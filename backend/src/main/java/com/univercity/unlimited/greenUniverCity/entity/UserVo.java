@@ -11,18 +11,25 @@ import java.util.List;
 @NoArgsConstructor //파라미터가 없는 기본 생성자 생성
 @Getter
 @Table(name = "tbl_user")
-@ToString(exclude = "RoleList") // 객체 정보를 문자열로 출력 할 수 있는 롬복
+@ToString
+//(exclude ="userRoleList")// 객체 정보를 문자열로 출력 할 수 있는 롬복
 @Builder
 public class UserVo {
     @Id //아이디 이메일 비밀번호 닉네임 칼럼 생성
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long uno;
+
     private String id;
     private String email;
     private String password;
     private String nickname;
 
-//    @ElementCollection(fetch = FetchType.LAZY)
-    @Builder.Default private List<Role> RoleList=new ArrayList<>();
+    @ElementCollection(fetch = FetchType.LAZY)
+    @Builder.Default
+    @Enumerated(EnumType.STRING)
+    private List<UserRole> userRoleList=new ArrayList<>();
 
+    public void addRole(UserRole memberRole){userRoleList.add(memberRole);}
 
 }
 
