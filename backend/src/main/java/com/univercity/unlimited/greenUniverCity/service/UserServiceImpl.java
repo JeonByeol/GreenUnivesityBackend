@@ -1,5 +1,6 @@
 package com.univercity.unlimited.greenUniverCity.service;
 
+import com.univercity.unlimited.greenUniverCity.dto.UserDTO;
 import com.univercity.unlimited.greenUniverCity.entity.UserRole;
 import com.univercity.unlimited.greenUniverCity.entity.UserVo;
 import com.univercity.unlimited.greenUniverCity.repository.UserRepository;
@@ -25,5 +26,18 @@ public class UserServiceImpl implements UserService{
     public List<UserVo> findUsersByRole(UserRole role) {
         log.info("role에 해당 하는 부분의 데이터만 조회");
         return userRepository.findAllByRole(role);
+    }
+
+    @Override
+    public UserDTO login(UserDTO userDTO) {
+        UserVo user=userRepository.getUserByEmail(userDTO.getEmail()).get();
+//        UserVo user=userRepository.getUserByEmail(userDTO.getEmail()).get();
+        return UserDTO.builder()
+                .uno(user.getUno())
+                .id(user.getId())
+                .email(user.getEmail())
+                .nickname(user.getNickname())
+                .password(user.getPassword())
+                .build();
     }
 }

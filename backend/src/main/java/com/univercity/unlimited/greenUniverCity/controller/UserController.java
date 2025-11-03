@@ -7,10 +7,7 @@ import com.univercity.unlimited.greenUniverCity.repository.UserRepository;
 import com.univercity.unlimited.greenUniverCity.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -30,6 +27,11 @@ public class UserController {
     public List<UserVo> postmanTestRole(@PathVariable("roleName") UserRole role){
         log.info("Controller: /api/user/role/{} 호출", role);
         return userService.findUsersByRole(role);
+    }
+    @PostMapping("/login")
+    private UserDTO postmanTestlogin(@RequestBody UserDTO userDTO){
+        log.info("Controller:/api/user/login:{} 호출",userDTO);
+        return userService.login(userDTO);
     }
 
 }

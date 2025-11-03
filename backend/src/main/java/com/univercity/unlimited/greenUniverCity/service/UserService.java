@@ -1,5 +1,6 @@
 package com.univercity.unlimited.greenUniverCity.service;
 
+import com.univercity.unlimited.greenUniverCity.dto.UserDTO;
 import com.univercity.unlimited.greenUniverCity.entity.UserRole;
 import com.univercity.unlimited.greenUniverCity.entity.UserVo;
 
@@ -11,5 +12,7 @@ public interface UserService {
 
 //    특정 역할을 가진 모든 사용자를 조회합니다.
     List<UserVo> findUsersByRole(UserRole role);
+
+    UserDTO login(UserDTO userDTO);
     
 }
