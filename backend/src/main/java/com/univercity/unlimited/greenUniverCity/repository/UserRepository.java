@@ -8,14 +8,14 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
-public interface UserRepository extends JpaRepository<UserVo,String> {
+public interface UserRepository extends JpaRepository<UserVo,Long> {
 
     @EntityGraph(attributePaths = ("userRoleList"))
     @Query("select m from UserVo m where email = :email" )
     //select * from tbl_user u inner join user_vo_user_role_list ru on u.uno=ru.user_vo_uno;
-    UserVo getUserByEmail(@Param("email") String email);
-
+    Optional<UserVo> getUserByEmail(@Param("email") String email);
     @Query("SELECT u FROM UserVo u JOIN u.userRoleList r WHERE r = :role")
     List<UserVo> findAllByRole(@Param("role") UserRole role);
 
