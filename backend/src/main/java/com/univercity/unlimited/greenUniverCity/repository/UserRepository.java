@@ -15,7 +15,7 @@ public interface UserRepository extends JpaRepository<UserVo,Long> {
     @EntityGraph(attributePaths = ("userRoleList"))
     @Query("select m from UserVo m where email = :email" )
     //select * from tbl_user u inner join user_vo_user_role_list ru on u.uno=ru.user_vo_uno;
-    Optional<UserVo> getUserByEmail(@Param("email") String email);
+    UserVo getUserByEmail(@Param("email") String email);
     @Query("SELECT u FROM UserVo u JOIN u.userRoleList r WHERE r = :role")
     List<UserVo> findAllByRole(@Param("role") UserRole role);
 
