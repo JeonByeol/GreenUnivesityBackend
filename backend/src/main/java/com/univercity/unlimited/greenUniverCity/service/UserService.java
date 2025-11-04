@@ -7,12 +7,12 @@ import com.univercity.unlimited.greenUniverCity.entity.UserVo;
 import java.util.List;
 
 public interface UserService {
-//    모든 사용자 조회
     List<UserVo> findAllUsers();
-
-//    특정 역할을 가진 모든 사용자를 조회합니다.
+    //전체 유저 데이터를 조회하기 위한 service
     List<UserVo> findUsersByRole(UserRole role);
-
+    //특정 역활에 속한 모든 유저를 조회하기 위한 service
     UserDTO login(UserDTO userDTO);
+    //user정보를 통하여 로그인을 시키기 위한 service
+    void register(UserDTO dto);
     
 }
