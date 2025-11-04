@@ -33,20 +33,16 @@ public class UserServiceImpl implements UserService{
     public UserDTO login(UserDTO userDTO) {
         Optional<UserVo> userOptional= Optional.ofNullable(userRepository.getUserByEmail(userDTO.getEmail()));
 //        UserVo user=userRepository.getUserByEmail(userDTO.getEmail()).get();
-
         if(userOptional.isEmpty()){
             log.warn("로그인 정보가 없다:{}",userDTO.getEmail());
             throw new RuntimeException("이메일 또는 비밀번호가 일치하지 않습니다.");
         }
-
         UserVo u=userOptional.get();
-
 //        if(userDTO.getPassword().equals(u.getPassword())){
 //            log.warn("로그인 실패: 비밀번호 불일치");
 //            throw new RuntimeException("이메일 또는 비밀번호가 일치하지 않습니다.");
 //        }
         // 추후에 passwordEncode와 같은 비밀번호 암호화와 같은 기능을 생성하고 이 암호화 비밀번호를 검증 시키기 위한 코드 추후 사용 예정
-
 
         log.info("로그인 성공: {}", u.getEmail());
         return UserDTO.builder()
@@ -55,6 +51,5 @@ public class UserServiceImpl implements UserService{
                 .email(u.getEmail())
                 .nickname(u.getNickname())
                 .build();
-
     }
 }
