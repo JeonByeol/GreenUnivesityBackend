@@ -16,22 +16,31 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("/api/user")
 public class UserController {
-//    private final UserRepository userRepository;
+    //    private final UserRepository userRepository;
     private final UserService userService;
-    @GetMapping("/all")
-    public List<UserVo> postmanTestUser(){
+
+    @GetMapping("/all") //전체 데이터 조회
+    public List<UserVo> postmanTestUser() {
         log.info("Controller: /api/user/all 호출");
         return userService.findAllUsers();
     }
-    @GetMapping("/role/{roleName}")
-    public List<UserVo> postmanTestRole(@PathVariable("roleName") UserRole role){
+
+    @GetMapping("/role/{roleName}") //role 데이터 조회
+    public List<UserVo> postmanTestRole(@PathVariable("roleName") UserRole role) {
         log.info("Controller: /api/user/role/{} 호출", role);
         return userService.findUsersByRole(role);
     }
-    @PostMapping("/login")
-    private UserDTO login(@RequestBody UserDTO userDTO){
-        log.info("Controller:/api/user/login:{} 호출",userDTO);
+
+    @PostMapping("/login") //로그인
+    private UserDTO login(@RequestBody UserDTO userDTO) {
+        log.info("Controller:/api/user/login:{} 호출", userDTO);
         return userService.login(userDTO);
+    }
+
+    @PostMapping("/register") //회원가입
+    private UserDTO rr(@RequestBody UserDTO dto) {
+        log.info("Controller:/api/user/register:{} 호출", dto);
+        return null;
     }
 
 }
