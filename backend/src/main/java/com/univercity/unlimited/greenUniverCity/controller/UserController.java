@@ -29,7 +29,7 @@ public class UserController {
         return userService.findUsersByRole(role);
     }
     @PostMapping("/login")
-    private UserDTO postmanTestlogin(@RequestBody UserDTO userDTO){
+    private UserDTO login(@RequestBody UserDTO userDTO){
         log.info("Controller:/api/user/login:{} 호출",userDTO);
         return userService.login(userDTO);
     }
