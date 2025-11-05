@@ -1,28 +1,34 @@
 package com.univercity.unlimited.greenUniverCity.entity;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.ToString;
+import lombok.*;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Entity
-@Table(name = "tbl_course")
+@Table(name = "tbl_enrollment")
 @ToString
 @Getter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Enrollment {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "enrollment_id")
     private Long enrollmentId; // 과목 코드
 
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private UserVo user;
+    @Column(name = "enroll_date")
+    private LocalDateTime enrollDate;
 
     @ManyToOne
     @JoinColumn(name = "offering_id")
+    @ToString.Exclude
     private CourseOffering courseOffering;
 
-    @Column(name = "enroll_date")
-    private Date enrollDate;
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    @ToString.Exclude
+    private UserVo userVo;
 }

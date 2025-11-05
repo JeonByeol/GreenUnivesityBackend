@@ -16,17 +16,17 @@ public class UserRepositoryTests {
 
     @Test
     public void testInsertData(){
-        for(int i=0;i<1;i++){
+        for(int i=0;i<10;i++){
             UserVo user=UserVo.builder()
-                    .email("user8@aaa.com")
+                    .email("user"+i+"@aaa.com")
                     .password("1111")
                     .nickname("user"+i)
                     .id("user"+i)
                     .build();
-//            user.addRole(UserRole.ADMIN);
-//            if(i>3) user.addRole(UserRole.STUDENT);
-//            if(i>5) user.addRole(UserRole.PROFESSOR);
-//            if(i>7) user.addRole(UserRole.GUEST);
+            user.addRole(UserRole.ADMIN);
+            if(i>3) user.addRole(UserRole.STUDENT);
+            if(i>5) user.addRole(UserRole.PROFESSOR);
+            if(i>7) user.addRole(UserRole.GUEST);
             userRepository.save(user);
         }
 

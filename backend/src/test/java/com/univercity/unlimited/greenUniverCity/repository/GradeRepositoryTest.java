@@ -14,6 +14,9 @@ public class GradeRepositoryTest {
     private GradeRepository repository;
 
     @Autowired
+    private CourseRepository re;
+
+    @Autowired
     private EnrollmentRepository enrollmentRepository;
 
 
