@@ -22,10 +22,6 @@ public class TimeTable{
     @Column(name = "timetable_id")
     private Integer timetableId;
 
-    @ManyToOne
-    @JoinColumn(name = "offering_id")
-    private CourseOffering courseOffering;
-
     @Column(name = "day_of_week", length = 10, nullable = false)
     private String dayOfWeek;
 
@@ -38,4 +34,11 @@ public class TimeTable{
     
     @Column(name = "location", length = 50)
     private String location;
+
+    @ManyToOne
+    @JoinColumn(name = "offering_id")
+    private CourseOffering courseOffering;
+    //OneToMany,ManyToOne ***To*** 형태는
+    //앞에게 현재 테이블 뒤에게 조인칼럼
+
 }
