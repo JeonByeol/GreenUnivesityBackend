@@ -24,10 +24,6 @@ public class Review{
     @Column(name = "review_id")
     private Integer reviewId;
 
-    @ManyToOne
-    @JoinColumn(name = "enrollment_id")
-    private Enrollment enrollment;
-
     @Column(name = "rating", nullable = false)
     private Integer rating;
 
@@ -39,5 +35,9 @@ public class Review{
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
+
+    @ManyToOne
+    @JoinColumn(name = "enrollment_id")
+    private Enrollment enrollment;
 
 }
