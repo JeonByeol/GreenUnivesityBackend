@@ -19,21 +19,23 @@ public class TimeTableRepositoryTests {
     @Test
 
     public void testTimeTableData(){
-        final long offeringId=1;
-//        final long enrollmentId=1;
-        //CourseOffering courseOffering=courseOfferingRepository.findById(offeringId)
-
+        for (int i= 1; i <4 ; i++) {
+        final long offeringId=i;
+        CourseOffering courseOffering=courseOfferingRepository.findById(offeringId)
+                .orElseThrow(() ->
+                        new RuntimeException("Test Error: Enrollment " + offeringId + " not found")
+                );
         TimeTable timeTable=TimeTable.builder()
-                .courseOffering(new CourseOffering(1l,null,"교수님",1,1))
-                .dayOfWeek("1")
+                .courseOffering(courseOffering)
+                .dayOfWeek("1"+i)
                 .startTime(LocalTime.of(2,4,7,0))
                 .endTime(LocalTime.of(7,3,5,1))
-                .location("부산")
+                .location("부산"+i)
                 .build();
         repository.save(timeTable);
-//        for (int i= 1; i <4 ; i++) {
-//
-//        }
+
+
+        }
 
     }
 }

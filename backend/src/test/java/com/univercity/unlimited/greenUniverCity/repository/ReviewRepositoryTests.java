@@ -21,19 +21,20 @@ public class ReviewRepositoryTests {
     
     @Test
     public void testReviewData(){
-            final long enrollmentId=1;
-//            Enrollment enrollment=enrollmentRepository.findById(enrollmentId)
-//                    .orElseThrow(() ->
-//                            new RuntimeException("Test Error: Enrollment " + enrollmentId + " not found")
-//                    );
+        for (int i=1; i <3;i++){
+            final long enrollmentId=i;
+            Enrollment enrollment=enrollmentRepository.findById(enrollmentId)
+                    .orElseThrow(() ->
+                            new RuntimeException("Test Error: Enrollment " + enrollmentId + " not found")
+                    );
             Review review=Review.builder()
-                    .rating(1)
-                    .comment("응")
+                    .rating(i)
+                    .comment("응"+i)
                     .createdAt(LocalDateTime.now())
-                    .enrollment(new Enrollment(1l,null,null,new Date()))
+                    .enrollment(enrollment)
                     .build();
             repository.save(review);
-//        for (int i=1; i <3;i++){
-//        }
+
+        }
     }
 }
