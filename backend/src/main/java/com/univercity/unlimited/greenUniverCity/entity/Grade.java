@@ -21,12 +21,11 @@ public class Grade{
     @Column(name = "grade_id")
     private Integer gradeId;
 
-    @ManyToOne
-    @JoinColumn(name = "enrollment_id")
-    private Enrollment enrollment;
-
     @Column(name = "grade_value", length = 5)
     private String gradeValue;
 
+    @OneToOne
+    @JoinColumn(name = "enrollment_id")
+    private Enrollment enrollment;
 
 }

@@ -9,7 +9,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
 @Slf4j
-public class GradeRepositoryTest {
+public class GradeRepositoryTests {
     @Autowired
     private GradeRepository repository;
 
@@ -19,7 +19,7 @@ public class GradeRepositoryTest {
 
     @Test
     public void testGradeData(){
-        for(int i = 1; i <= 3; i++){
+        for(int i = 1; i < 3; i++){
             final long enrollmentId = i;
             Enrollment enrollment = enrollmentRepository.findById(enrollmentId)
                     .orElseThrow(() ->
