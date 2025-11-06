@@ -13,12 +13,14 @@ import java.util.List;
 @Table(name = "tbl_user")
 @ToString(exclude = {"userRoleList","offerings","enrollments"})// 객체 정보를 문자열로 출력 할 수 있는 롬복
 @Builder
+@Setter
 public class UserVo {
     @Id //아이디 이메일 비밀번호 닉네임 칼럼 생성
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
     private Long userId;
 
+    @Column(unique = true)
     private String email;
     private String password;
     private String nickname;

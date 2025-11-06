@@ -29,4 +29,8 @@ public interface UserRepository extends JpaRepository<UserVo,Long> {
     @Query("SELECT DISTINCT u FROM UserVo u JOIN FETCH u.enrollments e WHERE e.enrollmentId = :enrollmentId")
     Optional<UserVo> findByEnrollmentId(@Param("enrollmentId") Long enrollmentId);
 
+    @Query("select m from UserVo m where id = :id" )
+    UserVo findById(@Param("id") String id);
+
+//   |@Query(...) 어노테이션이 아예 필요 없습니다.| UserVo findByEmail(String email);
 }
