@@ -19,7 +19,7 @@ public class NoticeRepositoryTests {
        for(int i=0;i<1;i++){
            Notice notice= Notice.builder()
                    .notice_id(i)
-                   .userVo(null)
+                   .user(null)
                    .title("새로운 알림"+i)
                    .content("전달사항입니다")
                    .created_at(LocalDateTime.now())

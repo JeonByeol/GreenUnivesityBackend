@@ -11,15 +11,14 @@ import java.util.List;
 @NoArgsConstructor //파라미터가 없는 기본 생성자 생성
 @Getter
 @Table(name = "tbl_user")
-@ToString(exclude = {"userRoleList","offerings"})// 객체 정보를 문자열로 출력 할 수 있는 롬복
+@ToString(exclude = {"userRoleList","offerings","enrollments"})// 객체 정보를 문자열로 출력 할 수 있는 롬복
 @Builder
 public class UserVo {
     @Id //아이디 이메일 비밀번호 닉네임 칼럼 생성
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
-    private Long uno;
+    private Long userId;
 
-    private String id;
     private String email;
     private String password;
     private String nickname;
