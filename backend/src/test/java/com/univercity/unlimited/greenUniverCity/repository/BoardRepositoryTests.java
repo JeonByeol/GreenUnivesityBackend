@@ -1,4 +1,5 @@
 package com.univercity.unlimited.greenUniverCity.repository;
+import com.univercity.unlimited.greenUniverCity.entity.Board;
 import com.univercity.unlimited.greenUniverCity.entity.Comment;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
@@ -12,28 +13,26 @@ import java.util.List;
 @SpringBootTest
 @Slf4j
 @ToString
-public class CommentRepositoryTests {
+public class BoardRepositoryTests {
 
     @Autowired
-    private CommentRepository repository;
+    private BoardRepository repository;
 
     @Test
     public void testInsert(){
-        for(int i = 0; i <= 20; i ++){
+        var boardArray = List.of("전체게시판","자유게시판","동아리게시판","질문게시판");
+        for(int i = 0; i <= 3; i ++){
 
-            Comment dto = Comment.builder()
-//                    .commentId(20l+i)
-                    .content(i + "")
-                    .createdAt(LocalDateTime.now())
-                    .postId(15l+i)
-                    .userId("user"+i)
-                    .build();
+            Board dto = Board.builder()
+//                    .boardId("board"+i)
+                    .boardName(boardArray.get(i))
+                            .build();
             repository.save(dto);
         }
     }
     @Test
     public void testRead(){
-        List<Comment> result = repository.findAll();
+        List<Board> result = repository.findAll();
         log.info("hello={}",result);
     }
 
