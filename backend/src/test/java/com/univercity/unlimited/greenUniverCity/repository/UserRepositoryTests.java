@@ -29,7 +29,6 @@ public class UserRepositoryTests {
             if(i>7) user.addRole(UserRole.GUEST);
             userRepository.save(user);
         }
-
     }
 
     @Test

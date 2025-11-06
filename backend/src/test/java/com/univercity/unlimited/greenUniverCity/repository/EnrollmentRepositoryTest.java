@@ -35,7 +35,7 @@ public class EnrollmentRepositoryTest {
             Enrollment enrollment = Enrollment.builder()
                     .enrollDate(LocalDateTime.now())
                     .courseOffering(courseOffering)
-                    .userVo(userVo)
+                    .user(userVo)
                     .build();
 
             enrollmentRepository.save(enrollment);
