@@ -27,5 +27,4 @@ public class Grade{
     @OneToOne
     @JoinColumn(name = "enrollment_id")
     private Enrollment enrollment;
-
 }

@@ -19,5 +19,8 @@ public interface UserRepository extends JpaRepository<UserVo,Long> {
     @Query("SELECT u FROM UserVo u JOIN u.userRoleList r WHERE r = :role")
     List<UserVo> findAllByRole(@Param("role") UserRole role);
 
+    @Query("select m from UserVo m where id = :id" )
+    UserVo findById(@Param("id") String id);
+
 //   |@Query(...) 어노테이션이 아예 필요 없습니다.| UserVo findByEmail(String email);
 }
