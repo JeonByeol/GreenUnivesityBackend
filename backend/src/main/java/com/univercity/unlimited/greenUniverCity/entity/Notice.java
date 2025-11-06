@@ -27,7 +27,7 @@ public class Notice {
 
     @ManyToOne
     @JoinColumn(name="user_id")
-    private UserVo userVo;
+    private UserVo user;
 
     @Column(name="title",nullable = false)
     private String title;

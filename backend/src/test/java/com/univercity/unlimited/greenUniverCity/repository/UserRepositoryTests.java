@@ -21,7 +21,6 @@ public class UserRepositoryTests {
                     .email("user"+i+"@aaa.com")
                     .password("1111")
                     .nickname("user"+i)
-                    .id("user"+i)
                     .build();
             user.addRole(UserRole.ADMIN);
             if(i>3) user.addRole(UserRole.STUDENT);
@@ -29,7 +28,6 @@ public class UserRepositoryTests {
             if(i>7) user.addRole(UserRole.GUEST);
             userRepository.save(user);
         }
-
     }
 
     @Test

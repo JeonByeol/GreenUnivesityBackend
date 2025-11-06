@@ -3,18 +3,22 @@ package com.univercity.unlimited.greenUniverCity.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 
 @Entity
 @Table(name = "tbl_course")
-@ToString(exclude = "department")
+@ToString(exclude = {"department","offerings"})
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class Course {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "course_id")
-    private String courseId; // 과목 코드
+    private Long courseId; // 과목 코드
 
     @Column(name = "course_name")
     private String courseName; // 과목명
@@ -28,4 +32,12 @@ public class Course {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "dept_id")
     private Department department; // 학과
+
+    @OneToMany(mappedBy = "course", fetch = FetchType.LAZY)
+    @Builder.Default
+    private List<CourseOffering> offerings = new ArrayList<>();
+
+    public void addCourseOffering(CourseOffering courseOffering){
+        offerings.add(courseOffering);
+    }
 }

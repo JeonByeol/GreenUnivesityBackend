@@ -30,5 +30,5 @@ public class Enrollment {
     @ManyToOne
     @JoinColumn(name = "user_id")
     @ToString.Exclude
-    private UserVo userVo;
+    private UserVo user;
 }

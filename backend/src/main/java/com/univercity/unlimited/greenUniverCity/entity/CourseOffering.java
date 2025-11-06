@@ -3,10 +3,14 @@ package com.univercity.unlimited.greenUniverCity.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Table(name = "tbl_course_offering")
-@ToString(exclude = "course")
+@ToString(exclude = {"course","enrollments"})
 @Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -28,4 +32,16 @@ public class CourseOffering {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "course_id")
     private Course course; // 강의 정보
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private UserVo user;
+
+    @OneToMany(mappedBy = "courseOffering", fetch = FetchType.LAZY)
+    @Builder.Default
+    private List<Enrollment> enrollments = new ArrayList<>();
+
+    public void addEnrollment(Enrollment enrollment) {
+        enrollments.add(enrollment);
+    }
 }
