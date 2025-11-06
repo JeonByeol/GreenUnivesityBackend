@@ -10,9 +10,8 @@ import lombok.*;
 @Builder
 
 public class UserDTO {
-    private Long uno;
+    private Long userId;
 
-    private String id;
     private String email;
     private String password;
     private String nickname;

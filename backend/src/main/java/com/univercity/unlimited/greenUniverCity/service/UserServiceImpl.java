@@ -43,8 +43,7 @@ public class UserServiceImpl implements UserService{
         // 추후에 passwordEncode와 같은 비밀번호 암호화와 같은 기능을 생성하고 이 암호화 비밀번호를 검증 시키기 위한 코드 추후 사용 예정
         log.info("로그인 성공: {}", u.getEmail());
         return UserDTO.builder()
-                .uno(u.getUno())
-                .id(u.getId())
+                .userId(u.getUserId())
                 .email(u.getEmail())
                 .nickname(u.getNickname())
                 .build();
