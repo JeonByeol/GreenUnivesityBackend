@@ -28,14 +28,10 @@ public class CommentRepositoryTests {
         userRepository.findAll().forEach(u->{
             log.info("{}",u);
             for(int i = 0; i <= 20; i ++){
-
                 Comment dto = Comment.builder()
-//                    .commentId(20l+i)
                     .content("user 내용:"+  u.getUserId()+" , " +  i + "")
                     .createdAt(LocalDateTime.now())
-//                    .postId(15l+i+u.getUno())
-                        .post(postRepository.findById(1l).get())
-                        .board( new Board(1l,"김유라 게시판"))
+                        .post(postRepository.findById(1l).get()).board( new Board(1l,"김유라 게시판"))
                     .user(u)
                     .build();
             repository.save(dto);

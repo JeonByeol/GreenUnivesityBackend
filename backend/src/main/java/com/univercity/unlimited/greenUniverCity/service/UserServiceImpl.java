@@ -82,8 +82,7 @@ public class UserServiceImpl implements UserService {
         log.info("3) savedUser:{}",savedUser);
 
         return UserDTO.builder()
-                .uno(savedUser.getUno())
-                .id(savedUser.getId())
+                .userId(savedUser.getUserId())
                 .email(savedUser.getEmail())
                 .nickname(savedUser.getNickname())
                 .role(savedUser.getUserRoleList().get(0).name()) // (예시) 첫 번째 역할 반환
