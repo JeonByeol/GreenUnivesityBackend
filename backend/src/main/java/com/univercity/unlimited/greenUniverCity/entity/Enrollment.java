@@ -39,6 +39,12 @@ public class Enrollment {
     @ToString.Exclude
     private Grade grade;
 
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "enrollment_id")
+    @ToString.Exclude
+    private Attendance enrollment;
+
+
     @OneToMany(mappedBy = "enrollment", fetch = FetchType.LAZY)
     @Builder.Default
     @ToString.Exclude
