@@ -9,7 +9,7 @@ import java.time.LocalTime;
 @NoArgsConstructor
 @Getter
 @Builder
-@ToString(exclude = "courseOffering")
+@ToString
 
 @Table(
         name = "tbl_timetable", indexes = {
@@ -28,15 +28,15 @@ public class TimeTable{
     @Column(name = "start_time", nullable = false)
     private LocalTime startTime;
 
-
     @Column(name = "end_time", nullable = false)
     private LocalTime endTime;
     
     @Column(name = "location", length = 50)
     private String location;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "offering_id")
+    @ToString.Exclude
     private CourseOffering courseOffering;
     //OneToMany,ManyToOne ***To*** 형태는
     //앞에게 현재 테이블 뒤에게 조인칼럼

@@ -12,7 +12,6 @@ import java.time.LocalDateTime;
 @ToString
 @Table(name="tbl_comment")
 public class Comment {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "comment_id")
@@ -20,16 +19,17 @@ public class Comment {
 
     @Column (name = "content")
     private String content;
+
     @Column (name = "created_at")
     private LocalDateTime createdAt;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
+    @ToString.Exclude
     private UserVo user;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id")
+    @ToString.Exclude
     private Post post;
-
-
 }

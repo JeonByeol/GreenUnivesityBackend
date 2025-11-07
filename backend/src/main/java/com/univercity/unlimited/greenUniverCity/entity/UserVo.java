@@ -11,7 +11,7 @@ import java.util.List;
 @NoArgsConstructor //파라미터가 없는 기본 생성자 생성
 @Getter
 @Table(name = "tbl_user")
-@ToString(exclude = {"userRoleList","offerings","enrollments"})// 객체 정보를 문자열로 출력 할 수 있는 롬복
+@ToString
 @Builder
 @Setter
 public class UserVo {
@@ -28,28 +28,34 @@ public class UserVo {
     @ElementCollection(fetch = FetchType.LAZY)
     @Builder.Default
     @Enumerated(EnumType.STRING)
+    @ToString.Exclude
     private List<UserRole> userRoleList=new ArrayList<>();
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     @Builder.Default
+    @ToString.Exclude
     private List<CourseOffering> offerings = new ArrayList<>();
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     @Builder.Default
+    @ToString.Exclude
     private List<Enrollment> enrollments = new ArrayList<>();
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     @Builder.Default
+    @ToString.Exclude
     private List<Comment> comments = new ArrayList<>();
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     @Builder.Default
+    @ToString.Exclude
     private List<Post> posts = new ArrayList<>();
 
     public void addRole(UserRole memberRole){userRoleList.add(memberRole);}
     public void addOffering(CourseOffering courseOffering){
         offerings.add(courseOffering);
     }
+    public void addEnrollment(Enrollment enrollment) {enrollments.add(enrollment);}
     public void addComment(Comment comment){comments.add(comment);}
     public void addPost(Post post){posts.add(post);}
 }

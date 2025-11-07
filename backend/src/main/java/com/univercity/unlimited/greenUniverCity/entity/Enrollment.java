@@ -4,7 +4,9 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(name = "tbl_enrollment")
@@ -22,13 +24,27 @@ public class Enrollment {
     @Column(name = "enroll_date")
     private LocalDateTime enrollDate;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "offering_id")
     @ToString.Exclude
     private CourseOffering courseOffering;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     @ToString.Exclude
     private UserVo user;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "grade_id")
+    @ToString.Exclude
+    private Grade grade;
+
+    @OneToMany(mappedBy = "enrollment", fetch = FetchType.LAZY)
+    @Builder.Default
+    @ToString.Exclude
+    private List<Review> reviews = new ArrayList<>();
+
+    public void addReview(Review review) {
+        reviews.add(review);
+    }
 }

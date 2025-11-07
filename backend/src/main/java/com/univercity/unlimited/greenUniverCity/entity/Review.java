@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Getter
 @Builder
-@ToString(exclude = "enrollment")
+@ToString
 @Setter
 
 @Table(
@@ -27,17 +27,16 @@ public class Review{
     @Column(name = "rating", nullable = false)
     private Integer rating;
 
-
     @Column(name = "comment", columnDefinition = "TEXT")
     private String comment;
-
 
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "enrollment_id")
+    @ToString.Exclude
     private Enrollment enrollment;
 
 }
