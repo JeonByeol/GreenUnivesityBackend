@@ -8,7 +8,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "tbl_course_offering")
-@ToString(exclude = {"course","enrollments"})
+@ToString
 @Getter
 @Setter
 @NoArgsConstructor
@@ -31,17 +31,29 @@ public class CourseOffering {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "course_id")
+    @ToString.Exclude
     private Course course; // 강의 정보
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
+    @ToString.Exclude
     private UserVo user;
 
     @OneToMany(mappedBy = "courseOffering", fetch = FetchType.LAZY)
     @Builder.Default
+    @ToString.Exclude
     private List<Enrollment> enrollments = new ArrayList<>();
+
+    @OneToMany(mappedBy = "courseOffering", fetch = FetchType.LAZY)
+    @Builder.Default
+    @ToString.Exclude
+    private List<TimeTable> timeTables = new ArrayList<>();
 
     public void addEnrollment(Enrollment enrollment) {
         enrollments.add(enrollment);
+    }
+
+    public void addTimeTable(TimeTable timeTable) {
+        timeTables.add(timeTable);
     }
 }

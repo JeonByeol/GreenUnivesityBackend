@@ -20,14 +20,15 @@ public class Board {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-
     @Column(name = "board_id")
     private Long boardId;
+
     @Column(name="board_name")
     private String boardName;
 
-    @OneToMany(mappedBy = "board")
+    @OneToMany(mappedBy = "board", fetch = FetchType.LAZY)
     @Builder.Default
+    @ToString.Exclude
     private List<Post> posts = new ArrayList<>();
 
     public void addPost(Post post){
