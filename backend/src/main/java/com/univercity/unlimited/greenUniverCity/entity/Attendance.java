@@ -22,19 +22,18 @@ import java.util.Date;
 public class Attendance {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-
     @Column(name="attendance_id")
-    private Integer attendance;
-
-    @ManyToOne
-    @JoinColumn(name="enrollment_id")
-    private Enrollment enrollment;
+    private Integer attendanceId;
 
     @Column(name="date",nullable = false)
     private LocalDate localDate;
 
     @Column(name="status",nullable = false)
     private String status;
+
+    @ManyToOne
+    @JoinColumn(name="enrollment_id")
+    private Enrollment enrollment;
 }
 
 
