@@ -31,7 +31,7 @@ public class CommentRepositoryTests {
                 Comment dto = Comment.builder()
                     .content("user 내용:"+  u.getUserId()+" , " +  i + "")
                     .createdAt(LocalDateTime.now())
-                        .post(postRepository.findById(1l).get()).board( new Board(1l,"김유라 게시판"))
+                        .post(null)
                     .user(u)
                     .build();
             repository.save(dto);
