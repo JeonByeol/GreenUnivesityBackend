@@ -14,22 +14,19 @@ public class GradeRepositoryTests {
     private GradeRepository repository;
 
     @Autowired
-    private CourseRepository re;
-
-    @Autowired
     private EnrollmentRepository enrollmentRepository;
 
 
     @Test
     public void testGradeData(){
-        for(int i = 1; i < 3; i++){
+        for(int i = 3; i < 4; i++){
             final long enrollmentId = i;
             Enrollment enrollment = enrollmentRepository.findById(enrollmentId)
                     .orElseThrow(() ->
                             new RuntimeException("Test Error: Enrollment " + enrollmentId + " not found")
                     );
             Grade grade=Grade.builder()
-                    .gradeValue("A+")
+                    .gradeValue("B+")
                     .enrollment(enrollment)
                     .build();
 

@@ -1,11 +1,22 @@
 package com.univercity.unlimited.greenUniverCity.service;
 
+import com.univercity.unlimited.greenUniverCity.entity.Grade;
+import com.univercity.unlimited.greenUniverCity.repository.GradeRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @Slf4j
 @RequiredArgsConstructor
 public class GradeServiceImpl implements GradeService{
+    private final GradeRepository repository;
+
+    @Override
+    public List<Grade> findAllGrade() {
+        log.info("전체 성적 조회");
+        return repository.findAll();
+    }
 }

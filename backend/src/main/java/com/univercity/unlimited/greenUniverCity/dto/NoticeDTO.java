@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 
 public class NoticeDTO {
     private Integer notice_id;
-    private UserVo userVo;
+    private UserDTO userVo;
     private String title;
     private String content;
     private LocalDateTime created_at;

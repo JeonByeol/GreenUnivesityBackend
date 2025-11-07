@@ -22,9 +22,14 @@ public class UserServiceImpl implements UserService {
     private final ModelMapper mapper;
 
     @Override
-    public List<UserVo> findAllUsers() {
+    public List<UserDTO> findAllUsers() {
+        List<UserDTO> dto=new ArrayList<>();
+        for (UserVo i:userRepository.findAll()){
+            UserDTO r= mapper.map(i,UserDTO.class);
+            dto.add(r);
+        }
         log.info("모든 유저를 조회하는 service 코드 실행");
-        return userRepository.findAll();
+        return dto;
     }
 
     @Override

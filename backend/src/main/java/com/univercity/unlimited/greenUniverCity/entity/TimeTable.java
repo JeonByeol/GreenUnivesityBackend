@@ -2,6 +2,7 @@ package com.univercity.unlimited.greenUniverCity.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 @Entity
@@ -26,10 +27,10 @@ public class TimeTable{
     private String dayOfWeek;
 
     @Column(name = "start_time", nullable = false)
-    private LocalTime startTime;
+    private LocalDateTime startTime;
 
     @Column(name = "end_time", nullable = false)
-    private LocalTime endTime;
+    private LocalDateTime endTime;
     
     @Column(name = "location", length = 50)
     private String location;

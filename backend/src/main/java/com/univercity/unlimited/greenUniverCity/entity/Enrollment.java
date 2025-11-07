@@ -39,6 +39,7 @@ public class Enrollment {
     @ToString.Exclude
     private Grade grade;
 
+
     @OneToMany(mappedBy = "enrollment", fetch = FetchType.LAZY)
     @Builder.Default
     @ToString.Exclude
