@@ -5,6 +5,8 @@ import lombok.*;
 //import org.springframework.data.annotation.Id;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @AllArgsConstructor
@@ -24,5 +26,12 @@ public class Board {
     @Column(name="board_name")
     private String boardName;
 
+    @OneToMany(mappedBy = "board")
+    @Builder.Default
+    private List<Post> posts = new ArrayList<>();
+
+    public void addPost(Post post){
+        posts.add(post);
+    }
 
 }
