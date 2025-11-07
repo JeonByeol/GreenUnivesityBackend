@@ -38,9 +38,19 @@ public class UserVo {
     @Builder.Default
     private List<Enrollment> enrollments = new ArrayList<>();
 
+    @OneToMany(mappedBy = "user")
+    @Builder.Default
+    private List<Comment> comments = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user")
+    @Builder.Default
+    private List<Post> posts = new ArrayList<>();
+
     public void addRole(UserRole memberRole){userRoleList.add(memberRole);}
     public void addOffering(CourseOffering courseOffering){
         offerings.add(courseOffering);
     }
+    public void addComment(Comment comment){comments.add(comment);}
+    public void addPost(Post post){posts.add(post);}
 }
 

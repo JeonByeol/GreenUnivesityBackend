@@ -27,13 +27,13 @@ public class PostRepositoryTests {
                 log.info("{}",u);
                 for(int i = 0; i<20; i++){
                     Post dto = Post.builder()
-//                            .board(board)
-//                            .user(u)
-                            .userId(null)
-                            .title("title"+i)
-                            .content("content"+i)
-                            .createAt(LocalDateTime.now())
+                            .comments(null)
+                            .title(""+i)
+                            .content(""+i)
                             .viewCount(i)
+                            .createAt(LocalDateTime.now())
+                            .board(board)
+                            .user(users.get(0))
                             .build();
                     postRepository.save(dto);
                 }
