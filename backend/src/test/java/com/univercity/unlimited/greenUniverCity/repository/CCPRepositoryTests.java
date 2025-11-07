@@ -44,7 +44,7 @@ public class CCPRepositoryTests {
             return;
         }
 
-        for(int i = 0; i < 10; i++){
+        for(int i = 0; i <3; i++){
             Department department = Department.builder()
                     .deptName(departmentArray.get(i%3))
                     .build();
@@ -62,7 +62,7 @@ public class CCPRepositoryTests {
             }
 
             List<CourseOffering> courseOfferingList = new ArrayList<>();
-            for(int j=0; j<5; j++) {
+            for(int j=0; j<2; j++) {
                 CourseOffering courseOffering = CourseOffering.builder()
                         .professorId("pro"+j)
                         .year(LocalDateTime.now().getYear())

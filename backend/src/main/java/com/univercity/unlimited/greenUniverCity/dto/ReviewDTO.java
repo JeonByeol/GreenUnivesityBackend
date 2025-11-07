@@ -19,6 +19,6 @@ public class ReviewDTO {
     private Integer rating;
     private String comment;
     private LocalDateTime createAt;
-
+    @JsonBackReference("enrollment-review")
     private EnrollmentDTO enrollmentDTO;
 }

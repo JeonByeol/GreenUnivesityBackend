@@ -19,14 +19,15 @@ public class GradeRepositoryTests {
 
     @Test
     public void testGradeData(){
-        for(int i = 3; i < 4; i++){
+        String vv[]={"A+","A","B+","B"};
+        for(int i = 1; i < 4; i++){
             final long enrollmentId = i;
             Enrollment enrollment = enrollmentRepository.findById(enrollmentId)
                     .orElseThrow(() ->
                             new RuntimeException("Test Error: Enrollment " + enrollmentId + " not found")
                     );
             Grade grade=Grade.builder()
-                    .gradeValue("B+")
+                    .gradeValue(vv[i])
                     .enrollment(enrollment)
                     .build();
 

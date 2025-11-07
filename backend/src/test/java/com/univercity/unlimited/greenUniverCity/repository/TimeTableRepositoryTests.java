@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 @SpringBootTest
@@ -28,8 +29,8 @@ public class TimeTableRepositoryTests {
         TimeTable timeTable=TimeTable.builder()
                 .courseOffering(courseOffering)
                 .dayOfWeek("1"+i)
-                .startTime(LocalTime.of(2,4,7,0))
-                .endTime(LocalTime.of(7,3,5,1))
+                .startTime(LocalDateTime.now())
+                .endTime(LocalDateTime.now())
                 .location("부산"+i)
                 .build();
         repository.save(timeTable);

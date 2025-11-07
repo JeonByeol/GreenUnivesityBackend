@@ -23,9 +23,10 @@ public class EnrollmentRepositoryTest {
     private UserRepository userRepository;
 
 
+
     @Test
     public void testGradeData(){
-        for(int i = 0; i < 10; i++){
+        for(int i = 0; i < 4; i++){
             List<CourseOffering> courseOfferingList = courseOfferingRepository.findAll();
             List<UserVo> userList = userRepository.findAll();
 

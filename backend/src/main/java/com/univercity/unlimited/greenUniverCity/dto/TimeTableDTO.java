@@ -1,5 +1,6 @@
 package com.univercity.unlimited.greenUniverCity.dto;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.univercity.unlimited.greenUniverCity.entity.CourseOffering;
 import lombok.*;
 
@@ -19,6 +20,7 @@ public class TimeTableDTO {
     private LocalDateTime endTime;
     private String location;
 
+    @JsonBackReference("offering-timetable")
     private CourseOfferingDTO courseOffering;
 
 }

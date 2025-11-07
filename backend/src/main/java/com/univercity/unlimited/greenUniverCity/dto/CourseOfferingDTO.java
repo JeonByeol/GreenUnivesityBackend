@@ -1,6 +1,8 @@
 package com.univercity.unlimited.greenUniverCity.dto;
 
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.univercity.unlimited.greenUniverCity.entity.Course;
 import com.univercity.unlimited.greenUniverCity.entity.Enrollment;
 import com.univercity.unlimited.greenUniverCity.entity.TimeTable;
@@ -25,13 +27,16 @@ public class CourseOfferingDTO {
 
     private int semester; // 개설 학기 ex) 1학기 2학기
 
+    @JsonBackReference("course-offering")
     private CourseDTO course; // 강의 정보
 
     private UserDTO user;
 
-
+    @Builder.Default
+    @JsonManagedReference("offering-enrollment")
     private List<EnrollmentDTO> enrollments = new ArrayList<>();
 
-
+    @Builder.Default
+    @JsonManagedReference("offering-timetable")
     private List<TimeTableDTO> timeTables = new ArrayList<>();
 }

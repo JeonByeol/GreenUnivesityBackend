@@ -21,7 +21,7 @@ public class ReviewRepositoryTests {
     
     @Test
     public void testReviewData(){
-        for (int i=1; i <3;i++){
+        for (int i=1; i <4;i++){
             final long enrollmentId=i;
             Enrollment enrollment=enrollmentRepository.findById(enrollmentId)
                     .orElseThrow(() ->
