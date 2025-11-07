@@ -11,6 +11,4 @@ import java.util.Optional;
 
 public interface CourseRepository extends JpaRepository<Course, Long> {
 
-    @Query("SELECT DISTINCT c FROM Course c JOIN FETCH c.offerings o WHERE o.offeringId = :offeringId")
-    Optional<Course> findByOfferingId(@Param("offeringId") Long offeringId);
 }

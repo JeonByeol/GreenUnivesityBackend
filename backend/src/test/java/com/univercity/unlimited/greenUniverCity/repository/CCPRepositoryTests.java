@@ -75,8 +75,6 @@ public class CCPRepositoryTests {
                 courseOfferingList.add(courseOffering);
             }
 
-
-
             for(CourseOffering offering : courseOfferingList){
                 course.addCourseOffering(offering);
                 if(user == null)
@@ -141,38 +139,4 @@ public class CCPRepositoryTests {
             log.info("➡️ 개설 ID: {}, Enrollment {}", userVoOptional.get(), userVoOptional.get().getEnrollments());
         }
     }
-
-    @Test
-    public void find2() { // courseRepository
-        List<CourseOffering> allOfferings = courseOfferingRepository.findAll();
-        if (allOfferings.isEmpty()) {
-            log.warn("⚠️ CourseOffering 데이터가 없습니다.");
-            return;
-        }
-
-        Long offeringId = allOfferings.get(0).getOfferingId();
-        courseRepository.findByOfferingId(offeringId).ifPresent(course -> {
-            log.info("📘 과목명: {}", course.getCourseName());
-            course.getOfferings().forEach(o ->
-                    log.info("➡️ 개설 ID: {}, CourseOffering {}", o.getOfferingId(), o)
-            );
-        });
-    }
-
-    @Test
-    public void find3() { // courseOfferingRepository
-        List<CourseOffering> allOfferings = courseOfferingRepository.findAll();
-        if (allOfferings.isEmpty()) {
-            log.warn("⚠️ CourseOffering 데이터가 없습니다.");
-            return;
-        }
-
-        Long courseId = allOfferings.get(0).getCourse().getCourseId();
-        courseOfferingRepository.findCourseByCourseId(courseId).ifPresent(course ->
-                log.info("📗 개설된 과목: {} (Course: {})", course.getCourseName(), course.getOfferings())
-        );
-    }
-
-
-
 }
