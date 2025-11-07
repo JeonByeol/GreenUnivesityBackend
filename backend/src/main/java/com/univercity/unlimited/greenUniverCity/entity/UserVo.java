@@ -51,6 +51,10 @@ public class UserVo {
     @ToString.Exclude
     private List<Post> posts = new ArrayList<>();
 
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    @Builder.Default
+    private List<Notice> notices = new ArrayList<>();
+
     public void addRole(UserRole memberRole){userRoleList.add(memberRole);}
     public void addOffering(CourseOffering courseOffering){
         offerings.add(courseOffering);
