@@ -19,7 +19,8 @@ public class Grade{
     @Column(name = "grade_value", length = 5)
     private String gradeValue;
 
-    @OneToOne(mappedBy = "grade", fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
     @ToString.Exclude
-    private Enrollment enrollment;
+    private UserVo user;
 }

@@ -7,7 +7,7 @@ import com.univercity.unlimited.greenUniverCity.entity.UserVo;
 import java.util.List;
 
 public interface UserService {
-    List<UserVo> findAllUsers();
+    List<UserDTO> findAllUsers();
     //전체 유저 데이터를 조회하기 위한 service
     UserVo findByUser(String id);
     //하나의 유저 데이터 조회하기 위한 service

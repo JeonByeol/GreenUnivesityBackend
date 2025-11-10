@@ -21,7 +21,7 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping("/all") //전체 데이터 조회
-    public List<UserVo> postmanTestUser() {
+    public List<UserDTO> postmanTestUser() {
         log.info("Controller: /api/user/all 호출");
         return userService.findAllUsers();
     }
