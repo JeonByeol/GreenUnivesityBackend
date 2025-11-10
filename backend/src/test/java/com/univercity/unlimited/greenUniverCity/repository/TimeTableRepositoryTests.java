@@ -9,6 +9,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.List;
 
 @SpringBootTest
 @Slf4j
@@ -20,6 +21,7 @@ public class TimeTableRepositoryTests {
     @Test
 
     public void testTimeTableData(){
+        // 데이터 세팅
         String[] dummyLocations = {
                 "공학관 101호",
                 "인문관 305호",
@@ -42,24 +44,27 @@ public class TimeTableRepositoryTests {
                 "자연과학관 309호",
                 "경영관 301호 (세미나실 B)"
         };
-        String [] week={"월","화","수","목","금","토","일"};
-        for (int i= 1; i <4 ; i++) {
-        final long offeringId=i;
-        CourseOffering courseOffering=courseOfferingRepository.findById(offeringId)
-                .orElseThrow(() ->
-                        new RuntimeException("Test Error: Enrollment " + offeringId + " not found")
-                );
-        TimeTable timeTable=TimeTable.builder()
-                .courseOffering(courseOffering)
-                .dayOfWeek(week[i])
-                .startTime(LocalDateTime.now())
-                .endTime(LocalDateTime.now())
-                .location(dummyLocations[i])
-                .build();
-        repository.save(timeTable);
+        String [] week={"월","화","수","목","금"};
 
+        List<CourseOffering> courseOfferings = courseOfferingRepository.findAll();
 
+        // 데이터 체크
+        if(courseOfferings.isEmpty() == true) {
+            log.info("CourseOfferings 데이터가 없습니다.");
+            return;
         }
 
+        // 데이터 추가
+        for(CourseOffering courseOffering : courseOfferings) {
+            TimeTable timeTable = TimeTable.builder()
+                    .dayOfWeek(week[(int)(Math.random()*week.length)])
+                    .startTime(LocalDateTime.now())
+                    .endTime(LocalDateTime.now())
+                    .location(dummyLocations[(int)(Math.random()*dummyLocations.length)])
+                    .courseOffering(courseOffering)
+                    .build();
+
+            repository.save(timeTable);
+        }
     }
 }

@@ -20,8 +20,11 @@ public class CourseOffering {
     @Column(name = "offering_id")
     private Long offeringId; // 개설 강의 ID
 
-    @Column(name = "professor_id")
-    private String professorId; // 담당 교수 ID
+    @Column(name = "professor_name")
+    private String professorName; // 담당 교수 이름
+
+    @Column(name = "course_name")
+    private String courseName;
 
     @Column(name = "year")
     private int year; // 개설 년도

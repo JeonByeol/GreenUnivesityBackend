@@ -25,10 +25,6 @@ public class UserVo {
     private String password;
     private String nickname;
 
-
-
-
-
     @ElementCollection(fetch = FetchType.LAZY)
     @Builder.Default
     @Enumerated(EnumType.STRING)

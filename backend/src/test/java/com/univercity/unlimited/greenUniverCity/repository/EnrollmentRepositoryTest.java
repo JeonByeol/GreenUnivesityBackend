@@ -14,38 +14,42 @@ import java.util.Optional;
 @Slf4j
 public class EnrollmentRepositoryTest {
     @Autowired
-    private EnrollmentRepository enrollmentRepository;
+    private EnrollmentRepository repository;
 
     @Autowired
-    private CourseOfferingRepository courseOfferingRepository;
+    private CourseOfferingRepository offeringRepository;
 
     @Autowired
     private UserRepository userRepository;
 
-
-
     @Test
-    public void testGradeData(){
-        for(int i = 0; i < 4; i++){
-            List<CourseOffering> courseOfferingList = courseOfferingRepository.findAll();
-            List<UserVo> userList = userRepository.findAll();
+    public void insertInitData(){
+        // 데이터 세팅
+        List<CourseOffering> offerings = offeringRepository.findAll();
+        List<UserVo> users = userRepository.findAll();
 
-            CourseOffering courseOffering = Optional.of(courseOfferingList.get(i)).orElseGet(() -> new CourseOffering());
-            UserVo userVo = Optional.of(userList.get(i)).orElseGet(() -> new UserVo());
+        // 데이터 체크
+        if(offerings.isEmpty() == true)
+        {
+            log.info("Offering 데이터가 없습니다.");
+            return;
+        }
 
+        if(users.isEmpty() == true)
+        {
+            log.info("User 데이터가 없습니다.");
+            return;
+        }
+
+        // 데이터 저장
+        for(CourseOffering offering : offerings) {
             Enrollment enrollment = Enrollment.builder()
+                    .courseOffering(offering)
                     .enrollDate(LocalDateTime.now())
-                    .courseOffering(courseOffering)
-                    .user(userVo)
+                    .user(users.get((int)(Math.random()*users.size())))
                     .build();
 
-            enrollmentRepository.save(enrollment);
+            repository.save(enrollment);
         }
-    }
-    @Test
-    public void gradefind()
-    {
-        List<Enrollment> enrollmentList = enrollmentRepository.findAll();
-        log.info("enrollment test : {}",enrollmentList);
     }
 }
