@@ -20,18 +20,18 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class EnrollmentDTO {
-
-
     private Long enrollmentId; // 과목 코드
 
     private LocalDateTime enrollDate;
     @JsonBackReference("offering-enrollment")
     private CourseOfferingDTO courseOffering;
+    @JsonBackReference("user-enrollment")
     private UserDTO user;
-    @JsonManagedReference("enrollment-grade")
-    private GradeDTO grade;
+//    @JsonManagedReference("enrollment-grade")
+//    private GradeDTO grade;
     @Builder.Default
     @JsonManagedReference("enrollment-review")
     private List<ReviewDTO> reviews = new ArrayList<>();
+
 
 }

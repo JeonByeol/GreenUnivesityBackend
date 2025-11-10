@@ -32,7 +32,7 @@ public class RootConfig {
                         return source;
                     }
                 };
-        
+
         mapper.addConverter(localDateTimeConverter);
         return mapper;
     }

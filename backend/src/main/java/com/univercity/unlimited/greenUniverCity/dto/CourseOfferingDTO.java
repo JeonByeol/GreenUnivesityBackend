@@ -30,6 +30,7 @@ public class CourseOfferingDTO {
     @JsonBackReference("course-offering")
     private CourseDTO course; // 강의 정보
 
+    @JsonBackReference("user-offering")
     private UserDTO user;
 
     @Builder.Default

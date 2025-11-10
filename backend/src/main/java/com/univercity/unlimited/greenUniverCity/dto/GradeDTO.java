@@ -2,6 +2,7 @@ package com.univercity.unlimited.greenUniverCity.dto;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.univercity.unlimited.greenUniverCity.entity.Enrollment;
+import com.univercity.unlimited.greenUniverCity.entity.UserVo;
 import lombok.*;
 
 @AllArgsConstructor
@@ -13,6 +14,6 @@ import lombok.*;
 public class GradeDTO {
     private Integer gradeId;
     private String gradeValue;
-    @JsonBackReference("enrollment-grade")
-    private EnrollmentDTO enrollment;
+    @JsonBackReference("user-grade")
+    private UserDTO user;
 }
