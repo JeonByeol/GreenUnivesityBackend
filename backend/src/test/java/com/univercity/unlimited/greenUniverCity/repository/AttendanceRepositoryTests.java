@@ -17,16 +17,34 @@ import java.util.List;
 @Slf4j
 public class AttendanceRepositoryTests {
     @Autowired
-    private AttendanceRepository attendanceRepository;
+    private EnrollmentRepository enrollmentRepository;
+
+    @Autowired
+    private AttendanceRepository repository;
 
     @Test
     public void testInsertData() {
-        for (int i = 0; i < 10; i++) {
+        // 데이터 세팅
+        List<Enrollment> enrollments = enrollmentRepository.findAll();
+
+        // 체크
+        if(enrollments.isEmpty() == true)
+        {
+            log.info("Enrollment가 비어있습니다.");
+            return;
+        }
+
+        for(Enrollment enrollment : enrollments) {
+            int ran = (int)(Math.random()*2);
+            String status = ran == 1 ? "출석" : "결석";
+
             Attendance attendance = Attendance.builder()
                     .localDate(LocalDate.now())
-                    .status("출석")
+                    .enrollment(enrollment)
+                    .status(status)
                     .build();
-            attendanceRepository.save(attendance);
+
+            repository.save(attendance);
         }
     }
 

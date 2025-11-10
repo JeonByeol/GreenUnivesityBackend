@@ -16,15 +16,37 @@ public class EnrollmentRepositoryTest {
     @Autowired
     private EnrollmentRepository repository;
 
+    @Autowired
+    private CourseOfferingRepository offeringRepository;
+
+    @Autowired
+    private UserRepository userRepository;
+
     @Test
     public void insertInitData(){
         // 데이터 세팅
-        // 넣을게 없당
+        List<CourseOffering> offerings = offeringRepository.findAll();
+        List<UserVo> users = userRepository.findAll();
+
+        // 데이터 체크
+        if(offerings.isEmpty() == true)
+        {
+            log.info("Offering 데이터가 없습니다.");
+            return;
+        }
+
+        if(users.isEmpty() == true)
+        {
+            log.info("User 데이터가 없습니다.");
+            return;
+        }
 
         // 데이터 저장
-        for(int i=0; i<10; i++) {
+        for(CourseOffering offering : offerings) {
             Enrollment enrollment = Enrollment.builder()
+                    .courseOffering(offering)
                     .enrollDate(LocalDateTime.now())
+                    .user(users.get((int)(Math.random()*users.size())))
                     .build();
 
             repository.save(enrollment);

@@ -10,6 +10,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.List;
 
 @SpringBootTest
 @Slf4j
@@ -23,6 +24,7 @@ public class ReviewRepositoryTests {
 
     @Test
     public void testReviewData(){
+        // 데이터 세팅
         int [] rate={1,2,3,4,5};
         String[] dummyComments = {
                 "인생 최고의 강의였습니다! 교수님 정말 감사합니다.",
@@ -46,20 +48,24 @@ public class ReviewRepositoryTests {
                 "조별 과제가 학기의 절반입니다. 조원 잘못 만나면 힘듭니다.",
                 "이 수업 듣고 개발에 흥미가 생겼습니다. 좋은 강의 감사합니다!"
         };
-        for (int i=1; i <4;i++){
-            final long enrollmentId=i;
-            Enrollment enrollment=enrollmentRepository.findById(enrollmentId)
-                    .orElseThrow(() ->
-                            new RuntimeException("Test Error: Enrollment " + enrollmentId + " not found")
-                    );
+
+        // 데이터 체크
+        List<Enrollment> enrollments = enrollmentRepository.findAll();
+        if(enrollments.isEmpty() == true)
+        {
+            log.info("enrollment가 없습니다.");
+            return;
+        }
+
+        for(Enrollment enrollment : enrollments){
             Review review=Review.builder()
-                    .rating(rate[i])
-                    .comment(dummyComments[i])
-                    .createdAt(LocalDateTime.now())
+                    .rating(rate[(int)(Math.random()* rate.length)])
+                    .comment(dummyComments[(int)(Math.random()*dummyComments.length)])
+                    .createdAt(LocalDateTime.now().minusDays(5))
                     .enrollment(enrollment)
                     .build();
-            repository.save(review);
 
+            repository.save(review);
         }
     }
 }

@@ -16,6 +16,9 @@ public class Grade{
     @Column(name = "grade_id")
     private Integer gradeId;
 
+    @Column(name = "enrollment_id")
+    private Long enrollmentId;
+
     @Column(name = "grade_value", length = 5)
     private String gradeValue;
 
