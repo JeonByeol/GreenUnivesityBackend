@@ -25,6 +25,10 @@ public class UserVo {
     private String password;
     private String nickname;
 
+
+
+
+
     @ElementCollection(fetch = FetchType.LAZY)
     @Builder.Default
     @Enumerated(EnumType.STRING)
@@ -53,6 +57,11 @@ public class UserVo {
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     @Builder.Default
+    @ToString.Exclude
+    private List<Grade> grades = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    @Builder.Default
     private List<Notice> notices = new ArrayList<>();
 
     public void addRole(UserRole memberRole){userRoleList.add(memberRole);}
@@ -62,5 +71,6 @@ public class UserVo {
     public void addEnrollment(Enrollment enrollment) {enrollments.add(enrollment);}
     public void addComment(Comment comment){comments.add(comment);}
     public void addPost(Post post){posts.add(post);}
+    public void addGrade(Grade grade){grades.add(grade);}
 }
 

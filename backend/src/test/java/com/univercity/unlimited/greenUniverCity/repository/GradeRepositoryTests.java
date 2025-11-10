@@ -2,6 +2,7 @@ package com.univercity.unlimited.greenUniverCity.repository;
 
 import com.univercity.unlimited.greenUniverCity.entity.Enrollment;
 import com.univercity.unlimited.greenUniverCity.entity.Grade;
+import com.univercity.unlimited.greenUniverCity.entity.UserVo;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,23 +15,23 @@ public class GradeRepositoryTests {
     private GradeRepository repository;
 
     @Autowired
-    private CourseRepository re;
-
-    @Autowired
-    private EnrollmentRepository enrollmentRepository;
-
+    private UserRepository userRepository;
 
     @Test
     public void testGradeData(){
-        for(int i = 1; i < 3; i++){
-            final long enrollmentId = i;
-            Enrollment enrollment = enrollmentRepository.findById(enrollmentId)
+        String vv[]={"A+","A","B+","B"};
+        for(int i = 1; i < 4; i++){
+            final long userId = i;
+            UserVo userid = userRepository.findById(userId)
                     .orElseThrow(() ->
-                            new RuntimeException("Test Error: Enrollment " + enrollmentId + " not found")
+                            new RuntimeException("Test Error: Enrollment " + userId + " not found")
                     );
+
+
+
             Grade grade=Grade.builder()
-                    .gradeValue("A+")
-                    .enrollment(enrollment)
+                    .gradeValue(vv[i])
+                    .user(userid)
                     .build();
 
             repository.save(grade);

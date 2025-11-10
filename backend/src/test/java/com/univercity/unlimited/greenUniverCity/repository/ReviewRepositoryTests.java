@@ -18,18 +18,43 @@ public class ReviewRepositoryTests {
     
     @Autowired
     private EnrollmentRepository enrollmentRepository;
-    
+
+
+
     @Test
     public void testReviewData(){
-        for (int i=1; i <3;i++){
+        int [] rate={1,2,3,4,5};
+        String[] dummyComments = {
+                "인생 최고의 강의였습니다! 교수님 정말 감사합니다.",
+                "배운 게 많아요. 과제는 좀 많았지만 남는 게 있는 수업입니다.",
+                "그냥저냥... 학점 채우기용으로는 무난합니다.",
+                "교수님 설명이 너무 빨라서 따라가기 벅찼습니다.",
+                "시간 낭비였어요. 다음 학기엔 다른 과목 들으세요.",
+                "유익한 수업이었습니다. 추천합니다!",
+                "시험이 너무 어렵게 나와서 힘들었네요...",
+                "팀플이 많아서 비추천. 팀원 잘 만나야 해요.",
+                "평범합니다. 기대한 만큼입니다.",
+                "교수님이 열정적이시고, 질문도 잘 받아주십니다.",
+                "출석을 너무 깐깐하게 잡으세요. 1분 늦어도 결석 처리됩니다.",
+                "학점 따기 좋은 꿀강의입니다. 로드가 적어요.",
+                "PPT 자료가 부실해서 따로 공부를 많이 해야 했습니다.",
+                "전공자라면 꼭 한번 들어봐야 할 수업.",
+                "기대 이하였습니다. 얻어가는 게 별로 없네요.",
+                "다 좋은데 시험이 너무 어려웠어요. 그래도 많이 배웁니다.",
+                "교수님... 제발... 학점... A+ 받고 싶습니다.",
+                "강의 내용이 알차고 좋았습니다. 비전공자도 들을만 해요.",
+                "조별 과제가 학기의 절반입니다. 조원 잘못 만나면 힘듭니다.",
+                "이 수업 듣고 개발에 흥미가 생겼습니다. 좋은 강의 감사합니다!"
+        };
+        for (int i=1; i <4;i++){
             final long enrollmentId=i;
             Enrollment enrollment=enrollmentRepository.findById(enrollmentId)
                     .orElseThrow(() ->
                             new RuntimeException("Test Error: Enrollment " + enrollmentId + " not found")
                     );
             Review review=Review.builder()
-                    .rating(i)
-                    .comment("응"+i)
+                    .rating(rate[i])
+                    .comment(dummyComments[i])
                     .createdAt(LocalDateTime.now())
                     .enrollment(enrollment)
                     .build();

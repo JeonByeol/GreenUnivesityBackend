@@ -3,7 +3,7 @@ package com.univercity.unlimited.greenUniverCity.dto;
 import com.univercity.unlimited.greenUniverCity.entity.Enrollment;
 import lombok.*;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -15,7 +15,7 @@ import java.time.LocalDate;
 public class AttendanceDTO {
     private Integer attendance;
 
-    private Enrollment enrollment;
-    private LocalDate localDate;
+    private EnrollmentDTO enrollment;
+    private LocalDateTime localDate;
     private String status;
 }

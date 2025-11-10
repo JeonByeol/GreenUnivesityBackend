@@ -1,5 +1,7 @@
 package com.univercity.unlimited.greenUniverCity.dto;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.univercity.unlimited.greenUniverCity.entity.CourseOffering;
 import com.univercity.unlimited.greenUniverCity.entity.UserRole;
 import lombok.*;
 
@@ -21,5 +23,17 @@ public class UserDTO {
     private String nickname;
 
     private String  role;
+
+    @Builder.Default
+    @JsonManagedReference("user-grade")
+    private List<GradeDTO> grades= new ArrayList<>();
+
+    @Builder.Default
+    @JsonManagedReference("user-offering")
+    private List<CourseOfferingDTO> offerings=new ArrayList<>();
+
+    @Builder.Default
+    @JsonManagedReference("user-enrollment")
+    private List<EnrollmentDTO> enrollments=new ArrayList<>();
 
 }
