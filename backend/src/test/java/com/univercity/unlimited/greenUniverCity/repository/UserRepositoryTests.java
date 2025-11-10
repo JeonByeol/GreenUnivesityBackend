@@ -16,16 +16,48 @@ public class UserRepositoryTests {
 
     @Test
     public void testInsertData(){
+        String[] emails = {
+                "alice@aaa.com",
+                "bob@aaa.com",
+                "charlie@aaa.com",
+                "diana@aaa.com",
+                "edward@aaa.com",
+
+                "fiona@aaa.com",
+                "george@aaa.com",
+                "hannah@aaa.com",
+                "ian@aaa.com",
+                "julia@aaa.com"
+        };
+
+        String[] nicknames = {
+                "알리쌤",
+                "밥이",
+                "찰리왕자",
+                "디디",
+                "에디",
+
+                "피오나공주",
+                "조지형",
+                "한나누나",
+                "이안",
+                "줄리아"
+        };
+        
+        // 데이터 추가
         for(int i=0;i<10;i++){
+            int roleNumber = (int)(Math.random()*8) + 1;
+
             UserVo user=UserVo.builder()
-                    .email("user"+i+"@aaa.com")
+                    .email(emails[i])
                     .password("1111")
-                    .nickname("user"+i)
+                    .nickname(nicknames[i])
                     .build();
-            user.addRole(UserRole.ADMIN);
-            if(i>3) user.addRole(UserRole.STUDENT);
-            if(i>5) user.addRole(UserRole.PROFESSOR);
-            if(i>7) user.addRole(UserRole.GUEST);
+
+            user.addRole(UserRole.GUEST);
+            if(roleNumber>3) user.addRole(UserRole.STUDENT);
+            if(roleNumber>5) user.addRole(UserRole.PROFESSOR);
+            if(roleNumber>7) user.addRole(UserRole.ADMIN);
             userRepository.save(user);
         }
     }
