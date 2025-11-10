@@ -64,7 +64,7 @@ public class CCPRepositoryTests {
             List<CourseOffering> courseOfferingList = new ArrayList<>();
             for(int j=0; j<2; j++) {
                 CourseOffering courseOffering = CourseOffering.builder()
-                        .professorId("pro"+j)
+                        .professorName("pro"+j)
                         .year(LocalDateTime.now().getYear())
                         .user(user)
                         .semester(j%2)
