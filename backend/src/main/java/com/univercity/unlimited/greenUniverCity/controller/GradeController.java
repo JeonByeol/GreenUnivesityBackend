@@ -1,5 +1,6 @@
 package com.univercity.unlimited.greenUniverCity.controller;
 
+import com.univercity.unlimited.greenUniverCity.dto.CourseDTO;
 import com.univercity.unlimited.greenUniverCity.dto.GradeDTO;
 import com.univercity.unlimited.greenUniverCity.entity.Grade;
 import com.univercity.unlimited.greenUniverCity.service.GradeService;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @Slf4j
@@ -26,5 +28,4 @@ public class GradeController {
         return gradeService.findAllGrade();
         // 관리자가 모든 성적을 조회하기 위해 필요한 get방식 코드
     }
-
 }

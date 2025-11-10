@@ -24,10 +24,10 @@ public class CourseDTO {
     private String description; // 강의 설명
 
     private Integer credits; // 학점
+
     @JsonBackReference("dept-course")
     private DepartmentDTO department; // 학과
 
-    @Builder.Default
     @JsonManagedReference("course-offering")
     private List<CourseOfferingDTO> offerings = new ArrayList<>();
 

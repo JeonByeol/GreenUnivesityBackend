@@ -1,27 +1,35 @@
-//package com.univercity.unlimited.greenUniverCity.controller;
-//
-//import com.univercity.unlimited.greenUniverCity.entity.Board;
-//import com.univercity.unlimited.greenUniverCity.entity.Comment;
-//import com.univercity.unlimited.greenUniverCity.repository.BoardRepository;
-//import com.univercity.unlimited.greenUniverCity.repository.CommentRepository;
-//import lombok.RequiredArgsConstructor;
-//import lombok.extern.slf4j.Slf4j;
-//import org.springframework.web.bind.annotation.GetMapping;
-//import org.springframework.web.bind.annotation.RequestMapping;
-//import org.springframework.web.bind.annotation.RestController;
-//
-//import java.util.List;
-//
-//@RestController
-//@Slf4j
-//@RequiredArgsConstructor
-//@RequestMapping("/community/Board")
-//public class BoardController {
-//    BoardRepository boardRepository;
-//    @GetMapping("/All")
-//    public List<Board> postAllSearch(){
-//        log.info("모든 게시판들의 정보 호출");
-//        return (boardRepository.findAll());
-//    }
-//
-//}
+package com.univercity.unlimited.greenUniverCity.controller;
+
+import com.univercity.unlimited.greenUniverCity.dto.BoardDTO;
+import com.univercity.unlimited.greenUniverCity.service.BoardService;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
+import java.util.Optional;
+
+@RestController
+@Slf4j
+@RequiredArgsConstructor
+@RequestMapping("/community/Board")
+public class BoardController {
+    @Autowired
+    private BoardService service;
+
+    @GetMapping("/all")
+    public ResponseEntity<List<BoardDTO>> postAllSearch(){
+        log.info("모든 게시판들의 이름 출력");
+
+        Optional<List<BoardDTO>> optionalBoardDTOS = service.findAllBoard();
+        if(optionalBoardDTOS.isEmpty() == true){
+            return ResponseEntity.ok(null);
+        }
+
+        return ResponseEntity.ok(optionalBoardDTOS.get());
+    }
+}

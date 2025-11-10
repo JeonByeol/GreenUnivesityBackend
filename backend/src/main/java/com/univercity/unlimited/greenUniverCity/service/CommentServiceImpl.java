@@ -1,11 +1,14 @@
 package com.univercity.unlimited.greenUniverCity.service;
 
+import com.univercity.unlimited.greenUniverCity.dto.BoardDTO;
 import com.univercity.unlimited.greenUniverCity.dto.CommentDTO;
+import com.univercity.unlimited.greenUniverCity.entity.Board;
 import com.univercity.unlimited.greenUniverCity.entity.Comment;
 import com.univercity.unlimited.greenUniverCity.repository.CommentRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -38,5 +41,20 @@ public class CommentServiceImpl implements CommentService {
     public List<CommentDTO> getCommentsByPostId(Long postId) {
         log.info("해당 게시글 아이디의 코멘트를을  조회 -> service :{} " ,postId);
         return commentRepository.findCommentsByPostId(postId).stream().map(i->mapper.map(i, CommentDTO.class)).toList();
+    }
+
+    @Override
+    public ResponseEntity<String> addComment(CommentDTO commentDTO) {
+        return null;
+    }
+
+    @Override
+    public Optional<List<CommentDTO>> findAllCommentDTO() {
+        List<Comment> comments = commentRepository.findAll();
+        List<CommentDTO> commentDTOS = comments.stream().map(comment ->
+                mapper.map(comment, CommentDTO.class)).toList();
+
+        Optional<List<CommentDTO>> optionalCommentDTOS = Optional.of(commentDTOS);
+        return optionalCommentDTOS;
     }
 }
