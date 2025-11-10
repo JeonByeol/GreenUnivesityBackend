@@ -11,6 +11,7 @@ import java.util.List;
 @Entity
 @Table(name = "tbl_enrollment")
 @ToString
+@Setter
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
@@ -39,17 +40,22 @@ public class Enrollment {
     @ToString.Exclude
     private Grade grade;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "enrollment_id")
+    @OneToMany(mappedBy = "enrollment",fetch = FetchType.LAZY)
+    @Builder.Default
     @ToString.Exclude
-    private Attendance enrollment;
-
+    private List<Attendance> attendances = new ArrayList<>();
 
     @OneToMany(mappedBy = "enrollment", fetch = FetchType.LAZY)
     @Builder.Default
     @ToString.Exclude
     private List<Review> reviews = new ArrayList<>();
 
+    public void addGrade(Grade grade) {
+        this.setGrade(grade);
+    }
+    public void addAttendance(Attendance attendance){
+        attendances.add(attendance);
+    }
     public void addReview(Review review) {
         reviews.add(review);
     }
