@@ -19,6 +19,9 @@ public class Grade{
     @Column(name = "grade_value", length = 5)
     private String gradeValue;
 
+    @Column(name = "enrollment_id")
+    private Long enrollmentId;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     @ToString.Exclude

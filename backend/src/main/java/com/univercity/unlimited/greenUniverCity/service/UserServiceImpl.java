@@ -4,6 +4,7 @@ import com.univercity.unlimited.greenUniverCity.dto.UserDTO;
 import com.univercity.unlimited.greenUniverCity.entity.UserRole;
 import com.univercity.unlimited.greenUniverCity.entity.UserVo;
 import com.univercity.unlimited.greenUniverCity.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -92,6 +93,33 @@ public class UserServiceImpl implements UserService {
                 .nickname(savedUser.getNickname())
                 .role(savedUser.getUserRoleList().get(0).name()) // (예시) 첫 번째 역할 반환
                 .build();
+    }
+
+    @Override
+    @Transactional
+    public UserDTO grade(Long userId) {
+//        Optional<UserVo> userEntities = userRepository.findUserWithGradesById(userId);
+//        List<UserDTO> dto=new ArrayList<>();
+//        log.info("1)여기가 문제인지 dto:{}",dto);
+//        for(UserVo i:userEntities){
+//            log.info("2)아니면 여기가 문제인지 i:{}",i);
+//            UserDTO r=mapper.map(i,UserDTO.class);
+//            log.info("3)그것도 아니면 여기가 문제인지 r:{}",r);
+//            dto.add(r);
+//        }
+//        return dto;
+        // 1. 유저를 조회하고, 없으면 예외(Exception)를 발생시킴
+        UserVo userVo = userRepository.findUserWithGradesById(userId)
+                .orElseThrow(() -> {
+                    log.warn("ID: {}에 해당하는 유저를 찾을 수 없음", userId);
+                    return new RuntimeException("User not found with id: " + userId);
+                });
+        log.info("2) 유저 찾음: {}", userVo.getNickname());
+        // 2. ModelMapper로 변환 ()
+        UserDTO dto = mapper.map(userVo, UserDTO.class);
+        log.info("3) DTO로 변환 완료");
+        // 3. List가 아닌 DTO 객체 1개를 반환
+        return dto;
     }
 
 }

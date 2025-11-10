@@ -39,19 +39,39 @@ public class UserController {
     }
 
     @PostMapping("/login") //로그인
-    private UserDTO login(@RequestBody UserDTO dto) {
+    public UserDTO login(@RequestBody UserDTO dto) {
         log.info("Controller:/api/user/login:{} 확인", dto);
         return userService.login(dto);
     }
 
     @PostMapping("/register") //회원가입
 //    private  ResponseEntity<String > rr(@RequestBody UserDTO dto) {
-    private UserDTO register(@RequestBody UserDTO dto) {
+    public UserDTO register(@RequestBody UserDTO dto) {
         log.info("Controller:/api/user/register:{} 확인", dto);
 //        vo.addRole(UserRole.STUDENT);
 //         userService.register(dto);
 //         return ResponseEntity.ok(dto.getNickname());
         return  userService.register(dto);
+    }
+
+//    @GetMapping("/grade/{gradeValue}")
+//    public ResponseEntity<List<UserDTO>> getUsersByGrade(@PathVariable("gradeValue") Long userId) {
+//        log.info("Controller: '{}' 성적을 받은 유저 조회", gradeValue);
+//
+//        // 이전에 작성하신 service의 'grade(String gradeValue)' 메서드를 호출합니다.
+//        List<UserDTO> userList = userService.grade(gradeValue);
+//
+//        return ResponseEntity.ok(userList);
+//    }
+    @GetMapping("/grades/id/{userId}")
+    public ResponseEntity<UserDTO> getUserWithGrades(@PathVariable("userId") Long userId) {
+         log.info("Controller: ID {} 유저의 성적 정보 조회", userId);
+
+        // 이전에 수정한 (Optional을 사용하고 UserDTO 1개를 반환하는)
+        // userService.grade(Long userId) 메서드를 호출합니다.
+        UserDTO userDTO = userService.grade(userId);
+
+        return ResponseEntity.ok(userDTO);
     }
 
 }
