@@ -1,5 +1,6 @@
 package com.univercity.unlimited.greenUniverCity.controller;
 
+import com.univercity.unlimited.greenUniverCity.dto.GradeDTO;
 import com.univercity.unlimited.greenUniverCity.entity.Grade;
 import com.univercity.unlimited.greenUniverCity.service.GradeService;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +21,7 @@ public class GradeController {
     private final GradeService gradeService;
 
     @GetMapping("/all")
-    public List<Grade> postmanTestGrade(){
+    public List<GradeDTO> postmanTestGrade(){
         log.info("Controller: 성적전체조회");
         return gradeService.findAllGrade();
     }
