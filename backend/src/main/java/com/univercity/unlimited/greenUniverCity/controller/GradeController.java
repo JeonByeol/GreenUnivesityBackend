@@ -24,6 +24,7 @@ public class GradeController {
     public List<GradeDTO> postmanTestGrade(){
         log.info("Controller: 성적전체조회");
         return gradeService.findAllGrade();
+        // 관리자가 모든 성적을 조회하기 위해 필요한 get방식 코드
     }
 
 }

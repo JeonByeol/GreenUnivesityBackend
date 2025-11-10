@@ -58,6 +58,7 @@ public class UserVo {
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     @Builder.Default
+    @ToString.Exclude
     private List<Notice> notices = new ArrayList<>();
 
     public void addRole(UserRole memberRole){userRoleList.add(memberRole);}

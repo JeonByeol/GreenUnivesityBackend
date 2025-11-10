@@ -45,6 +45,7 @@ public class Enrollment {
     @ToString.Exclude
     private List<Review> reviews = new ArrayList<>();
 
+
     public void addAttendance(Attendance attendance){
         attendances.add(attendance);
     }
