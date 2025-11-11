@@ -9,7 +9,5 @@ import java.util.Optional;
 public interface CourseService {
     List<CourseDTO> findAllCourse();
 
-    ResponseEntity<String> addCourse(CourseDTO courseDTO);
-
-    Optional<List<CourseDTO>> findAllCourseDTO();
+    int addCourse(CourseDTO courseDTO);
 }

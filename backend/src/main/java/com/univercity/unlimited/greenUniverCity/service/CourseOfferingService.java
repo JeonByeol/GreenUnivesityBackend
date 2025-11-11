@@ -9,4 +9,6 @@ import java.util.Optional;
 
 public interface CourseOfferingService {
     Optional<List<CourseOfferingDTO>> findAllCourseOfferingDTO();
+
+    int addCourseOffering(CourseOfferingDTO courseOfferingDTO);
 }

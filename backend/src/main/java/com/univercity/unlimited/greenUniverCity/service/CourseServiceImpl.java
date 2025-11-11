@@ -35,17 +35,15 @@ public class CourseServiceImpl implements CourseService{
     }
 
     @Override
-    public ResponseEntity<String> addCourse(CourseDTO courseDTO) {
-        return null;
-    }
-
-    @Override
-    public Optional<List<CourseDTO>> findAllCourseDTO() {
-        List<Course> courses = repository.findAll();
-        List<CourseDTO> courseDTOS = courses.stream().map(course ->
-                mapper.map(course, CourseDTO.class)).toList();
-
-        Optional<List<CourseDTO>> optionalCommentDTOS = Optional.of(courseDTOS);
-        return optionalCommentDTOS;
+    public int addCourse(CourseDTO courseDTO) {
+        log.info("1) 확인 : {}",courseDTO);
+        Course course = mapper.map(courseDTO,Course.class);
+        log.info("확인 : {}",course);
+        try{
+            repository.save(course);
+        } catch(Exception e) {
+            return -1;
+        }
+        return 1;
     }
 }

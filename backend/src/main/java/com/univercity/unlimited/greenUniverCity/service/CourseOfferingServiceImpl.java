@@ -4,6 +4,7 @@ import com.univercity.unlimited.greenUniverCity.dto.BoardDTO;
 import com.univercity.unlimited.greenUniverCity.dto.CourseDTO;
 import com.univercity.unlimited.greenUniverCity.dto.CourseOfferingDTO;
 import com.univercity.unlimited.greenUniverCity.entity.Board;
+import com.univercity.unlimited.greenUniverCity.entity.Course;
 import com.univercity.unlimited.greenUniverCity.entity.CourseOffering;
 import com.univercity.unlimited.greenUniverCity.repository.BoardRepository;
 import com.univercity.unlimited.greenUniverCity.repository.CourseOfferingRepository;
@@ -31,5 +32,18 @@ public class CourseOfferingServiceImpl implements CourseOfferingService{
 
         Optional<List<CourseOfferingDTO>> optionalCourseOfferingDTOS = Optional.of(courseOfferingDTOS);
         return optionalCourseOfferingDTOS;
+    }
+
+    @Override
+    public int addCourseOffering(CourseOfferingDTO courseOfferingDTO) {
+        log.info("1) 확인 : {}",courseOfferingDTO);
+        CourseOffering courseOffering = mapper.map(courseOfferingDTO,CourseOffering.class);
+        log.info("확인 : {}",courseOffering);
+        try{
+            repository.save(courseOffering);
+        } catch(Exception e) {
+            return -1;
+        }
+        return 1;
     }
 }

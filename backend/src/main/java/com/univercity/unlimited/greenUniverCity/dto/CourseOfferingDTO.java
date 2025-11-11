@@ -21,10 +21,10 @@ import java.util.List;
 @Builder
 public class CourseOfferingDTO {
     private Long offeringId; // 개설 강의 ID
-    private String professorId; // 담당 교수 ID
+    private String professorName; // 담당 교수 ID
+    private String courseName;
 
     private int year; // 개설 년도
-
     private int semester; // 개설 학기 ex) 1학기 2학기
 
     @JsonBackReference("course-offering")
