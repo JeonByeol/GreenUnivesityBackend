@@ -15,4 +15,6 @@ public interface GradeService {
     ResponseEntity<String> addGrade(GradeDTO gradeDTO);
 
     Optional<List<GradeDTO>> findAllGradeDTO();
+
+    List<GradeDTO> findMyGrade(String email);
 }

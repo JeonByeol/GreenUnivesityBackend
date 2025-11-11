@@ -6,6 +6,7 @@ import com.univercity.unlimited.greenUniverCity.entity.UserVo;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -23,6 +24,7 @@ public class CommentRepositoryTests {
     @Autowired PostRepository postRepository;
 
     @Test
+    @Tag("push")
     public void testInsert(){
         // 데이터 세팅
         String[] comments = {

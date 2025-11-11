@@ -9,9 +9,9 @@ import java.util.Optional;
 
 public interface PostService {
 
-    List<Post> findAllPost();
+    List<PostDTO> findAllPost();
 //    모든 게시글 조회
-    Optional<Post> findByIdPost(Long postId);
-//    아이디로 게시글 조회
-    ResponseEntity<String> addPost(PostDTO postDTO);
+//    Optional<Post> findByIdPost(Long postId);
+////    아이디로 게시글 조회
+//    ResponseEntity<String> addPost(PostDTO postDTO);
 }

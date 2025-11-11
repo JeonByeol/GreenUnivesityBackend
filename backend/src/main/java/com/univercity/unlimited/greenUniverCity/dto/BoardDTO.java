@@ -1,5 +1,6 @@
 package com.univercity.unlimited.greenUniverCity.dto;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.univercity.unlimited.greenUniverCity.entity.Post;
 import jakarta.persistence.*;
 import lombok.*;
@@ -15,8 +16,12 @@ import java.util.List;
 @ToString
 public class BoardDTO {
     private Long boardId;
+
     private String boardName;
 
+    @Builder.Default
+    @JsonManagedReference("board-post")
+    private List<PostDTO> posts=new ArrayList<>();
 
 //    private List<Post> posts = new ArrayList<>();
 }

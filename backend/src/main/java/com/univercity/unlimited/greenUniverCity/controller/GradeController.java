@@ -26,6 +26,11 @@ public class GradeController {
     public List<GradeDTO> postmanTestGrade(){
         log.info("Controller: 성적전체조회");
         return gradeService.findAllGrade();
-        // 관리자가 모든 성적을 조회하기 위해 필요한 get방식 코드
     }
+
+    @GetMapping("/mygrade/{email}") // 로그인 한 학생의 정보에 맞는 성적을 뽑아서 쓸 수 있게 만든코드
+    public List<GradeDTO> postmanMyGrade(@PathVariable("email") String email){
+       return gradeService.findMyGrade(email);
+    }
+
 }

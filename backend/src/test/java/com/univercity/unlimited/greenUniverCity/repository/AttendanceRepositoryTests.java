@@ -5,12 +5,14 @@ import com.univercity.unlimited.greenUniverCity.entity.Enrollment;
 import com.univercity.unlimited.greenUniverCity.entity.UserVo;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Commit;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @SpringBootTest
@@ -23,6 +25,7 @@ public class AttendanceRepositoryTests {
     private AttendanceRepository repository;
 
     @Test
+    @Tag("push")
     public void testInsertData() {
         // 데이터 세팅
         List<Enrollment> enrollments = enrollmentRepository.findAll();
@@ -39,7 +42,7 @@ public class AttendanceRepositoryTests {
             String status = ran == 1 ? "출석" : "결석";
 
             Attendance attendance = Attendance.builder()
-                    .localDate(LocalDate.now())
+                    .localDateTime(LocalDateTime.now())
                     .enrollment(enrollment)
                     .status(status)
                     .build();

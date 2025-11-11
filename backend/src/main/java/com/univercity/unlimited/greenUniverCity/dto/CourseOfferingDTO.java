@@ -21,6 +21,7 @@ import java.util.List;
 @Builder
 public class CourseOfferingDTO {
     private Long offeringId; // 개설 강의 ID
+
     private String professorId; // 담당 교수 ID
 
     private int year; // 개설 년도

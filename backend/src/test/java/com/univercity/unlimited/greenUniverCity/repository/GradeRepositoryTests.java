@@ -4,6 +4,7 @@ import com.univercity.unlimited.greenUniverCity.entity.Enrollment;
 import com.univercity.unlimited.greenUniverCity.entity.Grade;
 import com.univercity.unlimited.greenUniverCity.entity.UserVo;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -23,6 +24,7 @@ public class GradeRepositoryTests {
     private EnrollmentRepository enrollmentRepository;
 
     @Test
+    @Tag("push")
     public void testGradeData(){
         // 데이터 세팅
         String vv[]={"A+","A","B+","B","C+","C","D+","D","F"};
@@ -34,7 +36,6 @@ public class GradeRepositoryTests {
             log.info("User가 비어있습니다.");
             return;
         }
-
         for(UserVo user : users) {
             for(Enrollment enrollment : enrollments) {
                 if((int)(Math.random()*2) == 1)

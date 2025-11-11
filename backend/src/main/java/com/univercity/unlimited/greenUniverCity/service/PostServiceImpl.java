@@ -11,6 +11,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,21 +21,27 @@ import java.util.Optional;
 
 public class PostServiceImpl implements PostService {
     private final PostRepository postRepository;
+    private final ModelMapper mapper;
 
-    public List<Post> findAllPost() {
+    public List<PostDTO> findAllPost() {
+        List<PostDTO> dto=new ArrayList<>();
+        for(Post i:postRepository.findAll()){
+            PostDTO r=mapper.map(i, PostDTO.class);
+            dto.add(r);
+        }
         log.info("모든 유저를 조회하는 service 코드 실행");
-        return postRepository.findAll();
+        return dto;
     }
 
-    @Override
-    public Optional<Post> findByIdPost(Long postId) {
-        log.info("한명의 회원을 조회하는 service 생성");
-        return postRepository.findById(postId);
-    }
-
-    @Override
-    public ResponseEntity<String> addPost(PostDTO postDTO) {
-        return null;
-    }
+//    @Override
+//    public Optional<Post> findByIdPost(Long postId) {
+//        log.info("한명의 회원을 조회하는 service 생성");
+//        return postRepository.findById(postId);
+//    }
+//
+//    @Override
+//    public ResponseEntity<String> addPost(PostDTO postDTO) {
+//        return null;
+//    }
 
 }

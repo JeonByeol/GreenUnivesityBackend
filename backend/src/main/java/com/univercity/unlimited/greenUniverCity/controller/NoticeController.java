@@ -1,5 +1,6 @@
 package com.univercity.unlimited.greenUniverCity.controller;
 
+import com.univercity.unlimited.greenUniverCity.dto.NoticeDTO;
 import com.univercity.unlimited.greenUniverCity.entity.Course;
 import com.univercity.unlimited.greenUniverCity.entity.Enrollment;
 import com.univercity.unlimited.greenUniverCity.entity.Notice;
@@ -24,7 +25,7 @@ public class NoticeController {
 
     //전체강의 조회
     @GetMapping("/all")
-    public List<Notice> postmanTestNotice(){
+    public List<NoticeDTO> postmanTestNotice(){
         log.info("모든 공지들의 정보 호출");
         return noticeService.findAllNotice();
     }

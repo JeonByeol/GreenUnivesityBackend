@@ -22,14 +22,16 @@ public class BoardController {
     private BoardService service;
 
     @GetMapping("/all")
-    public ResponseEntity<List<BoardDTO>> postAllSearch(){
-        log.info("모든 게시판들의 이름 출력");
-
-        Optional<List<BoardDTO>> optionalBoardDTOS = service.findAllBoard();
-        if(optionalBoardDTOS.isEmpty() == true){
-            return ResponseEntity.ok(null);
-        }
-
-        return ResponseEntity.ok(optionalBoardDTOS.get());
+    public List<BoardDTO> postAllSearch(){
+        return service.findAllBoard();
     }
+//    public ResponseEntity<List<BoardDTO>> postAllSearch(){
+//        log.info("모든 게시판들의 이름 출력");
+//
+//        Optional<List<BoardDTO>> optionalBoardDTOS = service.findAllBoard();
+//        if(optionalBoardDTOS.isEmpty() == true){
+//            return ResponseEntity.ok(null);
+//        }
+//        return ResponseEntity.ok(optionalBoardDTOS.get());
+
 }

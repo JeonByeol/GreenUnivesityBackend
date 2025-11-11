@@ -8,5 +8,5 @@ import java.util.List;
 import java.util.Optional;
 
 public interface BoardService {
-    Optional<List<BoardDTO>> findAllBoard();
+    List<BoardDTO> findAllBoard();
 }

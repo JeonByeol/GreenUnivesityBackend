@@ -11,6 +11,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,11 +25,17 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public List<CommentDTO> findList() {
-        log.info("2) 모든 코멘트를 조회");
-        List<CommentDTO>  list  = commentRepository.findAll().stream().map(i->mapper.map(i, CommentDTO.class)).toList();
-        log.info("3) 모든 코멘트를 조회.{}" ,list);
-
-        return list;
+//        log.info("2) 모든 코멘트를 조회");
+//        List<CommentDTO>  list  = commentRepository.findAll().stream().map(i->mapper.map(i, CommentDTO.class)).toList();
+//        log.info("3) 모든 코멘트를 조회.{}" ,list);
+//
+//        return list;
+        List<CommentDTO> dto=new ArrayList<>();
+        for(Comment i:commentRepository.findAll()){
+            CommentDTO r=mapper.map(i,CommentDTO.class);
+            dto.add(r);
+        }
+        return dto;
     }
 
     @Override

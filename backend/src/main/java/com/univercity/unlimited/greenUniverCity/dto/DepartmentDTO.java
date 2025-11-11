@@ -21,6 +21,7 @@ public class DepartmentDTO {
     private Long departmentId; // 학과 ID
 
     private String deptName; // 학과명
+
     @Builder.Default
     @JsonManagedReference("dept-course")
     private List<CourseDTO> courses = new ArrayList<>();

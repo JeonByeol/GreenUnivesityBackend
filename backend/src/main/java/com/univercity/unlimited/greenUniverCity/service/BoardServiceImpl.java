@@ -15,6 +15,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -27,12 +28,22 @@ public class BoardServiceImpl implements BoardService{
     private final ModelMapper mapper;
 
     @Override
-    public Optional<List<BoardDTO>> findAllBoard() {
-        List<Board> boards = repository.findAll();
-        List<BoardDTO> boardDTOS = boards.stream().map(board ->
-                mapper.map(board, BoardDTO.class)).toList();
-
-        Optional<List<BoardDTO>> optionalBoardDTOS = Optional.of(boardDTOS);
-        return optionalBoardDTOS;
+    public List<BoardDTO> findAllBoard() {
+       List<BoardDTO> dto=new ArrayList<>();
+       for(Board i:repository.findAll()){
+           BoardDTO r=mapper.map(i,BoardDTO.class);
+           dto.add(r);
+       }
+       return dto;
     }
+
+//    @Override
+//    public Optional<List<BoardDTO>> findAllBoard() {
+//        List<Board> boards = repository.findAll();
+//        List<BoardDTO> boardDTOS = boards.stream().map(board ->
+//                mapper.map(board, BoardDTO.class)).toList();
+//
+//        Optional<List<BoardDTO>> optionalBoardDTOS = Optional.of(boardDTOS);
+//        return optionalBoardDTOS;
+//    }
 }
