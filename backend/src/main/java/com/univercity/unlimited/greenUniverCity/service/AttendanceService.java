@@ -14,7 +14,8 @@ public interface AttendanceService {
     //수강하고 있는 학생의 이름일치확인,이름과 같을 경우 신청한 과목코드 불러오기
     List<Enrollment> findPartEnrollment(UserVo userVo, Long enrollmentId);
 
-    Optional<List<AttendanceDTO>> findAllAttendance();
+//    Optional<List<AttendanceDTO>> findAllAttendance();
 
+    List<AttendanceDTO> findAllat();
     ResponseEntity<String> addAttendance(AttendanceDTO attendanceDTO);
 }

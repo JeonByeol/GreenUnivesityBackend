@@ -24,18 +24,22 @@ import java.util.Optional;
 public class AttendanceController {
     private final AttendanceService attendanceService;
 
+//    @GetMapping("/all")
+//    public ResponseEntity<List<AttendanceDTO>> postAllSearch(){
+//        log.info("모든 게시판들의 이름 출력");
+//
+//        Optional<List<AttendanceDTO>> optionalAttendanceDTOS = attendanceService.findAllAttendance();
+//        if(optionalAttendanceDTOS.isEmpty() == true){
+//            return ResponseEntity.ok(null);
+//        }
+//
+//        return ResponseEntity.ok(optionalAttendanceDTOS.get());
+//    }
+
     @GetMapping("/all")
-    public ResponseEntity<List<AttendanceDTO>> postAllSearch(){
-        log.info("모든 게시판들의 이름 출력");
-
-        Optional<List<AttendanceDTO>> optionalAttendanceDTOS = attendanceService.findAllAttendance();
-        if(optionalAttendanceDTOS.isEmpty() == true){
-            return ResponseEntity.ok(null);
-        }
-
-        return ResponseEntity.ok(optionalAttendanceDTOS.get());
+    public List<AttendanceDTO> postAllSearch(){
+        return attendanceService.findAllat();
     }
-
     //학생
     //강의별 본인출석조회(전체 출석률체크포함)
     //출석체크

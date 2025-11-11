@@ -1,5 +1,6 @@
 package com.univercity.unlimited.greenUniverCity.dto;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.univercity.unlimited.greenUniverCity.entity.Enrollment;
 import lombok.*;
 
@@ -15,7 +16,10 @@ import java.time.LocalDateTime;
 public class AttendanceDTO {
     private Integer attendance;
 
-    private EnrollmentDTO enrollment;
-    private LocalDateTime localDate;
+    private LocalDateTime localDateTime;
+
     private String status;
+
+    @JsonBackReference("enrollment-attendance")
+    private EnrollmentDTO enrollment;
 }

@@ -3,6 +3,7 @@ package com.univercity.unlimited.greenUniverCity.repository;
 import com.univercity.unlimited.greenUniverCity.entity.CourseOffering;
 import com.univercity.unlimited.greenUniverCity.entity.TimeTable;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -19,7 +20,7 @@ public class TimeTableRepositoryTests {
     @Autowired CourseOfferingRepository courseOfferingRepository;
 
     @Test
-
+    @Tag("push")
     public void testTimeTableData(){
         // 데이터 세팅
         String[] dummyLocations = {

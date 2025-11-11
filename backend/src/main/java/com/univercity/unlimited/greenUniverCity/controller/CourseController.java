@@ -19,7 +19,6 @@ public class CourseController {
 
     @GetMapping("/all")
     public List<CourseDTO> postmanTestCourse(){
-        List<CourseDTO> list=courseService.findAllCourse();
-        return list;
+        return courseService.findAllCourse();
     }
 }

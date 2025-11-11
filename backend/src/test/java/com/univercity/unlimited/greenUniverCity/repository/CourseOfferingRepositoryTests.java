@@ -10,6 +10,7 @@ import com.univercity.unlimited.greenUniverCity.entity.UserVo;
 import com.univercity.unlimited.greenUniverCity.service.CourseOfferingService;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +39,7 @@ public class CourseOfferingRepositoryTests {
     private ModelMapper mapper;
 
     @Test
+    @Tag("push")
     public void insertInitData() {
         // 데이터 세팅
         // Course가 있다는 가정하에 진행합니다.

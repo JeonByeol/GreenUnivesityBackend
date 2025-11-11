@@ -5,6 +5,7 @@ import com.univercity.unlimited.greenUniverCity.dto.CourseDTO;
 import com.univercity.unlimited.greenUniverCity.entity.Course;
 import com.univercity.unlimited.greenUniverCity.service.CourseService;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -21,6 +22,7 @@ public class CourseRepositoryTests {
     private CourseService service;
 
     @Test
+    @Tag("push")
     public void insertInitData() {
         // 데이터 세팅
         String[] courseNameArray = {

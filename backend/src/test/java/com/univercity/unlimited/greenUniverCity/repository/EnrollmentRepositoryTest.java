@@ -7,6 +7,7 @@ import com.univercity.unlimited.greenUniverCity.entity.*;
 import com.univercity.unlimited.greenUniverCity.service.EnrollmentService;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +37,7 @@ public class EnrollmentRepositoryTest {
     private ModelMapper mapper;
 
     @Test
+    @Tag("push")
     public void insertInitData(){
         // 데이터 세팅
         List<CourseOffering> offerings = offeringRepository.findAll();

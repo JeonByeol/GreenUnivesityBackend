@@ -12,6 +12,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -38,14 +39,24 @@ public class AttendanceServiceImpl implements AttendanceService{
     }
 
     @Override
-    public Optional<List<AttendanceDTO>> findAllAttendance() {
-        List<Attendance> attendances = repository.findAll();
-        List<AttendanceDTO> attendanceDTOS = attendances.stream().map(attendance ->
-                mapper.map(attendance, AttendanceDTO.class)).toList();
-
-        Optional<List<AttendanceDTO>> optionalAttendanceDTOS = Optional.of(attendanceDTOS);
-        return optionalAttendanceDTOS;
+    public List<AttendanceDTO> findAllat() {
+        List<AttendanceDTO> dto=new ArrayList<>();
+        for(Attendance i:repository.findAll()){
+            AttendanceDTO r=mapper.map(i,AttendanceDTO.class);
+            dto.add(r);
+        }
+        return dto;
     }
+
+//    @Override
+//    public Optional<List<AttendanceDTO>> findAllAttendance() {
+//        List<Attendance> attendances = repository.findAll();
+//        List<AttendanceDTO> attendanceDTOS = attendances.stream().map(attendance ->
+//                mapper.map(attendance, AttendanceDTO.class)).toList();
+//
+//        Optional<List<AttendanceDTO>> optionalAttendanceDTOS = Optional.of(attendanceDTOS);
+//        return optionalAttendanceDTOS;
+//    }
 
     @Override
     public ResponseEntity<String> addAttendance(AttendanceDTO attendanceDTO) {

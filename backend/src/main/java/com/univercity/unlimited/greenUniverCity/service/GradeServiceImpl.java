@@ -4,7 +4,9 @@ import com.univercity.unlimited.greenUniverCity.dto.CourseDTO;
 import com.univercity.unlimited.greenUniverCity.dto.GradeDTO;
 import com.univercity.unlimited.greenUniverCity.entity.Course;
 import com.univercity.unlimited.greenUniverCity.entity.Grade;
+import com.univercity.unlimited.greenUniverCity.entity.UserVo;
 import com.univercity.unlimited.greenUniverCity.repository.GradeRepository;
+import com.univercity.unlimited.greenUniverCity.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -14,6 +16,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -46,5 +49,15 @@ public class GradeServiceImpl implements GradeService{
 
         Optional<List<GradeDTO>> optionalGradeDTOS = Optional.of(gradeDTOS);
         return optionalGradeDTOS;
+    }
+
+    @Override
+    public List<GradeDTO> findMyGrade(String email) {
+        List<Grade> grades=repository.findByStudent(email);
+        log.info("1) 제발 들어와라 grades:{}",grades);
+
+        return grades.stream()
+                .map(grade -> mapper.map(grade, GradeDTO.class))
+                .collect(Collectors.toList());
     }
 }

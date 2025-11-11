@@ -13,7 +13,11 @@ import lombok.*;
 @Builder
 public class GradeDTO {
     private Integer gradeId;
+
+    private Long enrollmentId;
+
     private String gradeValue;
+
     @JsonBackReference("user-grade")
     private UserDTO user;
 }

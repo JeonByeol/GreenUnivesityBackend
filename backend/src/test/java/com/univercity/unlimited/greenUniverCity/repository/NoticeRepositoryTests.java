@@ -4,6 +4,7 @@ import com.univercity.unlimited.greenUniverCity.entity.Notice;
 import com.univercity.unlimited.greenUniverCity.entity.UserVo;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -28,6 +29,7 @@ public class NoticeRepositoryTests {
     private final Random random = new Random();
 
     @Test
+    @Tag("push")
     public void testInsertData() {
         List<UserVo> users = userRepository.findAll();
 

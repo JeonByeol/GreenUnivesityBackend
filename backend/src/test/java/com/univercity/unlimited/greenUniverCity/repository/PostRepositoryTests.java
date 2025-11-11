@@ -2,6 +2,7 @@ package com.univercity.unlimited.greenUniverCity.repository;
 import com.univercity.unlimited.greenUniverCity.entity.*;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -20,6 +21,7 @@ public class PostRepositoryTests {
     @Autowired private UserRepository userRepository;
 
     @Test
+    @Tag("push")
     public void testInsert(){
         // 데이터 세팅
         List<Board> boards = boardRepository.findAll();

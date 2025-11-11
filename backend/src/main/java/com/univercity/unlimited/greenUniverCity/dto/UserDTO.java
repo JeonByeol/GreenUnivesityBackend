@@ -24,9 +24,6 @@ public class UserDTO {
 
     private String  role;
 
-    @Builder.Default
-    @JsonManagedReference("user-grade")
-    private List<GradeDTO> grades= new ArrayList<>();
 
     @Builder.Default
     @JsonManagedReference("user-offering")
@@ -35,5 +32,21 @@ public class UserDTO {
     @Builder.Default
     @JsonManagedReference("user-enrollment")
     private List<EnrollmentDTO> enrollments=new ArrayList<>();
+
+    @Builder.Default
+    @JsonManagedReference("user-comment")
+    private List<CommentDTO> comments=new ArrayList<>();
+
+    @Builder.Default
+    @JsonManagedReference("user-post")
+    private List<PostDTO> posts=new ArrayList<>();
+
+    @Builder.Default
+    @JsonManagedReference("user-grade")
+    private List<GradeDTO> grades= new ArrayList<>();
+
+    @Builder.Default
+    @JsonManagedReference("user-notice")
+    private List<NoticeDTO> notices=new ArrayList<>();
 
 }

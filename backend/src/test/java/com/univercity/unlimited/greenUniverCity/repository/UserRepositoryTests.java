@@ -4,6 +4,7 @@ import com.univercity.unlimited.greenUniverCity.entity.UserRole;
 import com.univercity.unlimited.greenUniverCity.entity.UserVo;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.catalina.User;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -15,6 +16,7 @@ public class UserRepositoryTests {
     private UserRepository userRepository;
 
     @Test
+    @Tag("push")
     public void testInsertData(){
         String[] emails = {
                 "alice@aaa.com",
