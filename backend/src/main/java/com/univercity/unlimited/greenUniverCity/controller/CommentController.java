@@ -22,13 +22,12 @@ public class CommentController {
 
     private final CommentService commentService;
 
-    @GetMapping("/comment/list")
-    public List<CommentDTO> getListComments() {
-        return commentService.findList();
-        //log.info("1) Controller: /community/list 호출");
-//        List<CommentDTO> result  = commentService.findList();
-//        log.info("4) Controller: /community,{}" ,result);
-//        return ResponseEntity.ok( result);
+    @GetMapping("/commentlist")
+    public ResponseEntity<List<CommentDTO>> getListComments() {
+        log.info("1) Controller: /community/list 호출");
+        List<CommentDTO> result  = commentService.findList();
+        log.info("4) Controller: /community,{}" ,result);
+        return ResponseEntity.ok( result);
     }
 //    @GetMapping("/comment/read/{cid}")
 //    public ResponseEntity<CommentDTO> getReadCommentByCid( @PathVariable("cid") Long commentId) {
