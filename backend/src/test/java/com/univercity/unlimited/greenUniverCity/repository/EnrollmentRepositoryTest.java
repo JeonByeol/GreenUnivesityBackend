@@ -1,10 +1,18 @@
 package com.univercity.unlimited.greenUniverCity.repository;
 
+import com.univercity.unlimited.greenUniverCity.dto.CourseOfferingDTO;
+import com.univercity.unlimited.greenUniverCity.dto.EnrollmentDTO;
+import com.univercity.unlimited.greenUniverCity.dto.UserDTO;
 import com.univercity.unlimited.greenUniverCity.entity.*;
+import com.univercity.unlimited.greenUniverCity.service.EnrollmentService;
+import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.Commit;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -14,38 +22,86 @@ import java.util.Optional;
 @Slf4j
 public class EnrollmentRepositoryTest {
     @Autowired
-    private EnrollmentRepository enrollmentRepository;
+    private EnrollmentRepository repository;
 
     @Autowired
-    private CourseOfferingRepository courseOfferingRepository;
+    private CourseOfferingRepository offeringRepository;
 
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private EnrollmentService enrollmentService;
 
+    @Autowired
+    private ModelMapper mapper;
 
     @Test
-    public void testGradeData(){
-        for(int i = 0; i < 4; i++){
-            List<CourseOffering> courseOfferingList = courseOfferingRepository.findAll();
-            List<UserVo> userList = userRepository.findAll();
+    @Tag("push")
+    public void insertInitData(){
+        // 데이터 세팅
+        List<CourseOffering> offerings = offeringRepository.findAll();
+        List<UserVo> users = userRepository.findAll();
 
-            CourseOffering courseOffering = Optional.of(courseOfferingList.get(i)).orElseGet(() -> new CourseOffering());
-            UserVo userVo = Optional.of(userList.get(i)).orElseGet(() -> new UserVo());
+        // 데이터 체크
+        if(offerings.isEmpty() == true)
+        {
+            log.info("Offering 데이터가 없습니다.");
+            return;
+        }
 
+        if(users.isEmpty() == true)
+        {
+            log.info("User 데이터가 없습니다.");
+            return;
+        }
+
+        // 데이터 저장
+        for(CourseOffering offering : offerings) {
             Enrollment enrollment = Enrollment.builder()
+                    .courseOffering(offering)
                     .enrollDate(LocalDateTime.now())
-                    .courseOffering(courseOffering)
-                    .user(userVo)
+                    .user(users.get((int)(Math.random()*users.size())))
                     .build();
 
-            enrollmentRepository.save(enrollment);
+            repository.save(enrollment);
         }
     }
+
+    @Transactional
+    @Commit
     @Test
-    public void gradefind()
-    {
-        List<Enrollment> enrollmentList = enrollmentRepository.findAll();
-        log.info("enrollment test : {}",enrollmentList);
+    public void insertEnrollmentData() {
+        // 데이터 세팅
+        List<CourseOffering> offerings = offeringRepository.findAll();
+        List<UserVo> users = userRepository.findAll();
+
+        // 데이터 체크
+        if(offerings.isEmpty() == true)
+        {
+            log.info("Offering 데이터가 없습니다.");
+            return;
+        }
+
+        if(users.isEmpty() == true)
+        {
+            log.info("User 데이터가 없습니다.");
+            return;
+        }
+
+        CourseOffering offering = offerings.get((int)(Math.random()*offerings.size()));
+        CourseOfferingDTO offeringDTO = mapper.map(offering,CourseOfferingDTO.class);
+        UserVo user = users.get((int)(Math.random()*users.size()));
+        UserDTO userDTO = mapper.map(user,UserDTO.class);
+
+        EnrollmentDTO enrollmentDTO = EnrollmentDTO.builder()
+                .courseOffering(offeringDTO)
+                .enrollDate(LocalDateTime.now())
+                .user(userDTO)
+                .build();
+
+        enrollmentService.addEnrollment(enrollmentDTO);
+
+
     }
 }

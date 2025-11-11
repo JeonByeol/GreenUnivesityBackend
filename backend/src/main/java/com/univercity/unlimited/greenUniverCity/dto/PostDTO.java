@@ -1,5 +1,7 @@
 package com.univercity.unlimited.greenUniverCity.dto;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.univercity.unlimited.greenUniverCity.entity.Board;
 import com.univercity.unlimited.greenUniverCity.entity.Comment;
 import com.univercity.unlimited.greenUniverCity.entity.UserVo;
@@ -17,12 +19,24 @@ import java.util.List;
 @Setter
 @Builder
 public class PostDTO {
-    Long postId;
-    Board board;
-    UserVo user;
-    String title;
-    String content;
-    LocalDateTime createAt;
-    int viewCount;
-    List<Comment> comments = new ArrayList<>();
+    private Long postId;
+
+    private String title;
+
+    private String content;
+
+    private LocalDateTime createAt;
+
+    private int viewCount;
+
+    @JsonBackReference("board-post")
+    private BoardDTO board;
+
+    @JsonBackReference ("user-post")
+    private UserDTO user;
+
+    @Builder.Default
+    @JsonManagedReference("post-comment")
+    private List<CommentDTO> comments=new ArrayList<>();
+
 }

@@ -4,12 +4,14 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
+@Setter
 @Builder
 @ToString
 
@@ -26,7 +28,7 @@ public class Attendance {
     private Integer attendanceId;
 
     @Column(name="date",nullable = false)
-    private LocalDate localDate;
+    private LocalDateTime localDateTime;
 
     @Column(name="status",nullable = false)
     private String status;

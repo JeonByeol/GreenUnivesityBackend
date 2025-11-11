@@ -8,6 +8,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -38,5 +39,10 @@ public class ReviewServiceImpl implements ReviewService{
             dtoList.add(r);
         }
         return dtoList;
+    }
+
+    @Override
+    public ResponseEntity<String> addReview(ReviewDTO reviewDTO) {
+        return null;
     }
 }

@@ -25,10 +25,6 @@ public class UserVo {
     private String password;
     private String nickname;
 
-
-
-
-
     @ElementCollection(fetch = FetchType.LAZY)
     @Builder.Default
     @Enumerated(EnumType.STRING)
@@ -62,6 +58,7 @@ public class UserVo {
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     @Builder.Default
+    @ToString.Exclude
     private List<Notice> notices = new ArrayList<>();
 
     public void addRole(UserRole memberRole){userRoleList.add(memberRole);}

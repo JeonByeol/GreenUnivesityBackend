@@ -16,9 +16,13 @@ import java.time.LocalDateTime;
 @Builder
 public class ReviewDTO {
     private Integer reviewId;
-    private Integer rating;
+
+    private Integer rating
+            ;
     private String comment;
+
     private LocalDateTime createAt;
+
     @JsonBackReference("enrollment-review")
     private EnrollmentDTO enrollmentDTO;
 }

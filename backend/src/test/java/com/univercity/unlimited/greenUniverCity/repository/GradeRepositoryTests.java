@@ -4,9 +4,12 @@ import com.univercity.unlimited.greenUniverCity.entity.Enrollment;
 import com.univercity.unlimited.greenUniverCity.entity.Grade;
 import com.univercity.unlimited.greenUniverCity.entity.UserVo;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+
+import java.util.List;
 
 @SpringBootTest
 @Slf4j
@@ -17,24 +20,35 @@ public class GradeRepositoryTests {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private EnrollmentRepository enrollmentRepository;
+
     @Test
+    @Tag("push")
     public void testGradeData(){
-        String vv[]={"A+","A","B+","B"};
-        for(int i = 1; i < 4; i++){
-            final long userId = i;
-            UserVo userid = userRepository.findById(userId)
-                    .orElseThrow(() ->
-                            new RuntimeException("Test Error: Enrollment " + userId + " not found")
-                    );
+        // 데이터 세팅
+        String vv[]={"A+","A","B+","B","C+","C","D+","D","F"};
 
+        List<UserVo> users = userRepository.findAll();
+        List<Enrollment> enrollments = enrollmentRepository.findAll();
 
+        if(users.isEmpty() == true) {
+            log.info("User가 비어있습니다.");
+            return;
+        }
+        for(UserVo user : users) {
+            for(Enrollment enrollment : enrollments) {
+                if((int)(Math.random()*2) == 1)
+                    continue;
 
-            Grade grade=Grade.builder()
-                    .gradeValue(vv[i])
-                    .user(userid)
-                    .build();
+                Grade grade=Grade.builder()
+                        .enrollmentId(enrollment.getEnrollmentId())
+                        .gradeValue(vv[(int)(Math.random()*vv.length)])
+                        .user(user)
+                        .build();
 
-            repository.save(grade);
+                repository.save(grade);
+            }
         }
     }
     @Test

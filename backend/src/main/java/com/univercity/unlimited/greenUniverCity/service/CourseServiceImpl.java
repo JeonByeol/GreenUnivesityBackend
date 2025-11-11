@@ -1,16 +1,20 @@
 package com.univercity.unlimited.greenUniverCity.service;
 
+import com.univercity.unlimited.greenUniverCity.dto.CommentDTO;
 import com.univercity.unlimited.greenUniverCity.dto.CourseDTO;
+import com.univercity.unlimited.greenUniverCity.entity.Comment;
 import com.univercity.unlimited.greenUniverCity.entity.Course;
 import com.univercity.unlimited.greenUniverCity.repository.CourseRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Slf4j
@@ -28,5 +32,18 @@ public class CourseServiceImpl implements CourseService{
             dtoList.add(r);
         }
         return dtoList;
+    }
+
+    @Override
+    public int addCourse(CourseDTO courseDTO) {
+        log.info("1) 확인 : {}",courseDTO);
+        Course course = mapper.map(courseDTO,Course.class);
+        log.info("확인 : {}",course);
+        try{
+            repository.save(course);
+        } catch(Exception e) {
+            return -1;
+        }
+        return 1;
     }
 }

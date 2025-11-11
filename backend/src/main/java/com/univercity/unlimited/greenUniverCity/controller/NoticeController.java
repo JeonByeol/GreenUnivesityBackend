@@ -1,7 +1,9 @@
 package com.univercity.unlimited.greenUniverCity.controller;
 
+import com.univercity.unlimited.greenUniverCity.dto.NoticeDTO;
 import com.univercity.unlimited.greenUniverCity.entity.Course;
 import com.univercity.unlimited.greenUniverCity.entity.Enrollment;
+import com.univercity.unlimited.greenUniverCity.entity.Notice;
 import com.univercity.unlimited.greenUniverCity.service.NoticeService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,18 +25,15 @@ public class NoticeController {
 
     //전체강의 조회
     @GetMapping("/all")
-    public List<Course> postmanTestCourse(){
-        log.info("모든 강의들의 정보 호출");
-        return noticeService.findAllCourse();
+    public List<NoticeDTO> postmanTestNotice(){
+        log.info("모든 공지들의 정보 호출");
+        return noticeService.findAllNotice();
     }
+
     //특정강의 조회
-    @GetMapping("/all/partCourse")
-    public List<Course> postmanTestPartCourse(@PathVariable("partCourse")String course_id,String course_name){
-        log.info("특정강의 정보 호출");
-        return noticeService.findPartCourse(course_id,course_name);
-    }
-
-    //작성(교수)
-    //해당학과 아이디확인,교수id들어옴,/>>추후 필요:글 작성.등록
-
+//    @GetMapping("/all/partCourse")
+//    public List<Course> postmanTestPartCourse(@PathVariable("partCourse")String course_id,String course_name){
+//        log.info("특정강의 정보 호출");
+//        return noticeService.findPartCourse(course_id,course_name);
+//    }
 }

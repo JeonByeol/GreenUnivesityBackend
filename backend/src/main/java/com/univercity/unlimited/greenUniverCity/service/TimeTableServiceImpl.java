@@ -8,6 +8,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -33,5 +34,10 @@ public class TimeTableServiceImpl implements TimeTableService{
             dto.add(r);
         }
         return dto;
+    }
+
+    @Override
+    public ResponseEntity<String> addTimeTable(TimeTableDTO timeTableDTO) {
+        return null;
     }
 }

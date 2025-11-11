@@ -21,7 +21,7 @@ public class ReviewController {
     @GetMapping("/all")
     public List<ReviewDTO> postmanTestReview(){
         log.info("여기는 리뷰 전체 조회 Controller 입니다");
-        List<ReviewDTO> list = reviewService.findAllReview();
-        return list;
+        return reviewService.findAllReview();
+
     }
 }

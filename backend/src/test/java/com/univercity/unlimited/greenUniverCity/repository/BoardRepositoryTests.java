@@ -3,6 +3,7 @@ import com.univercity.unlimited.greenUniverCity.entity.Board;
 import com.univercity.unlimited.greenUniverCity.entity.Comment;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -19,14 +20,14 @@ public class BoardRepositoryTests {
     private BoardRepository repository;
 
     @Test
+    @Tag("push")
     public void testInsert(){
         var boardArray = List.of("전체게시판","자유게시판","동아리게시판","질문게시판");
-        for(int i = 0; i <= 3; i ++){
+        for(int i = 0; i < boardArray.size(); i++){
 
             Board dto = Board.builder()
-//                    .boardId("board"+i)
                     .boardName(boardArray.get(i))
-                            .build();
+                    .build();
             repository.save(dto);
         }
     }
@@ -35,27 +36,4 @@ public class BoardRepositoryTests {
         List<Board> result = repository.findAll();
         log.info("hello={}",result);
     }
-
-//    @Test
-//    public void testdelete(){
-//        Long tno = 1l;
-//        Optional<CommentDTO> result = repository.deleteById(tno);
-//
-//        CommentDTO dto = result.orElseThrow();
-//
-//        log.info("hello={}",dto);
-//    }
-
-//    @RequiredArgsConstructor
-//    @Log4j2
-//    @RequestMapping("community/club")
-//    public class TestController {
-//
-//        private final TestService testService;
-//
-//        @GetMapping("{tno}")
-//        public Test01 get(@PathVariable(name="tno") Long tno){
-//            return testService.findById().get(tno);
-//        }
-//    }
 }
