@@ -3,7 +3,7 @@ package com.univercity.unlimited.greenUniverCity.service;
 import com.univercity.unlimited.greenUniverCity.dto.AttendanceDTO;
 import com.univercity.unlimited.greenUniverCity.entity.Attendance;
 import com.univercity.unlimited.greenUniverCity.entity.Enrollment;
-import com.univercity.unlimited.greenUniverCity.entity.UserVo;
+import com.univercity.unlimited.greenUniverCity.entity.User;
 import com.univercity.unlimited.greenUniverCity.repository.AttendanceRepository;
 import com.univercity.unlimited.greenUniverCity.repository.EnrollmentRepository;
 import lombok.RequiredArgsConstructor;
@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @Slf4j
@@ -32,7 +31,7 @@ public class AttendanceServiceImpl implements AttendanceService{
     }
 
     @Override
-    public List<Enrollment> findPartEnrollment(UserVo userVo, Long enrollmentId) {
+    public List<Enrollment> findPartEnrollment(User user, Long enrollmentId) {
         log.info("해당 강의의 id와 유저의 정보를 조회");
         return  enrollmentRepository.findAll();
 

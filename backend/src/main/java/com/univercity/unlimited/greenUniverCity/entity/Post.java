@@ -40,7 +40,7 @@ public class Post {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     @ToString.Exclude
-    private UserVo user;
+    private User user;
 
     @OneToMany(mappedBy = "post", fetch = FetchType.LAZY)
     @Builder.Default

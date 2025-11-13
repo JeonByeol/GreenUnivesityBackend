@@ -2,7 +2,7 @@ package com.univercity.unlimited.greenUniverCity.service;
 
 import com.univercity.unlimited.greenUniverCity.dto.UserDTO;
 import com.univercity.unlimited.greenUniverCity.entity.UserRole;
-import com.univercity.unlimited.greenUniverCity.entity.UserVo;
+import com.univercity.unlimited.greenUniverCity.entity.User;
 import com.univercity.unlimited.greenUniverCity.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +25,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<UserDTO> findAllUsers() {
         List<UserDTO> dto=new ArrayList<>();
-        for (UserVo i:userRepository.findAll()){
+        for (User i:userRepository.findAll()){
             UserDTO r= mapper.map(i,UserDTO.class);
             dto.add(r);
         }
@@ -34,26 +34,26 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserVo findByUser(String id) {
+    public User findByUser(String id) {
         log.info("한명의 회원을 조회하는 service 생성");
         return userRepository.findById(id);
     }
 
     @Override
-    public List<UserVo> findUsersByRole(UserRole role) {
+    public List<User> findUsersByRole(UserRole role) {
         log.info("role에 해당 하는 부분의 데이터만 조회");
         return userRepository.findAllByRole(role);
     }
 
     @Override
     public UserDTO login(UserDTO userDTO) {
-        Optional<UserVo> userOptional = Optional.ofNullable(userRepository.getUserByEmail(userDTO.getEmail()));
+        Optional<User> userOptional = Optional.ofNullable(userRepository.getUserByEmail(userDTO.getEmail()));
 //        UserVo user=userRepository.getUserByEmail(userDTO.getEmail()).get();
         if (userOptional.isEmpty()) {
             log.warn("로그인 정보가 없다:{}", userDTO.getEmail());
             throw new RuntimeException("이메일 또는 비밀번호가 일치하지 않습니다.");
         }
-        UserVo u = userOptional.get();
+        User u = userOptional.get();
 //        if(userDTO.getPassword().equals(u.getPassword())){
 //            log.warn("로그인 실패: 비밀번호 불일치");
 //            throw new RuntimeException("이메일 또는 비밀번호가 일치하지 않습니다.");
@@ -71,20 +71,20 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDTO register(UserDTO dto) {
         log.info("service user, register dto=>{}", dto);
-        UserVo userVo=mapper.map(dto,UserVo.class);
+        User user =mapper.map(dto, User.class);
         String data = dto.getRole();
         log.info("1) data:{}",data);
         if(data.equals("학생")) {
 //            roles.add(UserRole.STUDENT);
 //           userVo.setUserRoleList(roles);
-           userVo.addRole(UserRole.STUDENT);
+           user.addRole(UserRole.STUDENT);
         } else if(data.equals("교수")){
-            userVo.addRole(UserRole.PROFESSOR);
+            user.addRole(UserRole.PROFESSOR);
         }
-        log.info("2) IF 이후  :{}",userVo);
-        userRepository.save(userVo);
+        log.info("2) IF 이후  :{}", user);
+        userRepository.save(user);
 
-        UserVo savedUser = userRepository.save(userVo);
+        User savedUser = userRepository.save(user);
         log.info("3) savedUser:{}",savedUser);
 
         return UserDTO.builder()
@@ -109,14 +109,14 @@ public class UserServiceImpl implements UserService {
 //        }
 //        return dto;
         // 1. 유저를 조회하고, 없으면 예외(Exception)를 발생시킴
-        UserVo userVo = userRepository.findUserWithGradesById(userId)
+        User user = userRepository.findUserWithGradesById(userId)
                 .orElseThrow(() -> {
                     log.warn("ID: {}에 해당하는 유저를 찾을 수 없음", userId);
                     return new RuntimeException("User not found with id: " + userId);
                 });
-        log.info("2) 유저 찾음: {}", userVo.getNickname());
+        log.info("2) 유저 찾음: {}", user.getNickname());
         // 2. ModelMapper로 변환 ()
-        UserDTO dto = mapper.map(userVo, UserDTO.class);
+        UserDTO dto = mapper.map(user, UserDTO.class);
         log.info("3) DTO로 변환 완료");
         // 3. List가 아닌 DTO 객체 1개를 반환
         return dto;

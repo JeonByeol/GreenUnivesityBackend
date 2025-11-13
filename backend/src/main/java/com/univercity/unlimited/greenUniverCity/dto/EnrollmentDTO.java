@@ -2,11 +2,6 @@ package com.univercity.unlimited.greenUniverCity.dto;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.univercity.unlimited.greenUniverCity.entity.CourseOffering;
-import com.univercity.unlimited.greenUniverCity.entity.Grade;
-import com.univercity.unlimited.greenUniverCity.entity.Review;
-import com.univercity.unlimited.greenUniverCity.entity.UserVo;
-import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;

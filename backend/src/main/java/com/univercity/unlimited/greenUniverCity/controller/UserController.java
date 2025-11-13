@@ -2,8 +2,7 @@ package com.univercity.unlimited.greenUniverCity.controller;
 
 import com.univercity.unlimited.greenUniverCity.dto.UserDTO;
 import com.univercity.unlimited.greenUniverCity.entity.UserRole;
-import com.univercity.unlimited.greenUniverCity.entity.UserVo;
-import com.univercity.unlimited.greenUniverCity.repository.UserRepository;
+import com.univercity.unlimited.greenUniverCity.entity.User;
 import com.univercity.unlimited.greenUniverCity.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,14 +25,14 @@ public class UserController {
         return userService.findAllUsers();
     }
     @GetMapping("/one/{id}")
-    public ResponseEntity<UserVo> postmanTestOne(@PathVariable("id")  String id){
+    public ResponseEntity<User> postmanTestOne(@PathVariable("id")  String id){
         log.info("Controller 하나 호출 id:{}",id);
-        UserVo r=userService.findByUser(id);
+        User r=userService.findByUser(id);
         log.info("찾는중 테스트:{}",r);
         return ResponseEntity.ok(r);
     }
     @GetMapping("/role/{roleName}") //role 데이터 조회
-    public List<UserVo> postmanTestRole(@PathVariable("roleName") UserRole role) {
+    public List<User> postmanTestRole(@PathVariable("roleName") UserRole role) {
         log.info("Controller: /api/user/role/{} 호출", role);
         return userService.findUsersByRole(role);
     }
