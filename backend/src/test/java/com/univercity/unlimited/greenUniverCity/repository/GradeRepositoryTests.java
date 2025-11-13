@@ -24,6 +24,9 @@ public class GradeRepositoryTests {
     @Autowired
     private CourseOfferingRepository courseOfferingRepository;
 
+    @Autowired
+    private EnrollmentRepository enrollmentRepository;
+
     @Test
     @Tag("push")
     public void testGradeData(){
@@ -31,26 +34,25 @@ public class GradeRepositoryTests {
         String vv[]={"A+","A","B+","B","C+","C","D+","D","F"};
 
         List<User> users = userRepository.findAll();
-        List<CourseOffering> courseOfferings = courseOfferingRepository.findAll();
+        List<Enrollment> enrollments = enrollmentRepository.findAll();
 
         if(users.isEmpty() == true) {
             log.info("User가 비어있습니다.");
             return;
         }
-        for(User user : users) {
-            for(CourseOffering offering : courseOfferings) {
-                if((int)(Math.random()*2) == 1)
+            for(Enrollment enrollment : enrollments) {
+//                enrollment=enrollments.get((int)(Math.random())*enrollments.size());
+                if((int)(Math.random()*2) == 1) {
                     continue;
-
+                }
                 Grade grade=Grade.builder()
-                        .offeringId(offering.getOfferingId())
+                        .enrollment(enrollment)
                         .gradeValue(vv[(int)(Math.random()*vv.length)])
-                        .user(user)
                         .build();
 
                 repository.save(grade);
             }
-        }
+
     }
     @Test
     public void gradefind(){

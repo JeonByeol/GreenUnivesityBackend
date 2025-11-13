@@ -22,6 +22,7 @@ public class NoticeDTO {
     private LocalDateTime created_at;
 
     @JsonBackReference("user-notice")
+    @ToString.Exclude
     private UserDTO userDTO;
 
 

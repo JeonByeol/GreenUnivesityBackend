@@ -44,6 +44,11 @@ public class Enrollment {
     @ToString.Exclude
     private List<Review> reviews = new ArrayList<>();
 
+    @OneToMany(mappedBy = "enrollment", fetch = FetchType.LAZY)
+    @Builder.Default
+    @ToString.Exclude
+    private List<Grade> grades = new ArrayList<>();
+
 
     public void addAttendance(Attendance attendance){
         attendances.add(attendance);
@@ -51,4 +56,6 @@ public class Enrollment {
     public void addReview(Review review) {
         reviews.add(review);
     }
+
+    public void addGrade(Grade grade){grades.add(grade);}
 }

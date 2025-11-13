@@ -19,9 +19,11 @@ public class CommentDTO {
     private LocalDateTime createdAt;
 //    private String name;
     @JsonBackReference("user-comment")
+    @ToString.Exclude
     private UserDTO user;
 
     @JsonBackReference("post-comment")
+    @ToString.Exclude
     private PostDTO posts;
 
 

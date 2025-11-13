@@ -42,10 +42,6 @@ public class UserDTO {
     private List<PostDTO> posts=new ArrayList<>();
 
     @Builder.Default
-    @JsonManagedReference("user-grade")
-    private List<GradeDTO> grades= new ArrayList<>();
-
-    @Builder.Default
     @JsonManagedReference("user-notice")
     private List<NoticeDTO> notices=new ArrayList<>();
 

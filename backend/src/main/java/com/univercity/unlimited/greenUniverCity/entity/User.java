@@ -51,10 +51,10 @@ public class User {
     @ToString.Exclude
     private List<Post> posts = new ArrayList<>();
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
-    @Builder.Default
-    @ToString.Exclude
-    private List<Grade> grades = new ArrayList<>();
+//    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+//    @Builder.Default
+//    @ToString.Exclude
+//    private List<Grade> grades = new ArrayList<>(); ***없앨예정***
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     @Builder.Default
@@ -68,6 +68,6 @@ public class User {
     public void addEnrollment(Enrollment enrollment) {enrollments.add(enrollment);}
     public void addComment(Comment comment){comments.add(comment);}
     public void addPost(Post post){posts.add(post);}
-    public void addGrade(Grade grade){grades.add(grade);}
+//    public void addGrade(Grade grade){grades.add(grade);}
 }
 

@@ -5,17 +5,16 @@ import lombok.*;
 
 @AllArgsConstructor
 @NoArgsConstructor
-@ToString
 @Getter
 @Setter
 @Builder
+@ToString
 public class GradeDTO {
     private Integer gradeId;
 
-    private Long offeringId;
-
     private String gradeValue;
 
-    @JsonBackReference("user-grade")
-    private UserDTO user;
+    @JsonBackReference("enrollment-grade")
+    @ToString.Exclude
+    private EnrollmentDTO enrollment;
 }

@@ -21,5 +21,6 @@ public class AttendanceDTO {
     private String status;
 
     @JsonBackReference("enrollment-attendance")
+    @ToString.Exclude
     private EnrollmentDTO enrollment;
 }

@@ -62,15 +62,8 @@ public class UserController {
 //
 //        return ResponseEntity.ok(userList);
 //    }
-    @GetMapping("/grades/id/{userId}")
-    public ResponseEntity<UserDTO> getUserWithGrades(@PathVariable("userId") Long userId) {
-         log.info("Controller: ID {} 유저의 성적 정보 조회", userId);
 
-        // 이전에 수정한 (Optional을 사용하고 UserDTO 1개를 반환하는)
-        // userService.grade(Long userId) 메서드를 호출합니다.
-        UserDTO userDTO = userService.grade(userId);
 
-        return ResponseEntity.ok(userDTO);
-    }
+
 
 }

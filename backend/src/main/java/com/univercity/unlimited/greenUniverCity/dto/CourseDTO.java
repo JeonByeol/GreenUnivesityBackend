@@ -26,6 +26,7 @@ public class CourseDTO {
     private Integer credits; // 학점
 
     @JsonBackReference("dept-course")
+    @ToString.Exclude
     private DepartmentDTO department; // 학과
 
     @Builder.Default

@@ -17,5 +17,4 @@ public interface UserService {
     //user정보를 통하여 로그인을 시키기 위한 service
     UserDTO register(UserDTO dto);
 
-    UserDTO grade(Long userId);
 }

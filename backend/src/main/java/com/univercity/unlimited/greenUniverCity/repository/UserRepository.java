@@ -31,7 +31,5 @@ public interface UserRepository extends JpaRepository<User,Long> {
     @Query("select m from User m where id = :id" )
     User findById(@Param("id") String id);
 
-    @Query("SELECT DISTINCT u FROM User u LEFT JOIN FETCH u.grades g WHERE u.userId = :userId")
-    Optional<User> findUserWithGradesById(@Param("userId") Long userId);
 
 }

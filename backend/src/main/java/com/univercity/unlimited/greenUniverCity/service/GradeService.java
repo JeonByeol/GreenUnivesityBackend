@@ -16,5 +16,5 @@ public interface GradeService {
 
     Optional<List<GradeDTO>> findAllGradeDTO();
 
-    List<GradeDTO> findMyGrade(String email);
+    List<GradeDTO> myGrade(String email);
 }

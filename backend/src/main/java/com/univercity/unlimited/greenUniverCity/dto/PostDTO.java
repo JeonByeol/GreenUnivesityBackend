@@ -26,9 +26,11 @@ public class PostDTO {
     private int viewCount;
 
     @JsonBackReference("board-post")
+    @ToString.Exclude
     private BoardDTO board;
 
     @JsonBackReference ("user-post")
+    @ToString.Exclude
     private UserDTO user;
 
     @Builder.Default

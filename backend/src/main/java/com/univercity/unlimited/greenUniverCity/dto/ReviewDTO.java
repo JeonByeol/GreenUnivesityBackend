@@ -17,12 +17,13 @@ import java.time.LocalDateTime;
 public class ReviewDTO {
     private Integer reviewId;
 
-    private Integer rating
-            ;
+    private Integer rating;
+
     private String comment;
 
     private LocalDateTime createAt;
 
     @JsonBackReference("enrollment-review")
+    @ToString.Exclude
     private EnrollmentDTO enrollmentDTO;
 }

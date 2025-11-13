@@ -30,7 +30,7 @@ public class GradeController {
 
     @GetMapping("/mygrade/{email}") // 로그인 한 학생의 정보에 맞는 성적을 뽑아서 쓸 수 있게 만든코드
     public List<GradeDTO> postmanMyGrade(@PathVariable("email") String email){
-       return gradeService.findMyGrade(email);
+       return gradeService.myGrade(email);
     }
 
 }

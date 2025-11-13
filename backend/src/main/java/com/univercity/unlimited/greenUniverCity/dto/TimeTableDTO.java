@@ -25,6 +25,7 @@ public class TimeTableDTO {
     private String location;
 
     @JsonBackReference("offering-timetable")
+    @ToString.Exclude
     private CourseOfferingDTO courseOffering;
 
 }

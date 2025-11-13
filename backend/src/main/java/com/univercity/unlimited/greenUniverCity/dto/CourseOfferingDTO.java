@@ -23,9 +23,11 @@ public class CourseOfferingDTO {
     private int semester; // 개설 학기 ex) 1학기 2학기
 
     @JsonBackReference("course-offering")
+    @ToString.Exclude
     private CourseDTO course; // 강의 정보
 
     @JsonBackReference("user-offering")
+    @ToString.Exclude
     private UserDTO user;
 
     @Builder.Default
