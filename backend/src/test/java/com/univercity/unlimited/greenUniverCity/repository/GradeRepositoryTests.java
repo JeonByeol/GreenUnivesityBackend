@@ -1,8 +1,9 @@
 package com.univercity.unlimited.greenUniverCity.repository;
 
+import com.univercity.unlimited.greenUniverCity.entity.CourseOffering;
 import com.univercity.unlimited.greenUniverCity.entity.Enrollment;
 import com.univercity.unlimited.greenUniverCity.entity.Grade;
-import com.univercity.unlimited.greenUniverCity.entity.UserVo;
+import com.univercity.unlimited.greenUniverCity.entity.User;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -21,7 +22,7 @@ public class GradeRepositoryTests {
     private UserRepository userRepository;
 
     @Autowired
-    private EnrollmentRepository enrollmentRepository;
+    private CourseOfferingRepository courseOfferingRepository;
 
     @Test
     @Tag("push")
@@ -29,20 +30,20 @@ public class GradeRepositoryTests {
         // 데이터 세팅
         String vv[]={"A+","A","B+","B","C+","C","D+","D","F"};
 
-        List<UserVo> users = userRepository.findAll();
-        List<Enrollment> enrollments = enrollmentRepository.findAll();
+        List<User> users = userRepository.findAll();
+        List<CourseOffering> courseOfferings = courseOfferingRepository.findAll();
 
         if(users.isEmpty() == true) {
             log.info("User가 비어있습니다.");
             return;
         }
-        for(UserVo user : users) {
-            for(Enrollment enrollment : enrollments) {
+        for(User user : users) {
+            for(CourseOffering offering : courseOfferings) {
                 if((int)(Math.random()*2) == 1)
                     continue;
 
                 Grade grade=Grade.builder()
-                        .enrollmentId(enrollment.getEnrollmentId())
+                        .offeringId(offering.getOfferingId())
                         .gradeValue(vv[(int)(Math.random()*vv.length)])
                         .user(user)
                         .build();

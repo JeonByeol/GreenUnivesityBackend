@@ -14,7 +14,7 @@ import java.util.List;
 @ToString
 @Builder
 @Setter
-public class UserVo {
+public class User {
     @Id //아이디 이메일 비밀번호 닉네임 칼럼 생성
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")

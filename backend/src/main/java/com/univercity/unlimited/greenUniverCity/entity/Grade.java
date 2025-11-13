@@ -16,8 +16,8 @@ public class Grade{
     @Column(name = "grade_id")
     private Integer gradeId;
 
-    @Column(name = "enrollment_id")
-    private Long enrollmentId;
+    @Column(name = "offering_id")
+    private Long offeringId;
 
     @Column(name = "grade_value", length = 5)
     private String gradeValue;
@@ -25,5 +25,5 @@ public class Grade{
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     @ToString.Exclude
-    private UserVo user;
+    private User user;
 }

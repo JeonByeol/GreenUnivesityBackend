@@ -16,7 +16,6 @@ import org.springframework.test.annotation.Commit;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 @SpringBootTest
 @Slf4j
@@ -41,7 +40,7 @@ public class EnrollmentRepositoryTest {
     public void insertInitData(){
         // 데이터 세팅
         List<CourseOffering> offerings = offeringRepository.findAll();
-        List<UserVo> users = userRepository.findAll();
+        List<User> users = userRepository.findAll();
 
         // 데이터 체크
         if(offerings.isEmpty() == true)
@@ -74,7 +73,7 @@ public class EnrollmentRepositoryTest {
     public void insertEnrollmentData() {
         // 데이터 세팅
         List<CourseOffering> offerings = offeringRepository.findAll();
-        List<UserVo> users = userRepository.findAll();
+        List<User> users = userRepository.findAll();
 
         // 데이터 체크
         if(offerings.isEmpty() == true)
@@ -91,7 +90,7 @@ public class EnrollmentRepositoryTest {
 
         CourseOffering offering = offerings.get((int)(Math.random()*offerings.size()));
         CourseOfferingDTO offeringDTO = mapper.map(offering,CourseOfferingDTO.class);
-        UserVo user = users.get((int)(Math.random()*users.size()));
+        User user = users.get((int)(Math.random()*users.size()));
         UserDTO userDTO = mapper.map(user,UserDTO.class);
 
         EnrollmentDTO enrollmentDTO = EnrollmentDTO.builder()

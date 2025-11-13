@@ -1,9 +1,7 @@
 package com.univercity.unlimited.greenUniverCity.repository;
-import com.univercity.unlimited.greenUniverCity.entity.Board;
 import com.univercity.unlimited.greenUniverCity.entity.Comment;
 import com.univercity.unlimited.greenUniverCity.entity.Post;
-import com.univercity.unlimited.greenUniverCity.entity.UserVo;
-import lombok.RequiredArgsConstructor;
+import com.univercity.unlimited.greenUniverCity.entity.User;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Tag;
@@ -41,10 +39,10 @@ public class CommentRepositoryTests {
         };
 
         // 데이터 체크
-        List<UserVo> userVo = userRepository.findAll();
+        List<User> user = userRepository.findAll();
         List<Post> posts = postRepository.findAll();
 
-        if(userVo.isEmpty() == true) {
+        if(user.isEmpty() == true) {
             log.info("유저 항목이 비어있습니다.");
             return;
         }
@@ -54,7 +52,7 @@ public class CommentRepositoryTests {
         }
 
 
-        userVo.forEach(u->{
+        user.forEach(u->{
             int ran = (int)(Math.random()*3)+1;
             for(int i = 0; i < ran; i ++){
                 int postRan = (int)(Math.random() * posts.size());

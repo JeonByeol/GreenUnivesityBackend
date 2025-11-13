@@ -1,7 +1,6 @@
 package com.univercity.unlimited.greenUniverCity.dto;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.univercity.unlimited.greenUniverCity.entity.UserVo;
 import lombok.*;
 
 import java.time.LocalDateTime;
