@@ -1,21 +1,14 @@
 package com.univercity.unlimited.greenUniverCity.controller;
 
 import com.univercity.unlimited.greenUniverCity.dto.AttendanceDTO;
-import com.univercity.unlimited.greenUniverCity.dto.UserDTO;
-import com.univercity.unlimited.greenUniverCity.entity.Board;
-import com.univercity.unlimited.greenUniverCity.entity.Enrollment;
-import com.univercity.unlimited.greenUniverCity.entity.UserVo;
 import com.univercity.unlimited.greenUniverCity.service.AttendanceService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @Slf4j

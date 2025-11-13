@@ -3,10 +3,11 @@ package com.univercity.unlimited.greenUniverCity.repository;
 
 import com.univercity.unlimited.greenUniverCity.dto.CourseDTO;
 import com.univercity.unlimited.greenUniverCity.dto.CourseOfferingDTO;
+import com.univercity.unlimited.greenUniverCity.dto.UserDTO;
 import com.univercity.unlimited.greenUniverCity.entity.Course;
 import com.univercity.unlimited.greenUniverCity.entity.CourseOffering;
 import com.univercity.unlimited.greenUniverCity.entity.UserRole;
-import com.univercity.unlimited.greenUniverCity.entity.UserVo;
+import com.univercity.unlimited.greenUniverCity.entity.User;
 import com.univercity.unlimited.greenUniverCity.service.CourseOfferingService;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
@@ -39,11 +40,15 @@ public class CourseOfferingRepositoryTests {
     private ModelMapper mapper;
 
     @Test
+    @Transactional
+    @Commit
     @Tag("push")
     public void insertInitData() {
         // 데이터 세팅
         // Course가 있다는 가정하에 진행합니다.
         List<Course> coureList = courseRepository.findAll();
+        List<User> userList = userRepository.findAll();
+
         if(coureList.isEmpty() == true) {
             log.info("코스 데이터가 없습니다.");
             return;
@@ -53,6 +58,7 @@ public class CourseOfferingRepositoryTests {
             int max = (int) (Math.random() * 3) + 1;
             int semester = 1;
             char alphabat = 'A';
+            User user = userList.get((int)(Math.random()*userList.size()));
             for (int i = 0; i < max; i++) {
                 CourseOffering courseOffering = CourseOffering.builder()
                         .professorName("EMPTY")
@@ -60,6 +66,7 @@ public class CourseOfferingRepositoryTests {
                         .year(2025)
                         .semester(semester)
                         .course(course)
+                        .user(user)
                         .build();
 
                 repository.save(courseOffering);
@@ -81,7 +88,7 @@ public class CourseOfferingRepositoryTests {
     public void insertCourseOfferingData() {
         // 데이터 세팅
         List<CourseOffering> courseOfferings = repository.findAll();
-        List<UserVo> userList = userRepository.findAll();
+        List<User> userList = userRepository.findAll();
         List<Course> courseList = courseRepository.findAll();
 
         if(courseOfferings.isEmpty() == true) {
@@ -101,7 +108,7 @@ public class CourseOfferingRepositoryTests {
 
         // 교수 이름 세팅
         List<String> professorNames = new ArrayList<>();
-        for(UserVo user : userList) {
+        for(User user : userList) {
             if(user.getUserRoleList().contains(UserRole.PROFESSOR)){
                 professorNames.add(user.getNickname());
             }
@@ -160,7 +167,7 @@ public class CourseOfferingRepositoryTests {
         for(int i=0; i<5; i++) {
             // 데이터 세팅
             List<CourseOffering> courseOfferings = repository.findAll();
-            List<UserVo> userList = userRepository.findAll();
+            List<User> userList = userRepository.findAll();
             List<Course> courseList = courseRepository.findAll();
 
             if(courseOfferings.isEmpty() == true) {
@@ -180,7 +187,7 @@ public class CourseOfferingRepositoryTests {
 
             // 교수 이름 세팅
             List<String> professorNames = new ArrayList<>();
-            for(UserVo user : userList) {
+            for(User user : userList) {
                 if(user.getUserRoleList().contains(UserRole.PROFESSOR)){
                     professorNames.add(user.getNickname());
                 }
@@ -224,6 +231,8 @@ public class CourseOfferingRepositoryTests {
                 } else {
                     // 중복이 없으면 처리 완료
                     courseOfferingDTO.setCourseName(course.getCourseName() + alphabat);
+                    UserDTO userDTO = mapper.map(userList.get((int)(Math.random()*userList.size())),UserDTO.class);
+                    courseOfferingDTO.setUser(userDTO);
                     service.addCourseOffering(courseOfferingDTO);
                     break;
                 }

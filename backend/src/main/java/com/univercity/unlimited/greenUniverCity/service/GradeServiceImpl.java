@@ -1,12 +1,8 @@
 package com.univercity.unlimited.greenUniverCity.service;
 
-import com.univercity.unlimited.greenUniverCity.dto.CourseDTO;
 import com.univercity.unlimited.greenUniverCity.dto.GradeDTO;
-import com.univercity.unlimited.greenUniverCity.entity.Course;
 import com.univercity.unlimited.greenUniverCity.entity.Grade;
-import com.univercity.unlimited.greenUniverCity.entity.UserVo;
 import com.univercity.unlimited.greenUniverCity.repository.GradeRepository;
-import com.univercity.unlimited.greenUniverCity.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;

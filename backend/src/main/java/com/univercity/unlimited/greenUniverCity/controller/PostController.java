@@ -27,6 +27,7 @@ public class PostController {
         return postService.findAllPost();
     }
 
+
 //    @GetMapping("/read/{cid}")
 //    public ResponseEntity<PostDTO> getReadCommentByCid(@PathVariable("cid") Long PostId) {
 //        log.info("Controller: /community/read 호출");

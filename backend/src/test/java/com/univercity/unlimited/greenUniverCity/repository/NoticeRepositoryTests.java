@@ -1,7 +1,7 @@
 package com.univercity.unlimited.greenUniverCity.repository;
 
 import com.univercity.unlimited.greenUniverCity.entity.Notice;
-import com.univercity.unlimited.greenUniverCity.entity.UserVo;
+import com.univercity.unlimited.greenUniverCity.entity.User;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Tag;
@@ -31,13 +31,13 @@ public class NoticeRepositoryTests {
     @Test
     @Tag("push")
     public void testInsertData() {
-        List<UserVo> users = userRepository.findAll();
+        List<User> users = userRepository.findAll();
 
         if (users.isEmpty()) {
             throw new IllegalStateException("User 데이터가 없습니다. 최소 1명 이상 필요합니다!");
         }
 
-        UserVo user = users.get(0); // 첫 번째 사용자 기준으로 Notice 등록
+        User user = users.get(0); // 첫 번째 사용자 기준으로 Notice 등록
 
         String[] titles = {
                 "공지사항", "업데이트 안내", "서비스 점검 예정", "이벤트 알림",

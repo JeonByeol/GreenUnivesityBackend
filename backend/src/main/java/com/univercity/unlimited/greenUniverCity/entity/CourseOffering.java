@@ -40,7 +40,7 @@ public class CourseOffering {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     @ToString.Exclude
-    private UserVo user;
+    private User user;
 
     @OneToMany(mappedBy = "courseOffering", fetch = FetchType.LAZY)
     @Builder.Default

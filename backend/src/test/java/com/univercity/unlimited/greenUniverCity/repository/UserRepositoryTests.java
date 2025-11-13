@@ -1,9 +1,8 @@
 package com.univercity.unlimited.greenUniverCity.repository;
 
 import com.univercity.unlimited.greenUniverCity.entity.UserRole;
-import com.univercity.unlimited.greenUniverCity.entity.UserVo;
+import com.univercity.unlimited.greenUniverCity.entity.User;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.catalina.User;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,7 +49,7 @@ public class UserRepositoryTests {
         for(int i=0;i<10;i++){
             int roleNumber = (int)(Math.random()*8) + 1;
 
-            UserVo user=UserVo.builder()
+            User user= User.builder()
                     .email(emails[i])
                     .password("1111")
                     .nickname(nicknames[i])
@@ -66,7 +65,7 @@ public class UserRepositoryTests {
 
     @Test
     public void testEamil(){
-        UserVo a = userRepository.getUserByEmail("user9@aaa.com");
+        User a = userRepository.getUserByEmail("user9@aaa.com");
         log.info("user= {}",a);
         log.info("user roles= {}", a.getUserRoleList());
     }

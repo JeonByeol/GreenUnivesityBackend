@@ -3,11 +3,6 @@ package com.univercity.unlimited.greenUniverCity.dto;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.univercity.unlimited.greenUniverCity.entity.Course;
-import com.univercity.unlimited.greenUniverCity.entity.Enrollment;
-import com.univercity.unlimited.greenUniverCity.entity.TimeTable;
-import com.univercity.unlimited.greenUniverCity.entity.UserVo;
-import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.ArrayList;

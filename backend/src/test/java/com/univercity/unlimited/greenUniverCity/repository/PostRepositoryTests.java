@@ -9,7 +9,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Random;
 
 @SpringBootTest
 @Slf4j
@@ -25,7 +24,7 @@ public class PostRepositoryTests {
     public void testInsert(){
         // 데이터 세팅
         List<Board> boards = boardRepository.findAll();
-        List<UserVo> users = userRepository.findAll();
+        List<User> users = userRepository.findAll();
 
         // 데이터 체크
         if(boards.isEmpty() == true) {
@@ -66,7 +65,7 @@ public class PostRepositoryTests {
 
         for(int i=0; i<titles.length; i++){
             int viewCount = (int)(Math.random()*100);
-            UserVo user = users.get((int)(Math.random()*users.size()));
+            User user = users.get((int)(Math.random()*users.size()));
             Board board = boards.get(boards.size()-1);
 
             Post post = Post.builder()

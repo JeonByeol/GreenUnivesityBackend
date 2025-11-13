@@ -2,14 +2,12 @@ package com.univercity.unlimited.greenUniverCity.config;
 
 // [추가] DTO와 Entity import
 import com.univercity.unlimited.greenUniverCity.dto.UserDTO;
-import com.univercity.unlimited.greenUniverCity.entity.UserVo;
+import com.univercity.unlimited.greenUniverCity.entity.User;
 
 import org.modelmapper.AbstractConverter;
-import org.modelmapper.Condition;
 import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
-import org.modelmapper.spi.MappingContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 // [추가] AccessLevel import
@@ -37,8 +35,8 @@ public class RootConfig {
         // String -> List 오류(register) 해결
         // UserDTO의 'role'(String) 필드가 UserVo의 'userRoleList'(List)에
         // 자동 매핑되는 것을 방지합니다. (register 메서드용)
-        mapper.typeMap(UserDTO.class, UserVo.class)
-                .addMappings(m -> m.skip(UserVo::setUserRoleList));
+        mapper.typeMap(UserDTO.class, User.class)
+                .addMappings(m -> m.skip(User::setUserRoleList));
 
 
         Converter<LocalDateTime, LocalDateTime> localDateTimeConverter =
