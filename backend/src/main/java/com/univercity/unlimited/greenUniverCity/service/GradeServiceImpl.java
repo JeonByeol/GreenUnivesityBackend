@@ -1,8 +1,14 @@
 package com.univercity.unlimited.greenUniverCity.service;
 
+import com.univercity.unlimited.greenUniverCity.dto.CourseOfferingDTO;
 import com.univercity.unlimited.greenUniverCity.dto.GradeDTO;
+import com.univercity.unlimited.greenUniverCity.entity.CourseOffering;
+import com.univercity.unlimited.greenUniverCity.entity.Enrollment;
 import com.univercity.unlimited.greenUniverCity.entity.Grade;
+import com.univercity.unlimited.greenUniverCity.repository.CourseOfferingRepository;
+import com.univercity.unlimited.greenUniverCity.repository.EnrollmentRepository;
 import com.univercity.unlimited.greenUniverCity.repository.GradeRepository;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,7 +25,13 @@ import java.util.stream.Collectors;
 @Slf4j
 @RequiredArgsConstructor
 public class GradeServiceImpl implements GradeService{
+
     private final GradeRepository repository;
+
+    private final EnrollmentRepository enrollmentRepository;
+
+    private final CourseOfferingRepository courseOfferingRepository;
+
     private final ModelMapper mapper;
 
     @Override
@@ -62,6 +74,41 @@ public class GradeServiceImpl implements GradeService{
         }
         return dto;
     }
+
+
+    @Override
+    @Transactional
+    public GradeDTO postNewGrade(String gradeValue) {
+//        Optional<Enrollment> enrollment=enrollmentRepository.findById(enrollmentId);
+
+        Enrollment enrollment=enrollmentRepository.findById(1l)
+                .orElseThrow(() -> new EntityNotFoundException("ID에 해당하는 수강신청 내역이 없습니다: " + 1l));
+
+        List<CourseOffering> offering=courseOfferingRepository.findAll();
+        if(enrollment.getEnrollmentId()==null)
+            return null;
+
+        List<CourseOfferingDTO> dto=new ArrayList<>();
+        for(CourseOffering i:courseOfferingRepository.findAll()){
+            CourseOfferingDTO r=mapper.map(i,CourseOfferingDTO.class);
+            dto.add(r);
+        }
+
+        Optional<CourseOfferingDTO> bb = dto.stream().filter(i -> i.getCourseName().equals("자료구조A")).findAny();
+
+
+
+        Grade newGrade = Grade.builder()
+                .gradeValue(gradeValue)
+                .build();
+
+        Grade saveEntity=repository.save(newGrade);
+        GradeDTO dto=mapper.map(saveEntity,GradeDTO.class);
+
+        return dto;
+    }
+
+
 
 //    @Override
 //    public List<GradeDTO> findMyGrade(String email) {

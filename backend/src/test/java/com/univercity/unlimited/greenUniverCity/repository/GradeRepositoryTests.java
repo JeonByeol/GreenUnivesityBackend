@@ -32,7 +32,19 @@ public class GradeRepositoryTests {
     public void testGradeData(){
         // 데이터 세팅
         String vv[]={"A+","A","B+","B","C+","C","D+","D","F"};
-
+//        for(int i = 1; i <= 10; i++){
+//            final long enrollmentId = i;
+//            Enrollment enrollment = enrollmentRepository.findById(enrollmentId)
+//                    .orElseThrow(() ->
+//                            new RuntimeException("Test Error: Enrollment " + enrollmentId + " not found")
+//                    );
+//            Grade grade=Grade.builder()
+//                    .enrollment(enrollment)
+//                    .gradeValue(vv[(int)(Math.random()*vv.length)])
+//                    .build();
+//
+//            repository.save(grade);
+//            }
         List<User> users = userRepository.findAll();
         List<Enrollment> enrollments = enrollmentRepository.findAll();
 

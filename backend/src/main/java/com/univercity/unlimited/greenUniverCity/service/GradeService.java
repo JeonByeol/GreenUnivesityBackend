@@ -17,4 +17,6 @@ public interface GradeService {
     Optional<List<GradeDTO>> findAllGradeDTO();
 
     List<GradeDTO> myGrade(String email);
+
+    GradeDTO postNewGrade(Long enrollmentId,String gradeValue,String name);
 }
