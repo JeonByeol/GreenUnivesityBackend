@@ -1,0 +1,57 @@
+package com.univercity.unlimited.greenUniverCity.function.post.entity;
+
+import com.univercity.unlimited.greenUniverCity.function.board.entity.Board;
+import com.univercity.unlimited.greenUniverCity.function.comment.entity.Comment;
+import com.univercity.unlimited.greenUniverCity.function.user.entity.User;
+import jakarta.persistence.*;
+import lombok.*;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
+@Entity
+@Table(name = "tbl_post")
+@Getter
+@Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class Post {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column (name = "post_id")
+    private Long postId;
+
+    @Column(name = "title")
+    private String title;
+
+    @Column(name = "content")
+    private String content;
+
+    @Column(name = "created_at")
+    private LocalDateTime createAt;
+
+    @Column(name = "view_count")
+    private int viewCount;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "board_id")
+    @ToString.Exclude
+    private Board board;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    @ToString.Exclude
+    private User user;
+
+    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY)
+    @Builder.Default
+    @ToString.Exclude
+    private List<Comment> comments = new ArrayList<>();
+
+    public void addComment(Comment comment){
+        comments.add(comment);
+    }
+
+}

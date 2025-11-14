@@ -1,8 +1,10 @@
 package com.univercity.unlimited.greenUniverCity.repository;
 
 
-import com.univercity.unlimited.greenUniverCity.entity.Enrollment;
-import com.univercity.unlimited.greenUniverCity.entity.Review;
+import com.univercity.unlimited.greenUniverCity.function.enrollment.entity.Enrollment;
+import com.univercity.unlimited.greenUniverCity.function.enrollment.repository.EnrollmentRepository;
+import com.univercity.unlimited.greenUniverCity.function.review.entity.Review;
+import com.univercity.unlimited.greenUniverCity.function.review.repository.ReviewRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -10,13 +12,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.List;
 
 @SpringBootTest
 @Slf4j
 public class ReviewRepositoryTests {
-    @Autowired ReviewRepository repository;
+    @Autowired
+    ReviewRepository repository;
     
     @Autowired
     private EnrollmentRepository enrollmentRepository;
