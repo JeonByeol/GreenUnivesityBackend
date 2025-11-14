@@ -1,13 +1,14 @@
 package com.univercity.unlimited.greenUniverCity.service;
 
-import com.univercity.unlimited.greenUniverCity.dto.CourseOfferingDTO;
-import com.univercity.unlimited.greenUniverCity.dto.GradeDTO;
-import com.univercity.unlimited.greenUniverCity.entity.CourseOffering;
+import com.univercity.unlimited.greenUniverCity.dto.grade.GradeDTO;
+import com.univercity.unlimited.greenUniverCity.dto.grade.GradeProfessorDTO;
+import com.univercity.unlimited.greenUniverCity.dto.grade.GradeStudentDTO;
 import com.univercity.unlimited.greenUniverCity.entity.Enrollment;
 import com.univercity.unlimited.greenUniverCity.entity.Grade;
 import com.univercity.unlimited.greenUniverCity.repository.CourseOfferingRepository;
 import com.univercity.unlimited.greenUniverCity.repository.EnrollmentRepository;
 import com.univercity.unlimited.greenUniverCity.repository.GradeRepository;
+import com.univercity.unlimited.greenUniverCity.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +25,7 @@ import java.util.stream.Collectors;
 @Service
 @Slf4j
 @RequiredArgsConstructor
+@Transactional
 public class GradeServiceImpl implements GradeService{
 
     private final GradeRepository repository;
@@ -31,6 +33,8 @@ public class GradeServiceImpl implements GradeService{
     private final EnrollmentRepository enrollmentRepository;
 
     private final CourseOfferingRepository courseOfferingRepository;
+
+    private final UserRepository userRepository;
 
     private final ModelMapper mapper;
 
@@ -46,77 +50,73 @@ public class GradeServiceImpl implements GradeService{
     }
 
     @Override
-    public ResponseEntity<String> addGrade(GradeDTO gradeDTO) {
-        return null;
-    }
-
-    @Override
-    public Optional<List<GradeDTO>> findAllGradeDTO() {
-        List<Grade> grades = repository.findAll();
-        List<GradeDTO> gradeDTOS = grades.stream().map(grade ->
-                mapper.map(grade, GradeDTO.class)).toList();
-
-        Optional<List<GradeDTO>> optionalGradeDTOS = Optional.of(gradeDTOS);
-        return optionalGradeDTOS;
-    }
-
-    @Transactional
-    @Override
-    public List<GradeDTO> myGrade(String email) {
+    public List<GradeStudentDTO> myGrade(String email) {
+//        List<Grade> grades= repository.findByMyGrade(email);
         List<Grade> grades= repository.findByMyGrade(email);
-        List<GradeDTO> dto=new ArrayList<>();
-        log.info("1) dto의 개수가 몇 개인가 :{}",dto);
-        for(Grade i:grades){
-            log.info("2) 여기는 어떻게 들어오는가 :{}",i);
-            GradeDTO r=mapper.map(i,GradeDTO.class);
-            log.info("3) r은 정상적인가 :{}",r);
-            dto.add(r);
-        }
-        return dto;
+        return grades.stream()
+                .map(g -> GradeStudentDTO.builder()
+                        .gradeId(g.getGradeId())
+                        .gradeValue(g.getGradeValue())
+                        .courseName(g.getEnrollment().getCourseOffering().getCourse().getCourseName())
+                        .courseId(g.getEnrollment().getCourseOffering().getOfferingId())
+                        .studentName(g.getEnrollment().getUser().getNickname())
+                        .build()
+                )
+                .collect(Collectors.toList());
     }
+
+    @Override
+    public List<GradeProfessorDTO> courseOfGrade(Long offeringId) {
+        List<Grade> grades=repository.findByOfferingGrade(offeringId);
+        return grades.stream()
+                .map(g->GradeProfessorDTO.builder()
+                        .gradeId(g.getGradeId())
+                        .gradeValue(g.getGradeValue())
+                        .studentName(g.getEnrollment().getUser().getNickname())
+                        .build()
+                )
+                .collect(Collectors.toList());
+    }
+
+//        List<GradeDTO> dto=new ArrayList<>();
+//        log.info("1) dto의 개수가 몇 개인가 :{}",dto);
+//        for(Grade i:grades){
+//            log.info("2) 여기는 어떻게 들어오는가 :{}",i);
+//            GradeDTO r=mapper.map(i,GradeDTO.class);
+//            log.info("3) r은 정상적인가 :{}",r);
+//            dto.add(r);
+//        }
+//        return dto;
+//    }
 
 
     @Override
-    @Transactional
-    public GradeDTO postNewGrade(String gradeValue) {
-//        Optional<Enrollment> enrollment=enrollmentRepository.findById(enrollmentId);
+    public GradeDTO postNewGrade(Long enrollmentId,String gradeValue) {
 
-        Enrollment enrollment=enrollmentRepository.findById(1l)
-                .orElseThrow(() -> new EntityNotFoundException("ID에 해당하는 수강신청 내역이 없습니다: " + 1l));
+        Enrollment enrollment=enrollmentRepository.findById(enrollmentId)
+                .orElseThrow(()->new EntityNotFoundException("이게 맞을까요?"+enrollmentId));
 
-        List<CourseOffering> offering=courseOfferingRepository.findAll();
-        if(enrollment.getEnrollmentId()==null)
-            return null;
+        //Service에서 전달된 교수의 email, 수강신청(enroll)에 연결된 과목(offering)의 담당 교수(user)의
+        //email이 일치하는지 보안검사에 대한 코드 "feat Gemini"
+//        User professor= enrollment.getCourseOffering().getUser();
+//        if(professor == null || !professor.getEmail().equals(professorEmail)){
+//            log.warn("권한이 없다: 교수[{}]가 타 과목(Id:{}) 성적 입력을 시도.",professorEmail,enrollmentId);
+//            throw new IllegalArgumentException("이 과목의 성적을 입력할 권한이 없습니다.");
+//        }
 
-        List<CourseOfferingDTO> dto=new ArrayList<>();
-        for(CourseOffering i:courseOfferingRepository.findAll()){
-            CourseOfferingDTO r=mapper.map(i,CourseOfferingDTO.class);
-            dto.add(r);
-        }
+        //성적과 연결된 enrollmentId를 찾고 없으면 신규 객체를 생성한다
+        Grade grade=repository.findByEnrollment_enrollmentId(enrollmentId)
+                .orElse(new Grade());
 
-        Optional<CourseOfferingDTO> bb = dto.stream().filter(i -> i.getCourseName().equals("자료구조A")).findAny();
+        grade.setGradeValue(gradeValue);
+        grade.setEnrollment(enrollment);
 
+        Grade saveGrade= repository.save(grade);
 
+        log.info("성공:  학생 [{}]에게 성적 [{}] 입력 완료",
+                 enrollment.getUser().getEmail(), gradeValue);
 
-        Grade newGrade = Grade.builder()
-                .gradeValue(gradeValue)
-                .build();
-
-        Grade saveEntity=repository.save(newGrade);
-        GradeDTO dto=mapper.map(saveEntity,GradeDTO.class);
-
-        return dto;
+        return mapper.map(saveGrade,GradeDTO.class);
     }
 
-
-
-//    @Override
-//    public List<GradeDTO> findMyGrade(String email) {
-//        List<Grade> grades=repository.findByStudent(email);
-//        log.info("1) 제발 들어와라 grades:{}",grades);
-//
-//        return grades.stream()
-//                .map(grade -> mapper.map(grade, GradeDTO.class))
-//                .collect(Collectors.toList());
-//    }
 }

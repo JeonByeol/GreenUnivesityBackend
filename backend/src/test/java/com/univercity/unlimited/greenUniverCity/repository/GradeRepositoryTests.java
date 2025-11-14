@@ -1,6 +1,5 @@
 package com.univercity.unlimited.greenUniverCity.repository;
 
-import com.univercity.unlimited.greenUniverCity.entity.CourseOffering;
 import com.univercity.unlimited.greenUniverCity.entity.Enrollment;
 import com.univercity.unlimited.greenUniverCity.entity.Grade;
 import com.univercity.unlimited.greenUniverCity.entity.User;
@@ -65,9 +64,5 @@ public class GradeRepositoryTests {
                 repository.save(grade);
             }
 
-    }
-    @Test
-    public void gradefind(){
-        repository.findAll();
     }
 }

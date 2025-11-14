@@ -1,16 +1,16 @@
 package com.univercity.unlimited.greenUniverCity.controller;
 
-import com.univercity.unlimited.greenUniverCity.dto.CourseDTO;
-import com.univercity.unlimited.greenUniverCity.dto.GradeDTO;
-import com.univercity.unlimited.greenUniverCity.entity.Grade;
+import com.univercity.unlimited.greenUniverCity.dto.grade.GradeDTO;
+import com.univercity.unlimited.greenUniverCity.dto.grade.GradeProfessorDTO;
+import com.univercity.unlimited.greenUniverCity.dto.grade.GradeStudentDTO;
 import com.univercity.unlimited.greenUniverCity.service.GradeService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+//import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @Slf4j
@@ -26,13 +26,40 @@ public class GradeController {
     }
 
     @GetMapping("/mygrade/{email}") // 로그인 한 학생의 정보에 맞는 성적을 뽑아서 쓸 수 있게 만든코드
-    public List<GradeDTO> postmanMyGrade(@PathVariable("email") String email){
+    public List<GradeStudentDTO> postmanMyGrade(@PathVariable("email") String email){
        return gradeService.myGrade(email);
     }
 
-
-    @PostMapping("/test")
-    public GradeDTO postmanadd(@RequestBody GradeDTO dto){
-        return gradeService.postNewGrade(dto.getEnrollment().getEnrollmentId(), dto.getGradeValue(),dto.getEnrollment().getCourseOffering().getCourseName());
+    @GetMapping("/course/{offeringId}")
+    public List<GradeProfessorDTO> postmanCourseGrade(@PathVariable("offeringId") Long offeringId){
+        return gradeService.courseOfGrade(offeringId);
     }
+
+    @PutMapping("{enrollmentId}")
+    public ResponseEntity<GradeDTO> updateGrade(
+            @PathVariable("enrollmentId") Long enrollmentId,
+            @RequestBody GradeDTO gradeDTO) {
+
+        String gradeValue=gradeDTO.getGradeValue();
+        log.info(" 수강신청 ID[{}]의 성적을 [{}]로 입력 시도...",  enrollmentId, gradeValue);
+
+        GradeDTO updateGrade=gradeService.postNewGrade(
+                enrollmentId,
+                gradeValue
+        );
+        return ResponseEntity.ok(updateGrade);
+    }
+
+
+
+
+
+
+//    @PostMapping("/test")
+//    public GradeDTO postmanTestAdd(@RequestBody GradeDTO dto){
+//        Long enrollment=dto.getEnrollment().getEnrollmentId();
+//        String value=dto.getGradeValue();
+//        String mail=dto.getEnrollment().getUser().getEmail();
+//        return gradeService.postNewGrade(enrollment,value,mail);
+//    }
 }
