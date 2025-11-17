@@ -14,13 +14,13 @@ import java.time.LocalDateTime;
 @Builder
 
 public class AttendanceDTO {
-    private Integer attendance;
+    private Integer attendanceId; //출석아이디
 
-    private LocalDateTime localDateTime;
+    private LocalDateTime localDateTime; //출석 시간
 
-    private String status;
+    private String status; //출,결석 확인
 
     @JsonBackReference("enrollment-attendance")
     @ToString.Exclude
-    private EnrollmentDTO enrollment;
+    private EnrollmentDTO enrollment; //수강내역
 }

@@ -27,32 +27,32 @@ public class Enrollment {
     private Long enrollmentId; // 과목 코드
 
     @Column(name = "enroll_date")
-    private LocalDateTime enrollDate;
+    private LocalDateTime enrollDate; //신청 날짜
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "offering_id")
     @ToString.Exclude
-    private CourseOffering courseOffering;
+    private CourseOffering courseOffering; //강의 개설
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     @ToString.Exclude
-    private User user;
+    private User user; //유저
 
     @OneToMany(mappedBy = "enrollment",fetch = FetchType.LAZY)
     @Builder.Default
     @ToString.Exclude
-    private List<Attendance> attendances = new ArrayList<>();
+    private List<Attendance> attendances = new ArrayList<>(); //출석들
 
     @OneToMany(mappedBy = "enrollment", fetch = FetchType.LAZY)
     @Builder.Default
     @ToString.Exclude
-    private List<Review> reviews = new ArrayList<>();
+    private List<Review> reviews = new ArrayList<>(); //리뷰들
 
     @OneToMany(mappedBy = "enrollment", fetch = FetchType.LAZY)
     @Builder.Default
     @ToString.Exclude
-    private List<Grade> grades = new ArrayList<>();
+    private List<Grade> grades = new ArrayList<>(); //성적들
 
 
     public void addAttendance(Attendance attendance){

@@ -14,13 +14,13 @@ import java.time.LocalDateTime;
 @Builder
 
 public class NoticeDTO {
-    private Integer notice_id;
+    private Integer noticeId; //공지아이디
 
-    private String title;
+    private String title; //타이틀
 
-    private String content;
+    private String content; //콘텐츠
 
-    private LocalDateTime created_at;
+    private LocalDateTime createdAt; //날짜
 
     @JsonBackReference("user-notice")
     @ToString.Exclude

@@ -12,14 +12,14 @@ import lombok.*;
 @Builder
 @ToString
 public class GradeDTO {
-    private Integer gradeId;
+    private Integer gradeId; //성적 아이디
 
-    private String gradeValue;
+    private String gradeValue; //성적 벨류
 
     @JsonIgnore
-    private String courseName;
+    private String courseName; // 수강 이름
 
     @JsonBackReference("enrollment-grade")
     @ToString.Exclude
-    private EnrollmentDTO enrollment;
+    private EnrollmentDTO enrollment; //수강신청내역
 }

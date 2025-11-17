@@ -14,18 +14,18 @@ import java.time.LocalDateTime;
 @Setter
 @Builder
 public class TimeTableDTO {
-    private Integer timetableId;
+    private Integer timetableId; //수강표 아이디
 
-    private String dayOfWeek;
+    private String dayOfWeek; //이번주의 오늘
 
-    private LocalDateTime startTime;
+    private LocalDateTime startTime; //시작 타임
 
-    private LocalDateTime endTime;
+    private LocalDateTime endTime; // 끝 타임
 
-    private String location;
+    private String location; // 돌림
 
     @JsonBackReference("offering-timetable")
     @ToString.Exclude
-    private CourseOfferingDTO courseOffering;
+    private CourseOfferingDTO courseOffering; //강의 개설
 
 }

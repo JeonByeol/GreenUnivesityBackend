@@ -18,15 +18,15 @@ import java.util.List;
 @Setter
 @Builder
 public class PostDTO {
-    private Long postId;
+    private Long postId; //포스트 아이디
 
-    private String title;
+    private String title; // 타이틀
 
-    private String content;
+    private String content; //콘텐츠
 
-    private LocalDateTime createAt;
+    private LocalDateTime createAt; //게시날짜
 
-    private int viewCount;
+    private int viewCount; // 뷰 수
 
     @JsonBackReference("board-post")
     @ToString.Exclude

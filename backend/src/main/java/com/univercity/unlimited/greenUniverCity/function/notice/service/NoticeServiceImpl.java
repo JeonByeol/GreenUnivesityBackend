@@ -1,5 +1,6 @@
 package com.univercity.unlimited.greenUniverCity.function.notice.service;
 
+import com.univercity.unlimited.greenUniverCity.function.course.entity.Course;
 import com.univercity.unlimited.greenUniverCity.function.course.repository.CourseRepository;
 import com.univercity.unlimited.greenUniverCity.function.notice.dto.NoticeDTO;
 import com.univercity.unlimited.greenUniverCity.function.notice.entity.Notice;
@@ -26,15 +27,15 @@ public class NoticeServiceImpl implements NoticeService{
             NoticeDTO r=mapper.map(i,NoticeDTO.class);
             dto.add(r);
         }
-        log.info("모든과정을 조회");
+        log.info("모든 공지를 조회");
         return dto;
     }
-
+//    @Override
 //    public List<Course> findPartCourse(String course_id, String course_name) {
-//       log.info("해당 강의를 조회");
+//       log.info("특정 공지를 조회");
 //       return  courseRepository.findAll();
 //    }
-//
+////
 //    @Override
 //    public ResponseEntity<String> addNotice(NoticeDTO noticeDTO) {
 //        return null;

@@ -21,29 +21,29 @@ public class Post {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column (name = "post_id")
-    private Long postId;
+    private Long postId; //게시글 아이디
 
     @Column(name = "title")
-    private String title;
+    private String title; //타이틀
 
     @Column(name = "content")
-    private String content;
+    private String content; //콘텐츠
 
     @Column(name = "created_at")
-    private LocalDateTime createAt;
+    private LocalDateTime createAt; //개시 날짜
 
     @Column(name = "view_count")
-    private int viewCount;
+    private int viewCount; //뷰 수
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "board_id")
     @ToString.Exclude
-    private Board board;
+    private Board board; //보드
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     @ToString.Exclude
-    private User user;
+    private User user; //유저
 
     @OneToMany(mappedBy = "post", fetch = FetchType.LAZY)
     @Builder.Default

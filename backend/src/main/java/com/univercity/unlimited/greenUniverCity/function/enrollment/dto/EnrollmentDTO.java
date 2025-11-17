@@ -23,27 +23,27 @@ import java.util.List;
 public class EnrollmentDTO {
     private Long enrollmentId; // 과목 코드
 
-    private LocalDateTime enrollDate;
+    private LocalDateTime enrollDate; //해당 날짜
 
     @JsonBackReference("offering-enrollment")
     @ToString.Exclude
-    private CourseOfferingDTO courseOffering;
+    private CourseOfferingDTO courseOffering; //강의 개설
 
     @JsonBackReference("user-enrollment")
     @ToString.Exclude
-    private UserDTO user;
+    private UserDTO user; //유저
 
     @Builder.Default
     @JsonManagedReference("enrollment-grade")
-    private List<GradeDTO> grades=new ArrayList<>();
+    private List<GradeDTO> grades=new ArrayList<>(); //성적 모음
 
     @Builder.Default
     @JsonManagedReference("enrollment-attendance")
-    private List<AttendanceDTO> attendances= new ArrayList<>();
+    private List<AttendanceDTO> attendances= new ArrayList<>(); //출석 모음
 
     @Builder.Default
     @JsonManagedReference("enrollment-review")
-    private List<ReviewDTO> reviews = new ArrayList<>();
+    private List<ReviewDTO> reviews = new ArrayList<>(); //리뷰 모음
 
 
 }

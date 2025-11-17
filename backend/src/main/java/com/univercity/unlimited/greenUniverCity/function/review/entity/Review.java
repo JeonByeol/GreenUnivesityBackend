@@ -23,17 +23,17 @@ public class Review{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "review_id")
-    private Integer reviewId;
+    private Integer reviewId; //리뷰 아이디
 
     @Column(name = "rating", nullable = false)
-    private Integer rating;
+    private Integer rating; //리뷰 점수
 
     @Column(name = "comment", columnDefinition = "TEXT")
-    private String comment;
+    private String comment; //코멘트
 
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
-    private LocalDateTime createdAt;
+    private LocalDateTime createdAt; //개시 날짜
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "enrollment_id")

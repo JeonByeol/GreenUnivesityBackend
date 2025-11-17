@@ -13,13 +13,13 @@ import java.time.LocalDateTime;
 @Setter
 @Builder
 public class ReviewDTO {
-    private Integer reviewId;
+    private Integer reviewId; //리뷰 아이디
 
-    private Integer rating;
+    private Integer rating; //리뷰 점수
 
-    private String comment;
+    private String comment; //리뷰 코멘트
 
-    private LocalDateTime createAt;
+    private LocalDateTime createAt; //개시 날짜
 
     @JsonBackReference("enrollment-review")
     @ToString.Exclude

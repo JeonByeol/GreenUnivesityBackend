@@ -19,13 +19,13 @@ import java.util.List;
 @Builder
 
 public class UserDTO {
-    private Long userId;
+    private Long userId; //유저 아이디
 
-    private String email;
-    private String password;
-    private String nickname;
+    private String email; //이메일
+    private String password; //패스워드
+    private String nickname; //닉네임
 
-    private String  role;
+    private String  role; //롤
 
 
     @Builder.Default

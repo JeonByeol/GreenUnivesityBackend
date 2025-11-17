@@ -65,7 +65,7 @@ public class NoticeRepositoryTests {
                     .user(users.get(random.nextInt(users.size())))
                     .title(titles[random.nextInt(titles.length)] + " #" + (i + 1))
                     .content(contents[random.nextInt(contents.length)])
-                    .created_at((LocalDateTime.now().minusDays(random.nextInt(10))))
+                    .createdAt((LocalDateTime.now().minusDays(random.nextInt(10))))
                     .build();
 
             noticeRepository.save(notice);
