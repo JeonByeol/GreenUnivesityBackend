@@ -13,8 +13,8 @@ import java.util.List;
 @RestController
 @Slf4j
 @RequiredArgsConstructor
-@RequestMapping("/api/enrollment")
-public class EnrollmentController {
+@RequestMapping("/api/enrollement")
+public class EnrollementController {
     private final EnrollmentService enrollmentService;
 
     @GetMapping("/all")

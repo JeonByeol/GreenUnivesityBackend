@@ -12,7 +12,7 @@ import java.util.List;
 @RestController
 @Slf4j
 @RequiredArgsConstructor
-    @RequestMapping("/community")
+    @RequestMapping("api/comment")
 public class CommentController {
 
     private final CommentService commentService;

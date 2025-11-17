@@ -15,7 +15,7 @@ import java.util.List;
 @Builder
 @Setter
 @ToString
-@Table(name="tbl_Board")
+@Table(name="tbl_board")
 public class Board {
 
     @Id
