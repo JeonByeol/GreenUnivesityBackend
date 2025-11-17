@@ -1,7 +1,10 @@
 package com.univercity.unlimited.greenUniverCity.repository;
-import com.univercity.unlimited.greenUniverCity.entity.Comment;
-import com.univercity.unlimited.greenUniverCity.entity.Post;
-import com.univercity.unlimited.greenUniverCity.entity.User;
+import com.univercity.unlimited.greenUniverCity.function.comment.entity.Comment;
+import com.univercity.unlimited.greenUniverCity.function.comment.repository.CommentRepository;
+import com.univercity.unlimited.greenUniverCity.function.post.entity.Post;
+import com.univercity.unlimited.greenUniverCity.function.user.entity.User;
+import com.univercity.unlimited.greenUniverCity.function.post.repository.PostRepository;
+import com.univercity.unlimited.greenUniverCity.function.user.repository.UserRepository;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Tag;
@@ -17,9 +20,12 @@ import java.util.List;
 @ToString
 //@RequiredArgsConstructor
 public class CommentRepositoryTests {
-    @Autowired CommentRepository repository;
-    @Autowired UserRepository userRepository;
-    @Autowired PostRepository postRepository;
+    @Autowired
+    CommentRepository repository;
+    @Autowired
+    UserRepository userRepository;
+    @Autowired
+    PostRepository postRepository;
 
     @Test
     @Tag("push")

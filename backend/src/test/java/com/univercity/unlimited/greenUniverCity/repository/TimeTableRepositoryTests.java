@@ -1,7 +1,9 @@
 package com.univercity.unlimited.greenUniverCity.repository;
 
-import com.univercity.unlimited.greenUniverCity.entity.CourseOffering;
-import com.univercity.unlimited.greenUniverCity.entity.TimeTable;
+import com.univercity.unlimited.greenUniverCity.function.offering.entity.CourseOffering;
+import com.univercity.unlimited.greenUniverCity.function.timetable.entity.TimeTable;
+import com.univercity.unlimited.greenUniverCity.function.offering.repository.CourseOfferingRepository;
+import com.univercity.unlimited.greenUniverCity.function.timetable.repository.TimeTableRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -9,15 +11,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.List;
 
 @SpringBootTest
 @Slf4j
 public class TimeTableRepositoryTests {
-    @Autowired TimeTableRepository repository;
+    @Autowired
+    TimeTableRepository repository;
 
-    @Autowired CourseOfferingRepository courseOfferingRepository;
+    @Autowired
+    CourseOfferingRepository courseOfferingRepository;
 
     @Test
     @Tag("push")

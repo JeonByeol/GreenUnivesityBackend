@@ -1,8 +1,10 @@
 package com.univercity.unlimited.greenUniverCity.config;
 
 // [추가] DTO와 Entity import
-import com.univercity.unlimited.greenUniverCity.dto.UserDTO;
-import com.univercity.unlimited.greenUniverCity.entity.User;
+import com.univercity.unlimited.greenUniverCity.function.grade.dto.GradeDTO;
+import com.univercity.unlimited.greenUniverCity.function.user.dto.UserDTO;
+import com.univercity.unlimited.greenUniverCity.function.grade.entity.Grade;
+import com.univercity.unlimited.greenUniverCity.function.user.entity.User;
 
 import org.modelmapper.AbstractConverter;
 import org.modelmapper.Converter;
@@ -37,6 +39,14 @@ public class RootConfig {
         // 자동 매핑되는 것을 방지합니다. (register 메서드용)
         mapper.typeMap(UserDTO.class, User.class)
                 .addMappings(m -> m.skip(User::setUserRoleList));
+
+        //Grad→ Enrollment→ CourseOffering → Course   → courseName
+        mapper.typeMap(Grade.class, GradeDTO.class).addMappings(m ->
+                m.map(src -> src.getEnrollment().getCourseOffering().getCourse().getCourseName(),
+                        GradeDTO::setCourseName)
+        );
+//        mapper.typeMap(Grade.class, GradeDTO.class)
+//                .addMappings(g->g.skip(GradeDTO::setCourseName));
 
 
         Converter<LocalDateTime, LocalDateTime> localDateTimeConverter =

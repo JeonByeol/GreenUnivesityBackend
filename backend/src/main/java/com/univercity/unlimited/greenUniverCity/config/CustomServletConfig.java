@@ -1,8 +1,7 @@
 package com.univercity.unlimited.greenUniverCity.config;
 
 
-import com.univercity.unlimited.greenUniverCity.util.LocalDateFormater;
-import org.springframework.context.annotation.Bean;
+import com.univercity.unlimited.greenUniverCity.function.util.LocalDateFormater;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.format.FormatterRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
