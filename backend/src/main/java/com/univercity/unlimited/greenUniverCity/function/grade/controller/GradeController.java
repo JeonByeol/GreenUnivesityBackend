@@ -25,17 +25,17 @@ public class GradeController {
         return gradeService.findAllGrade();
     }
 
-    @GetMapping("/mygrade/{email}") // 로그인 한 학생의 정보에 맞는 성적을 뽑아서 쓸 수 있게 만든코드
+    @GetMapping("/mygrade/{email}") // 특정 학생이 본인이 수강한 모든 과목의 성적과 과목명을 조회
     public List<GradeStudentDTO> postmanMyGrade(@PathVariable("email") String email){
        return gradeService.myGrade(email);
     }
 
-    @GetMapping("/course/{offeringId}")
+    @GetMapping("/course/{offeringId}")// 교수가 특정 과목의 수업을 듣는 전체학생 조회
     public List<GradeProfessorDTO> postmanCourseGrade(@PathVariable("offeringId") Long offeringId){
         return gradeService.courseOfGrade(offeringId);
     }
 
-    @PutMapping("{enrollmentId}")
+    @PutMapping("{enrollmentId}")// 교수가 특정 학생에 대한 성적을 수정(입력)
     public ResponseEntity<GradeDTO> updateGrade(
             @PathVariable("enrollmentId") Long enrollmentId,
             @RequestBody GradeDTO gradeDTO) {

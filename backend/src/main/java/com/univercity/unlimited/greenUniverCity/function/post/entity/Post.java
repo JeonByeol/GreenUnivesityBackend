@@ -37,21 +37,21 @@ public class Post {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "board_id")
-    @ToString.Exclude
+//    @ToString.Exclude
     private Board board; //보드
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
-    @ToString.Exclude
+//    @ToString.Exclude
     private User user; //유저
 
-    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY)
-    @Builder.Default
-    @ToString.Exclude
-    private List<Comment> comments = new ArrayList<>();
-
-    public void addComment(Comment comment){
-        comments.add(comment);
-    }
+//    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY)
+//    @Builder.Default
+//    @ToString.Exclude
+//    private List<Comment> comments = new ArrayList<>();
+//
+//    public void addComment(Comment comment){
+//        comments.add(comment);
+//    }
 
 }

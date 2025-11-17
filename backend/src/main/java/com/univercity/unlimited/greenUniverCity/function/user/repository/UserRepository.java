@@ -19,14 +19,11 @@ public interface UserRepository extends JpaRepository<User,Long> {
     @Query("SELECT u FROM User u JOIN u.userRoleList r WHERE r = :role")
     List<User> findAllByRole(@Param("role") UserRole role);
 
-    //   |@Query(...) 어노테이션이 아예 필요 없습니다.| UserVo findByEmail(String email);
-    // 이거 뭐에요
-
-    @Query("SELECT DISTINCT u FROM User u JOIN FETCH u.offerings o WHERE o.offeringId = :offeringId")
-    Optional<User> findByOfferingId(@Param("offeringId") Long offeringId);
-
-    @Query("SELECT DISTINCT u FROM User u JOIN FETCH u.enrollments e WHERE e.enrollmentId = :enrollmentId")
-    Optional<User> findByEnrollmentId(@Param("enrollmentId") Long enrollmentId);
+//    @Query("SELECT DISTINCT u FROM User u JOIN FETCH u.offerings o WHERE o.offeringId = :offeringId")
+//    Optional<User> findByOfferingId(@Param("offeringId") Long offeringId);
+//
+//    @Query("SELECT DISTINCT u FROM User u JOIN FETCH u.enrollments e WHERE e.enrollmentId = :enrollmentId")
+//    Optional<User> findByEnrollmentId(@Param("enrollmentId") Long enrollmentId);
 
     @Query("select m from User m where id = :id" )
     User findById(@Param("id") String id);
