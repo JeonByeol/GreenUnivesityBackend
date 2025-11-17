@@ -1,9 +1,10 @@
 package com.univercity.unlimited.greenUniverCity.repository;
 
 
-import com.univercity.unlimited.greenUniverCity.dto.DepartmentDTO;
-import com.univercity.unlimited.greenUniverCity.entity.Department;
-import com.univercity.unlimited.greenUniverCity.service.DepartmentService;
+import com.univercity.unlimited.greenUniverCity.function.department.repository.DepartmentRepository;
+import com.univercity.unlimited.greenUniverCity.function.department.dto.DepartmentDTO;
+import com.univercity.unlimited.greenUniverCity.function.department.entity.Department;
+import com.univercity.unlimited.greenUniverCity.function.department.service.DepartmentService;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;

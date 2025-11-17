@@ -1,9 +1,12 @@
 package com.univercity.unlimited.greenUniverCity.repository;
 
-import com.univercity.unlimited.greenUniverCity.entity.CourseOffering;
-import com.univercity.unlimited.greenUniverCity.entity.Enrollment;
-import com.univercity.unlimited.greenUniverCity.entity.Grade;
-import com.univercity.unlimited.greenUniverCity.entity.User;
+import com.univercity.unlimited.greenUniverCity.function.enrollment.entity.Enrollment;
+import com.univercity.unlimited.greenUniverCity.function.enrollment.repository.EnrollmentRepository;
+import com.univercity.unlimited.greenUniverCity.function.grade.entity.Grade;
+import com.univercity.unlimited.greenUniverCity.function.user.entity.User;
+import com.univercity.unlimited.greenUniverCity.function.grade.repository.GradeRepository;
+import com.univercity.unlimited.greenUniverCity.function.offering.repository.CourseOfferingRepository;
+import com.univercity.unlimited.greenUniverCity.function.user.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -24,36 +27,46 @@ public class GradeRepositoryTests {
     @Autowired
     private CourseOfferingRepository courseOfferingRepository;
 
+    @Autowired
+    private EnrollmentRepository enrollmentRepository;
+
     @Test
     @Tag("push")
     public void testGradeData(){
         // 데이터 세팅
         String vv[]={"A+","A","B+","B","C+","C","D+","D","F"};
-
+//        for(int i = 1; i <= 10; i++){
+//            final long enrollmentId = i;
+//            Enrollment enrollment = enrollmentRepository.findById(enrollmentId)
+//                    .orElseThrow(() ->
+//                            new RuntimeException("Test Error: Enrollment " + enrollmentId + " not found")
+//                    );
+//            Grade grade=Grade.builder()
+//                    .enrollment(enrollment)
+//                    .gradeValue(vv[(int)(Math.random()*vv.length)])
+//                    .build();
+//
+//            repository.save(grade);
+//            }
         List<User> users = userRepository.findAll();
-        List<CourseOffering> courseOfferings = courseOfferingRepository.findAll();
+        List<Enrollment> enrollments = enrollmentRepository.findAll();
 
         if(users.isEmpty() == true) {
             log.info("User가 비어있습니다.");
             return;
         }
-        for(User user : users) {
-            for(CourseOffering offering : courseOfferings) {
-                if((int)(Math.random()*2) == 1)
+            for(Enrollment enrollment : enrollments) {
+//                enrollment=enrollments.get((int)(Math.random())*enrollments.size());
+                if((int)(Math.random()*2) == 1) {
                     continue;
-
+                }
                 Grade grade=Grade.builder()
-                        .offeringId(offering.getOfferingId())
+                        .enrollment(enrollment)
                         .gradeValue(vv[(int)(Math.random()*vv.length)])
-                        .user(user)
                         .build();
 
                 repository.save(grade);
             }
-        }
-    }
-    @Test
-    public void gradefind(){
-        repository.findAll();
+
     }
 }

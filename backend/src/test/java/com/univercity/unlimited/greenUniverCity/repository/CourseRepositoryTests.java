@@ -1,16 +1,15 @@
 package com.univercity.unlimited.greenUniverCity.repository;
 
 
-import com.univercity.unlimited.greenUniverCity.dto.CourseDTO;
-import com.univercity.unlimited.greenUniverCity.entity.Course;
-import com.univercity.unlimited.greenUniverCity.service.CourseService;
+import com.univercity.unlimited.greenUniverCity.function.course.dto.CourseDTO;
+import com.univercity.unlimited.greenUniverCity.function.course.entity.Course;
+import com.univercity.unlimited.greenUniverCity.function.course.repository.CourseRepository;
+import com.univercity.unlimited.greenUniverCity.function.course.service.CourseService;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-
-import java.util.Arrays;
 
 @SpringBootTest
 @Slf4j

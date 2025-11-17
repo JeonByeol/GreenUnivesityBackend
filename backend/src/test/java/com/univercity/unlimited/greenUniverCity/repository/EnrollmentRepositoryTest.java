@@ -1,10 +1,15 @@
 package com.univercity.unlimited.greenUniverCity.repository;
 
-import com.univercity.unlimited.greenUniverCity.dto.CourseOfferingDTO;
-import com.univercity.unlimited.greenUniverCity.dto.EnrollmentDTO;
-import com.univercity.unlimited.greenUniverCity.dto.UserDTO;
-import com.univercity.unlimited.greenUniverCity.entity.*;
-import com.univercity.unlimited.greenUniverCity.service.EnrollmentService;
+import com.univercity.unlimited.greenUniverCity.function.offering.entity.CourseOffering;
+import com.univercity.unlimited.greenUniverCity.function.offering.dto.CourseOfferingDTO;
+import com.univercity.unlimited.greenUniverCity.function.enrollment.entity.Enrollment;
+import com.univercity.unlimited.greenUniverCity.function.enrollment.dto.EnrollmentDTO;
+import com.univercity.unlimited.greenUniverCity.function.user.entity.User;
+import com.univercity.unlimited.greenUniverCity.function.user.dto.UserDTO;
+import com.univercity.unlimited.greenUniverCity.function.enrollment.repository.EnrollmentRepository;
+import com.univercity.unlimited.greenUniverCity.function.enrollment.service.EnrollmentService;
+import com.univercity.unlimited.greenUniverCity.function.offering.repository.CourseOfferingRepository;
+import com.univercity.unlimited.greenUniverCity.function.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Tag;
@@ -60,7 +65,7 @@ public class EnrollmentRepositoryTest {
             Enrollment enrollment = Enrollment.builder()
                     .courseOffering(offering)
                     .enrollDate(LocalDateTime.now())
-                    .user(users.get((int)(Math.random()*users.size())))
+                    .user(offering.getUser())
                     .build();
 
             repository.save(enrollment);

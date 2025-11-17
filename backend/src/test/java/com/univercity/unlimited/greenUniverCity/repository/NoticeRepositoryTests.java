@@ -1,7 +1,9 @@
 package com.univercity.unlimited.greenUniverCity.repository;
 
-import com.univercity.unlimited.greenUniverCity.entity.Notice;
-import com.univercity.unlimited.greenUniverCity.entity.User;
+import com.univercity.unlimited.greenUniverCity.function.notice.entity.Notice;
+import com.univercity.unlimited.greenUniverCity.function.user.entity.User;
+import com.univercity.unlimited.greenUniverCity.function.notice.repository.NoticeRepository;
+import com.univercity.unlimited.greenUniverCity.function.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Tag;
@@ -63,7 +65,7 @@ public class NoticeRepositoryTests {
                     .user(users.get(random.nextInt(users.size())))
                     .title(titles[random.nextInt(titles.length)] + " #" + (i + 1))
                     .content(contents[random.nextInt(contents.length)])
-                    .created_at((LocalDateTime.now().minusDays(random.nextInt(10))))
+                    .createdAt((LocalDateTime.now().minusDays(random.nextInt(10))))
                     .build();
 
             noticeRepository.save(notice);

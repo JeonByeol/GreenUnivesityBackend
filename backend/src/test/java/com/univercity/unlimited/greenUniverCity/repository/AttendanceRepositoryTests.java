@@ -1,7 +1,9 @@
 package com.univercity.unlimited.greenUniverCity.repository;
 
-import com.univercity.unlimited.greenUniverCity.entity.Attendance;
-import com.univercity.unlimited.greenUniverCity.entity.Enrollment;
+import com.univercity.unlimited.greenUniverCity.function.attendance.entity.Attendance;
+import com.univercity.unlimited.greenUniverCity.function.attendance.repository.AttendanceRepository;
+import com.univercity.unlimited.greenUniverCity.function.enrollment.entity.Enrollment;
+import com.univercity.unlimited.greenUniverCity.function.enrollment.repository.EnrollmentRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;

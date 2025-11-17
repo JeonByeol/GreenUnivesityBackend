@@ -1,6 +1,6 @@
 package com.univercity.unlimited.greenUniverCity.repository;
-import com.univercity.unlimited.greenUniverCity.entity.Board;
-import com.univercity.unlimited.greenUniverCity.entity.Comment;
+import com.univercity.unlimited.greenUniverCity.function.board.entity.Board;
+import com.univercity.unlimited.greenUniverCity.function.board.repository.BoardRepository;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Tag;
@@ -8,7 +8,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @SpringBootTest
