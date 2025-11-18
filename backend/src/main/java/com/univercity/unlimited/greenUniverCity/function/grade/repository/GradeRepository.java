@@ -10,24 +10,21 @@ import java.util.List;
 import java.util.Optional;
 
 public interface GradeRepository extends JpaRepository<Grade,Integer> {
-//    @Query("SELECT g FROM Grade g " +
-//            "JOIN g.user u " +
-//            "WHERE u.email = :email")
-//    List<Grade> findByStudent(@Param("email") String email); ***없앨예정***
-
     @Query("SELECT g FROM Grade g " +
             "JOIN FETCH g.enrollment e " +
             "JOIN FETCH e.courseOffering co " +
             "JOIN e.user u " +
             "WHERE u.email = :email")
-    List<Grade> findByMyGrade(@Param("email")String email);
+    List<Grade> findByMyGrade(@Param("email")String email); //G-2)
 
-    Optional<Grade> findByEnrollment_enrollmentId(Long enrollmentId);
-
-    @Query("SELECT g FROM Grade g J" +
-            "OIN g.enrollment e " +
+    @Query("SELECT g FROM Grade g " +
+            "JOIN g.enrollment e " +
             "WHERE e.courseOffering.offeringId =:offeringId")
-    List<Grade> findByOfferingGrade(@Param("offeringId") Long offeringId);
+    List<Grade> findByOfferingGrade(@Param("offeringId") Long offeringId); //G-3)
+
+    Optional<Grade> findByEnrollment_enrollmentId(Long enrollmentId);//G-4)
+
+
 
 
 }

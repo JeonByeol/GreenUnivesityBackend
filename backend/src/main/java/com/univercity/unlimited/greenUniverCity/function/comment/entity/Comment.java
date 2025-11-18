@@ -27,11 +27,11 @@ public class Comment {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
-//    @ToString.Exclude
+//  @ToString.Exclude
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id")
-//    @ToString.Exclude
+//  @ToString.Exclude
     private Post post;
 }

@@ -1,8 +1,10 @@
 package com.univercity.unlimited.greenUniverCity.function.enrollment.service;
 
 import com.univercity.unlimited.greenUniverCity.function.enrollment.dto.EnrollmentDTO;
+import com.univercity.unlimited.greenUniverCity.function.enrollment.dto.EnrollmentTestDTO;
 import com.univercity.unlimited.greenUniverCity.function.enrollment.entity.Enrollment;
 import com.univercity.unlimited.greenUniverCity.function.enrollment.repository.EnrollmentRepository;
+import com.univercity.unlimited.greenUniverCity.function.offering.entity.CourseOffering;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -19,7 +21,7 @@ public class EnrollmentServiceImpl implements EnrollmentService{
     private final ModelMapper mapper;
 
 
-    @Override
+    @Override //todo E-1)
     public List<EnrollmentDTO> findAllEnrollment() {
         List<EnrollmentDTO> dtoList=new ArrayList<>();
         for(Enrollment i:repository.findAll()){
@@ -40,5 +42,34 @@ public class EnrollmentServiceImpl implements EnrollmentService{
             return -1;
         }
         return 1;
+    }
+
+    @Override //todo E-2)
+    public EnrollmentTestDTO getEnrollmentForGrade(Long id) {
+        Enrollment e=repository.findByEnrollmentId(id);
+
+        CourseOffering co=e.getCourseOffering();
+
+        return EnrollmentTestDTO.builder()
+                .enrollmentId(e.getEnrollmentId())
+//                .studentId(e.getUser().getUserId())
+                .offeringId(co.getOfferingId())
+                .courseName(co.getCourse().getCourseName())
+                .studentName(e.getUser().getNickname())
+                .build();
+    }
+//        return mapper.map(enrollment,EnrollmentTestDTO.class);
+
+
+    @Override //todo E-3)
+    public Enrollment getEnrollmentEntity(Long id) {
+        return repository.findByEnrollmentId(id);
+    }
+
+
+    @Override
+    public List<EnrollmentDTO> getEnrollmentFindUser(Long id) {
+        List<EnrollmentDTO> list=new ArrayList<>();
+        return null;
     }
 }

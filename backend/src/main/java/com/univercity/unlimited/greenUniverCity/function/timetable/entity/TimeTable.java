@@ -37,7 +37,7 @@ public class TimeTable{
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "offering_id")
-    @ToString.Exclude
+//    @ToString.Exclude
     private CourseOffering courseOffering;
     //OneToMany,ManyToOne ***To*** 형태는
     //앞에게 현재 테이블 뒤에게 조인칼럼

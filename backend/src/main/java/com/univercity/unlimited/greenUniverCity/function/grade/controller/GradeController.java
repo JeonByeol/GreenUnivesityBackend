@@ -19,23 +19,23 @@ import java.util.List;
 public class GradeController {
     private final GradeService gradeService;
 
-    @GetMapping("/all")
+    @GetMapping("/all")//G-1) 성적 테이블에 존재하는 전체 데이터 조회
     public List<GradeDTO> postmanTestGrade(){
         log.info("Controller: 성적전체조회");
         return gradeService.findAllGrade();
     }
 
-    @GetMapping("/mygrade/{email}") // 특정 학생이 본인이 수강한 모든 과목의 성적과 과목명을 조회
+    @GetMapping("/mygrade/{email}") //G-2) 특정 학생이 본인이 수강한 모든 과목의 성적과 과목명을 조회
     public List<GradeStudentDTO> postmanMyGrade(@PathVariable("email") String email){
        return gradeService.myGrade(email);
     }
 
-    @GetMapping("/course/{offeringId}")// 교수가 특정 과목의 수업을 듣는 전체학생 조회
+    @GetMapping("/course/{offeringId}")//G-3) 교수가 특정 과목의 수업을 듣는 전체학생 조회
     public List<GradeProfessorDTO> postmanCourseGrade(@PathVariable("offeringId") Long offeringId){
         return gradeService.courseOfGrade(offeringId);
     }
 
-    @PutMapping("{enrollmentId}")// 교수가 특정 학생에 대한 성적을 수정(입력)
+    @PutMapping("{enrollmentId}")//G-4) 교수가 특정 학생에 대한 성적을 수정(입력)
     public ResponseEntity<GradeDTO> updateGrade(
             @PathVariable("enrollmentId") Long enrollmentId,
             @RequestBody GradeDTO gradeDTO) {

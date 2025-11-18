@@ -24,18 +24,18 @@ public class AttendanceServiceImpl implements AttendanceService{
 
     private final ModelMapper mapper;
 
-    @Override
-    public List<Enrollment> findAllEnrollment() {
-        log.info("모든 강의를 조회");
-        return enrollmentRepository.findAll();
-    }
+//    @Override
+//    public List<Enrollment> findAllEnrollment() {
+//        log.info("모든 강의를 조회");
+//        return enrollmentRepository.findAll();
+//    }
 
-    @Override
-    public List<Enrollment> findPartEnrollment(User user, Long enrollmentId) {
-        log.info("해당 강의의 id와 유저의 정보를 조회");
-        return  enrollmentRepository.findAll();
-
-    }
+//    @Override
+//    public List<Enrollment> findPartEnrollment(User user, Long enrollmentId) {
+//        log.info("해당 강의의 id와 유저의 정보를 조회");
+//        return  enrollmentRepository.findAll();
+//
+//    }
 
     @Override
     public List<AttendanceDTO> findAllat() {

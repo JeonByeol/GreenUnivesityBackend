@@ -1,11 +1,15 @@
 package com.univercity.unlimited.greenUniverCity.function.grade.service;
 
+import com.univercity.unlimited.greenUniverCity.function.enrollment.dto.EnrollmentDTO;
+import com.univercity.unlimited.greenUniverCity.function.enrollment.dto.EnrollmentTestDTO;
 import com.univercity.unlimited.greenUniverCity.function.enrollment.entity.Enrollment;
+import com.univercity.unlimited.greenUniverCity.function.enrollment.service.EnrollmentService;
 import com.univercity.unlimited.greenUniverCity.function.grade.repository.GradeRepository;
 import com.univercity.unlimited.greenUniverCity.function.grade.dto.GradeDTO;
 import com.univercity.unlimited.greenUniverCity.function.grade.dto.GradeProfessorDTO;
 import com.univercity.unlimited.greenUniverCity.function.grade.dto.GradeStudentDTO;
 import com.univercity.unlimited.greenUniverCity.function.grade.entity.Grade;
+import com.univercity.unlimited.greenUniverCity.function.offering.entity.CourseOffering;
 import com.univercity.unlimited.greenUniverCity.function.offering.repository.CourseOfferingRepository;
 import com.univercity.unlimited.greenUniverCity.function.enrollment.repository.EnrollmentRepository;
 import com.univercity.unlimited.greenUniverCity.function.user.repository.UserRepository;
@@ -28,15 +32,11 @@ public class GradeServiceImpl implements GradeService{
 
     private final GradeRepository repository;
 
-    private final EnrollmentRepository enrollmentRepository;
-
-    private final CourseOfferingRepository courseOfferingRepository;
-
-    private final UserRepository userRepository;
+    private final EnrollmentService enrollmentService;
 
     private final ModelMapper mapper;
 
-    @Override
+    @Override//G-1)
     public List<GradeDTO> findAllGrade() {
         log.info("전체 성적 조회");
         List<GradeDTO> dto=new ArrayList<>();
@@ -46,26 +46,37 @@ public class GradeServiceImpl implements GradeService{
         }
         return dto;
     }
-
-    @Override
+    //G-2)
+    @Override//todo 여기가 첫번쨰 G-2)
     public List<GradeStudentDTO> myGrade(String email) {
-//        List<Grade> grades= repository.findByMyGrade(email);
         List<Grade> grades= repository.findByMyGrade(email);
-        return grades.stream()
-                .map(g -> GradeStudentDTO.builder()
+
+        log.info("1)학생이 수강한 모든 과목의 성적을 조회하는 service가 맞냐:{}",grades);
+
+        List<GradeStudentDTO> myGrade= grades.stream()
+                .map(g -> {
+                    EnrollmentTestDTO info=
+                   enrollmentService.getEnrollmentForGrade(g.getEnrollment().getEnrollmentId());//todo E-2)
+                    return
+                        GradeStudentDTO.builder()
                         .gradeId(g.getGradeId())
                         .gradeValue(g.getGradeValue())
-                        .courseName(g.getEnrollment().getCourseOffering().getCourse().getCourseName())
-                        .courseId(g.getEnrollment().getCourseOffering().getOfferingId())
-                        .studentName(g.getEnrollment().getUser().getNickname())
-                        .build()
-                )
+                        .courseName(info.getCourseName())
+                        .courseId(info.getOfferingId())
+                        .studentName(info.getStudentName())
+                        .build();
+
+        })
                 .collect(Collectors.toList());
+
+        return myGrade;
     }
 
-    @Override
+    @Override//G-3)
     public List<GradeProfessorDTO> courseOfGrade(Long offeringId) {
+
         List<Grade> grades=repository.findByOfferingGrade(offeringId);
+
         return grades.stream()
                 .map(g->GradeProfessorDTO.builder()
                         .gradeId(g.getGradeId())
@@ -88,11 +99,10 @@ public class GradeServiceImpl implements GradeService{
 //    }
 
 
-    @Override
+    @Override//G-4)
     public GradeDTO postNewGrade(Long enrollmentId,String gradeValue) {
 
-        Enrollment enrollment=enrollmentRepository.findById(enrollmentId)
-                .orElseThrow(()->new EntityNotFoundException("이게 맞을까요?"+enrollmentId));
+        Enrollment enrollment=enrollmentService.getEnrollmentEntity(enrollmentId);//E-2)
 
         //Service에서 전달된 교수의 email, 수강신청(enroll)에 연결된 과목(offering)의 담당 교수(user)의
         //email이 일치하는지 보안검사에 대한 코드 "feat Gemini"
