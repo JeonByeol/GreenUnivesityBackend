@@ -6,3 +6,4 @@ public class ReviewNotFoundException extends RuntimeException {
         super(message);
     }
 }
+

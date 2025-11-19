@@ -4,6 +4,7 @@ import com.univercity.unlimited.greenUniverCity.function.enrollment.entity.Enrol
 import com.univercity.unlimited.greenUniverCity.function.review.dto.ReviewCreateDTO;
 import com.univercity.unlimited.greenUniverCity.function.review.dto.ReviewDTO;
 import com.univercity.unlimited.greenUniverCity.function.review.dto.ReviewResponseDTO;
+import com.univercity.unlimited.greenUniverCity.function.review.dto.ReviewUpdateDTO;
 import com.univercity.unlimited.greenUniverCity.function.review.service.ReviewService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -51,13 +52,24 @@ public class ReviewController {
     @PutMapping("/{reviewId}")
     public ResponseEntity<ReviewResponseDTO> postmanUpdateReview(
             @PathVariable("reviewId") Integer reviewId,
-            @RequestBody ReviewCreateDTO dto){
+            @RequestBody ReviewUpdateDTO dto,
+            @RequestHeader(value = "X-User-Email", required = false) String studentEmail){
 
-        log.info("1)리뷰 수정 요청 학생-:{},comment:{},rating:{}",reviewId,dto.getComment(),dto.getRating());
+        log.info("1)리뷰 수정 요청 reviewId-:{},comment:{},rating:{}",
+                reviewId,dto.getComment(),dto.getRating());
+
+        // Postman 테스트용: Header가 없으면 기본값 사용 (개발 환경에서만!)
+        if (studentEmail == null || studentEmail.isEmpty()) {
+            log.warn("X-User-Email 헤더가 없습니다. 테스트용 기본값 사용");
+            studentEmail = "edward@aaa.com"; // 테스트용 기본값
+        }
+
         ReviewResponseDTO updateReview=reviewService.myReviewUpdate(
                 reviewId,
-                dto
+                dto,
+                studentEmail
         );
+
         return ResponseEntity.ok(updateReview);
     }
 

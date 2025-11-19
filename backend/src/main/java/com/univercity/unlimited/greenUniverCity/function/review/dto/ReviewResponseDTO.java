@@ -1,5 +1,6 @@
 package com.univercity.unlimited.greenUniverCity.function.review.dto;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -18,7 +19,10 @@ public class ReviewResponseDTO {
 
     private String comment; //리뷰 코멘트
 
-    private LocalDateTime createdAt; //개시 날짜
+    private LocalDateTime createdAt; //개시날짜
+
+    @JsonInclude(JsonInclude.Include.NON_NULL) //null이면 JSON에서 제외
+    private LocalDateTime updatedAt;//수정날짜
 
     private String courseName; //강의 이름
 

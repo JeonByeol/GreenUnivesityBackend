@@ -3,6 +3,7 @@ package com.univercity.unlimited.greenUniverCity.function.review.service;
 import com.univercity.unlimited.greenUniverCity.function.review.dto.ReviewCreateDTO;
 import com.univercity.unlimited.greenUniverCity.function.review.dto.ReviewDTO;
 import com.univercity.unlimited.greenUniverCity.function.review.dto.ReviewResponseDTO;
+import com.univercity.unlimited.greenUniverCity.function.review.dto.ReviewUpdateDTO;
 import org.springframework.http.ResponseEntity;
 
 
@@ -21,7 +22,7 @@ public interface ReviewService {
     ReviewResponseDTO writeReviewStudent(ReviewCreateDTO dto, String studentEmail);;
 
     //R-4) R에 선언된 postmanUpdateReview의 요청을 받아서 동작하는 서비스(학생이 기존에 본인이 작성한 리뷰를 수정하는)
-    ReviewResponseDTO myReviewUpdate(Integer reviewId,ReviewCreateDTO dto);
+    ReviewResponseDTO myReviewUpdate(Integer reviewId, ReviewUpdateDTO dto, String studentEmail);
 
     //R-A) **(기능 작성 부탁드리거나/삭제 부탁드립니다) **
     ResponseEntity<String> addReview(ReviewDTO reviewDTO);

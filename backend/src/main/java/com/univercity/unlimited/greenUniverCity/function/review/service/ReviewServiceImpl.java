@@ -7,6 +7,7 @@ import com.univercity.unlimited.greenUniverCity.function.offering.entity.CourseO
 import com.univercity.unlimited.greenUniverCity.function.review.dto.ReviewCreateDTO;
 import com.univercity.unlimited.greenUniverCity.function.review.dto.ReviewDTO;
 import com.univercity.unlimited.greenUniverCity.function.review.dto.ReviewResponseDTO;
+import com.univercity.unlimited.greenUniverCity.function.review.dto.ReviewUpdateDTO;
 import com.univercity.unlimited.greenUniverCity.function.review.entity.Review;
 import com.univercity.unlimited.greenUniverCity.function.review.exception.DuplicateReviewException;
 import com.univercity.unlimited.greenUniverCity.function.review.exception.ReviewNotFoundException;
@@ -65,8 +66,26 @@ public class ReviewServiceImpl implements ReviewService{
 
         log.info("4) 중복 검사 통과 - enrollmentId: {}", enrollment.getEnrollmentId());
     }
+
+    /**
+     * R-4-1) 리뷰 소유권 검사: 로그인한 학생이 해당 리뷰의 작성자인지 확인하는 함수
+     */
+    private void validateReviewOwnership(Review review, String studentEmail) {
+        String reviewOwnerEmail = review.getEnrollment().getUser().getEmail();
+
+        if (!reviewOwnerEmail.equals(studentEmail)) {
+            log.warn("리뷰 수정 권한 없음 - 요청자: {}, 작성자: {}",
+                    studentEmail, reviewOwnerEmail);
+            throw new UnauthorizedReviewException(
+                    "본인이 작성한 리뷰만 수정할 수 있습니다.");
+        }
+
+        log.info("리뷰 소유권 검증 통과 - 학생: {}, reviewId: {}", studentEmail, review.getReviewId());
+    }
     /**
      * R-3-3) Review 엔티티를 (Response)DTO로 변환 | 추후 다른 crud 기능에 사용하기 위해 함수로 생성
+     * 생성 시에는 updatedAt이 null로 반환되고, 수정 시에는 값이 존재하는데
+     * 프론트엔드에서 updatedAt이 null이 아닌 경우에만 "수정됨" 표시를 하면 된다
      */
     private ReviewResponseDTO toResponseDTO(Review review) {
         Enrollment enrollment = review.getEnrollment();
@@ -78,11 +97,11 @@ public class ReviewServiceImpl implements ReviewService{
                 .rating(review.getRating())
                 .comment(review.getComment())
                 .createdAt(review.getCreatedAt())
+                .updatedAt(review.getUpdatedAt())
                 .courseName(courseOffering.getCourseName())
                 .studentNickname(user!= null ? user.getNickname() : "존재하지 않는 사용자")
                 .build();
     }
-
 
     //R-1) 리뷰 테이블에 존재하는 모든 데이터를 조회하는 서비스 구현부
     @Transactional
@@ -139,26 +158,25 @@ public class ReviewServiceImpl implements ReviewService{
 
     //R-4) 학생 본인이 기존에 작성한 리뷰를 수정하는 서비스 구현부
     @Override
-    public ReviewResponseDTO myReviewUpdate(Integer reviewId,ReviewCreateDTO dto) {
+    public ReviewResponseDTO myReviewUpdate(Integer reviewId, ReviewUpdateDTO dto, String studentEmail) {
 
-        Enrollment enrollment = enrollmentService.getEnrollmentEntity(dto.getEnrollmentId());
-        String studentEmail=enrollment.getUser().getNickname();
-        log.info("2) 리뷰 수정 시작 - 학생: {}, enrollmentId: {}",studentEmail,dto.getEnrollmentId());
+        log.info("리뷰 수정 시작 - reviewId: {}, 학생: {}", reviewId, studentEmail);
 
-        //R-4-1)보안 검사
-        validateStudentOwnership(enrollment, studentEmail);
+        // 1. 리뷰 조회
+        Review review = repository.findById(reviewId)
+                .orElseThrow(() -> new ReviewNotFoundException("리뷰가 존재하지 않습니다. reviewId: " + reviewId));
 
-        Review review=repository.findByEnrollment_enrollmentId(dto.getEnrollmentId())
-                .orElseThrow(() -> new ReviewNotFoundException("리뷰가 존재하지 않습니다."));
+        // 2. 소유권 검증 (현재 로그인한 학생이 해당 리뷰의 작성자인지)
+        validateReviewOwnership(review, studentEmail);
 
         review.setComment(dto.getComment());
         review.setRating(dto.getRating());
-        review.setCreatedAt(LocalDateTime.now());
+        review.setUpdatedAt(LocalDateTime.now());
 
         Review updateReview=repository.save(review);
 
-        log.info(" 성공 -학생:{},수강평:{},평점:{}",
-                studentEmail,dto.getComment(),dto.getRating());
+        log.info("리뷰 수정 성공 -학생:{}, reviewId: {},수강평:{},평점:{}",
+                studentEmail, reviewId, dto.getComment(),dto.getRating());
         
         return toResponseDTO(updateReview);
     }

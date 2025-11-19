@@ -66,6 +66,7 @@ public class ReviewRepositoryTests {
                     .rating(rate[(int)(Math.random()* rate.length)])
                     .comment(dummyComments[(int)(Math.random()*dummyComments.length)])
                     .createdAt(LocalDateTime.now().minusDays(5))
+                    .updatedAt(null)
                     .enrollment(enrollment)
                     .build();
 
