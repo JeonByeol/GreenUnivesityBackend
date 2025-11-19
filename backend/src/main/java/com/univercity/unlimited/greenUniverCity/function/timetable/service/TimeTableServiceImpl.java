@@ -26,8 +26,9 @@ import java.util.stream.Collectors;
 public class TimeTableServiceImpl implements TimeTableService{
     private final TimeTableRepository repository;
     private final ModelMapper mapper;
-    private final CourseService courseService;
 
+
+    //T-1) 리뷰 테이블에 존재하는 모든 데이터 조회
     @Transactional
     @Override
     public List<TimeTableDTO> findAllTimeTable() {
@@ -40,7 +41,8 @@ public class TimeTableServiceImpl implements TimeTableService{
         return dto;
     }
 
-    @Override //T-2)특정 과목에 대한 시간표 조회
+    //T-2)특정 과목에 대한 시간표 조회
+    @Override
     public List<TimeTableStudentDTO> get2(String dayOfWeek) {
         List<TimeTable> timeTables=repository.findByDayTimeTable(dayOfWeek);
 
@@ -62,7 +64,8 @@ public class TimeTableServiceImpl implements TimeTableService{
                 .collect(Collectors.toList());
     }
 
-    @Override//T-3)특정 학생이 신청한 모든 과목의 시간표를 조회
+    //T-3)특정 학생이 신청한 모든 과목의 시간표를 조회
+    @Override
     public List<TimeTableStudentDTO> get(String email) {
         List<TimeTable> timeTables = repository.findTimetableByStudentEmail(email);
         return timeTables.stream()

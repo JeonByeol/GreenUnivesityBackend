@@ -25,13 +25,15 @@ public class TimeTableController {
         return timeTableService.findAllTimeTable();
     }
 
-    @GetMapping("/one/{dayOfWeek}")//T-2) 특정 과목에 대한 시간표를 조회하는 기능
+    //T-2) 특정 과목에 대한 시간표를 조회하는 기능
+    @GetMapping("/one/{dayOfWeek}")
     public List<TimeTableStudentDTO> postmanTestCourseTimeTable(@PathVariable("dayOfWeek") String dayOfWeek){
         log.info("1)왜 안됨?:{}",dayOfWeek);
         return timeTableService.get2(dayOfWeek);
     }
 
-    @GetMapping("/my/{email}")//T-3) 특정 학생이 수강신청한 모든 시간표를 조회
+    //T-3) 특정 학생이 수강신청한 모든 시간표를 조회
+    @GetMapping("/my/{email}")
     public List<TimeTableStudentDTO> postmanTestMyTimeTable(@PathVariable("email") String email){
         return timeTableService.get(email);
     }

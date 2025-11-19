@@ -1,7 +1,5 @@
 package com.univercity.unlimited.greenUniverCity.function.review.dto;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.univercity.unlimited.greenUniverCity.function.enrollment.dto.EnrollmentDTO;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -12,7 +10,8 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @Builder
-public class ReviewDTO {
+
+public class ReviewResponseDTO {
     private Integer reviewId; //리뷰 아이디
 
     private Integer rating; //리뷰 점수
@@ -21,7 +20,7 @@ public class ReviewDTO {
 
     private LocalDateTime createdAt; //개시 날짜
 
-    @JsonBackReference("enrollment-review")
-    @ToString.Exclude
-    private EnrollmentDTO enrollmentDTO;
+    private String courseName; //강의 이름
+
+    private String studentNickname; //학생
 }

@@ -13,9 +13,11 @@ public interface TimeTableRepository extends JpaRepository<TimeTable,Integer> {
 //            "WHERE co.offeringId =:offeringId")
 //    List<TimeTable> findByOfferingTimeTable(@Param("offeringId") Long offeringId);//T-2)
 
+    //T-2)본인 시간표 조회
     @Query("SELECT t FROM TimeTable t " +
-            "WHERE t.dayOfWeek= :dayOfWeek")
-    List<TimeTable> findByDayTimeTable(@Param("dayOfWeek") String dayOfWeek);//T-2)본인 시간표 조회
+            "JOIN FETCH t.courseOffering co " +
+            "WHERE t.dayOfWeek = :dayOfWeek")
+    List<TimeTable> findByDayTimeTable(@Param("dayOfWeek") String dayOfWeek);
 
     @Query("SELECT t FROM TimeTable t " +
             "JOIN t.courseOffering co " +

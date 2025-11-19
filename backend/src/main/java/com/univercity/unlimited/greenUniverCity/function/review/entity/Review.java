@@ -37,7 +37,6 @@ public class Review{
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "enrollment_id")
-    @ToString.Exclude
     private Enrollment enrollment;
 
 }

@@ -64,12 +64,12 @@ public class CourseOfferingRepositoryTests {
             User user = userList.get((int)(Math.random()*userList.size()));
             for (int i = 0; i < max; i++) {
                 CourseOffering courseOffering = CourseOffering.builder()
-                        .professorName("EMPTY")
+//                        .professorName("EMPTY")
                         .courseName(course.getCourseName()+alphabat++)
                         .year(2025)
                         .semester(semester)
                         .course(course)
-                        .user(user)
+                        .professor(user)
                         .build();
 
                 repository.save(courseOffering);

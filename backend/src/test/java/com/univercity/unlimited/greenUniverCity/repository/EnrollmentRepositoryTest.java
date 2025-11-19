@@ -65,7 +65,7 @@ public class EnrollmentRepositoryTest {
             Enrollment enrollment = Enrollment.builder()
                     .courseOffering(offering)
                     .enrollDate(LocalDateTime.now())
-                    .user(offering.getUser())
+                    .user(offering.getProfessor())
                     .build();
 
             repository.save(enrollment);
