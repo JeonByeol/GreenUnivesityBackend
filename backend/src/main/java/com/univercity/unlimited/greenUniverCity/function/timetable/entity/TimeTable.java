@@ -21,19 +21,19 @@ public class TimeTable{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "timetable_id")
-    private Integer timetableId; //시간표 아이디
+    private Integer timetableId; //시간표아이디
 
     @Column(name = "day_of_week", length = 10, nullable = false)
-    private String dayOfWeek; //주간 테이블
+    private String dayOfWeek; //요일
 
     @Column(name = "start_time", nullable = false)
-    private LocalDateTime startTime; //시작 시간
+    private LocalDateTime startTime; //시작시간
 
     @Column(name = "end_time", nullable = false)
-    private LocalDateTime endTime; // 끝 시간
+    private LocalDateTime endTime; //종료시간
     
     @Column(name = "location", length = 50)
-    private String location; // 돌림
+    private String location; //장소
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "offering_id")

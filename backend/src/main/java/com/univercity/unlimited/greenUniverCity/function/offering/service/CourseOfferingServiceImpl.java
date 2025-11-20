@@ -2,6 +2,7 @@ package com.univercity.unlimited.greenUniverCity.function.offering.service;
 
 import com.univercity.unlimited.greenUniverCity.function.offering.dto.CourseOfferingDTO;
 import com.univercity.unlimited.greenUniverCity.function.offering.entity.CourseOffering;
+import com.univercity.unlimited.greenUniverCity.function.offering.exception.CourseOfferingNotFoundException;
 import com.univercity.unlimited.greenUniverCity.function.offering.repository.CourseOfferingRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -40,6 +41,20 @@ public class CourseOfferingServiceImpl implements CourseOfferingService{
             return -1;
         }
         return 1;
+    }
+
+    //CO-3)다른 service에서 CourseOffering과 여기에 속한 상위 테이블의 정보를 실질적으로 사용하기 위한 service 구현부
+    //현재 사용위치: TimeTableServiceImpl에서 [ T-4 시간표 생성 구현부에서 사용중]
+    @Override
+    public CourseOffering getCourseOfferingEntity(Long id) {
+        CourseOffering offering= repository.findByOfferingId(id);
+
+        //Offering 개설 강의 Id에 대한 검증
+        if (offering == null) {
+            throw new CourseOfferingNotFoundException("데이터 오류:개설 강의를 찾을 수 없습니다. id: " + id);
+        }
+
+        return offering;
     }
 
 }

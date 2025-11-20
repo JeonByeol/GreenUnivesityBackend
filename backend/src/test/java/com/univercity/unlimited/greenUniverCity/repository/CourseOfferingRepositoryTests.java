@@ -50,6 +50,7 @@ public class CourseOfferingRepositoryTests {
         // 데이터 세팅
         // Course가 있다는 가정하에 진행합니다.
         List<Course> coureList = courseRepository.findAll();
+
         List<User> userList = userRepository.findAll();
 
         if(coureList.isEmpty() == true) {
@@ -58,21 +59,21 @@ public class CourseOfferingRepositoryTests {
         }
 
         for(Course course : coureList) {
-            int max = (int) (Math.random() * 3) + 1;
+            int max = userList.size();
             int semester = 1;
             char alphabat = 'A';
             User user = userList.get((int)(Math.random()*userList.size()));
-            for (int i = 0; i < max; i++) {
-                CourseOffering courseOffering = CourseOffering.builder()
-//                        .professorName("EMPTY")
-                        .courseName(course.getCourseName()+alphabat++)
-                        .year(2025)
-                        .semester(semester)
-                        .course(course)
-                        .professor(user)
-                        .build();
 
-                repository.save(courseOffering);
+            CourseOffering courseOffering = CourseOffering.builder()
+//                        .professorName("EMPTY")
+                    .courseName(course.getCourseName()+alphabat++)
+                    .year(2025)
+                    .semester(semester)
+                    .course(course)
+                    .professor(user)
+                    .build();
+            repository.save(courseOffering);
+            for (int i = 0; i < max; i++) {
 
                 // 데이터 처리이후 초기화
                 if((int) (Math.random() * 2) == 1) {

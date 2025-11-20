@@ -1,10 +1,11 @@
 package com.univercity.unlimited.greenUniverCity.function.enrollment.service;
 
 import com.univercity.unlimited.greenUniverCity.function.enrollment.dto.EnrollmentDTO;
-import com.univercity.unlimited.greenUniverCity.function.enrollment.dto.EnrollmentTestDTO;
 import com.univercity.unlimited.greenUniverCity.function.enrollment.entity.Enrollment;
+import com.univercity.unlimited.greenUniverCity.function.enrollment.exception.EnrollmentNotFoundException;
+import com.univercity.unlimited.greenUniverCity.function.enrollment.exception.UserNotFoundException;
 import com.univercity.unlimited.greenUniverCity.function.enrollment.repository.EnrollmentRepository;
-import com.univercity.unlimited.greenUniverCity.function.offering.entity.CourseOffering;
+import com.univercity.unlimited.greenUniverCity.function.offering.exception.CourseOfferingNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -47,9 +48,27 @@ public class EnrollmentServiceImpl implements EnrollmentService {
     }
 
     //E3)다른 service에서 enrollment와 여기에 속한 상위 테이블의 정보를 실질적으로 사용하기 위한 service 구현부
+    //현재 사용위치: reviewServiceImpl에서 [ R-3) - 리뷰 생성 테이블에서 사용 ]
     @Override
     public Enrollment getEnrollmentEntity(Long id) {
-        return repository.findByEnrollmentId(id);
+        Enrollment enrollment = repository.findByEnrollmentId(id);
+
+        //Enrollment 수강 내역 id에 대한 검증
+        if (enrollment == null) {
+            throw new EnrollmentNotFoundException("수강 정보를 찾을 수 없습니다. id: " + id);
+        }
+
+        //User 검증 추가
+        if (enrollment.getUser() == null) {
+            throw new UserNotFoundException("수강 정보에 연결된 사용자가 존재하지 않습니다 id:."+id);
+        }
+
+        //Offering 개설 강의 Id에 대한 검증
+        if (enrollment.getCourseOffering() == null) {
+            throw new CourseOfferingNotFoundException( "데이터 오류: 수강 정보에 개설 강의가 없습니다. id: " + id);
+        }
+
+        return enrollment;
     }
 }
 

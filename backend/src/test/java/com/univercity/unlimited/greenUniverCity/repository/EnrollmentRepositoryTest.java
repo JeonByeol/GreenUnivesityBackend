@@ -21,6 +21,7 @@ import org.springframework.test.annotation.Commit;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Random;
 
 @SpringBootTest
 @Slf4j
@@ -62,13 +63,19 @@ public class EnrollmentRepositoryTest {
 
         // 데이터 저장
         for(CourseOffering offering : offerings) {
-            Enrollment enrollment = Enrollment.builder()
-                    .courseOffering(offering)
-                    .enrollDate(LocalDateTime.now())
-                    .user(offering.getProfessor())
-                    .build();
+            for(User user:users){
+                if((int)(Math.random()*10)>=4){
+                    continue;
+                }
+                Enrollment enrollment = Enrollment.builder()
+                        .courseOffering(offering)
+                        .enrollDate(LocalDateTime.now())
+                        .user(user)
+                        .build();
 
-            repository.save(enrollment);
+                repository.save(enrollment);
+            }
+
         }
     }
 

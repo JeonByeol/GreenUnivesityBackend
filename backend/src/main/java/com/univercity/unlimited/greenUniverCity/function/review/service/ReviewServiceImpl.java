@@ -83,7 +83,7 @@ public class ReviewServiceImpl implements ReviewService{
         log.info("리뷰 소유권 검증 통과 - 학생: {}, reviewId: {}", studentEmail, review.getReviewId());
     }
     /**
-     * R-3-3) Review 엔티티를 (Response)DTO로 변환 | 추후 다른 crud 기능에 사용하기 위해 함수로 생성
+     * R-A) Review 엔티티를 (Response)DTO로 변환 | 각각의 crud 기능에 사용되는 서비스 구현부에 사용하기 위해 함수로 생성
      * 생성 시에는 updatedAt이 null로 반환되고, 수정 시에는 값이 존재하는데
      * 프론트엔드에서 updatedAt이 null이 아닌 경우에만 "수정됨" 표시를 하면 된다
      */
@@ -99,11 +99,13 @@ public class ReviewServiceImpl implements ReviewService{
                 .createdAt(review.getCreatedAt())
                 .updatedAt(review.getUpdatedAt())
                 .courseName(courseOffering.getCourseName())
-                .studentNickname(user!= null ? user.getNickname() : "존재하지 않는 사용자")
+                .studentNickname(user!= null ? user.getNickname() : "탈퇴한 사용자")
                 .build();
     }
 
     //R-1) 리뷰 테이블에 존재하는 모든 데이터를 조회하는 서비스 구현부
+    //->60% 완료
+    //구상:modelMapper를 좀 더 깔끔하거나 좋은 방식으로 수정하거나 mapper를 사용 안 할 예정
     @Transactional
     @Override
     public List<ReviewDTO> findAllReview() {
@@ -119,6 +121,7 @@ public class ReviewServiceImpl implements ReviewService{
     }
 
     //R-2)특정 과목에 대해 존재하는 리뷰 목록 조회 서비스 구현부
+    // -> 98.9% 완료 나중에 구상 혹은 프론트앤드에서 작업할 때 추가 수정 하거나 그대로 사용 하면 될 듯?
     @Override
     public List<ReviewResponseDTO> findCourseForReview(Long offeringId) {
         List<Review> reviews=repository.findReviewsByCourseOfferingId(offeringId);
@@ -126,10 +129,10 @@ public class ReviewServiceImpl implements ReviewService{
         return reviews.stream()
                 .map(this::toResponseDTO)
                 .collect(Collectors.toList());
-
     }
 
     //R-3) 학생이 수강중이거나 완료한 과목에 대한 리뷰를 작성하는 서비스 구현부
+    // -> 90% 완료? 나중에 보안security를 추가하면 그거에 맞춰서 보안 작업에 대한 부분만 리팩토링 하면 됨
     @Override
     public ReviewResponseDTO writeReviewStudent(ReviewCreateDTO dto,String studentEmail) {
         log.info("2) 리뷰 작성 시작 - 학생: {}, enrollmentId: {}", studentEmail, dto.getEnrollmentId());
@@ -157,16 +160,17 @@ public class ReviewServiceImpl implements ReviewService{
     }
 
     //R-4) 학생 본인이 기존에 작성한 리뷰를 수정하는 서비스 구현부
+    //-> 90% 완료? 나중에 보안security를 추가하면 그거에 맞춰서 보안 작업에 대한 부분만 리팩토링 하면 됨
     @Override
     public ReviewResponseDTO myReviewUpdate(Integer reviewId, ReviewUpdateDTO dto, String studentEmail) {
 
         log.info("리뷰 수정 시작 - reviewId: {}, 학생: {}", reviewId, studentEmail);
 
-        // 1. 리뷰 조회
+        //1.리뷰 조회
         Review review = repository.findById(reviewId)
                 .orElseThrow(() -> new ReviewNotFoundException("리뷰가 존재하지 않습니다. reviewId: " + reviewId));
 
-        // 2. 소유권 검증 (현재 로그인한 학생이 해당 리뷰의 작성자인지)
+        //R-4-1)소유권 검증 (현재 로그인한 학생이 해당 리뷰의 작성자인지)
         validateReviewOwnership(review, studentEmail);
 
         review.setComment(dto.getComment());
@@ -179,6 +183,25 @@ public class ReviewServiceImpl implements ReviewService{
                 studentEmail, reviewId, dto.getComment(),dto.getRating());
         
         return toResponseDTO(updateReview);
+    }
+
+    //R-5) 학생이 작성한 리뷰를 삭제하기 위한 서비스 구현부
+    // -> 삭제 기능은 구현 o 하지만 학생과 운영자를 구분해서 삭제를 하는 기능을 만들어야함
+    // 구상: serviceImpl 구현부내에 userId값을 받아서 검증하는 함수를 만들어서 검증예정
+    @Override
+    public void  deleteByReview(Integer reviewId,String studentEmail) {
+        log.info("2)리뷰 삭제 요청 -학생:{}, reviewId:{}",studentEmail,reviewId);
+
+        //리뷰 조회
+        Review review=repository.findById(reviewId)
+                .orElseThrow(() -> new ReviewNotFoundException("리뷰가 존재하지 않습니다. reviewId: " + reviewId));
+
+        //R-4-1)소유권검증
+        validateReviewOwnership(review,studentEmail);
+
+        repository.delete(review);
+
+        log.info("3) 리뷰 삭제 성공 -학생:{}, reviewId:{}",studentEmail,reviewId);
     }
 
     @Override//R-A) **(기능 작성 부탁드리거나/삭제 부탁드립니다) **
