@@ -37,6 +37,7 @@ public class User {
     @ToString.Exclude
     private List<UserRole> userRoleList=new ArrayList<>();
 
+    public void addRole(UserRole memberRole){userRoleList.add(memberRole);}
 //    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY) ***없앨예정***
 //    @Builder.Default
 //    @ToString.Exclude
@@ -67,7 +68,7 @@ public class User {
 //    @ToString.Exclude
 //    private List<Notice> notices = new ArrayList<>();
 
-    public void addRole(UserRole memberRole){userRoleList.add(memberRole);}
+
 //    public void addOffering(CourseOffering courseOffering){
 //        offerings.add(courseOffering);
 //    }

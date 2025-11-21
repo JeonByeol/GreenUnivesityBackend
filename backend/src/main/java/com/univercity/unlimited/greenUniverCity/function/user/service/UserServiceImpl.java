@@ -1,5 +1,7 @@
 package com.univercity.unlimited.greenUniverCity.function.user.service;
 
+import com.univercity.unlimited.greenUniverCity.function.enrollment.exception.UserNotFoundException;
+import com.univercity.unlimited.greenUniverCity.function.review.exception.InvalidRoleException;
 import com.univercity.unlimited.greenUniverCity.function.user.dto.UserDTO;
 import com.univercity.unlimited.greenUniverCity.function.user.entity.User;
 import com.univercity.unlimited.greenUniverCity.function.user.entity.UserRole;
@@ -33,11 +35,11 @@ public class UserServiceImpl implements UserService {
         return dto;
     }
 
-    @Override
-    public User findByUser(String id) {
-        log.info("한명의 회원을 조회하는 service 생성");
-        return userRepository.findById(id);
-    }
+//    @Override
+//    public User findByUser(String id) {
+//        log.info("한명의 회원을 조회하는 service 생성");
+//        return userRepository.findById(id);
+//    }
 
     @Override
     public List<User> findUsersByRole(UserRole role) {
@@ -93,6 +95,31 @@ public class UserServiceImpl implements UserService {
                 .nickname(savedUser.getNickname())
                 .role(savedUser.getUserRoleList().get(0).name()) // (예시) 첫 번째 역할 반환
                 .build();
+    }
+
+    @Override
+    public User getUserById(Long userId) {
+        User user=userRepository.findByUserId(userId);
+
+        if(user == null){
+            throw new UserNotFoundException("사용자를 찾을 수 없습니다. id:"+ userId);
+        }
+
+        return user;
+    }
+
+    @Override
+    public User getProfessorById(Long userId) {
+        User user=userRepository.findProfessorById(userId)
+                .orElseThrow(()->new UserNotFoundException("사용자를 찾을 수 없습니다. id:"+ userId));
+
+        if (!user.getUserRoleList().contains(UserRole.PROFESSOR)) {
+            throw new InvalidRoleException(
+                    "교수 권한이 없습니다. userId: " + userId + ", 현재 역할: " + user.getUserRoleList()
+            );
+        }
+
+        return user;
     }
 
 //    @Override

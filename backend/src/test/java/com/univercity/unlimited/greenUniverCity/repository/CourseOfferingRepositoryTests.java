@@ -12,6 +12,7 @@ import com.univercity.unlimited.greenUniverCity.function.user.entity.UserRole;
 import com.univercity.unlimited.greenUniverCity.function.user.entity.User;
 import com.univercity.unlimited.greenUniverCity.function.offering.repository.CourseOfferingRepository;
 import com.univercity.unlimited.greenUniverCity.function.offering.service.CourseOfferingService;
+import com.univercity.unlimited.greenUniverCity.function.user.service.UserService;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Tag;
@@ -23,6 +24,7 @@ import org.springframework.test.annotation.Commit;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @SpringBootTest
 @Slf4j
@@ -40,47 +42,51 @@ public class CourseOfferingRepositoryTests {
     private UserRepository userRepository;
 
     @Autowired
+    private UserService userService;
+
+    @Autowired
     private ModelMapper mapper;
+
+
 
     @Test
     @Transactional
     @Commit
     @Tag("push")
     public void insertInitData() {
-        // 데이터 세팅
-        // Course가 있다는 가정하에 진행합니다.
-        List<Course> coureList = courseRepository.findAll();
+        List<Course> courseList = courseRepository.findAll();
 
-        List<User> userList = userRepository.findAll();
-
-        if(coureList.isEmpty() == true) {
+        if (courseList.isEmpty()) {
             log.info("코스 데이터가 없습니다.");
             return;
         }
 
-        for(Course course : coureList) {
-            int max = userList.size();
+        // ⭐ 교수만 필터링
+        List<User> professorList = userRepository.findAll().stream()
+                .filter(user -> user.getUserRoleList().contains(UserRole.PROFESSOR))
+                .collect(Collectors.toList());
+
+        if (professorList.isEmpty()) {
+            log.info("교수 데이터가 없습니다.");
+            return;
+        }
+
+        for (Course course : courseList) {
             int semester = 1;
-            char alphabat = 'A';
-            User user = userList.get((int)(Math.random()*userList.size()));
+            char alphabet = 'A';
+
+            // ⭐ 교수 리스트에서 랜덤 선택
+            User professor = professorList.get((int)(Math.random() * professorList.size()));
 
             CourseOffering courseOffering = CourseOffering.builder()
-//                        .professorName("EMPTY")
-                    .courseName(course.getCourseName()+alphabat++)
+                    .courseName(course.getCourseName() + alphabet++)
                     .year(2025)
                     .semester(semester)
                     .course(course)
-                    .professor(user)
+                    .professor(professor) // 이미 교수임이 보장됨
                     .build();
-            repository.save(courseOffering);
-            for (int i = 0; i < max; i++) {
 
-                // 데이터 처리이후 초기화
-                if((int) (Math.random() * 2) == 1) {
-                    alphabat = 'A';
-                    semester++;
-                }
-            }
+            repository.save(courseOffering);
         }
     }
 

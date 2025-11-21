@@ -26,10 +26,10 @@ public interface TimeTableService {
     //T-4) T에 선언된 postmanTestNewTimeTable의 요청을 받아서 특정 강의에 대한 새로운 시간표를 생성하기 위해 동작하는 서비스 선언
     TimeTableResponseDTO post(TimeTableCreateDTO dto, String requesterEmail);
 
-    //T-5) T에 선언된 postmanUpdateReview의 요청을 받아서 기존에 존재하는 강의 시간표를 수정하기 위해 동작하는 서비스 선언
-    TimeTable put();
+    //T-5) T에 선언된 postmanUpdateTimeTable의 요청을 받아서 기존에 존재하는 강의 시간표를 수정하기 위해 동작하는 서비스 선언
+    TimeTableResponseDTO put(Integer timetableId,TimeTableCreateDTO dto,String requesterEmail);
 
-    //T-6) T에 선언된 postmanDeleteReview의 요청을 받아서 기존에 존재하는 강의에 대한 시간표를 삭제하기 위해 동작하는 서비스 선언
+    //T-6) T에 선언된 postmanDeleteTimeTable의 요청을 받아서 기존에 존재하는 강의에 대한 시간표를 삭제하기 위해 동작하는 서비스 선언
     TimeTable delete();
 
     ResponseEntity<String> addTimeTable(TimeTableDTO timeTableDTO);
