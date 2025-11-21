@@ -27,7 +27,7 @@ public class ReviewController {
     //R-1) 리뷰 전체 조회
     @GetMapping("/all")
     public List<ReviewDTO> postmanTestReview(){
-        log.info("여기는 리뷰 전체 조회 Controller 입니다");
+        log.info("1) 여기는 리뷰 전체 조회 Controller 입니다");
         return reviewService.findAllReview();
     }
 
@@ -57,7 +57,7 @@ public class ReviewController {
             @RequestBody ReviewUpdateDTO dto,
             @RequestHeader(value = "X-User-Email", required = false) String studentEmail){
 
-        log.info("1)리뷰 수정 요청 reviewId-:{},comment:{},rating:{}",
+        log.info("1) 리뷰 수정 요청 reviewId-:{},comment:{},rating:{}",
                 reviewId,dto.getComment(),dto.getRating());
 
         // Postman 테스트용: Header가 없으면 기본값 사용 (개발 환경에서만)
@@ -74,13 +74,14 @@ public class ReviewController {
 
         return ResponseEntity.ok(updateReview);
     }
+
     //R-5) 학생이 작성한 리뷰를 삭제하기 위해 컨트롤러 내에 선언된 crud
     @DeleteMapping("/delete/{reviewId}")
     public void postmanDeleteReview(
             @PathVariable("reviewId") Integer reviewId,
             @RequestHeader(value = "X-User-Email", required = false) String studentEmail){
 
-        log.info("1)리뷰 삭제 요청 reviewId-:{},studentEmail:{}",
+        log.info("1) 리뷰 삭제 요청 reviewId-:{},studentEmail:{}",
                 reviewId,studentEmail);
 
         // Postman 테스트용: Header가 없으면 기본값 사용 (개발 환경에서만)
@@ -88,6 +89,7 @@ public class ReviewController {
             log.warn("X-User-Email 헤더가 없습니다. 테스트용 기본값 사용");
             studentEmail = "edward@aaa.com"; // 테스트용 기본값
         }
+
         reviewService.deleteByReview(reviewId,studentEmail);
     }
 

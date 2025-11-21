@@ -47,7 +47,7 @@ public class EnrollmentServiceImpl implements EnrollmentService {
         return 1;
     }
 
-    //E3)다른 service에서 enrollment와 여기에 속한 상위 테이블의 정보를 실질적으로 사용하기 위한 service 구현부
+    //E-3)다른 service에서 enrollment와 여기에 속한 상위 테이블의 정보를 실질적으로 사용하기 위한 service 구현부
     //현재 사용위치: reviewServiceImpl에서 [ R-3) - 리뷰 생성 테이블에서 사용 ]
     @Override
     public Enrollment getEnrollmentEntity(Long id) {
@@ -55,10 +55,12 @@ public class EnrollmentServiceImpl implements EnrollmentService {
 
         //Enrollment 수강 내역 id에 대한 검증
         if (enrollment == null) {
-            throw new EnrollmentNotFoundException("수강 정보를 찾을 수 없습니다. id: " + id);
+            throw new EnrollmentNotFoundException(
+                    "3) 보안 검사 시도 식별코드 -:E-3" +
+                            "수강 정보를 찾을 수 없습니다. id: " + id);
         }
 
-        //User 검증 추가
+        //User 검증 추가 -- 현재 사용 안함
         if (enrollment.getUser() == null) {
             throw new UserNotFoundException("수강 정보에 연결된 사용자가 존재하지 않습니다 id:."+id);
         }

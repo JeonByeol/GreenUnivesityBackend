@@ -8,6 +8,7 @@ import com.univercity.unlimited.greenUniverCity.function.review.exception.*;
 import com.univercity.unlimited.greenUniverCity.function.timetable.dto.TimeTableCreateDTO;
 import com.univercity.unlimited.greenUniverCity.function.timetable.dto.TimeTableDTO;
 import com.univercity.unlimited.greenUniverCity.function.timetable.dto.TimeTableResponseDTO;
+import com.univercity.unlimited.greenUniverCity.function.timetable.dto.TimeTableUpdateDTO;
 import com.univercity.unlimited.greenUniverCity.function.timetable.entity.TimeTable;
 import com.univercity.unlimited.greenUniverCity.function.timetable.repository.TimeTableRepository;
 import com.univercity.unlimited.greenUniverCity.function.user.entity.User;
@@ -34,8 +35,10 @@ public class TimeTableServiceImpl implements TimeTableService{
     private final ModelMapper mapper;
 
     /**
-     * T-A) TimeTable 엔티티를 (Response)DTO로 변환 | 각각의 crud 기능에 사용되는 서비스 구현부에 사용하기 위해 함수로 생성
+     * T-A) TimeTable 엔티티를 (Response)DTO로 변환
+     * - 각각의 crud 기능에 사용되는 서비스 구현부에 사용하기 위해 함수로 생성
      */
+
     private TimeTableResponseDTO toResponseDTO(TimeTable timeTable){
         CourseOffering courseOffering=timeTable.getCourseOffering();
 
@@ -47,28 +50,30 @@ public class TimeTableServiceImpl implements TimeTableService{
                         .location(timeTable.getLocation())
                         .dayOfWeek(timeTable.getDayOfWeek())
                         .courseName(courseOffering.getCourseName())
-
                         .build();
     }
 
     /**
-     * T-4-1) 교수 권한 검증
-     * - CourseOffering의 담당 교수와 요청자가 일치하는지 확인
+     * T-security) 보안 검사:
+     * - 교수 권한 검증: CourseOffering의 담당 교수와 요청자가 일치하는지 확인
      */
-    private void validateProfessorOwnership(CourseOffering offering, String requesterEmail) {
+
+    private void validateProfessorOwnership(CourseOffering offering, String requesterEmail,String action) {
         User professor = offering.getProfessor();
 
         // 1. professor null 체크
         if (professor == null) {
             throw new DataIntegrityException(
-                    "데이터 오류: 개설 강의에 담당 교수가 없습니다. offeringId: " + offering.getOfferingId()
+                    "4)보안 검사 시도 식별코드-: T-security " +
+                            "데이터 오류: 개설 강의에 담당 교수가 없습니다. offeringId: " + offering.getOfferingId()
             );
         }
 
         // 2.교수 역할 확인 (List에 PROFESSOR 포함 여부)
         if (!professor.getUserRoleList().contains(UserRole.PROFESSOR)) {
             throw new InvalidRoleException(
-                    "담당자가 교수 권한이 없습니다. userId: " + professor.getUserId() +
+                    "4)보안 검사 시도 식별코드-: T-security " +
+                            "담당자가 교수 권한이 없습니다. userId: " + professor.getUserId() +
                             ", 현재 역할: " + professor.getUserRoleList()
             );
         }
@@ -76,27 +81,14 @@ public class TimeTableServiceImpl implements TimeTableService{
         // 3. 요청자와 담당 교수 일치 확인
         if (!professor.getEmail().equals(requesterEmail)) {
             throw new UnauthorizedException(
-                    "해당 강의의 담당 교수만 시간표를 생성할 수 있습니다. " +
-                            "담당 교수: " + professor.getEmail() + ", 요청자: " + requesterEmail
+                    String.format(
+                            "4)보안 검사 시도 식별코드-: T-security " +
+                                    "해당 강의의 담당 교수만 시간표를 %s할 수 있습니다. 담당 교수: %s, 요청자: %s",
+                            action, professor.getEmail(), requesterEmail)
             );
         }
+
         log.info("4) 교수 권한 검증 완료 - 교수: {}", requesterEmail);
-    }
-    /**
-     * T-5-1) 교수 권한 검증
-     * - CourseOffering의 담당 교수와 요청자가 일치하는지 확인
-     */
-    private void validateReviewOwnership(TimeTable timeTable, CourseOffering offering,String requesterEmail) {
-        User professor = offering.getProfessor();;
-
-        if (!professor.getEmail().equals(requesterEmail)) {
-            log.warn("리뷰 수정 권한 없음 - 요청자: {}, 작성자: {}",
-                    requesterEmail, professor);
-            throw new UnauthorizedReviewException(
-                    "본인이 작성한 리뷰만 수정할 수 있습니다.");
-        }
-
-        log.info("리뷰 소유권 검증 통과 - 교수: {}, timetableId: {}", requesterEmail, timeTable.getTimetableId());
     }
 
     //T-1) 리뷰 테이블에 존재하는 모든 데이터를 조회하기 위한 서비스 구현부
@@ -145,7 +137,8 @@ public class TimeTableServiceImpl implements TimeTableService{
 
         CourseOffering offering=offeringService.getCourseOfferingEntity(dto.getOfferingId());
 
-        validateProfessorOwnership(offering,requesterEmail);
+        // T-security 보안검사
+        validateProfessorOwnership(offering,requesterEmail,"생성");
 
         TimeTable timeTable=TimeTable.builder()
                 .courseOffering(offering)
@@ -162,18 +155,19 @@ public class TimeTableServiceImpl implements TimeTableService{
         return toResponseDTO(saveTimeTable);
     }
 
-
-
+    //T-5) 교수가 본인이 담당하고 있는 수업에 존재하는 시간표를 수정하기 위한 서비스 구현부
     @Override
-    public TimeTableResponseDTO put(Integer timetableId,TimeTableCreateDTO dto,String requesterEmail) {
-        log.info("시간표 수정 시작 -timetableId:{},교수이름:{}",timetableId,requesterEmail);
-
-        CourseOffering offering=offeringService.getCourseOfferingEntity(dto.getOfferingId());
+    public TimeTableResponseDTO put(Integer timetableId, TimeTableUpdateDTO dto, String requesterEmail) {
+        log.info("2) 시간표 수정 시작 -timetableId-:{}, 교수-:{}",timetableId,requesterEmail);
 
         TimeTable timeTable=repository.findById(timetableId)
-                .orElseThrow(()->new TimeTableNotFoundException("시간표가 존재하지 않습니다. timeId:" + timetableId));
+                .orElseThrow(()->new TimeTableNotFoundException(
+                        "3)보안 검사 시도 식별 코드 -:T-5 " +
+                                "시간표가 존재하지 않습니다. timeId:" + timetableId));
 
-        validateReviewOwnership(timeTable,offering,requesterEmail);
+        // T-security 보안검사보안 검사(소유권 검증)
+        CourseOffering offering = timeTable.getCourseOffering();
+        validateProfessorOwnership(offering,requesterEmail,"수정");
 
         timeTable.setLocation(dto.getLocation());
         timeTable.setDayOfWeek(dto.getDayOfWeek());
@@ -182,7 +176,7 @@ public class TimeTableServiceImpl implements TimeTableService{
 
         TimeTable updateTimeTable=repository.save(timeTable);
 
-        log.info("시간표 수정 성공 -교수:{}, timetableId:{},강의실:{},요일:{},시작시간:{},종료시간:{}",
+        log.info("5) 시간표 수정 성공 -교수:{}, timetableId:{},강의실:{},요일:{},시작시간:{},종료시간:{}",
                 requesterEmail,
                 timetableId,
                 dto.getLocation(),
@@ -190,13 +184,27 @@ public class TimeTableServiceImpl implements TimeTableService{
                 dto.getStartTime(),
                 dto.getEndTime());
 
-
         return toResponseDTO(updateTimeTable);
     }
 
+    //T-6) 교수 or 관리자가 개설된 강의에 대한 시간표를 삭제하기 위한 서비스 구현부
     @Override
-    public TimeTable delete() {
-        return null;
+    public void deleteByTimeTable(Integer timetableId,String requesterEmail) {
+        log.info("2) 시간표 삭제 요청 -교수: {} ,timetableId: {}",requesterEmail,timetableId);
+
+        //시간표 조회
+        TimeTable timeTable=repository.findById(timetableId)
+                .orElseThrow(()->new TimeTableNotFoundException(
+                        "3)보안 검사 시도 식별 코드-: T-6 " +
+                                "시간표가 존재하지 않습니다. timeId:" + timetableId));
+
+        // T-security 보안검사
+        CourseOffering offering = timeTable.getCourseOffering();
+        validateProfessorOwnership(offering,requesterEmail,"삭제");
+
+        repository.delete(timeTable);
+
+        log.info("5)시간표 삭제 성공 -교수: {},timetableId: {}",requesterEmail,timetableId);
     }
 
     @Override
