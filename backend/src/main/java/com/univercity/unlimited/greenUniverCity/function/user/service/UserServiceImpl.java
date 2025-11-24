@@ -122,6 +122,12 @@ public class UserServiceImpl implements UserService {
         return user;
     }
 
+    @Override
+    public User getUserByEmail(String email) {
+        return userRepository.findByEmail(email)
+                .orElseThrow(()->new UserNotFoundException("사용자를 찾을 수 없습니다. email:"+email));
+    }
+
 //    @Override
 //    @Transactional
 //    public UserDTO grade(Long userId) { ***없앨예정***
@@ -135,6 +141,7 @@ public class UserServiceImpl implements UserService {
 ////            dto.add(r);
 ////        }
 ////        return dto;
+
 //        // 1. 유저를 조회하고, 없으면 예외(Exception)를 발생시킴
 //        User user = userRepository.findUserWithGradesById(userId)
 //                .orElseThrow(() -> {

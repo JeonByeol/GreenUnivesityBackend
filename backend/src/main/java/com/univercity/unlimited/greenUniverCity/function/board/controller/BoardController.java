@@ -1,6 +1,6 @@
 package com.univercity.unlimited.greenUniverCity.function.board.controller;
 
-import com.univercity.unlimited.greenUniverCity.function.board.dto.BoardDTO;
+import com.univercity.unlimited.greenUniverCity.function.board.dto.LegacyBoardDTO;
 import com.univercity.unlimited.greenUniverCity.function.board.service.BoardService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,7 +20,7 @@ public class BoardController {
     private BoardService service;
 
     @GetMapping("/all")
-    public List<BoardDTO> postAllSearch(){
+    public List<LegacyBoardDTO> postAllSearch(){
         return service.findAllBoard();
     }
 //    public ResponseEntity<List<BoardDTO>> postAllSearch(){

@@ -1,6 +1,6 @@
 package com.univercity.unlimited.greenUniverCity.function.offering.controller;
 
-import com.univercity.unlimited.greenUniverCity.function.offering.dto.CourseOfferingDTO;
+import com.univercity.unlimited.greenUniverCity.function.offering.dto.LegacyCourseOfferingDTO;
 import com.univercity.unlimited.greenUniverCity.function.offering.service.CourseOfferingService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,10 +20,10 @@ public class CourseOfferingController {
     private final CourseOfferingService courseOfferingService;
 
     @GetMapping("/all")
-    public ResponseEntity<List<CourseOfferingDTO>> postmanTestCourseOffering(){
+    public ResponseEntity<List<LegacyCourseOfferingDTO>> postmanTestCourseOffering(){
         log.info("모든 CourseOffering들의 이름 출력");
 
-        Optional<List<CourseOfferingDTO>> optionalCourseOfferingDTOList = courseOfferingService.findAllCourseOfferingDTO();
+        Optional<List<LegacyCourseOfferingDTO>> optionalCourseOfferingDTOList = courseOfferingService.findAllCourseOfferingDTO();
         if(optionalCourseOfferingDTOList.isEmpty() == true){
             return ResponseEntity.ok(null);
         }

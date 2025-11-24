@@ -25,6 +25,9 @@ public class Comment {
     @Column (name = "created_at")
     private LocalDateTime createdAt;
 
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt; //수정날짜
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
 //  @ToString.Exclude

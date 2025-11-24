@@ -1,7 +1,6 @@
 package com.univercity.unlimited.greenUniverCity.function.timetable.controller;
 
 import com.univercity.unlimited.greenUniverCity.function.timetable.dto.TimeTableCreateDTO;
-import com.univercity.unlimited.greenUniverCity.function.timetable.dto.TimeTableDTO;
 import com.univercity.unlimited.greenUniverCity.function.timetable.dto.TimeTableResponseDTO;
 import com.univercity.unlimited.greenUniverCity.function.timetable.dto.TimeTableUpdateDTO;
 import com.univercity.unlimited.greenUniverCity.function.timetable.service.TimeTableService;
@@ -21,22 +20,22 @@ public class TimeTableController {
 
     //T-1) 시간표 테이블에 존재하는 모든 시간표를 조회하기 위해 컨트롤러 내에 선언된 crud(get)
     @GetMapping("/all")
-    public List<TimeTableDTO> postmanTestTimeTable(){
+    public List<TimeTableResponseDTO> postmanTestTimeTable(){
         log.info("1) 여기는 시간표 전체조회Controller 입니다");
         return timeTableService.findAllTimeTable();
     }
 
     //T-2) 특정 과목에 대한 시간표를 조회하기 위해 컨트롤러 내에 선언된 crud(get)
-    @GetMapping("/one/{dayOfWeek}")
-    public List<TimeTableResponseDTO> postmanTestCourseTimeTable(@PathVariable("dayOfWeek") String dayOfWeek){
-        log.info("1)왜안됨?:{}",dayOfWeek);
-        return timeTableService.get2(dayOfWeek);
+    @GetMapping("/one/{offeringId}")
+    public List<TimeTableResponseDTO> postmanTestCourseTimeTable(@PathVariable("offeringId") Long offeringId){
+        log.info("1)왜안됨?:{}",offeringId);
+        return timeTableService.offeringOfTimeTable(offeringId);
     }
 
     //T-3) 특정 학생이 수강신청한 모든 시간표를 조회하기 위해 컨트롤러 내에 선언된 crud(get)
     @GetMapping("/my/{email}")
     public List<TimeTableResponseDTO> postmanTestMyTimeTable(@PathVariable("email") String email){
-        return timeTableService.get(email);
+        return timeTableService.studentOfTimeTable(email);
     }
 
     //T-4) 교수 or 관리자가 개설된 강의에 대한 시간표를 생성하기 위해 컨트롤러 내에 선언된 crud(post)
@@ -47,7 +46,7 @@ public class TimeTableController {
 
         log.info("1) 시간표 생성 요청 -교수:{},offeringId:{}",requesterEmail,dto.getOfferingId());
 
-        TimeTableResponseDTO response=timeTableService.post(dto,requesterEmail);
+        TimeTableResponseDTO response=timeTableService.createTimeTableForProfessor(dto,requesterEmail);
 
         return ResponseEntity.ok(response);
     }
@@ -73,7 +72,7 @@ public class TimeTableController {
             requesterEmail = "julia@aaa.com"; // 테스트용 기본값
         }
 
-        TimeTableResponseDTO updateTimeTable=timeTableService.put(
+        TimeTableResponseDTO updateTimeTable=timeTableService.updateTimeTableForProfessor(
                 timetableId,
                 dto,
                 requesterEmail

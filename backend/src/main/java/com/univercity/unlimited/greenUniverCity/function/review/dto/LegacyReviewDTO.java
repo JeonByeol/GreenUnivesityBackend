@@ -1,7 +1,7 @@
 package com.univercity.unlimited.greenUniverCity.function.review.dto;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.univercity.unlimited.greenUniverCity.function.enrollment.dto.EnrollmentDTO;
+import com.univercity.unlimited.greenUniverCity.function.enrollment.dto.LegacyEnrollmentDTO;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -12,7 +12,9 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @Builder
-public class ReviewDTO {
+public class LegacyReviewDTO {
+    //사용안하고 삭제하기 위한 Legacy 표시입니다
+
     private Integer reviewId; //리뷰 아이디
 
     private Integer rating; //리뷰 점수
@@ -25,5 +27,5 @@ public class ReviewDTO {
 
     @JsonBackReference("enrollment-review")
     @ToString.Exclude
-    private EnrollmentDTO enrollmentDTO;
+    private LegacyEnrollmentDTO legacyEnrollmentDTO;
 }

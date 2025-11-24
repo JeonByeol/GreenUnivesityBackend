@@ -3,10 +3,9 @@ package com.univercity.unlimited.greenUniverCity.function.offering.dto;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.univercity.unlimited.greenUniverCity.function.course.dto.CourseDTO;
-import com.univercity.unlimited.greenUniverCity.function.timetable.dto.TimeTableDTO;
+import com.univercity.unlimited.greenUniverCity.function.course.dto.LegacyCourseDTO;
 import com.univercity.unlimited.greenUniverCity.function.user.dto.UserDTO;
-import com.univercity.unlimited.greenUniverCity.function.enrollment.dto.EnrollmentDTO;
+import com.univercity.unlimited.greenUniverCity.function.enrollment.dto.LegacyEnrollmentDTO;
 import lombok.*;
 
 import java.util.ArrayList;
@@ -18,7 +17,9 @@ import java.util.List;
 @Getter
 @Setter
 @Builder
-public class CourseOfferingDTO {
+public class LegacyCourseOfferingDTO {
+    //사용안하고 삭제하기 위한 Legacy 표시입니다
+
     private Long offeringId; // 개설 강의 ID
     private String professorName; // 담당 교수 ID
     private String courseName;
@@ -28,7 +29,7 @@ public class CourseOfferingDTO {
 
     @JsonBackReference("course-offering")
     @ToString.Exclude
-    private CourseDTO course; // 강의 정보
+    private LegacyCourseDTO course; // 강의 정보
 
     @JsonBackReference("user-offering")
     @ToString.Exclude
@@ -36,9 +37,9 @@ public class CourseOfferingDTO {
 
     @Builder.Default
     @JsonManagedReference("offering-enrollment")
-    private List<EnrollmentDTO> enrollments = new ArrayList<>();
+    private List<LegacyEnrollmentDTO> enrollments = new ArrayList<>();
 
-    @Builder.Default
-    @JsonManagedReference("offering-timetable")
-    private List<TimeTableDTO> timeTables = new ArrayList<>();
+//    @Builder.Default
+//    @JsonManagedReference("offering-timetable")
+//    private List<TimeTableDTO> timeTables = new ArrayList<>();
 }

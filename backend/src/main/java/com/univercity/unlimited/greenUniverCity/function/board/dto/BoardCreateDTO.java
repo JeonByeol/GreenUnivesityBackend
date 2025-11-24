@@ -13,14 +13,8 @@ import java.util.List;
 @Setter
 @Builder
 @ToString
-public class BoardDTO {
-    private Long boardId;
+public class BoardCreateDTO {
+    //** 추후 유라님이 필요한 칼럼 작성하실 예정 ** 완성본 아닙니다
 
-    private String boardName;
-
-    @Builder.Default
-    @JsonManagedReference("board-post")
-    private List<PostDTO> posts=new ArrayList<>();
-
-//    private List<Post> posts = new ArrayList<>();
+    private String boardName; //게시판 이름
 }

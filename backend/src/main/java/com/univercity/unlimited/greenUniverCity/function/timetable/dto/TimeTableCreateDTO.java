@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 public class TimeTableCreateDTO {
-    private Long offeringId;//개설강의고유Id
+    private Long offeringId; //개설강의고유Id
 
     private String dayOfWeek; // 요일
 

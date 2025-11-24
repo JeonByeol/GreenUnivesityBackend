@@ -1,6 +1,6 @@
 package com.univercity.unlimited.greenUniverCity.function.course.service;
 
-import com.univercity.unlimited.greenUniverCity.function.course.dto.CourseDTO;
+import com.univercity.unlimited.greenUniverCity.function.course.dto.LegacyCourseDTO;
 import com.univercity.unlimited.greenUniverCity.function.course.entity.Course;
 import com.univercity.unlimited.greenUniverCity.function.course.repository.CourseRepository;
 import jakarta.transaction.Transactional;
@@ -21,19 +21,19 @@ public class CourseServiceImpl implements CourseService{
 
     @Transactional
     @Override
-    public List<CourseDTO> findAllCourse() {
-        List<CourseDTO> dtoList=new ArrayList<>();
+    public List<LegacyCourseDTO> findAllCourse() {
+        List<LegacyCourseDTO> dtoList=new ArrayList<>();
         for(Course i:repository.findAll()){
-            CourseDTO r=mapper.map(i,CourseDTO.class);
+            LegacyCourseDTO r=mapper.map(i, LegacyCourseDTO.class);
             dtoList.add(r);
         }
         return dtoList;
     }
 
     @Override
-    public int addCourse(CourseDTO courseDTO) {
-        log.info("1) 확인 : {}",courseDTO);
-        Course course = mapper.map(courseDTO,Course.class);
+    public int addCourse(LegacyCourseDTO legacyCourseDTO) {
+        log.info("1) 확인 : {}", legacyCourseDTO);
+        Course course = mapper.map(legacyCourseDTO,Course.class);
         log.info("확인 : {}",course);
         try{
             repository.save(course);

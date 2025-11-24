@@ -1,7 +1,7 @@
 package com.univercity.unlimited.greenUniverCity.repository;
 
 
-import com.univercity.unlimited.greenUniverCity.function.course.dto.CourseDTO;
+import com.univercity.unlimited.greenUniverCity.function.course.dto.LegacyCourseDTO;
 import com.univercity.unlimited.greenUniverCity.function.course.entity.Course;
 import com.univercity.unlimited.greenUniverCity.function.course.repository.CourseRepository;
 import com.univercity.unlimited.greenUniverCity.function.course.service.CourseService;
@@ -102,12 +102,12 @@ public class CourseRepositoryTests {
         String description = newCourseDescriptionArray[(int)(Math.random()* newCourseDescriptionArray.length)];
         int credits = (int)(Math.random()*3)+1;
 
-        CourseDTO courseDTO = CourseDTO.builder()
+        LegacyCourseDTO legacyCourseDTO = LegacyCourseDTO.builder()
                 .courseName(courseName)
                 .description(description)
                 .credits(credits)
                 .build();
 
-        service.addCourse(courseDTO);
+        service.addCourse(legacyCourseDTO);
     }
 }

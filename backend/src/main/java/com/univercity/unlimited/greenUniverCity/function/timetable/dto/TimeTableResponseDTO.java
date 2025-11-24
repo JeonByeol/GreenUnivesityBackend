@@ -12,6 +12,7 @@ import java.time.LocalDateTime;
 @Setter
 @Builder
 public class TimeTableResponseDTO {
+    //TimeTable 필드에 담긴 정보
     private Integer timetableId; //시간표 아이디
 
     private String dayOfWeek; //요일
@@ -22,7 +23,10 @@ public class TimeTableResponseDTO {
 
     private String location; // 장소
 
+    //CourseOffering 필드에 담긴 정보
     private String courseName; //강의명
 
-    private String nickName; //학생이름
+    private String professorNickname; //학생이름
+
+    private Long offeringId; //개설강의고유 id
 }

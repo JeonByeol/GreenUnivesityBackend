@@ -2,7 +2,7 @@ package com.univercity.unlimited.greenUniverCity.repository;
 
 
 import com.univercity.unlimited.greenUniverCity.function.department.repository.DepartmentRepository;
-import com.univercity.unlimited.greenUniverCity.function.department.dto.DepartmentDTO;
+import com.univercity.unlimited.greenUniverCity.function.department.dto.LegacyDepartmentDTO;
 import com.univercity.unlimited.greenUniverCity.function.department.entity.Department;
 import com.univercity.unlimited.greenUniverCity.function.department.service.DepartmentService;
 import lombok.extern.slf4j.Slf4j;
@@ -53,11 +53,11 @@ public class DepartmentRepositoryTests {
                 "체육"
         };
         String department = departmentArray[(int)(Math.random()*departmentArray.length)];
-        DepartmentDTO departmentDTO = DepartmentDTO.builder()
+        LegacyDepartmentDTO legacyDepartmentDTO = LegacyDepartmentDTO.builder()
                 .deptName(department)
                 .build();
 
-        service.addDepartment(departmentDTO);
+        service.addDepartment(legacyDepartmentDTO);
     }
 
 }
