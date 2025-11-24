@@ -44,7 +44,7 @@ public class AttendanceServiceImpl implements AttendanceService{
                 AttendanceResponseDTO.builder()
                         .attendanceId(attendance.getAttendanceId())
                         .enrollmentId(enrollment.getEnrollmentId())
-                        .localDateTime(attendance.getLocalDateTime())
+                        .attendanceDate(attendance.getAttendanceDate())
                         .status(attendance.getStatus())
                         .build();
     }

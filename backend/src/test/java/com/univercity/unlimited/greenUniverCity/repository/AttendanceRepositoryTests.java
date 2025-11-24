@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -40,7 +41,7 @@ public class AttendanceRepositoryTests {
             String status = ran == 1 ? "출석" : "결석";
 
             Attendance attendance = Attendance.builder()
-                    .localDateTime(LocalDateTime.now())
+                    .attendanceDate(LocalDate.now())
                     .enrollment(enrollment)
                     .status(status)
                     .build();
