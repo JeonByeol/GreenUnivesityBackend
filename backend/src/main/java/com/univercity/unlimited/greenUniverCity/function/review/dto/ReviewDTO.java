@@ -19,7 +19,9 @@ public class ReviewDTO {
 
     private String comment; //리뷰 코멘트
 
-    private LocalDateTime createAt; //개시 날짜
+    private LocalDateTime createdAt; //개시날짜
+    
+    private LocalDateTime updatedAt; //수정날짜
 
     @JsonBackReference("enrollment-review")
     @ToString.Exclude

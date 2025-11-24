@@ -20,6 +20,7 @@ import java.util.List;
 @Builder
 @Setter
 public class User {
+
     @Id //아이디 이메일 비밀번호 닉네임 칼럼 생성
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
@@ -36,43 +37,44 @@ public class User {
     @ToString.Exclude
     private List<UserRole> userRoleList=new ArrayList<>();
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
-    @Builder.Default
-    @ToString.Exclude
-    private List<CourseOffering> offerings = new ArrayList<>();
-
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
-    @Builder.Default
-    @ToString.Exclude
-    private List<Enrollment> enrollments = new ArrayList<>();
-
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
-    @Builder.Default
-    @ToString.Exclude
-    private List<Comment> comments = new ArrayList<>();
-
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
-    @Builder.Default
-    @ToString.Exclude
-    private List<Post> posts = new ArrayList<>();
+    public void addRole(UserRole memberRole){userRoleList.add(memberRole);}
+//    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY) ***없앨예정***
+//    @Builder.Default
+//    @ToString.Exclude
+//    private List<CourseOffering> offerings = new ArrayList<>();
+//
+//    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+//    @Builder.Default
+//    @ToString.Exclude
+//    private List<Enrollment> enrollments = new ArrayList<>();
+//
+//    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+//    @Builder.Default
+//    @ToString.Exclude
+//    private List<Comment> comments = new ArrayList<>();
+//
+//    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+//    @Builder.Default
+//    @ToString.Exclude
+//    private List<Post> posts = new ArrayList<>();
 
 //    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
 //    @Builder.Default
 //    @ToString.Exclude
 //    private List<Grade> grades = new ArrayList<>(); ***없앨예정***
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
-    @Builder.Default
-    @ToString.Exclude
-    private List<Notice> notices = new ArrayList<>();
+//    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+//    @Builder.Default
+//    @ToString.Exclude
+//    private List<Notice> notices = new ArrayList<>();
 
-    public void addRole(UserRole memberRole){userRoleList.add(memberRole);}
-    public void addOffering(CourseOffering courseOffering){
-        offerings.add(courseOffering);
-    }
-    public void addEnrollment(Enrollment enrollment) {enrollments.add(enrollment);}
-    public void addComment(Comment comment){comments.add(comment);}
-    public void addPost(Post post){posts.add(post);}
+
+//    public void addOffering(CourseOffering courseOffering){
+//        offerings.add(courseOffering);
+//    }
+//    public void addEnrollment(Enrollment enrollment) {enrollments.add(enrollment);}
+//    public void addComment(Comment comment){comments.add(comment);}
+//    public void addPost(Post post){posts.add(post);}
 //    public void addGrade(Grade grade){grades.add(grade);}
 }
 

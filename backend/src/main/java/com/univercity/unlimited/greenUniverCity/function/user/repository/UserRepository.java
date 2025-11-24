@@ -1,5 +1,6 @@
 package com.univercity.unlimited.greenUniverCity.function.user.repository;
 
+import com.univercity.unlimited.greenUniverCity.function.offering.entity.CourseOffering;
 import com.univercity.unlimited.greenUniverCity.function.user.entity.UserRole;
 import com.univercity.unlimited.greenUniverCity.function.user.entity.User;
 import org.springframework.data.jpa.repository.EntityGraph;
@@ -19,17 +20,20 @@ public interface UserRepository extends JpaRepository<User,Long> {
     @Query("SELECT u FROM User u JOIN u.userRoleList r WHERE r = :role")
     List<User> findAllByRole(@Param("role") UserRole role);
 
-    //   |@Query(...) 어노테이션이 아예 필요 없습니다.| UserVo findByEmail(String email);
-    // 이거 뭐에요
+//    @Query("SELECT DISTINCT u FROM User u JOIN FETCH u.offerings o WHERE o.offeringId = :offeringId")
+//    Optional<User> findByOfferingId(@Param("offeringId") Long offeringId);
+//
+//    @Query("SELECT DISTINCT u FROM User u JOIN FETCH u.enrollments e WHERE e.enrollmentId = :enrollmentId")
+//    Optional<User> findByEnrollmentId(@Param("enrollmentId") Long enrollmentId);
+    
+    // 유저의 정보를 찾기 위한 쿼리 선언
+    User findByUserId(Long id);
 
-    @Query("SELECT DISTINCT u FROM User u JOIN FETCH u.offerings o WHERE o.offeringId = :offeringId")
-    Optional<User> findByOfferingId(@Param("offeringId") Long offeringId);
+    //PROFESSOR 역할을 가진 사용자만 조회하기 위한 service선언에 활용될 쿼리
+    @Query("SELECT u FROM User u JOIN u.userRoleList role WHERE u.userId = :userId AND role = 'PROFESSOR'")
+    Optional<User> findProfessorById(@Param("userId") Long userId);
 
-    @Query("SELECT DISTINCT u FROM User u JOIN FETCH u.enrollments e WHERE e.enrollmentId = :enrollmentId")
-    Optional<User> findByEnrollmentId(@Param("enrollmentId") Long enrollmentId);
-
-    @Query("select m from User m where id = :id" )
-    User findById(@Param("id") String id);
-
+    //Email을 통해
+    Optional<User> findByEmail(String email);
 
 }

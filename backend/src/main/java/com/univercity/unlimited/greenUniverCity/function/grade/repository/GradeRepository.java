@@ -10,11 +10,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface GradeRepository extends JpaRepository<Grade,Integer> {
-//    @Query("SELECT g FROM Grade g " +
-//            "JOIN g.user u " +
-//            "WHERE u.email = :email")
-//    List<Grade> findByStudent(@Param("email") String email); ***없앨예정***
-
+    //G-2)학생이 본인이 수강한 모든 과목의 성적과 과목명을 조회하기 위한 쿼리
     @Query("SELECT g FROM Grade g " +
             "JOIN FETCH g.enrollment e " +
             "JOIN FETCH e.courseOffering co " +
@@ -22,12 +18,18 @@ public interface GradeRepository extends JpaRepository<Grade,Integer> {
             "WHERE u.email = :email")
     List<Grade> findByMyGrade(@Param("email")String email);
 
+    //G-3)교수가 특정 과목의 수업을 듣는 전체학생 조회하기 위한 쿼리
+    @Query("SELECT g FROM Grade g " +
+            "JOIN FETCH g.enrollment e " +
+            "JOIN FETCH e.user u " +
+            "WHERE e.courseOffering.offeringId =:offeringId " +
+            "ORDER BY u.nickname ASC")
+    List<Grade> findByOfferingGrade(@Param("offeringId") Long offeringId);
+
+    //G-4) 교수가 학생에 대한 정보를 받아와서 성적의 대한 값을 수정하기 위한 쿼리
     Optional<Grade> findByEnrollment_enrollmentId(Long enrollmentId);
 
-    @Query("SELECT g FROM Grade g J" +
-            "OIN g.enrollment e " +
-            "WHERE e.courseOffering.offeringId =:offeringId")
-    List<Grade> findByOfferingGrade(@Param("offeringId") Long offeringId);
+
 
 
 }
