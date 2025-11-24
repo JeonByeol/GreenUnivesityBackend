@@ -1,13 +1,18 @@
 package com.univercity.unlimited.greenUniverCity.function.grade.service;
 
+import com.univercity.unlimited.greenUniverCity.function.enrollment.dto.EnrollmentDTO;
+import com.univercity.unlimited.greenUniverCity.function.enrollment.dto.EnrollmentTestDTO;
 import com.univercity.unlimited.greenUniverCity.function.enrollment.entity.Enrollment;
+import com.univercity.unlimited.greenUniverCity.function.enrollment.service.EnrollmentService;
 import com.univercity.unlimited.greenUniverCity.function.grade.repository.GradeRepository;
 import com.univercity.unlimited.greenUniverCity.function.grade.dto.GradeDTO;
 import com.univercity.unlimited.greenUniverCity.function.grade.dto.GradeProfessorDTO;
 import com.univercity.unlimited.greenUniverCity.function.grade.dto.GradeStudentDTO;
 import com.univercity.unlimited.greenUniverCity.function.grade.entity.Grade;
+import com.univercity.unlimited.greenUniverCity.function.offering.entity.CourseOffering;
 import com.univercity.unlimited.greenUniverCity.function.offering.repository.CourseOfferingRepository;
 import com.univercity.unlimited.greenUniverCity.function.enrollment.repository.EnrollmentRepository;
+import com.univercity.unlimited.greenUniverCity.function.user.entity.User;
 import com.univercity.unlimited.greenUniverCity.function.user.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
@@ -28,14 +33,13 @@ public class GradeServiceImpl implements GradeService{
 
     private final GradeRepository repository;
 
+    private final EnrollmentService enrollmentService;
+
     private final EnrollmentRepository enrollmentRepository;
-
-    private final CourseOfferingRepository courseOfferingRepository;
-
-    private final UserRepository userRepository;
 
     private final ModelMapper mapper;
 
+    //G-1)성적 전체 조회
     @Override
     public List<GradeDTO> findAllGrade() {
         log.info("전체 성적 조회");
@@ -47,52 +51,62 @@ public class GradeServiceImpl implements GradeService{
         return dto;
     }
 
+    //G-2) 학생이 본인이 수강한 모든 과목의 성적과 과목명을 조회하기 위한 서비스 구현부 todo
     @Override
     public List<GradeStudentDTO> myGrade(String email) {
-//        List<Grade> grades= repository.findByMyGrade(email);
         List<Grade> grades= repository.findByMyGrade(email);
-        return grades.stream()
-                .map(g -> GradeStudentDTO.builder()
+
+        log.info("1)학생이 수강한 모든 과목의 성적을 조회하는 service가 맞냐:{}",grades);
+
+        List<GradeStudentDTO> myGrade= grades.stream()
+                .map(g -> {
+                    Enrollment enrollment=g.getEnrollment();
+                    CourseOffering offering=enrollment.getCourseOffering();
+                    User user=enrollment.getUser();
+//                    EnrollmentTestDTO info=
+//                   enrollmentService.getEnrollmentForGrade(g.getEnrollment().getEnrollmentId());//todo E-2)
+                    return
+                        GradeStudentDTO.builder()
                         .gradeId(g.getGradeId())
                         .gradeValue(g.getGradeValue())
-                        .courseName(g.getEnrollment().getCourseOffering().getCourse().getCourseName())
-                        .courseId(g.getEnrollment().getCourseOffering().getOfferingId())
-                        .studentName(g.getEnrollment().getUser().getNickname())
-                        .build()
-                )
+                        .courseName(offering.getCourseName())
+                        .courseId(offering.getOfferingId())
+                        .studentName(user.getNickname())
+                        .build();
+
+        })
                 .collect(Collectors.toList());
+
+        return myGrade;
     }
 
+    //G-3) 교수가 특정 과목의 수업을 듣는 전체학생 조회하기 위한 service 구현부
     @Override
     public List<GradeProfessorDTO> courseOfGrade(Long offeringId) {
+
         List<Grade> grades=repository.findByOfferingGrade(offeringId);
+
         return grades.stream()
-                .map(g->GradeProfessorDTO.builder()
-                        .gradeId(g.getGradeId())
-                        .gradeValue(g.getGradeValue())
-                        .studentName(g.getEnrollment().getUser().getNickname())
-                        .build()
-                )
+                .map(g-> {
+                    Enrollment enrollment=g.getEnrollment();
+                    User user=enrollment.getUser();
+                    return
+                    GradeProfessorDTO.builder()
+                            .gradeId(g.getGradeId())
+                            .gradeValue(g.getGradeValue())
+                            .studentName(user.getNickname())
+                            .build();
+                })
                 .collect(Collectors.toList());
     }
 
-//        List<GradeDTO> dto=new ArrayList<>();
-//        log.info("1) dto의 개수가 몇 개인가 :{}",dto);
-//        for(Grade i:grades){
-//            log.info("2) 여기는 어떻게 들어오는가 :{}",i);
-//            GradeDTO r=mapper.map(i,GradeDTO.class);
-//            log.info("3) r은 정상적인가 :{}",r);
-//            dto.add(r);
-//        }
-//        return dto;
-//    }
 
-
+    //G-4) 교수가 학생에 대한 정보를 받아와서 성적의 대한 값을 수정하기 위한 service 구현부
     @Override
     public GradeDTO postNewGrade(Long enrollmentId,String gradeValue) {
 
-        Enrollment enrollment=enrollmentRepository.findById(enrollmentId)
-                .orElseThrow(()->new EntityNotFoundException("이게 맞을까요?"+enrollmentId));
+        //Enrollment enrollment1=enrollmentRepository.findByEnrollmentId(enrollmentId);
+        Enrollment enrollment=enrollmentService.getEnrollmentEntity(enrollmentId);//E-2)
 
         //Service에서 전달된 교수의 email, 수강신청(enroll)에 연결된 과목(offering)의 담당 교수(user)의
         //email이 일치하는지 보안검사에 대한 코드 "feat Gemini"

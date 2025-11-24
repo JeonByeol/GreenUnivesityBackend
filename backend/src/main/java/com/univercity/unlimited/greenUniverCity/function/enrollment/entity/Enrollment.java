@@ -31,36 +31,35 @@ public class Enrollment {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "offering_id")
-    @ToString.Exclude
+//    @ToString.Exclude
     private CourseOffering courseOffering; //강의 개설
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
-    @ToString.Exclude
+//    @ToString.Exclude
     private User user; //유저
 
-    @OneToMany(mappedBy = "enrollment",fetch = FetchType.LAZY)
-    @Builder.Default
-    @ToString.Exclude
-    private List<Attendance> attendances = new ArrayList<>(); //출석들
+//    @OneToMany(mappedBy = "enrollment",fetch = FetchType.LAZY)
+//    @Builder.Default
+//    @ToString.Exclude
+//    private List<Attendance> attendances = new ArrayList<>(); //출석들
+//
+//    @OneToMany(mappedBy = "enrollment", fetch = FetchType.LAZY)
+//    @Builder.Default
+//    @ToString.Exclude
+//    private List<Review> reviews = new ArrayList<>(); //리뷰들
+//
+//    @OneToMany(mappedBy = "enrollment", fetch = FetchType.LAZY)
+//    @Builder.Default
+//    @ToString.Exclude
+//    private List<Grade> grades = new ArrayList<>(); //성적들
 
-    @OneToMany(mappedBy = "enrollment", fetch = FetchType.LAZY)
-    @Builder.Default
-    @ToString.Exclude
-    private List<Review> reviews = new ArrayList<>(); //리뷰들
 
-    @OneToMany(mappedBy = "enrollment", fetch = FetchType.LAZY)
-    @Builder.Default
-    @ToString.Exclude
-    private List<Grade> grades = new ArrayList<>(); //성적들
-
-
-    public void addAttendance(Attendance attendance){
-        attendances.add(attendance);
-    }
-    public void addReview(Review review) {
-        reviews.add(review);
-    }
-
-    public void addGrade(Grade grade){grades.add(grade);}
+//    public void addAttendance(Attendance attendance){
+//        attendances.add(attendance);
+//    }
+//    public void addReview(Review review) {
+//        reviews.add(review);
+//    }
+//    public void addGrade(Grade grade){grades.add(grade);}
 }

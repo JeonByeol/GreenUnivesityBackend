@@ -27,7 +27,7 @@ public class Grade{
 //    private User user;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "enrollment_id")
-    @ToString.Exclude
+//    @ToString.Exclude
     private Enrollment enrollment;
 
 }

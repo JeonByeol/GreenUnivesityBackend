@@ -3,6 +3,7 @@ import com.univercity.unlimited.greenUniverCity.function.enrollment.entity.Enrol
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
 
@@ -33,11 +34,13 @@ public class Review{
 
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
-    private LocalDateTime createdAt; //개시 날짜
+    private LocalDateTime createdAt; //개시날짜
+
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt; //수정날짜
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "enrollment_id")
-    @ToString.Exclude
     private Enrollment enrollment;
 
 }

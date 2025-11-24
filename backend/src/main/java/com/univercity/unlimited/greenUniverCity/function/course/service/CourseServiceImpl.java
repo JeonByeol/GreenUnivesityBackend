@@ -42,4 +42,12 @@ public class CourseServiceImpl implements CourseService{
         }
         return 1;
     }
+
+//    @Override//C-3) Timetable에 강의명을 넘겨주기 위해 구성한 serviceImpl
+//    public CourseDTO findByCourseNameForTimeTable(Long id) {
+//        Course c=repository.findByCourseId(id);
+//        return CourseDTO.builder()
+//                .courseName(c.getCourseName())
+//                .build();
+//    }
 }

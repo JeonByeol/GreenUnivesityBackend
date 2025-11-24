@@ -25,9 +25,9 @@ public class UserController {
         return userService.findAllUsers();
     }
     @GetMapping("/one/{id}")
-    public ResponseEntity<User> postmanTestOne(@PathVariable("id")  String id){
+    public ResponseEntity<User> postmanTestOne(@PathVariable("id")  Long id){
         log.info("Controller 하나 호출 id:{}",id);
-        User r=userService.findByUser(id);
+        User r=userService.getUserById(id);
         log.info("찾는중 테스트:{}",r);
         return ResponseEntity.ok(r);
     }

@@ -24,8 +24,8 @@ public class CourseOffering {
     @Column(name = "offering_id")
     private Long offeringId; // 개설 강의 ID
 
-    @Column(name = "professor_name")
-    private String professorName; // 담당 교수 이름
+//    @Column(name = "professor_name")
+//    private String professorName; // 담당 교수 이름
 
     @Column(name = "course_name")
     private String courseName;
@@ -38,29 +38,29 @@ public class CourseOffering {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "course_id")
-    @ToString.Exclude
+//    @ToString.Exclude
     private Course course; // 강의 정보
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    @ToString.Exclude
-    private User user;
+    @JoinColumn(name = "professor_id")
+//    @ToString.Exclude
+    private User professor;
 
-    @OneToMany(mappedBy = "courseOffering", fetch = FetchType.LAZY)
-    @Builder.Default
-    @ToString.Exclude
-    private List<Enrollment> enrollments = new ArrayList<>();
+//    @OneToMany(mappedBy = "courseOffering", fetch = FetchType.LAZY)
+//    @Builder.Default
+//    @ToString.Exclude
+//    private List<Enrollment> enrollments = new ArrayList<>();
+//
+//    @OneToMany(mappedBy = "courseOffering", fetch = FetchType.LAZY)
+//    @Builder.Default
+//    @ToString.Exclude
+//    private List<TimeTable> timeTables = new ArrayList<>();
 
-    @OneToMany(mappedBy = "courseOffering", fetch = FetchType.LAZY)
-    @Builder.Default
-    @ToString.Exclude
-    private List<TimeTable> timeTables = new ArrayList<>();
-
-    public void addEnrollment(Enrollment enrollment) {
-        enrollments.add(enrollment);
-    }
-
-    public void addTimeTable(TimeTable timeTable) {
-        timeTables.add(timeTable);
-    }
+//    public void addEnrollment(Enrollment enrollment) {
+//        enrollments.add(enrollment);
+//    }
+//
+//    public void addTimeTable(TimeTable timeTable) {
+//        timeTables.add(timeTable);
+//    }
 }
