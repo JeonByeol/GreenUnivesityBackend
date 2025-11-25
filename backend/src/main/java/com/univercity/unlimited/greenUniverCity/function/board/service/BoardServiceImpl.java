@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Slf4j
@@ -27,6 +28,13 @@ public class BoardServiceImpl implements BoardService{
            dto.add(r);
        }
        return dto;
+    }
+
+    @Override
+    public LegacyBoardDTO findIdBoard(Long boardId){
+        Optional<Board> data = repository.findById(boardId);
+        LegacyBoardDTO r = mapper.map(data.get(), LegacyBoardDTO.class);
+        return r;
     }
 
 //    @Override
