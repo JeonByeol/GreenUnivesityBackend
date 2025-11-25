@@ -18,7 +18,11 @@ import java.util.List;
 public class TimeTableController {
     private final TimeTableService timeTableService;
 
-    //T-1) 시간표 테이블에 존재하는 모든 시간표를 조회하기 위해 컨트롤러 내에 선언된 crud(get)
+    /**
+     * [전체 조회] 시간표 테이블의 모든 데이터를 조회합니다.
+     * (T-1)
+     */
+    //T-GET) 시간표 테이블에 존재하는 모든 시간표를 조회하기 위해 컨트롤러 내에 선언된 crud(get)
     @GetMapping("/all")
     public List<TimeTableResponseDTO> postmanTestTimeTable(){
         log.info("1) 여기는 시간표 전체조회Controller 입니다");
@@ -39,12 +43,18 @@ public class TimeTableController {
     }
 
     //T-4) 교수 or 관리자가 개설된 강의에 대한 시간표를 생성하기 위해 컨트롤러 내에 선언된 crud(post)
-    @PostMapping("/create/{email}")
+    @PostMapping("/create")
     public ResponseEntity<TimeTableResponseDTO> postmanCreateTime(
             @RequestBody TimeTableCreateDTO dto,
-            @PathVariable("email") String requesterEmail){
+            @RequestHeader(value="X-User-Email",required = false) String requesterEmail){
 
         log.info("1) 시간표 생성 요청 -교수:{},offeringId:{}",requesterEmail,dto.getOfferingId());
+
+        // Postman 테스트용: Header가 없으면 기본값 사용 (개발 환경에서만)
+        if (requesterEmail == null || requesterEmail.isEmpty()) {
+            log.warn("X-User-Email 헤더가 없습니다. 테스트용 기본값 사용");
+            requesterEmail = "hannah@aaa.com"; // 테스트용 기본값
+        }
 
         TimeTableResponseDTO response=timeTableService.createTimeTableForProfessor(dto,requesterEmail);
 

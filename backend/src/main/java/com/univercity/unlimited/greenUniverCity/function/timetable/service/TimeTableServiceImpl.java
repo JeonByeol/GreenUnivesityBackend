@@ -127,6 +127,8 @@ public class TimeTableServiceImpl implements TimeTableService{
     public List<TimeTableResponseDTO> findAllTimeTable() {
         log.info("2) 시간표 전체조회 시작");
         List<TimeTable> timeTables=repository.findAll();
+        
+        log.info("3) 시간표 전체조회 성공");
 
         return timeTables.stream()
                 .map(this::toResponseDTO)
@@ -140,7 +142,10 @@ public class TimeTableServiceImpl implements TimeTableService{
     // 2번째 동작부터 호출을 하는 문제가 있음
     @Override
     public List<TimeTableResponseDTO> offeringOfTimeTable(Long offeringId) {
+        log.info("2) 특정 시간표 조회 시작 offeringId-:{}",offeringId);
         List<TimeTable> timeTables=repository.findTimeTableByOfferingId(offeringId);
+        
+        log.info("3) 시간표 조회 성공 offeringId-:{}",offeringId);
 
         return timeTables.stream()
                 .map(this::toResponseDTO)
@@ -150,9 +155,11 @@ public class TimeTableServiceImpl implements TimeTableService{
     //T-3)특정 학생이 신청한 모든 과목의 시간표를 조회하기 위한 서비스 구현부
     @Override
     public List<TimeTableResponseDTO> studentOfTimeTable(String email) {
-        log.info("2) 학생이 시간표 조회 요청 -학생:{}",email);
+        log.info("2) 학생이 시간표 조회 요청 학생-:{}",email);
 
         List<TimeTable> timeTables = repository.findTimetableByStudentEmail(email);
+
+        log.info("3) 학생의 시간표 조회 성공 학생-:{}",email);
 
         return timeTables.stream()
                 .map(this::toResponseDTO)
@@ -181,7 +188,7 @@ public class TimeTableServiceImpl implements TimeTableService{
 
         TimeTable saveTimeTable=repository.save(timeTable);
 
-        log.info("3) 시간표 생성 완료 -timetableId:{}, 교수:{}",saveTimeTable.getTimetableId(),requesterEmail);
+        log.info("5) 시간표 생성 완료 -timetableId:{}, 교수:{}",saveTimeTable.getTimetableId(),requesterEmail);
 
         return toResponseDTO(saveTimeTable);
     }
