@@ -1,9 +1,9 @@
 package com.univercity.unlimited.greenUniverCity.function.board.service;
 
-import com.univercity.unlimited.greenUniverCity.function.board.dto.BoardDTO;
+import com.univercity.unlimited.greenUniverCity.function.board.dto.LegacyBoardDTO;
 
 import java.util.List;
 
 public interface BoardService {
-    List<BoardDTO> findAllBoard();
+    List<LegacyBoardDTO> findAllBoard();
 }

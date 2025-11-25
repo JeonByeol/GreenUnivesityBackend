@@ -1,7 +1,5 @@
 package com.univercity.unlimited.greenUniverCity.function.grade.service;
 
-import com.univercity.unlimited.greenUniverCity.function.enrollment.dto.EnrollmentDTO;
-import com.univercity.unlimited.greenUniverCity.function.enrollment.dto.EnrollmentTestDTO;
 import com.univercity.unlimited.greenUniverCity.function.enrollment.entity.Enrollment;
 import com.univercity.unlimited.greenUniverCity.function.enrollment.service.EnrollmentService;
 import com.univercity.unlimited.greenUniverCity.function.grade.repository.GradeRepository;
@@ -10,11 +8,7 @@ import com.univercity.unlimited.greenUniverCity.function.grade.dto.GradeProfesso
 import com.univercity.unlimited.greenUniverCity.function.grade.dto.GradeStudentDTO;
 import com.univercity.unlimited.greenUniverCity.function.grade.entity.Grade;
 import com.univercity.unlimited.greenUniverCity.function.offering.entity.CourseOffering;
-import com.univercity.unlimited.greenUniverCity.function.offering.repository.CourseOfferingRepository;
-import com.univercity.unlimited.greenUniverCity.function.enrollment.repository.EnrollmentRepository;
 import com.univercity.unlimited.greenUniverCity.function.user.entity.User;
-import com.univercity.unlimited.greenUniverCity.function.user.repository.UserRepository;
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -35,8 +29,6 @@ public class GradeServiceImpl implements GradeService{
 
     private final EnrollmentService enrollmentService;
 
-    private final EnrollmentRepository enrollmentRepository;
-
     private final ModelMapper mapper;
 
     //G-1)성적 전체 조회
@@ -46,7 +38,7 @@ public class GradeServiceImpl implements GradeService{
         List<GradeDTO> dto=new ArrayList<>();
         for(Grade i:repository.findAll()){
             GradeDTO r=mapper.map(i,GradeDTO.class);
-            dto.add(r);
+                dto.add(r);
         }
         return dto;
     }
@@ -82,7 +74,7 @@ public class GradeServiceImpl implements GradeService{
 
     //G-3) 교수가 특정 과목의 수업을 듣는 전체학생 조회하기 위한 service 구현부
     @Override
-    public List<GradeProfessorDTO> courseOfGrade(Long offeringId) {
+    public List<GradeProfessorDTO> offeringOfGrade(Long offeringId) {
 
         List<Grade> grades=repository.findByOfferingGrade(offeringId);
 
@@ -103,7 +95,7 @@ public class GradeServiceImpl implements GradeService{
 
     //G-4) 교수가 학생에 대한 정보를 받아와서 성적의 대한 값을 수정하기 위한 service 구현부
     @Override
-    public GradeDTO postNewGrade(Long enrollmentId,String gradeValue) {
+    public GradeDTO updateNewGrade(Long enrollmentId,String gradeValue) {
 
         //Enrollment enrollment1=enrollmentRepository.findByEnrollmentId(enrollmentId);
         Enrollment enrollment=enrollmentService.getEnrollmentEntity(enrollmentId);//E-2)

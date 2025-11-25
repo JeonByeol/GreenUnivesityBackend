@@ -13,21 +13,11 @@ import java.time.LocalDateTime;
 @Getter
 @ToString
 @Builder
-public class CommentDTO {
-    private Long commentId;
+public class CommentUpdateDTO {
+    //** 추후 유라님이 필요한 칼럼 작성하실 예정 ** 완성본 아닙니다
+    private String content; //댓글내용
 
-    private String content;
-//    private String writerName;
-    private LocalDateTime createdAt;
-//    private String name;
-    @JsonBackReference("user-comment")
-    @ToString.Exclude
-    private UserDTO user;
-
-    @JsonBackReference("post-comment")
-    @ToString.Exclude
-    private PostDTO posts;
-
+    private LocalDateTime createdAt;//작성일시
 
 
 

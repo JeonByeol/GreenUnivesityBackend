@@ -2,8 +2,8 @@ package com.univercity.unlimited.greenUniverCity.function.course.dto;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.univercity.unlimited.greenUniverCity.function.offering.dto.CourseOfferingDTO;
-import com.univercity.unlimited.greenUniverCity.function.department.dto.DepartmentDTO;
+import com.univercity.unlimited.greenUniverCity.function.offering.dto.LegacyCourseOfferingDTO;
+import com.univercity.unlimited.greenUniverCity.function.department.dto.LegacyDepartmentDTO;
 import lombok.*;
 
 import java.util.ArrayList;
@@ -15,7 +15,8 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class CourseDTO {
+public class LegacyCourseDTO {
+    //사용안하고 삭제하기 위한 Legacy 표시입니다
     private Long courseId; // 과목 코드
 
     private String courseName; // 과목명
@@ -26,11 +27,11 @@ public class CourseDTO {
 
     @JsonBackReference("dept-course")
     @ToString.Exclude
-    private DepartmentDTO department; // 학과
+    private LegacyDepartmentDTO department; // 학과
 
     @Builder.Default
     @JsonManagedReference("course-offering")
-    private List<CourseOfferingDTO> offerings = new ArrayList<>();
+    private List<LegacyCourseOfferingDTO> offerings = new ArrayList<>();
 
 }
 

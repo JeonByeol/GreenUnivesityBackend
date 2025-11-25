@@ -2,7 +2,7 @@ package com.univercity.unlimited.greenUniverCity.function.grade.dto;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.univercity.unlimited.greenUniverCity.function.enrollment.dto.EnrollmentDTO;
+import com.univercity.unlimited.greenUniverCity.function.enrollment.dto.LegacyEnrollmentDTO;
 import lombok.*;
 
 @AllArgsConstructor
@@ -21,5 +21,5 @@ public class GradeDTO {
 
     @JsonBackReference("enrollment-grade")
     @ToString.Exclude
-    private EnrollmentDTO enrollment; //수강신청내역
+    private LegacyEnrollmentDTO enrollment; //수강신청내역
 }

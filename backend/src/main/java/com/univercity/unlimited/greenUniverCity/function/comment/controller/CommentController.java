@@ -1,6 +1,6 @@
 package com.univercity.unlimited.greenUniverCity.function.comment.controller;
 
-import com.univercity.unlimited.greenUniverCity.function.comment.dto.CommentDTO;
+import com.univercity.unlimited.greenUniverCity.function.comment.dto.LegacyCommentDTO;
 import com.univercity.unlimited.greenUniverCity.function.comment.service.CommentService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,9 +18,9 @@ public class CommentController {
     private final CommentService commentService;
 
     @GetMapping("/commentlist")
-    public ResponseEntity<List<CommentDTO>> getListComments() {
+    public ResponseEntity<List<LegacyCommentDTO>> getListComments() {
         log.info("1) Controller: /community/list 호출");
-        List<CommentDTO> result  = commentService.findList();
+        List<LegacyCommentDTO> result  = commentService.findList();
         log.info("4) Controller: /community,{}" ,result);
         return ResponseEntity.ok( result);
     }

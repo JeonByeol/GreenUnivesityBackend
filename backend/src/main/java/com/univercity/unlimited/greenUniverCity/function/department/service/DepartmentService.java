@@ -1,11 +1,11 @@
 package com.univercity.unlimited.greenUniverCity.function.department.service;
 
-import com.univercity.unlimited.greenUniverCity.function.department.dto.DepartmentDTO;
+import com.univercity.unlimited.greenUniverCity.function.department.dto.LegacyDepartmentDTO;
 
 import java.util.List;
 
 public interface DepartmentService {
-    List<DepartmentDTO> findAllDepartment();
+    List<LegacyDepartmentDTO> findAllDepartment();
 
-    int addDepartment(DepartmentDTO departmentDTO);
+    int addDepartment(LegacyDepartmentDTO legacyDepartmentDTO);
 }

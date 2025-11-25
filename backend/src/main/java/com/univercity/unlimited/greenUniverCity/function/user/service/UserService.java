@@ -22,9 +22,12 @@ public interface UserService {
     //user정보가 없는 사람을 회원가입을 통해 정보를 만들기 위한 service
     UserDTO register(UserDTO dto);
 
-    //
+    //U-U) Id를 통하여 학생 권한이 있는 사용자만 조회 및 검증을 하기 위한 service 구현부
     User getUserById(Long userId);
 
-    //교수 권한이 있는 사용자만 조회
+    //U-P) Id를 통하여 교수 권한이 있는 사용자만 조회 및 검증을 하기 위한 service 구현부
     User getProfessorById(Long userId);
+
+    //U-E) Email을 통하여 사용자를 조회하기 위한 service 구현부
+    User getUserByEmail(String email);
 }

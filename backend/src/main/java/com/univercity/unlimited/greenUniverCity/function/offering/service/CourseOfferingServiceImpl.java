@@ -1,6 +1,6 @@
 package com.univercity.unlimited.greenUniverCity.function.offering.service;
 
-import com.univercity.unlimited.greenUniverCity.function.offering.dto.CourseOfferingDTO;
+import com.univercity.unlimited.greenUniverCity.function.offering.dto.LegacyCourseOfferingDTO;
 import com.univercity.unlimited.greenUniverCity.function.offering.entity.CourseOffering;
 import com.univercity.unlimited.greenUniverCity.function.offering.exception.CourseOfferingNotFoundException;
 import com.univercity.unlimited.greenUniverCity.function.offering.repository.CourseOfferingRepository;
@@ -21,19 +21,19 @@ public class CourseOfferingServiceImpl implements CourseOfferingService{
     private final ModelMapper mapper;
 
     @Override
-    public Optional<List<CourseOfferingDTO>> findAllCourseOfferingDTO() {
+    public Optional<List<LegacyCourseOfferingDTO>> findAllCourseOfferingDTO() {
         List<CourseOffering> courseOfferings = repository.findAll();
-        List<CourseOfferingDTO> courseOfferingDTOS = courseOfferings.stream().map(courseOffering ->
-                mapper.map(courseOffering, CourseOfferingDTO.class)).toList();
+        List<LegacyCourseOfferingDTO> legacyCourseOfferingDTOS = courseOfferings.stream().map(courseOffering ->
+                mapper.map(courseOffering, LegacyCourseOfferingDTO.class)).toList();
 
-        Optional<List<CourseOfferingDTO>> optionalCourseOfferingDTOS = Optional.of(courseOfferingDTOS);
+        Optional<List<LegacyCourseOfferingDTO>> optionalCourseOfferingDTOS = Optional.of(legacyCourseOfferingDTOS);
         return optionalCourseOfferingDTOS;
     }
 
     @Override
-    public int addCourseOffering(CourseOfferingDTO courseOfferingDTO) {
-        log.info("1) 확인 : {}",courseOfferingDTO);
-        CourseOffering courseOffering = mapper.map(courseOfferingDTO,CourseOffering.class);
+    public int addCourseOffering(LegacyCourseOfferingDTO legacyCourseOfferingDTO) {
+        log.info("1) 확인 : {}", legacyCourseOfferingDTO);
+        CourseOffering courseOffering = mapper.map(legacyCourseOfferingDTO,CourseOffering.class);
         log.info("확인 : {}",courseOffering);
         try{
             repository.save(courseOffering);

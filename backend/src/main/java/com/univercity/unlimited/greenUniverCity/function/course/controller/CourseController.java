@@ -1,6 +1,6 @@
 package com.univercity.unlimited.greenUniverCity.function.course.controller;
 
-import com.univercity.unlimited.greenUniverCity.function.course.dto.CourseDTO;
+import com.univercity.unlimited.greenUniverCity.function.course.dto.LegacyCourseDTO;
 import com.univercity.unlimited.greenUniverCity.function.course.service.CourseService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,7 +18,7 @@ public class CourseController {
     private final CourseService courseService;
 
     @GetMapping("/all")
-    public List<CourseDTO> postmanTestCourse(){
+    public List<LegacyCourseDTO> postmanTestCourse(){
         return courseService.findAllCourse();
     }
 }

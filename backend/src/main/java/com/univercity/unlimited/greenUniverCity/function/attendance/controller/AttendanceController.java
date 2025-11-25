@@ -1,6 +1,6 @@
 package com.univercity.unlimited.greenUniverCity.function.attendance.controller;
 
-import com.univercity.unlimited.greenUniverCity.function.attendance.dto.AttendanceDTO;
+import com.univercity.unlimited.greenUniverCity.function.attendance.dto.AttendanceResponseDTO;
 import com.univercity.unlimited.greenUniverCity.function.attendance.service.AttendanceService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,8 +30,8 @@ public class AttendanceController {
 //    }
 
     @GetMapping("/all")
-    public List<AttendanceDTO> postAllSearch(){
-        return attendanceService.findAllat();
+    public List<AttendanceResponseDTO> postAllSearch(){
+        return attendanceService.findAllAttendance();
     }
     //학생
     //강의별 본인출석조회(전체 출석률체크포함)

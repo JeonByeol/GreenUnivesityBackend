@@ -1,6 +1,6 @@
 package com.univercity.unlimited.greenUniverCity.function.board.service;
 
-import com.univercity.unlimited.greenUniverCity.function.board.dto.BoardDTO;
+import com.univercity.unlimited.greenUniverCity.function.board.dto.LegacyBoardDTO;
 import com.univercity.unlimited.greenUniverCity.function.board.entity.Board;
 import com.univercity.unlimited.greenUniverCity.function.board.repository.BoardRepository;
 import lombok.RequiredArgsConstructor;
@@ -20,10 +20,10 @@ public class BoardServiceImpl implements BoardService{
     private final ModelMapper mapper;
 
     @Override
-    public List<BoardDTO> findAllBoard() {
-       List<BoardDTO> dto=new ArrayList<>();
+    public List<LegacyBoardDTO> findAllBoard() {
+       List<LegacyBoardDTO> dto=new ArrayList<>();
        for(Board i:repository.findAll()){
-           BoardDTO r=mapper.map(i,BoardDTO.class);
+           LegacyBoardDTO r=mapper.map(i, LegacyBoardDTO.class);
            dto.add(r);
        }
        return dto;

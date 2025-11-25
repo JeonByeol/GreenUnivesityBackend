@@ -14,7 +14,7 @@ public interface GradeRepository extends JpaRepository<Grade,Integer> {
     @Query("SELECT g FROM Grade g " +
             "JOIN FETCH g.enrollment e " +
             "JOIN FETCH e.courseOffering co " +
-            "JOIN e.user u " +
+            "JOIN FETCH e.user u " +
             "WHERE u.email = :email")
     List<Grade> findByMyGrade(@Param("email")String email);
 
