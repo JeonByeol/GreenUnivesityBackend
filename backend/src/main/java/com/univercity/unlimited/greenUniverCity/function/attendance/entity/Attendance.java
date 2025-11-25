@@ -4,6 +4,7 @@ import com.univercity.unlimited.greenUniverCity.function.enrollment.entity.Enrol
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -24,17 +25,17 @@ public class Attendance {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="attendance_id")
-    private Integer attendanceId;
+    private Long attendanceId; //출결고유 Id
 
-    @Column(name="date",nullable = false)
-    private LocalDateTime localDateTime;
+    @Column(name = "attendance_date", nullable = false)
+    private LocalDate attendanceDate; //출결날짜
 
     @Column(name="status",nullable = false)
-    private String status;
+    private String status; //출결상태(출석,지각,조퇴)
 
     @ManyToOne
     @JoinColumn(name="enrollment_id")
-    private Enrollment enrollment;
+    private Enrollment enrollment;//수강내역Id
 }
 
 

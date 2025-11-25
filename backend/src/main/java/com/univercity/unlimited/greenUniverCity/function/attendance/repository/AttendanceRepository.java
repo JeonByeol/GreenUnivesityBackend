@@ -2,7 +2,17 @@ package com.univercity.unlimited.greenUniverCity.function.attendance.repository;
 
 import com.univercity.unlimited.greenUniverCity.function.attendance.entity.Attendance;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
-public interface AttendanceRepository extends JpaRepository <Attendance,Integer>{
+import java.util.List;
+
+public interface AttendanceRepository extends JpaRepository <Attendance,Long>{
+
+    @Query("SELECT a FROM Attendance a " +
+            "JOIN FETCH a.enrollment e " +
+            "JOIN FETCH e.user u " +
+            "WHERE u.email = :email")
+    List<Attendance> findAttendanceByStudentEmail(@Param("email") String email);
 
 }

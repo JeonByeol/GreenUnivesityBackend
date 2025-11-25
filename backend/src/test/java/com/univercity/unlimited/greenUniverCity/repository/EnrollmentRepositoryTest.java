@@ -1,9 +1,9 @@
 package com.univercity.unlimited.greenUniverCity.repository;
 
 import com.univercity.unlimited.greenUniverCity.function.offering.entity.CourseOffering;
-import com.univercity.unlimited.greenUniverCity.function.offering.dto.CourseOfferingDTO;
+import com.univercity.unlimited.greenUniverCity.function.offering.dto.LegacyCourseOfferingDTO;
 import com.univercity.unlimited.greenUniverCity.function.enrollment.entity.Enrollment;
-import com.univercity.unlimited.greenUniverCity.function.enrollment.dto.EnrollmentDTO;
+import com.univercity.unlimited.greenUniverCity.function.enrollment.dto.LegacyEnrollmentDTO;
 import com.univercity.unlimited.greenUniverCity.function.user.entity.User;
 import com.univercity.unlimited.greenUniverCity.function.user.dto.UserDTO;
 import com.univercity.unlimited.greenUniverCity.function.enrollment.repository.EnrollmentRepository;
@@ -21,7 +21,6 @@ import org.springframework.test.annotation.Commit;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Random;
 
 @SpringBootTest
 @Slf4j
@@ -101,17 +100,17 @@ public class EnrollmentRepositoryTest {
         }
 
         CourseOffering offering = offerings.get((int)(Math.random()*offerings.size()));
-        CourseOfferingDTO offeringDTO = mapper.map(offering,CourseOfferingDTO.class);
+        LegacyCourseOfferingDTO offeringDTO = mapper.map(offering, LegacyCourseOfferingDTO.class);
         User user = users.get((int)(Math.random()*users.size()));
         UserDTO userDTO = mapper.map(user,UserDTO.class);
 
-        EnrollmentDTO enrollmentDTO = EnrollmentDTO.builder()
+        LegacyEnrollmentDTO legacyEnrollmentDTO = LegacyEnrollmentDTO.builder()
                 .courseOffering(offeringDTO)
                 .enrollDate(LocalDateTime.now())
                 .user(userDTO)
                 .build();
 
-        enrollmentService.addEnrollment(enrollmentDTO);
+        enrollmentService.addEnrollment(legacyEnrollmentDTO);
 
 
     }

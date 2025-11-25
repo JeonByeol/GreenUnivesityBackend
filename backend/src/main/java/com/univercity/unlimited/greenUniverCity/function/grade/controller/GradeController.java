@@ -35,7 +35,7 @@ public class GradeController {
     //G-3) 교수가 특정 과목의 수업을 듣는 전체학생 조회
     @GetMapping("/course/{offeringId}")
     public List<GradeProfessorDTO> postmanCourseGrade(@PathVariable("offeringId") Long offeringId){
-        return gradeService.courseOfGrade(offeringId);
+        return gradeService.offeringOfGrade(offeringId);
     }
 
     //G-4) 교수가 특정 학생에 대한 성적을 수정(입력)
@@ -48,7 +48,7 @@ public class GradeController {
 
         log.info(" 수강신청 ID[{}]의 성적을 [{}]로 입력 시도...",  enrollmentId, gradeValue);
 
-        GradeDTO updateGrade=gradeService.postNewGrade(
+        GradeDTO updateGrade=gradeService.updateNewGrade(
                 enrollmentId,
                 gradeValue
         );

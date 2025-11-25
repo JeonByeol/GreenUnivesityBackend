@@ -6,13 +6,13 @@ import com.univercity.unlimited.greenUniverCity.function.offering.service.Course
 import com.univercity.unlimited.greenUniverCity.function.review.entity.Review;
 import com.univercity.unlimited.greenUniverCity.function.review.exception.*;
 import com.univercity.unlimited.greenUniverCity.function.timetable.dto.TimeTableCreateDTO;
-import com.univercity.unlimited.greenUniverCity.function.timetable.dto.TimeTableDTO;
 import com.univercity.unlimited.greenUniverCity.function.timetable.dto.TimeTableResponseDTO;
 import com.univercity.unlimited.greenUniverCity.function.timetable.dto.TimeTableUpdateDTO;
 import com.univercity.unlimited.greenUniverCity.function.timetable.entity.TimeTable;
 import com.univercity.unlimited.greenUniverCity.function.timetable.repository.TimeTableRepository;
 import com.univercity.unlimited.greenUniverCity.function.user.entity.User;
 import com.univercity.unlimited.greenUniverCity.function.user.entity.UserRole;
+import com.univercity.unlimited.greenUniverCity.function.user.service.UserService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -32,6 +32,8 @@ public class TimeTableServiceImpl implements TimeTableService{
 
     private final CourseOfferingService offeringService;
 
+    private final UserService userService;
+
     private final ModelMapper mapper;
 
     /**
@@ -41,6 +43,7 @@ public class TimeTableServiceImpl implements TimeTableService{
 
     private TimeTableResponseDTO toResponseDTO(TimeTable timeTable){
         CourseOffering courseOffering=timeTable.getCourseOffering();
+        User user=courseOffering.getProfessor();
 
         return
                 TimeTableResponseDTO.builder()
@@ -50,58 +53,84 @@ public class TimeTableServiceImpl implements TimeTableService{
                         .location(timeTable.getLocation())
                         .dayOfWeek(timeTable.getDayOfWeek())
                         .courseName(courseOffering.getCourseName())
+                        .professorNickname(user.getNickname())
+                        .offeringId(courseOffering.getOfferingId())
                         .build();
     }
 
     /**
      * T-security) 보안 검사:
      * - 교수 권한 검증: CourseOffering의 담당 교수와 요청자가 일치하는지 확인
+     * (T-4/T-5/T-6)
      */
 
     private void validateProfessorOwnership(CourseOffering offering, String requesterEmail,String action) {
+        log.info("4) 시간표 {} - 교수 권한 검증 시작: {}", action, requesterEmail);
+
+        // 1. 요청자 조회 - userService에 존재하는 U-E service 구현부에 requesterEmail을 전달하여 유저를 조회한다
+        User requester = userService.getUserByEmail(requesterEmail);
+
+        // 2. 요청자의 교수 권한 확인
+        // 1번 과정을 통하여 조회한 user의 정보를 가지고 교수의 역할을 검증한다
+        if (!requester.getUserRoleList().contains(UserRole.PROFESSOR)) {
+            throw new InvalidRoleException(
+                    String.format(
+                            "4)보안 검사 시도 식별코드-: T-security-1 (시간표 %s) " +
+                                    "교수 권한이 없습니다. " +
+                                    "요청자: %s, userId: %s, 현재 역할: %s",
+                            action, requesterEmail, requester.getUserId(), requester.getUserRoleList())
+            );
+        }
+
+        // 3. 담당 교수가 존재하는지 확인
         User professor = offering.getProfessor();
 
-        // 1. professor null 체크
         if (professor == null) {
             throw new DataIntegrityException(
-                    "4)보안 검사 시도 식별코드-: T-security " +
-                            "데이터 오류: 개설 강의에 담당 교수가 없습니다. offeringId: " + offering.getOfferingId()
+                    String.format(
+                            "4)보안 검사 시도 식별코드-: T-security-2 (시간표 %s) " +
+                                    "데이터 오류: 개설 강의에 담당 교수가 없습니다. offeringId: %s",
+                            action, offering.getOfferingId())
             );
         }
 
-        // 2.교수 역할 확인 (List에 PROFESSOR 포함 여부)
+        // 4. 담당 교수의 역할 확인 (데이터 정합성)
         if (!professor.getUserRoleList().contains(UserRole.PROFESSOR)) {
             throw new InvalidRoleException(
-                    "4)보안 검사 시도 식별코드-: T-security " +
-                            "담당자가 교수 권한이 없습니다. userId: " + professor.getUserId() +
-                            ", 현재 역할: " + professor.getUserRoleList()
+                    String.format(
+                            "4)보안 검사 시도 식별코드-: T-security-3 (시간표 %s) " +
+                                    "데이터 오류: 담당자가 교수 권한이 없습니다. " +
+                                    "userId: %s, 현재 역할: %s",
+                            action, professor.getUserId(), professor.getUserRoleList())
             );
         }
 
-        // 3. 요청자와 담당 교수 일치 확인
-        if (!professor.getEmail().equals(requesterEmail)) {
+        // 5. 요청자와 담당 교수 일치 확인
+        if (!professor.getUserId().equals(requester.getUserId())) {
             throw new UnauthorizedException(
                     String.format(
-                            "4)보안 검사 시도 식별코드-: T-security " +
-                                    "해당 강의의 담당 교수만 시간표를 %s할 수 있습니다. 담당 교수: %s, 요청자: %s",
-                            action, professor.getEmail(), requesterEmail)
+                            "4)보안 검사 시도 식별코드-: T-security-4 (시간표 %s) " +
+                                    "해당 강의의 담당 교수만 시간표를 %s할 수 있습니다. " +
+                                    "담당 교수: %s (userId: %s), 요청자: %s (userId: %s)",
+                            action, action,
+                            professor.getEmail(), professor.getUserId(),
+                            requesterEmail, requester.getUserId())
             );
         }
 
-        log.info("4) 교수 권한 검증 완료 - 교수: {}", requesterEmail);
+        log.info("4) 교수 권한 검증 완료 - 교수: {}, 작업: {}", requesterEmail, action);
     }
 
     //T-1) 리뷰 테이블에 존재하는 모든 데이터를 조회하기 위한 서비스 구현부
     @Transactional
     @Override
-    public List<TimeTableDTO> findAllTimeTable() {
-        log.info("2) 여기는 시간표 전체조회 서비스입니다");
-        List<TimeTableDTO> dto=new ArrayList<>();
-        for(TimeTable i:repository.findAll()){
-            TimeTableDTO r= mapper.map(i,TimeTableDTO.class);
-            dto.add(r);
-        }
-        return dto;
+    public List<TimeTableResponseDTO> findAllTimeTable() {
+        log.info("2) 시간표 전체조회 시작");
+        List<TimeTable> timeTables=repository.findAll();
+
+        return timeTables.stream()
+                .map(this::toResponseDTO)
+                .collect(Collectors.toList());
     }
 
     //T-2)특정 과목에 존재하는 모든 시간표를 조회하기 위한 서비스 구현부
@@ -110,8 +139,8 @@ public class TimeTableServiceImpl implements TimeTableService{
     //-> 그리고 지금 postmanTest에서 데이터를 조회 할 때 1번째 동작에서 호출을 못하고
     // 2번째 동작부터 호출을 하는 문제가 있음
     @Override
-    public List<TimeTableResponseDTO> get2(String dayOfWeek) {
-        List<TimeTable> timeTables=repository.findByDayTimeTable(dayOfWeek);
+    public List<TimeTableResponseDTO> offeringOfTimeTable(Long offeringId) {
+        List<TimeTable> timeTables=repository.findTimeTableByOfferingId(offeringId);
 
         return timeTables.stream()
                 .map(this::toResponseDTO)
@@ -120,7 +149,9 @@ public class TimeTableServiceImpl implements TimeTableService{
 
     //T-3)특정 학생이 신청한 모든 과목의 시간표를 조회하기 위한 서비스 구현부
     @Override
-    public List<TimeTableResponseDTO> get(String email) {
+    public List<TimeTableResponseDTO> studentOfTimeTable(String email) {
+        log.info("2) 학생이 시간표 조회 요청 -학생:{}",email);
+
         List<TimeTable> timeTables = repository.findTimetableByStudentEmail(email);
 
         return timeTables.stream()
@@ -132,7 +163,7 @@ public class TimeTableServiceImpl implements TimeTableService{
     // -> 시간표에 대한 생성 기능은 구현 o 하지만 시간표를 생성할떄 그 강의 
     // 구상: serviceImpl 구현부내에 userId값을 받아서 검증하는 함수를 만들어서 검증예정
     @Override
-    public TimeTableResponseDTO post(TimeTableCreateDTO dto, String requesterEmail) {
+    public TimeTableResponseDTO createTimeTableForProfessor(TimeTableCreateDTO dto, String requesterEmail) {
         log.info("2) 시간표 생성 -교수:{}, offeringId:{}",requesterEmail,dto.getOfferingId());
 
         CourseOffering offering=offeringService.getCourseOfferingEntity(dto.getOfferingId());
@@ -157,7 +188,7 @@ public class TimeTableServiceImpl implements TimeTableService{
 
     //T-5) 교수가 본인이 담당하고 있는 수업에 존재하는 시간표를 수정하기 위한 서비스 구현부
     @Override
-    public TimeTableResponseDTO put(Integer timetableId, TimeTableUpdateDTO dto, String requesterEmail) {
+    public TimeTableResponseDTO updateTimeTableForProfessor(Integer timetableId, TimeTableUpdateDTO dto, String requesterEmail) {
         log.info("2) 시간표 수정 시작 -timetableId-:{}, 교수-:{}",timetableId,requesterEmail);
 
         TimeTable timeTable=repository.findById(timetableId)
@@ -207,8 +238,9 @@ public class TimeTableServiceImpl implements TimeTableService{
         log.info("5)시간표 삭제 성공 -교수: {},timetableId: {}",requesterEmail,timetableId);
     }
 
-    @Override
-    public ResponseEntity<String> addTimeTable(TimeTableDTO timeTableDTO) {
-        return null;
-    }
+    //T-EX) ** 필요한 기능에 대한 설명 입력 부탁드립니다/없으면 삭제 부탁드립니다 ** 
+//    @Override
+//    public ResponseEntity<String> addTimeTable(TimeTableDTO timeTableDTO) {
+//        return null;
+//    }
 }

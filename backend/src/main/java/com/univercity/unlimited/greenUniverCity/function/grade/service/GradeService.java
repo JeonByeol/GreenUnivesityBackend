@@ -15,9 +15,9 @@ public interface GradeService {
     List<GradeStudentDTO> myGrade(String email);
 
     //G-3) 교수가 특정 과목의 수업을 듣는 전체학생 조회하기 위한 service
-    List<GradeProfessorDTO> courseOfGrade(Long offeringId);
+    List<GradeProfessorDTO> offeringOfGrade(Long offeringId);
 
     //G-4) 교수가 학생에 대한 정보를 받아와서 성적의 대한 값을 수정하기 위한 service
-    GradeDTO postNewGrade(Long enrollmentId,String gradeValue);
+    GradeDTO updateNewGrade(Long enrollmentId,String gradeValue);
 
 }

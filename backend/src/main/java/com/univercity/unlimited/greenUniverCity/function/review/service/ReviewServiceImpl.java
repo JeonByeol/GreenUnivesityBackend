@@ -1,11 +1,10 @@
 package com.univercity.unlimited.greenUniverCity.function.review.service;
 
-import com.univercity.unlimited.greenUniverCity.function.enrollment.dto.EnrollmentDTO;
 import com.univercity.unlimited.greenUniverCity.function.enrollment.entity.Enrollment;
 import com.univercity.unlimited.greenUniverCity.function.enrollment.service.EnrollmentService;
 import com.univercity.unlimited.greenUniverCity.function.offering.entity.CourseOffering;
 import com.univercity.unlimited.greenUniverCity.function.review.dto.ReviewCreateDTO;
-import com.univercity.unlimited.greenUniverCity.function.review.dto.ReviewDTO;
+import com.univercity.unlimited.greenUniverCity.function.review.dto.LegacyReviewDTO;
 import com.univercity.unlimited.greenUniverCity.function.review.dto.ReviewResponseDTO;
 import com.univercity.unlimited.greenUniverCity.function.review.dto.ReviewUpdateDTO;
 import com.univercity.unlimited.greenUniverCity.function.review.entity.Review;
@@ -18,7 +17,6 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -120,12 +118,12 @@ public class ReviewServiceImpl implements ReviewService{
     //구상:modelMapper를 좀 더 깔끔하거나 좋은 방식으로 수정하거나 mapper를 사용 안 할 예정
     @Transactional
     @Override
-    public List<ReviewDTO> findAllReview() {
+    public List<LegacyReviewDTO> findAllReview() {
         int cnt=0;
         log.info("2) 여기는 전체 리뷰 조회 service입니다 service ");
-        List<ReviewDTO> dtoList=new ArrayList<>();
+        List<LegacyReviewDTO> dtoList=new ArrayList<>();
         for(Review i:repository.findAll()){
-            ReviewDTO r=mapper.map(i,ReviewDTO.class);
+            LegacyReviewDTO r=mapper.map(i, LegacyReviewDTO.class);
             log.info("5 ) cnt= {} 여기는 전체 리뷰 조회 service입니다 service,{}  " , cnt++ , i);
             dtoList.add(r);
         }
@@ -135,7 +133,7 @@ public class ReviewServiceImpl implements ReviewService{
     //R-2)특정 과목에 대해 존재하는 리뷰 목록 조회 서비스 구현부
     // -> 98.9% 완료 나중에 구상 혹은 프론트앤드에서 작업할 때 추가 수정 하거나 그대로 사용 하면 될 듯?
     @Override
-    public List<ReviewResponseDTO> findCourseForReview(Long offeringId) {
+    public List<ReviewResponseDTO> findOfferingForReview(Long offeringId) {
         List<Review> reviews=repository.findReviewsByCourseOfferingId(offeringId);
         
         return reviews.stream()
@@ -146,7 +144,7 @@ public class ReviewServiceImpl implements ReviewService{
     //R-3) 학생이 수강중이거나 완료한 과목에 대한 리뷰를 작성하는 서비스 구현부
     // -> 90% 완료? 나중에 보안security를 추가하면 그거에 맞춰서 보안 작업에 대한 부분만 리팩토링 하면 됨
     @Override
-    public ReviewResponseDTO writeReviewStudent(ReviewCreateDTO dto,String studentEmail) {
+    public ReviewResponseDTO createReviewStudent(ReviewCreateDTO dto,String studentEmail) {
         log.info("2) 리뷰 작성 시작 - 학생: {}, enrollmentId: {}", studentEmail, dto.getEnrollmentId());
 
         Enrollment enrollment = enrollmentService.getEnrollmentEntity(dto.getEnrollmentId());
@@ -221,7 +219,7 @@ public class ReviewServiceImpl implements ReviewService{
     }
 
     @Override//R-A) **(기능 작성 부탁드리거나/삭제 부탁드립니다) **
-    public ResponseEntity<String> addReview(ReviewDTO reviewDTO) {
+    public ResponseEntity<String> addReview(LegacyReviewDTO legacyReviewDTO) {
         return null;
     }
 }

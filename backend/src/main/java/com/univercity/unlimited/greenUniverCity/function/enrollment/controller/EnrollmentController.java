@@ -1,6 +1,6 @@
 package com.univercity.unlimited.greenUniverCity.function.enrollment.controller;
 
-import com.univercity.unlimited.greenUniverCity.function.enrollment.dto.EnrollmentDTO;
+import com.univercity.unlimited.greenUniverCity.function.enrollment.dto.LegacyEnrollmentDTO;
 import com.univercity.unlimited.greenUniverCity.function.enrollment.service.EnrollmentService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,8 +18,8 @@ public class EnrollmentController {
     private final EnrollmentService enrollmentService;
 
     @GetMapping("/all")
-    public List<EnrollmentDTO> postmanTestDepartment(){
-        List<EnrollmentDTO> list=enrollmentService.findAllEnrollment();
+    public List<LegacyEnrollmentDTO> postmanTestDepartment(){
+        List<LegacyEnrollmentDTO> list=enrollmentService.findAllEnrollment();
         return list;
     }
 }

@@ -1,9 +1,9 @@
 package com.univercity.unlimited.greenUniverCity.repository;
 
 
-import com.univercity.unlimited.greenUniverCity.function.course.dto.CourseDTO;
+import com.univercity.unlimited.greenUniverCity.function.course.dto.LegacyCourseDTO;
 import com.univercity.unlimited.greenUniverCity.function.course.repository.CourseRepository;
-import com.univercity.unlimited.greenUniverCity.function.offering.dto.CourseOfferingDTO;
+import com.univercity.unlimited.greenUniverCity.function.offering.dto.LegacyCourseOfferingDTO;
 import com.univercity.unlimited.greenUniverCity.function.user.dto.UserDTO;
 import com.univercity.unlimited.greenUniverCity.function.course.entity.Course;
 import com.univercity.unlimited.greenUniverCity.function.offering.entity.CourseOffering;
@@ -128,12 +128,12 @@ public class CourseOfferingRepositoryTests {
         String professorName = professorNames.get((int)(Math.random()*professorNames.size()));
         int semester = (int) (Math.random() * 2) + 1;
         Course course = courseList.get((int)(Math.random()*courseList.size()));
-        CourseDTO courseDTO = mapper.map(course,CourseDTO.class);
-        CourseOfferingDTO courseOfferingDTO = CourseOfferingDTO.builder()
+        LegacyCourseDTO legacyCourseDTO = mapper.map(course, LegacyCourseDTO.class);
+        LegacyCourseOfferingDTO legacyCourseOfferingDTO = LegacyCourseOfferingDTO.builder()
                 .professorName(professorName)
                 .year(2025)
                 .semester(semester)
-                .course(courseDTO)
+                .course(legacyCourseDTO)
                 .build();
 
         char alphabat = 'A';
@@ -161,8 +161,8 @@ public class CourseOfferingRepositoryTests {
                 }
             } else {
                 // 중복이 없으면 처리 완료
-                courseOfferingDTO.setCourseName(course.getCourseName() + alphabat);
-                service.addCourseOffering(courseOfferingDTO);
+                legacyCourseOfferingDTO.setCourseName(course.getCourseName() + alphabat);
+                service.addCourseOffering(legacyCourseOfferingDTO);
                 break;
             }
         }
@@ -207,12 +207,12 @@ public class CourseOfferingRepositoryTests {
             String professorName = professorNames.get((int)(Math.random()*professorNames.size()));
             int semester = (int) (Math.random() * 2) + 1;
             Course course = courseList.get((int)(Math.random()*courseList.size()));
-            CourseDTO courseDTO = mapper.map(course,CourseDTO.class);
-            CourseOfferingDTO courseOfferingDTO = CourseOfferingDTO.builder()
+            LegacyCourseDTO legacyCourseDTO = mapper.map(course, LegacyCourseDTO.class);
+            LegacyCourseOfferingDTO legacyCourseOfferingDTO = LegacyCourseOfferingDTO.builder()
                     .professorName(professorName)
                     .year(2025)
                     .semester(semester)
-                    .course(courseDTO)
+                    .course(legacyCourseDTO)
                     .build();
 
             char alphabat = 'A';
@@ -240,10 +240,10 @@ public class CourseOfferingRepositoryTests {
                     }
                 } else {
                     // 중복이 없으면 처리 완료
-                    courseOfferingDTO.setCourseName(course.getCourseName() + alphabat);
+                    legacyCourseOfferingDTO.setCourseName(course.getCourseName() + alphabat);
                     UserDTO userDTO = mapper.map(userList.get((int)(Math.random()*userList.size())),UserDTO.class);
-                    courseOfferingDTO.setUser(userDTO);
-                    service.addCourseOffering(courseOfferingDTO);
+                    legacyCourseOfferingDTO.setUser(userDTO);
+                    service.addCourseOffering(legacyCourseOfferingDTO);
                     break;
                 }
             }

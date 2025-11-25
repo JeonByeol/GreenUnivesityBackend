@@ -2,8 +2,8 @@ package com.univercity.unlimited.greenUniverCity.function.post.dto;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.univercity.unlimited.greenUniverCity.function.board.dto.BoardDTO;
-import com.univercity.unlimited.greenUniverCity.function.comment.dto.CommentDTO;
+import com.univercity.unlimited.greenUniverCity.function.board.dto.LegacyBoardDTO;
+import com.univercity.unlimited.greenUniverCity.function.comment.dto.LegacyCommentDTO;
 import com.univercity.unlimited.greenUniverCity.function.user.dto.UserDTO;
 import lombok.*;
 
@@ -30,7 +30,7 @@ public class PostDTO {
 
     @JsonBackReference("board-post")
     @ToString.Exclude
-    private BoardDTO board;
+    private LegacyBoardDTO board;
 
     @JsonBackReference ("user-post")
     @ToString.Exclude
@@ -38,6 +38,6 @@ public class PostDTO {
 
     @Builder.Default
     @JsonManagedReference("post-comment")
-    private List<CommentDTO> comments=new ArrayList<>();
+    private List<LegacyCommentDTO> comments=new ArrayList<>();
 
 }
