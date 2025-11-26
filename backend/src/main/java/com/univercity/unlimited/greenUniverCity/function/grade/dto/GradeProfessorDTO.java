@@ -12,5 +12,8 @@ public class GradeProfessorDTO {
         private String gradeValue; //점수 벨류
 
         private String courseId; //과목코드
+    
+        private String courseName;//과목명
+    
         private String studentName; //학생이름
 }

@@ -10,6 +10,8 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 public class TimeTableUpdateDTO {
+    private Integer timetableId; // 타임테이블 id
+
     private String dayOfWeek; // 요일
 
     private LocalDateTime startTime; //시작시간

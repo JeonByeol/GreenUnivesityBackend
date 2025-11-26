@@ -31,6 +31,24 @@ public class GradeServiceImpl implements GradeService{
 
     private final ModelMapper mapper;
 
+    /**
+     * G-A) Grade 엔티티를 (Response) 형식으로 변환하는 함수
+     */
+    private GradeProfessorDTO illWishChainResponse(Grade grade){
+        Enrollment enrollment=grade.getEnrollment();
+        CourseOffering offering=enrollment.getCourseOffering();
+        User user=enrollment.getUser();
+
+        return
+                GradeProfessorDTO.builder()
+                        .gradeId(grade.getGradeId())
+                        .gradeValue(grade.getGradeValue())
+                        .courseName(offering.getCourseName())
+                        .studentName(user.getNickname())
+                        .build();
+
+    }
+
     //G-1)성적 전체 조회
     @Override
     public List<GradeDTO> findAllGrade() {
@@ -71,6 +89,7 @@ public class GradeServiceImpl implements GradeService{
 
         return myGrade;
     }
+
 
     //G-3) 교수가 특정 과목의 수업을 듣는 전체학생 조회하기 위한 service 구현부
     @Override
