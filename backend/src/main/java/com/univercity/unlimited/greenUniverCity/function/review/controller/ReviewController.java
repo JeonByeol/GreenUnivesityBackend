@@ -35,12 +35,20 @@ public class ReviewController {
     }
 
     //R-3) 학생이 수강중이거나 완료한 과목에 대한 리뷰를 작성하는 컨트롤러
-    @PostMapping("/create/{email}")
+    @PostMapping("/create")
     public ResponseEntity<ReviewResponseDTO> postmanCreateReview(
             @Valid @RequestBody ReviewCreateDTO dto,
-            @PathVariable("email") String studentEmail) {  // Spring Security에서 이메일 가져옴
+            @RequestHeader(value="X-User-Email",required = false) String studentEmail) {  // Spring Security에서 이메일 가져옴
+
+        log.info("받은 DTO: {}", dto);
 
         log.info("1) 리뷰 작성 요청 - 학생: {}, enrollmentId: {}", studentEmail, dto.getEnrollmentId());
+
+        // Postman 테스트용: Header가 없으면 기본값 사용 (개발 환경에서만)
+        if (studentEmail == null || studentEmail.isEmpty()) {
+            log.warn("X-User-Email 헤더가 없습니다. 테스트용 기본값 사용");
+            studentEmail = "alice@aaa.com"; // 테스트용 기본값
+        }
 
         ReviewResponseDTO response = reviewService.createReviewStudent(dto, studentEmail);
 

@@ -50,7 +50,7 @@ public class OriginConfig implements WebMvcConfigurer {
         registry.addMapping("/**")
                 .allowedOrigins("http://localhost:3000")
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
-                .allowedHeaders("Authorization", "Content-Type", "X-Requested-With")
+                .allowedHeaders("Authorization", "Content-Type", "X-Requested-With","X-User-Email")
                 .allowCredentials(true)
                 .maxAge(3600);
     }
