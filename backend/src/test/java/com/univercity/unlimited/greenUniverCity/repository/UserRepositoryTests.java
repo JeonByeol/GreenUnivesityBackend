@@ -43,18 +43,34 @@ public class UserRepositoryTests {
                 "조지형",
                 "한나누나",
                 "이안",
-                "줄리아"
+                "줄리아",
+
+
+                "루트"
         };
         
         // 데이터 추가
-        for(int i=0;i<10;i++){
-            int roleNumber = (int)(Math.random()*8) + 1;
+        for(int i=0;i<11;i++){
+            int roleNumber = 0;
 
-            User user= User.builder()
-                    .email(emails[i])
-                    .password("1111")
-                    .nickname(nicknames[i])
-                    .build();
+            User user= null;
+            if(i == 10){
+                user = User.builder()
+                        .email("root")
+                        .password("1111")
+                        .nickname(nicknames[i])
+                        .build();
+
+                roleNumber = 9;
+            } else {
+                user = User.builder()
+                        .email(emails[i])
+                        .password("1111")
+                        .nickname(nicknames[i])
+                        .build();
+
+                roleNumber = (int)(Math.random()*8) + 1;
+            }
 
             user.addRole(UserRole.GUEST);
             if(roleNumber>3) user.addRole(UserRole.STUDENT);

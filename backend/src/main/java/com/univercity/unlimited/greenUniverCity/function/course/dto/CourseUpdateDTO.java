@@ -10,6 +10,7 @@ import lombok.*;
 @Builder
 public class CourseUpdateDTO {
     //** 임시 DTO 완성본 아닙니다 **
+    private Long courseId; // 강의 코드
     private String courseName; // 과목명
 
     private String description; // 강의 설명
