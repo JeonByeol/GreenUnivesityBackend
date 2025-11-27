@@ -27,7 +27,7 @@ public interface TimeTableService {
     TimeTableResponseDTO createTimeTableForProfessor(TimeTableCreateDTO dto, String requesterEmail);
 
     //T-5) T에 선언된 postmanUpdateTimeTable의 요청을 받아서 기존에 존재하는 강의 시간표를 수정하기 위해 동작하는 서비스 선언
-    TimeTableResponseDTO updateTimeTableForProfessor(Integer timetableId,TimeTableUpdateDTO dto, String requesterEmail);
+    TimeTableResponseDTO updateTimeTableForProfessor(TimeTableUpdateDTO dto, String requesterEmail);
 
     //T-6) T에 선언된 postmanDeleteTimeTable의 요청을 받아서 기존에 존재하는 강의에 대한 시간표를 삭제하기 위해 동작하는 서비스 선언
     void deleteByTimeTable(Integer timetableId,String requesterEmail);

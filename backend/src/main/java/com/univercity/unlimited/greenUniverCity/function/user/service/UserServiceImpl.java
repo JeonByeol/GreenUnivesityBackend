@@ -1,5 +1,6 @@
 package com.univercity.unlimited.greenUniverCity.function.user.service;
 
+import com.univercity.unlimited.greenUniverCity.config.PasswordEncoderConfig;
 import com.univercity.unlimited.greenUniverCity.function.enrollment.exception.UserNotFoundException;
 import com.univercity.unlimited.greenUniverCity.function.review.exception.InvalidRoleException;
 import com.univercity.unlimited.greenUniverCity.function.user.dto.UserDTO;
@@ -21,7 +22,10 @@ import java.util.Optional;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
+
     private final ModelMapper mapper;
+
+    private final PasswordEncoderConfig passwordEncoderConfig;
 
     @Override
     public List<UserDTO> findAllUsers() {

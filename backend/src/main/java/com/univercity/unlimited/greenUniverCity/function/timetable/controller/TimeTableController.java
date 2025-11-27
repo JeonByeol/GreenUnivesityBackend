@@ -62,14 +62,14 @@ public class TimeTableController {
     }
 
     //T-5) 교수가 본인이 담당하고 있는 수업에 존재하는 시간표를 수정하기 위한 컨트롤러 내에 선언된 crud(put)
-    @PutMapping("/update/{timetableId}")
+    @PutMapping("/update")
     public ResponseEntity<TimeTableResponseDTO> postmanUpdateTimeTable(
-            @PathVariable("timetableId") Integer timetableId,
+//          @PathVariable("timetableId") Integer timetableId,
             @RequestBody TimeTableUpdateDTO dto,
             @RequestHeader(value="X-User-Email",required = false) String requesterEmail){
 
         log.info("1) 시간표 수정 요청 timetableId-:{},강의실-:{},요일-:{},시작시간-:{},종료시간-:{}",
-                timetableId,
+                dto.getTimetableId(),
                 dto.getLocation(),
                 dto.getDayOfWeek(),
                 dto.getStartTime(),
@@ -83,7 +83,6 @@ public class TimeTableController {
         }
 
         TimeTableResponseDTO updateTimeTable=timeTableService.updateTimeTableForProfessor(
-                timetableId,
                 dto,
                 requesterEmail
         );

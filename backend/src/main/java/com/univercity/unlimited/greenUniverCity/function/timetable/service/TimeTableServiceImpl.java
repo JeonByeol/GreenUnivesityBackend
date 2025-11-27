@@ -195,13 +195,13 @@ public class TimeTableServiceImpl implements TimeTableService{
 
     //T-5) 교수가 본인이 담당하고 있는 수업에 존재하는 시간표를 수정하기 위한 서비스 구현부
     @Override
-    public TimeTableResponseDTO updateTimeTableForProfessor(Integer timetableId, TimeTableUpdateDTO dto, String requesterEmail) {
-        log.info("2) 시간표 수정 시작 -timetableId-:{}, 교수-:{}",timetableId,requesterEmail);
+    public TimeTableResponseDTO updateTimeTableForProfessor(TimeTableUpdateDTO dto, String requesterEmail) {
+        log.info("2) 시간표 수정 시작 -timetableId-:{}, 교수-:{}",dto.getTimetableId(),requesterEmail);
 
-        TimeTable timeTable=repository.findById(timetableId)
+        TimeTable timeTable=repository.findById(dto.getTimetableId())
                 .orElseThrow(()->new TimeTableNotFoundException(
                         "3)보안 검사 시도 식별 코드 -:T-5 " +
-                                "시간표가 존재하지 않습니다. timeId:" + timetableId));
+                                "시간표가 존재하지 않습니다. timeId:" + dto.getTimetableId()));
 
         // T-security 보안검사보안 검사(소유권 검증)
         CourseOffering offering = timeTable.getCourseOffering();
@@ -216,7 +216,7 @@ public class TimeTableServiceImpl implements TimeTableService{
 
         log.info("5) 시간표 수정 성공 -교수:{}, timetableId:{},강의실:{},요일:{},시작시간:{},종료시간:{}",
                 requesterEmail,
-                timetableId,
+                dto.getTimetableId(),
                 dto.getLocation(),
                 dto.getDayOfWeek(),
                 dto.getStartTime(),
