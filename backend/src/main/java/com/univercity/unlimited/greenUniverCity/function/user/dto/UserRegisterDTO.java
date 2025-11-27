@@ -1,18 +1,9 @@
 package com.univercity.unlimited.greenUniverCity.function.user.dto;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.univercity.unlimited.greenUniverCity.function.comment.dto.LegacyCommentDTO;
-import com.univercity.unlimited.greenUniverCity.function.enrollment.dto.LegacyEnrollmentDTO;
-import com.univercity.unlimited.greenUniverCity.function.notice.dto.NoticeDTO;
-import com.univercity.unlimited.greenUniverCity.function.offering.dto.LegacyCourseOfferingDTO;
-import com.univercity.unlimited.greenUniverCity.function.post.dto.PostDTO;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.*;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -20,8 +11,8 @@ import java.util.List;
 @Getter
 @Setter
 @Builder
+public class UserRegisterDTO {
 
-public class UserCreateDTO {
     //회원가입
     @NotBlank(message = "이메일은 필수입니다")
     @Email(message = "올바른 이메일 형식이 아닙니다")

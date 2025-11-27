@@ -18,6 +18,7 @@ import java.util.List;
 @Setter
 @Builder
 public class PostDTO {
+    // p-1) postDTO 생성
     private Long postId; //포스트 아이디
 
     private String title; // 타이틀
@@ -27,6 +28,8 @@ public class PostDTO {
     private LocalDateTime createAt; //게시날짜
 
     private int viewCount; // 뷰 수
+
+    private String PostId;
 
     @JsonBackReference("board-post")
     @ToString.Exclude
