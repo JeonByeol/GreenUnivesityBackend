@@ -5,11 +5,10 @@ import lombok.*;
 
 @AllArgsConstructor
 @NoArgsConstructor
-@ToString
 @Getter
 @Setter
 @Builder
-
+@ToString(exclude = "password")
 public class UserUpdateDTO {
     //정보수정
     @Size(min = 8, max = 20, message = "비밀번호는 8자 이상 20자 이하여야 합니다")

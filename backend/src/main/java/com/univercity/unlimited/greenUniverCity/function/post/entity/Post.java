@@ -45,6 +45,8 @@ public class Post {
 //    @ToString.Exclude
     private User user; //유저
 
+
+
 //    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY)
 //    @Builder.Default
 //    @ToString.Exclude

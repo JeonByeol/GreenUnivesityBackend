@@ -15,6 +15,5 @@ import java.util.List;
 @ToString
 public class BoardUpdateDTO {
     private String boardName; //게시판 이름
-
-    //ex 테이블 명: )Post ** 추후 유라님이 필요한 칼럼 작성하실 예정 **
+    private Long boardId;
 }

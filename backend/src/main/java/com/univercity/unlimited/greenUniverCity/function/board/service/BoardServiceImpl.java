@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Slf4j
@@ -27,6 +28,35 @@ public class BoardServiceImpl implements BoardService{
            dto.add(r);
        }
        return dto;
+    }
+
+    @Override
+    public LegacyBoardDTO findIdBoard(Long boardId){
+        Optional<Board> data = repository.findById(boardId);
+        LegacyBoardDTO r = mapper.map(data.get(), LegacyBoardDTO.class);
+        return r;
+    }
+
+    @Override
+    public LegacyBoardDTO createBoard(LegacyBoardDTO dto) {
+        Board r = mapper.map(dto, Board.class);
+        Board board = repository.save(r);
+        LegacyBoardDTO legacyData = mapper.map(board, LegacyBoardDTO.class);
+        return legacyData;
+    }
+
+    @Override
+    public LegacyBoardDTO updateBoard(Long boardId, LegacyBoardDTO dto) {
+        Board entity = repository.findById(boardId)
+                .orElseThrow(() -> new RuntimeException("Board not found"));
+        mapper.map(dto, entity);
+        repository.save(entity);
+        return mapper.map(entity, LegacyBoardDTO.class);
+    }
+
+    @Override
+    public void deleteBoard(Long boardId) {
+        repository.deleteById(boardId);
     }
 
 //    @Override

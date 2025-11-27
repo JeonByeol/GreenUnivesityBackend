@@ -38,7 +38,7 @@ public class AttendanceServiceImpl implements AttendanceService{
      */
     private AttendanceResponseDTO toResponseDTO(Attendance attendance){
         Enrollment enrollment=attendance.getEnrollment();
-
+        User user=enrollment.getUser();
 
         return
                 AttendanceResponseDTO.builder()
@@ -46,8 +46,29 @@ public class AttendanceServiceImpl implements AttendanceService{
                         .enrollmentId(enrollment.getEnrollmentId())
                         .attendanceDate(attendance.getAttendanceDate())
                         .status(attendance.getStatus())
+                        .studentNickName(user.getNickname())
                         .build();
     }
+
+    private void validateStudentOwnerShip(String requesterEmail,String targetEmail,String action){
+        log.info("4) 학생 권한 검증 시작 요청자 -:{}, 대상자 -:{}, 작업 -:{}",requesterEmail,targetEmail,action);
+
+        // 1.요청자 조회
+        User requester=userService.getUserByEmail(requesterEmail);
+
+        // 2.요청자의 학생 권한 확인
+        if(!requester.getUserRoleList().contains(UserRole.STUDENT)){
+            throw new InvalidRoleException(
+                    String.format(
+                         "4)보안 검사 시도 식별코드-: A-Security-1 (출결%s) " +
+                                 "학생 권한이 없습니다. " +
+                                 "요청자: %s,userId: %s, 현재역할: %s",
+                            action,requester.getUserId(),requester.getUserRoleList())
+                    );
+        }
+
+    }
+
 
     /**
      * A-Security) 보안검사:
@@ -109,7 +130,7 @@ public class AttendanceServiceImpl implements AttendanceService{
         log.info("4) 교수 권한 검증 완료 - 교수: {}, 작업: {}", email, action);
     }
 
-
+    //A-1) 출결 테이블에 존재하는 데이터를 조회하는 서비스 구현부
     @Override
     public List<AttendanceResponseDTO> findAllAttendance() {
         log.info("2)출결 표 전체조회 시작");
@@ -121,12 +142,24 @@ public class AttendanceServiceImpl implements AttendanceService{
                 .collect(Collectors.toList());
     }
 
-    //A-2) 학생이 자신의 수강과목에 대한 모든 출결을 조회하기 위한 서비스 구현부
+    //A-2)학생이 특정 과목에 대한 출결을 조회하기 위한 서비스 구현부
     @Override
-    public List<AttendanceResponseDTO> studentOfAttendance(Long enrollmentId, String studentEmail) {
-        log.info("2) 학생이 출결 조회 요청 -학생:{},enrollmentId:{}",studentEmail,enrollmentId);
+    public List<AttendanceResponseDTO> findForEnrollmentOfAttendance(Long enrollmentId) {
+        log.info("2) 학생이 출결 조회 요청 enrollmentId-:{}",enrollmentId);
 
-        List<Attendance> attendances=repository.findAttendanceByStudentEmail(studentEmail);
+        List<Attendance> attendances=repository.findByEnrollmentId(enrollmentId);
+
+        return attendances.stream()
+                .map(this::toResponseDTO)
+                .collect(Collectors.toList());
+    }
+
+    //A-3)학생이 자신의 수강과목에 대한 모든 출결을 조회하기 위한 서비스 구현부
+    @Override
+    public List<AttendanceResponseDTO> findForStudentOfAttendance(String email) {
+        log.info("2) 학생이 출결 조회 요청 email-:{}",email);
+
+        List<Attendance> attendances=repository.findByEmail(email);
 
         return attendances.stream()
                 .map(this::toResponseDTO)
