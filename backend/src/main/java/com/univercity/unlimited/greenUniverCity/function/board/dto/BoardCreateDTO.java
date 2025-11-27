@@ -14,6 +14,5 @@ import java.util.List;
 @Builder
 @ToString
 public class BoardCreateDTO {
-
     private String boardName; //게시판 이름
 }

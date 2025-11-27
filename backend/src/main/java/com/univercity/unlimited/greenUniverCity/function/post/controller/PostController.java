@@ -53,17 +53,14 @@ public class PostController {
     }
     // P-6) 게시물 삭제 204
     @DeleteMapping("/delete/{postId}")
-    public ResponseEntity<Void> deletePost(@PathVariable("postId") Long PostId) {
+    public ResponseEntity<String> deletePost(@PathVariable("postId") Long PostId) {
         postService.deleteByPost(PostId);
         return ResponseEntity.noContent().build(); // 204
     }
     // P-7) 게시물 작성 201
     @PostMapping("/create")
     public ResponseEntity<PostResponseDTO> createPost(@RequestBody PostCreateDTO dto) {
-        Post entity = mapper.map(dto, Post.class);
-        Post saved = postRepository.save(entity);
-        PostResponseDTO response = mapper.map(saved, PostResponseDTO.class);
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        return ResponseEntity.status(HttpStatus.CREATED).body(PostResponseDTO.builder().build());
     }
 
 

@@ -1,5 +1,6 @@
 package com.univercity.unlimited.greenUniverCity.function.post.dto;
 
+import com.univercity.unlimited.greenUniverCity.function.board.entity.Board;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -11,12 +12,10 @@ import java.time.LocalDateTime;
 @Builder
 @AllArgsConstructor
 public class PostCreateDTO {
-    private String boardName;
-    private Long userid;
-    private String title;
-    private String content;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
-
+    private Long boardId; // 게시판
+    private Long userId; //유저 아이디
+    private String title; // 타이틀
+    private String content; // 콘텐츠
+    private LocalDateTime createdAt; //생성 일자
 
 }
