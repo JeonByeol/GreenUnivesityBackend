@@ -8,12 +8,17 @@ import lombok.*;
 @NoArgsConstructor
 @Builder
 public class GradeProfessorDTO {
-        private Integer gradeId; //점수 아이디
-        private String gradeValue; //점수 벨류
-
-        private String courseId; //과목코드
+    //교수용
     
-        private String courseName;//과목명
+    //성적정보
+    private Integer gradeId; //점수 아이디
+    private String gradeValue; //등급 
+    private Double score; // 점수
     
-        private String studentName; //학생이름
+    //과목정보
+    private String courseId; //과목코드
+    
+    private String courseName;//과목명
+    
+    private String studentName; //학생이름
 }

@@ -19,13 +19,13 @@ import java.util.List;
 @Builder
 
 public class UserResponseDTO {
-    //User
+
+    //응답용DTO
     private Long userId; //유저 아이디
-
     private String email; //이메일
-    private String password; //패스워드
     private String nickname; //닉네임
+    private String  role; //권한(역할)
 
-    private String  role; //롤
+    private String password; //패스워드
 
 }

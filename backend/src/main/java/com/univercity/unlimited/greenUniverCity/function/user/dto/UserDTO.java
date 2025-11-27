@@ -27,27 +27,6 @@ public class UserDTO {
     private String password; //패스워드
     private String nickname; //닉네임
 
-    private String  role; //롤
-
-
-    @Builder.Default
-    @JsonManagedReference("user-offering")
-    private List<LegacyCourseOfferingDTO> offerings=new ArrayList<>();
-
-    @Builder.Default
-    @JsonManagedReference("user-enrollment")
-    private List<LegacyEnrollmentDTO> enrollments=new ArrayList<>();
-
-    @Builder.Default
-    @JsonManagedReference("user-comment")
-    private List<LegacyCommentDTO> comments=new ArrayList<>();
-
-    @Builder.Default
-    @JsonManagedReference("user-post")
-    private List<PostDTO> posts=new ArrayList<>();
-
-    @Builder.Default
-    @JsonManagedReference("user-notice")
-    private List<NoticeDTO> notices=new ArrayList<>();
+    private String  role; //역할(권한)
 
 }
