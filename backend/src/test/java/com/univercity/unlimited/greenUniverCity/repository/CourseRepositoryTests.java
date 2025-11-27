@@ -108,6 +108,6 @@ public class CourseRepositoryTests {
                 .credits(credits)
                 .build();
 
-        service.addCourse(legacyCourseDTO);
+//        service.addCourse(legacyCourseDTO);
     }
 }

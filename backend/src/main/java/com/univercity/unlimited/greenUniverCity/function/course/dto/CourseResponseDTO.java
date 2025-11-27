@@ -20,11 +20,6 @@ public class CourseResponseDTO {
 
     private Integer credits; // 학점
 
-    //Department
     private Long departmentId; //학과Id
-
-    //CourseOffering
-    private String professorNickName;
-
 }
 

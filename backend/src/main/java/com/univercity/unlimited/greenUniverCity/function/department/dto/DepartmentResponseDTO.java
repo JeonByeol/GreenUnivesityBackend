@@ -23,5 +23,5 @@ public class DepartmentResponseDTO {
     private String deptName; // 학과명
 
     //Course
-    private Long courseId;//과목코드
+//    private Long courseId;//과목코드
 }
