@@ -44,7 +44,7 @@ public class GradeServiceImpl implements GradeService{
                         .gradeId(grade.getGradeId())
                         .gradeValue(grade.getGradeValue())
                         .courseName(offering.getCourseName())
-                        .courseId(offering.getOfferingId())
+//                        .courseId(offering.getOfferingId())
                         .studentName(user.getNickname())
                         .build();
 
