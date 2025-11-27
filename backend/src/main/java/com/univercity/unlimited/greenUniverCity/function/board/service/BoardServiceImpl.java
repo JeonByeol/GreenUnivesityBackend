@@ -37,6 +37,28 @@ public class BoardServiceImpl implements BoardService{
         return r;
     }
 
+    @Override
+    public LegacyBoardDTO createBoard(LegacyBoardDTO dto) {
+        Board r = mapper.map(dto, Board.class);
+        Board board = repository.save(r);
+        LegacyBoardDTO legacyData = mapper.map(board, LegacyBoardDTO.class);
+        return legacyData;
+    }
+
+    @Override
+    public LegacyBoardDTO updateBoard(Long boardId, LegacyBoardDTO dto) {
+        Board entity = repository.findById(boardId)
+                .orElseThrow(() -> new RuntimeException("Board not found"));
+        mapper.map(dto, entity);
+        repository.save(entity);
+        return mapper.map(entity, LegacyBoardDTO.class);
+    }
+
+    @Override
+    public void deleteBoard(Long boardId) {
+        repository.deleteById(boardId);
+    }
+
 //    @Override
 //    public Optional<List<BoardDTO>> findAllBoard() {
 //        List<Board> boards = repository.findAll();
