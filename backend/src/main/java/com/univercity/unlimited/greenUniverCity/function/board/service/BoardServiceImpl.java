@@ -1,5 +1,7 @@
 package com.univercity.unlimited.greenUniverCity.function.board.service;
 
+import com.univercity.unlimited.greenUniverCity.function.board.dto.BoardResponseDTO;
+import com.univercity.unlimited.greenUniverCity.function.board.dto.BoardUpdateDTO;
 import com.univercity.unlimited.greenUniverCity.function.board.dto.LegacyBoardDTO;
 import com.univercity.unlimited.greenUniverCity.function.board.entity.Board;
 import com.univercity.unlimited.greenUniverCity.function.board.repository.BoardRepository;
@@ -45,13 +47,14 @@ public class BoardServiceImpl implements BoardService{
         return legacyData;
     }
 
+
     @Override
-    public LegacyBoardDTO updateBoard(Long boardId, LegacyBoardDTO dto) {
+    public BoardResponseDTO updateBoard(Long boardId, BoardUpdateDTO dto) {
         Board entity = repository.findById(boardId)
                 .orElseThrow(() -> new RuntimeException("Board not found"));
-        mapper.map(dto, entity);
-        repository.save(entity);
-        return mapper.map(entity, LegacyBoardDTO.class);
+        Board r = mapper.map(dto, Board.class);
+        repository.save(r);
+        return mapper.map(entity, BoardResponseDTO.class);
     }
 
     @Override

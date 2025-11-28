@@ -26,6 +26,9 @@ public interface PostService {
 
     //P-6) POST 작성
     PostResponseDTO postCreate (Long postId,String studentEmail );
+
+    PostResponseDTO postCreate(PostCreateDTO dto);
+
     //P-7) POST 수정
     PostResponseDTO postUpdate(Long PostId, PostUpdateDTO dto);
 

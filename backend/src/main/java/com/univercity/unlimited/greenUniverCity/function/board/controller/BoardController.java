@@ -1,6 +1,9 @@
 package com.univercity.unlimited.greenUniverCity.function.board.controller;
 
+import com.univercity.unlimited.greenUniverCity.function.board.dto.BoardResponseDTO;
+import com.univercity.unlimited.greenUniverCity.function.board.dto.BoardUpdateDTO;
 import com.univercity.unlimited.greenUniverCity.function.board.dto.LegacyBoardDTO;
+import com.univercity.unlimited.greenUniverCity.function.board.entity.Board;
 import com.univercity.unlimited.greenUniverCity.function.board.service.BoardService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,8 +29,8 @@ public class BoardController {
 
     // B-2) BOARD 1개만 검색
     @GetMapping("/one/{id}")
-    public LegacyBoardDTO postIdSearch(@PathVariable("id") Long boardId) {
-        return boardService.findIdBoard(boardId);
+    public List<LegacyBoardDTO> postIdSearch(@PathVariable("id") Long boardId) {
+        return List.of(boardService.findIdBoard(boardId));
     }
 
     // B-3) BOARD 생성 (나중에 @PreAuthorize 붙이면 admin 전용)
@@ -41,19 +44,20 @@ public class BoardController {
 
 
     // B-4) BOARD 수정
-    @PutMapping("/update/{id}")
-    public ResponseEntity<LegacyBoardDTO> updateBoard(
-            @PathVariable("id") Long boardId,
-            @RequestBody LegacyBoardDTO dto
+    @PutMapping("/update/{Id}")
+    public ResponseEntity<BoardResponseDTO> updateBoard(
+            @PathVariable("Id") Long boardId,
+            @RequestBody BoardUpdateDTO dto
     ) {
-        LegacyBoardDTO updated = boardService.updateBoard(boardId, dto);
+        BoardResponseDTO updated = boardService.updateBoard(boardId,dto);
         return ResponseEntity.ok(updated); // 200 OK
         // 또는: return ResponseEntity.status(HttpStatus.OK).body(updated);
     }
+
     // B-5) BOARD 삭제
 
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<Void> deleteBoard(@PathVariable("id") Long boardId) {
+    public ResponseEntity<Board> deleteBoard(@PathVariable("id") Long boardId) {
         boardService.deleteBoard(boardId);
         return ResponseEntity.noContent().build(); // 204
     }

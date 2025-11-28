@@ -13,9 +13,7 @@ import java.time.LocalDateTime;
 public class PostUpdateDTO {
     private String title;
     private String content;
-    private Long authorId;
-    private Long boardId;
-    private int viewCount;
+    private Long postId;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }
