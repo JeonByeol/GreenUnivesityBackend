@@ -1,15 +1,15 @@
 package com.univercity.unlimited.greenUniverCity.function.comment.service;
 
-import com.univercity.unlimited.greenUniverCity.function.comment.dto.LegacyCommentDTO;
+import com.univercity.unlimited.greenUniverCity.function.comment.dto.*;
 import com.univercity.unlimited.greenUniverCity.function.comment.entity.Comment;
 import com.univercity.unlimited.greenUniverCity.function.comment.repository.CommentRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,24 +22,19 @@ public class CommentServiceImpl implements CommentService {
 
 
     @Override
-    public List<LegacyCommentDTO> findList() {
-//        log.info("2) 모든 코멘트를 조회");
-//        List<CommentDTO>  list  = commentRepository.findAll().stream().map(i->mapper.map(i, CommentDTO.class)).toList();
-//        log.info("3) 모든 코멘트를 조회.{}" ,list);
-//
-//        return list;
-        List<LegacyCommentDTO> dto=new ArrayList<>();
-        for(Comment i:commentRepository.findAll()){
-            LegacyCommentDTO r=mapper.map(i, LegacyCommentDTO.class);
-            dto.add(r);
-        }
-        return dto;
+    public List<CommentResponseDTO> findAllComment() {
+        return List.of();
     }
 
     @Override
-    public LegacyCommentDTO findByCommentCommentId(Long commentId) {
+    public List<CommentResponseDTO> findList() {
+        return List.of();
+    }
+
+    @Override
+    public CommentDTO findByCommentCommentId(Long commentId) {
         log.info("해당 아이디의 코멘트를 조회 service->{}",commentId);
-        return mapper.map( commentRepository.findById(commentId), LegacyCommentDTO.class);
+        return mapper.map( commentRepository.findById(commentId), CommentDTO.class);
     }
 
     @Override
@@ -62,4 +57,67 @@ public class CommentServiceImpl implements CommentService {
         Optional<List<LegacyCommentDTO>> optionalCommentDTOS = Optional.of(legacyCommentDTOS);
         return optionalCommentDTOS;
     }
+    @Override
+    public Optional<Comment> commentId(Long commentId){
+        return null;
+    }
+
+    @Override
+    public CommentResponseDTO commentUpdate(Long commentId, CommentUpdateDTO dto) {
+
+        // 1) 댓글 존재 여부 확인
+        Comment entity = commentRepository.findById(dto.getCommentId())
+                .orElseThrow(() -> new RuntimeException("댓글이 존재하지 않습니다."));
+
+        // 2) 값 변경
+        entity.setContent(dto.getContent());
+
+        // 3) 저장
+        Comment saved = commentRepository.save(entity);
+
+        // 4) ResponseDTO 수동 매핑
+        return CommentResponseDTO.builder()
+                .commentId(saved.getCommentId())
+                .content(saved.getContent())
+                .build();
+    }
+
+    @Override
+    public void deleteComment(Long commentId) {
+
+    }
+
+    @Override
+    public List<CommentResponseDTO> findAll() {
+        return commentRepository.findAll().stream()
+                .map(c -> CommentResponseDTO.builder()
+                        .commentId(c.getCommentId())
+                        .content(c.getContent())
+                        .build())
+                .toList();
+    }
+
+    @Override
+    public CommentResponseDTO create(CommentCreateDTO dto) {
+        return null;
+    }
+
+    @Override
+    @Transactional
+    public CommentResponseDTO updateComment(CommentUpdateDTO dto) {
+
+        Comment comment = commentRepository.findById(dto.getCommentId())
+                .orElseThrow(() -> new RuntimeException("댓글이 없습니다."));
+
+        comment.setContent(dto.getContent());
+
+        Comment saved = commentRepository.save(comment);
+
+        return CommentResponseDTO.builder()
+                .commentId(saved.getCommentId())
+                .content(saved.getContent())
+                .build();
+    }
+
+
 }

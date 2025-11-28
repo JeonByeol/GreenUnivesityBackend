@@ -1,4 +1,5 @@
 package com.univercity.unlimited.greenUniverCity.function.comment.entity;
+import com.univercity.unlimited.greenUniverCity.function.enrollment.entity.Enrollment;
 import com.univercity.unlimited.greenUniverCity.function.post.entity.Post;
 import com.univercity.unlimited.greenUniverCity.function.user.entity.User;
 import jakarta.persistence.*;
@@ -29,12 +30,23 @@ public class Comment {
     private LocalDateTime updatedAt; //수정날짜
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-//  @ToString.Exclude
-    private User user;
-
-    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id")
-//  @ToString.Exclude
     private Post post;
+
+    @Column (name = "writer_Name")
+    private String writerName;
+
+    @Column (name = "board_Name")
+    private String boardName;
+
+
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "user_id")
+////  @ToString.Exclude
+//    private User user;
+//
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "post_id")
+////  @ToString.Exclude
+//    private Post post;
 }

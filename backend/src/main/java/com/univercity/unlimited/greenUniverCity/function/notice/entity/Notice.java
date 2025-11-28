@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
+@Setter
 @Builder
 @ToString
 
@@ -24,7 +25,7 @@ public class Notice {
     @GeneratedValue(strategy=GenerationType.IDENTITY)
 
     @Column(name="notice_id")
-    private Integer noticeId; //공지 아이디
+    private Long noticeId; //공지 아이디
 
     @ManyToOne
     @JoinColumn(name="user_id")
@@ -38,4 +39,5 @@ public class Notice {
 
     @Column(name="created_at",nullable = false)
     private LocalDateTime createdAt; //게시날짜
+
 }

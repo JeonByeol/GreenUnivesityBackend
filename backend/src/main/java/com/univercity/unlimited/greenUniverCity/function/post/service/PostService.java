@@ -14,6 +14,8 @@ public interface PostService {
     //P-2) P에 선언된 postmanTestPost의 요청을 받아서 Post에 존재하는 전체 Post
     List<PostDTO> findAllPost();
 
+    void deletePost(Long postId);
+
     PostDTO postById (Long postId);
 
     List<Post> searchById(Long postId);

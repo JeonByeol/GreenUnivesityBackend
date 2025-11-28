@@ -1,12 +1,15 @@
 package com.univercity.unlimited.greenUniverCity.function.notice.controller;
 
+import com.univercity.unlimited.greenUniverCity.function.notice.dto.NoticeCreateDTO;
 import com.univercity.unlimited.greenUniverCity.function.notice.dto.NoticeDTO;
+import com.univercity.unlimited.greenUniverCity.function.notice.dto.NoticeResponseDTO;
+import com.univercity.unlimited.greenUniverCity.function.notice.dto.NoticeUpdateDTO;
 import com.univercity.unlimited.greenUniverCity.function.notice.service.NoticeService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -15,21 +18,49 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("/api/notice")
 public class NoticeController {
-    private final NoticeService noticeService;
-    //확인(학생)
-    //해당강의 아이디,과목명,과목코드 들어옴/교수id들어옴
 
-    //전체강의 조회
+    private final NoticeService noticeService;
+
+    // N-1) 전체 공지 조회
     @GetMapping("/all")
-    public List<NoticeDTO> postmanTestNotice(){
-        log.info("모든 공지들의 정보 호출");
-        return noticeService.findAllNotice();
+    public ResponseEntity<List<NoticeResponseDTO>> getAllNotices() {
+        log.info("모든 공지 정보 호출");
+        List<NoticeResponseDTO> result = noticeService.findAllNotice();
+        return ResponseEntity.ok(result);
     }
 
-    //특정강의 조회
-//    @GetMapping("/all/partCourse")
-//    public List<Course> postmanTestPartCourse(@PathVariable("partCourse")String course_id,String course_name){
-//        log.info("특정강의 정보 호출");
-//        return noticeService.findPartCourse(course_id,course_name);
-//    }
+    // N-2) 공지 하나 조회 (noticeId 기준)
+    @GetMapping("/one/{noticeId}")
+    public ResponseEntity<List<NoticeResponseDTO>> getNoticeById(@PathVariable Long noticeId) {
+        log.info("단일 공지 조회 요청: id={}", noticeId);
+        List<NoticeResponseDTO> notice = noticeService.findNotice(noticeId);
+        return ResponseEntity.ok(notice);
+    }
+
+    // N-3) 공지 수정
+    @PutMapping("/update")
+    public ResponseEntity<NoticeResponseDTO> updateNotice(
+            @RequestBody NoticeUpdateDTO dto
+    ) {
+        NoticeResponseDTO result = noticeService.updateNotice();
+        return ResponseEntity.ok(result);
+    }
+
+    // N-4) 공지 삭제
+    @DeleteMapping("/delete/{noticeId}")
+    public ResponseEntity<Void> deleteNotice(@PathVariable Long noticeId) {
+        log.info("공지 삭제 요청: id={}", noticeId);
+        noticeService.deleteNotice(noticeId);
+        return ResponseEntity.noContent().build(); // 204 No Content
+    }
+
+    // N-5) 공지 생성
+    @PostMapping("/create")
+    public ResponseEntity<NoticeResponseDTO> createNotice(
+            @RequestBody NoticeCreateDTO dto
+    ) {
+        NoticeResponseDTO result = noticeService.createNotice(dto);
+        return ResponseEntity.ok(result);
+    }
+
 }

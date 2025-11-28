@@ -40,6 +40,11 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
+    public void deletePost(Long postId) {
+        postRepository.deleteById(postId);
+        }
+
+    @Override
     public PostDTO postById(Long postId) {
         Optional<Post> findById = postRepository.findById(postId);
         PostDTO r =mapper.map(findById.get(), PostDTO.class);

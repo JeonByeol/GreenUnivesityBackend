@@ -13,6 +13,7 @@ import java.util.List;
 @Setter
 @Builder
 @ToString
+@Data
 public class BoardResponseDTO {
     private Long boardId;
     private String boardName;

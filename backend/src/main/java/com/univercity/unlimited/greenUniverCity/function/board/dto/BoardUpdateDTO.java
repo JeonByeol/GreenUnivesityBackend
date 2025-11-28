@@ -14,6 +14,6 @@ import java.util.List;
 @Builder
 @ToString
 public class BoardUpdateDTO {
-    private String boardName; //게시판 이름
     private Long boardId;
+    private String boardName; //게시판 이름
 }
