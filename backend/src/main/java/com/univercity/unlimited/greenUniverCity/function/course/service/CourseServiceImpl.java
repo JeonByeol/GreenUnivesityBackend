@@ -35,15 +35,17 @@ public class CourseServiceImpl implements CourseService{
     private final DepartmentService departmentService;
 
     private final ModelMapper mapper;
-    
+
     private CourseResponseDTO toResponseDTO(Course course){
+        Department department = course.getDepartment();
+
         return
                 CourseResponseDTO.builder()
                         .courseId(course.getCourseId())
                         .courseName(course.getCourseName())
                         .description(course.getDescription())
                         .credits(course.getCredits())
-//                        .departmentId(course.getDepartment().getDepartmentId())
+                        .departmentId(department != null ? department.getDepartmentId() : -1)
                         .build();
     }
 

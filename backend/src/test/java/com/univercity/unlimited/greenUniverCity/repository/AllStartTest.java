@@ -8,11 +8,11 @@ import org.junit.platform.suite.api.Suite;
 @SelectClasses({
         UserRepositoryTests.class,
 
-        CourseRepositoryTests.class,
-
         BoardRepositoryTests.class,
 
         DepartmentRepositoryTests.class,
+
+        CourseRepositoryTests.class,
 
         PostRepositoryTests.class,
 

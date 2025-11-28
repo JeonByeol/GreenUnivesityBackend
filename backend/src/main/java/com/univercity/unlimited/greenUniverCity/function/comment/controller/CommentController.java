@@ -17,7 +17,7 @@ public class CommentController {
 
     private final CommentService commentService;
 
-    @GetMapping("/commentlist")
+    @GetMapping("/all")
     public ResponseEntity<List<LegacyCommentDTO>> getListComments() {
         log.info("1) Controller: /community/list 호출");
         List<LegacyCommentDTO> result  = commentService.findList();
