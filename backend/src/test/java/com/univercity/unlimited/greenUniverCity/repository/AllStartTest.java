@@ -1,5 +1,6 @@
 package com.univercity.unlimited.greenUniverCity.repository;
 
+import com.univercity.unlimited.greenUniverCity.function.user.repository.UserDummyRepository;
 import org.junit.platform.suite.api.IncludeTags;
 import org.junit.platform.suite.api.SelectClasses;
 import org.junit.platform.suite.api.Suite;
@@ -8,11 +9,11 @@ import org.junit.platform.suite.api.Suite;
 @SelectClasses({
         UserRepositoryTests.class,
 
-        CourseRepositoryTests.class,
-
         BoardRepositoryTests.class,
 
         DepartmentRepositoryTests.class,
+
+        CourseRepositoryTests.class,
 
         PostRepositoryTests.class,
 
@@ -30,7 +31,9 @@ import org.junit.platform.suite.api.Suite;
 
         GradeRepositoryTests.class,
 
-        AttendanceRepositoryTests.class
+        AttendanceRepositoryTests.class,
+
+        UserDummyRepositoryTests.class
 })
 @IncludeTags("push")
 public class AllStartTest {

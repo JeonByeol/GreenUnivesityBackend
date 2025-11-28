@@ -5,11 +5,17 @@ import com.univercity.unlimited.greenUniverCity.function.course.dto.LegacyCourse
 import com.univercity.unlimited.greenUniverCity.function.course.entity.Course;
 import com.univercity.unlimited.greenUniverCity.function.course.repository.CourseRepository;
 import com.univercity.unlimited.greenUniverCity.function.course.service.CourseService;
+import com.univercity.unlimited.greenUniverCity.function.department.entity.Department;
+import com.univercity.unlimited.greenUniverCity.function.department.repository.DepartmentRepository;
+import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.Commit;
+
+import java.util.List;
 
 @SpringBootTest
 @Slf4j
@@ -18,10 +24,15 @@ public class CourseRepositoryTests {
     private CourseRepository repository;
 
     @Autowired
+    private DepartmentRepository departmentRepository;
+
+    @Autowired
     private CourseService service;
 
     @Test
     @Tag("push")
+    @Transactional
+    @Commit
     public void insertInitData() {
         // 데이터 세팅
         String[] courseNameArray = {
@@ -53,8 +64,11 @@ public class CourseRepositoryTests {
             return;
         }
 
+        List<Department> departments = departmentRepository.findAll();
+
         // department나 offerings는 Link테스트에서 추가
         for(int i=0; i<courseNameArray.length; i++) {
+            int ranCount = (int)(Math.random()*departments.size());
             String courseName = courseNameArray[i];
             String description = courseDescriptionArray[i];
             int credits = creditsArray[i];
@@ -62,6 +76,7 @@ public class CourseRepositoryTests {
                     .courseName(courseName)
                     .description(description)
                     .credits(credits)
+                    .department(departments.get(ranCount))
                     .build();
 
             repository.save(course);

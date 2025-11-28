@@ -13,6 +13,8 @@ import java.time.LocalDateTime;
 
 public class EnrollmentUpdateDTO {
     //** 임시 DTO 완성본 아닙니다 **
+    private Long enrollmentId; // 수강 내역 아이디
     private LocalDateTime enrollDate;//해당 날짜
-
+    private Long offeringId;
+    private Long userId;
 }

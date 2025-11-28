@@ -6,6 +6,7 @@ import com.univercity.unlimited.greenUniverCity.function.attendance.dto.Attendan
 import com.univercity.unlimited.greenUniverCity.function.attendance.dto.AttendanceUpdateDTO;
 import com.univercity.unlimited.greenUniverCity.function.attendance.entity.Attendance;
 import com.univercity.unlimited.greenUniverCity.function.enrollment.entity.Enrollment;
+import com.univercity.unlimited.greenUniverCity.function.enrollment.service.EnrollmentService;
 import com.univercity.unlimited.greenUniverCity.function.review.exception.DataIntegrityException;
 import com.univercity.unlimited.greenUniverCity.function.review.exception.InvalidRoleException;
 import com.univercity.unlimited.greenUniverCity.function.review.exception.UnauthorizedException;
@@ -29,6 +30,8 @@ public class AttendanceServiceImpl implements AttendanceService{
     private final AttendanceRepository repository;
 
     private final UserService userService;
+
+    private final EnrollmentService enrollmentService;
 
     private final ModelMapper mapper;
 
@@ -145,7 +148,7 @@ public class AttendanceServiceImpl implements AttendanceService{
     //A-2)학생이 특정 과목에 대한 출결을 조회하기 위한 서비스 구현부
     @Override
     public List<AttendanceResponseDTO> findForEnrollmentOfAttendance(Long enrollmentId) {
-        log.info("2) 학생이 출결 조회 요청 enrollmentId-:{}",enrollmentId);
+        log.info("2) 학생이 출결 조회 시작 enrollmentId-:{}",enrollmentId);
 
         List<Attendance> attendances=repository.findByEnrollmentId(enrollmentId);
 
@@ -157,7 +160,7 @@ public class AttendanceServiceImpl implements AttendanceService{
     //A-3)학생이 자신의 수강과목에 대한 모든 출결을 조회하기 위한 서비스 구현부
     @Override
     public List<AttendanceResponseDTO> findForStudentOfAttendance(String email) {
-        log.info("2) 학생이 출결 조회 요청 email-:{}",email);
+        log.info("2) 학생이 출결 조회 시작 email-:{}",email);
 
         List<Attendance> attendances=repository.findByEmail(email);
 
@@ -166,18 +169,50 @@ public class AttendanceServiceImpl implements AttendanceService{
                 .collect(Collectors.toList());
     }
 
-    //A-3)  교수가 특정 학생에 대한 출결을 작성하기 위한 서비스 구현부
+    //A-4)  교수가 특정 학생에 대한 출결을 작성하기 위한 서비스 구현부
     @Override
-    public AttendanceResponseDTO createAttendanceForProfessor(AttendanceCreateDTO dto, String studentEmail, String professorEmail) {
-        log.info("2) 출결 ");
+    public AttendanceResponseDTO createAttendanceForProfessor(AttendanceCreateDTO dto,String professorEmail) {
+        log.info("2) 교수가 학생 출결 생성 시작 교수-:{}",professorEmail);
 
-        return null;
+        Enrollment enrollment=enrollmentService.getEnrollmentEntity(dto.getEnrollmentId());
+        
+        //A-security 보안검사
+        validateProfessorOwnership(enrollment,professorEmail,"생성");
+
+        Attendance attendance= Attendance.builder()
+                .enrollment(enrollment)
+                .attendanceDate(dto.getAttendanceDate())
+                .status(dto.getStatus())
+                .build();
+
+        Attendance createAttendance=repository.save(attendance);
+
+        log.info("5) 출결 작성 완료 -attendanceId:{}, 교수:{}",createAttendance.getAttendanceId(),professorEmail);
+
+        return toResponseDTO(createAttendance);
     }
 
-    //A-4) 교수가 학생에 대한 출결을 수정하기 위한 서비스 구현부
+    //A-5) 교수가 학생에 대한 출결을 수정하기 위한 서비스 구현부
     @Override
-    public AttendanceResponseDTO updateAttendanceForProfessor(AttendanceUpdateDTO dto, String studentEmail, String professorEmail) {
-        return null;
+    public AttendanceResponseDTO updateAttendanceForProfessor(AttendanceUpdateDTO dto, String professorEmail) {
+        log.info("2) 교수가 학생 출결 수정 시작  attendanceId-:{}, 교수-:{}",dto.getAttendanceId(),professorEmail);
+
+        Attendance attendance=repository.findById(dto.getAttendanceId())
+                .orElseThrow(()->new RuntimeException(
+                        "3)보안 검사 식별 코드 -:A-5 " +
+                                "출결이 존재하지 않습니다. attendanceId " + dto.getAttendanceId()));
+
+        Enrollment enrollment=attendance.getEnrollment();
+        validateProfessorOwnership(enrollment,professorEmail,"수정");
+
+        attendance.setAttendanceDate(dto.getAttendanceDate());
+        attendance.setStatus(dto.getStatus());
+
+        Attendance updateAttendance=repository.save(attendance);
+
+        log.info("5) 출결 수정 성공 교수-:{}, attendanceId-:{}",professorEmail,dto.getAttendanceId());
+
+        return toResponseDTO(updateAttendance);
     }
 
 
