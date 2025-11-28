@@ -30,4 +30,6 @@ public interface UserService {
 
     //U-E) Email을 통하여 사용자를 조회하기 위한 service 구현부
     User getUserByEmail(String email);
+
+    //U-GP) NickName 정보를 통하여 user를 탐색하기 위한
 }

@@ -35,8 +35,7 @@ public class CourseServiceImpl implements CourseService{
     private final DepartmentService departmentService;
 
     private final ModelMapper mapper;
-
-    @Transactional
+    
     private CourseResponseDTO toResponseDTO(Course course){
         return
                 CourseResponseDTO.builder()
@@ -142,5 +141,16 @@ public class CourseServiceImpl implements CourseService{
         repository.delete(course.get());
 
         return Map.of("Result","Success");
+    }
+
+    @Override
+    public Course getByCourseId(Long courseId) {
+        Optional<Course> courseOptional = repository.findById(courseId);
+
+        if(courseOptional.isEmpty()){
+            throw new RuntimeException("Course를 찾지 못하였습니다.");
+        }
+
+        return courseOptional.get();
     }
 }
