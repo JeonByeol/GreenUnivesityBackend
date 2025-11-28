@@ -138,7 +138,7 @@ public class ReviewServiceImpl implements ReviewService{
         
         return reviews.stream()
                 .map(this::toResponseDTO)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     //R-3) 학생이 수강중이거나 완료한 과목에 대한 리뷰를 작성하는 서비스 구현부

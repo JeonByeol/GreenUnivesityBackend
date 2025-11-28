@@ -21,10 +21,10 @@ public interface AttendanceService {
     List<AttendanceResponseDTO> findForStudentOfAttendance(String email);
 
     //A-4) A에 선언된 postmanTestCreateAttendance의 요청을 받아서 교수가 특정 학생에 대한 출결을 작성하기 위해 동작하는 서비스 선언
-    AttendanceResponseDTO createAttendanceForProfessor(AttendanceCreateDTO dto,String studentEmail,String professorEmail);
+    AttendanceResponseDTO createAttendanceForProfessor(AttendanceCreateDTO dto,String professorEmail);
 
     //A-5) A에 선언된 postmanUpdateAttendance의 요청을 받아서 교수가 학생에 대한 출결을 수정하기 위해 동작하는 서비스 선언
-    AttendanceResponseDTO updateAttendanceForProfessor(AttendanceUpdateDTO dto,String studentEmail,String professorEmail);
+    AttendanceResponseDTO updateAttendanceForProfessor(AttendanceUpdateDTO dto,String professorEmail);
 
     //A-A) ** 필요한 기능 입력 부탁드립니다 | 사용 안하면 삭제 서비스구현 삭제 부탁드립니다 **
     ResponseEntity<String> addAttendance(LegacyAttendanceDTO legacyAttendanceDTO);

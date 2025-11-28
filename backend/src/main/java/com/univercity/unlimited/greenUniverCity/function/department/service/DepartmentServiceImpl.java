@@ -1,14 +1,12 @@
 package com.univercity.unlimited.greenUniverCity.function.department.service;
 
-import com.univercity.unlimited.greenUniverCity.function.course.dto.CourseResponseDTO;
-import com.univercity.unlimited.greenUniverCity.function.course.entity.Course;
 import com.univercity.unlimited.greenUniverCity.function.department.dto.DepartmentCreateDTO;
 import com.univercity.unlimited.greenUniverCity.function.department.dto.DepartmentResponseDTO;
 import com.univercity.unlimited.greenUniverCity.function.department.dto.DepartmentUpdateDTO;
 import com.univercity.unlimited.greenUniverCity.function.department.entity.Department;
 import com.univercity.unlimited.greenUniverCity.function.department.repository.DepartmentRepository;
 import com.univercity.unlimited.greenUniverCity.function.department.dto.LegacyDepartmentDTO;
-import com.univercity.unlimited.greenUniverCity.function.util.MapperUtil;
+import com.univercity.unlimited.greenUniverCity.util.MapperUtil;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
