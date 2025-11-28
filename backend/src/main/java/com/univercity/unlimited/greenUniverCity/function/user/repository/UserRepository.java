@@ -29,11 +29,11 @@ public interface UserRepository extends JpaRepository<User,Long> {
     // 유저의 정보를 찾기 위한 쿼리 선언
     User findByUserId(Long id);
 
-    //PROFESSOR 역할을 가진 사용자만 조회하기 위한 service선언에 활용될 쿼리
+    //PROFESSOR(교수) 역할을 가진 사용자만 조회하기 위한 service선언에 활용될 쿼리
     @Query("SELECT u FROM User u JOIN u.userRoleList role WHERE u.userId = :userId AND role = 'PROFESSOR'")
     Optional<User> findProfessorById(@Param("userId") Long userId);
 
-    //Email을 통해
+    //Email을 통해 사용자조회
     Optional<User> findByEmail(String email);
 
 }
