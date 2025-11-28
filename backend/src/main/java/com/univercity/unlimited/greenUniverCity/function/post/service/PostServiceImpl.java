@@ -1,7 +1,6 @@
 package com.univercity.unlimited.greenUniverCity.function.post.service;
 
-import com.univercity.unlimited.greenUniverCity.function.board.dto.LegacyBoardDTO;
-import com.univercity.unlimited.greenUniverCity.function.board.entity.Board;
+import com.univercity.unlimited.greenUniverCity.function.post.dto.PostCreateDTO;
 import com.univercity.unlimited.greenUniverCity.function.post.dto.PostDTO;
 import com.univercity.unlimited.greenUniverCity.function.post.dto.PostResponseDTO;
 import com.univercity.unlimited.greenUniverCity.function.post.dto.PostUpdateDTO;
@@ -63,6 +62,14 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
+    public PostResponseDTO postCreate(PostCreateDTO dto) {
+        Post entity = mapper.map(dto, Post.class);
+        Post saved = postRepository.save(entity);
+        PostResponseDTO response = mapper.map(saved, PostResponseDTO.class);
+        return response;
+    }
+
+    @Override
     public PostResponseDTO postUpdate(Long postId, PostUpdateDTO dto) {
         Post entity = postRepository.findById(postId)
                 .orElseThrow(() -> new RuntimeException("게시물이 없습니다"));
@@ -77,8 +84,6 @@ public class PostServiceImpl implements PostService {
     public void deleteByPost(Long postId) {
         postRepository.deleteById(postId);
     }
-
-
 
     @Override
     public List<Post> search(String keyword) {

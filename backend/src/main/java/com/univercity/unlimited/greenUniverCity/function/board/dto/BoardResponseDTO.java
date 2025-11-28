@@ -15,7 +15,6 @@ import java.util.List;
 @ToString
 public class BoardResponseDTO {
     private Long boardId;
-
     private String boardName;
 
 

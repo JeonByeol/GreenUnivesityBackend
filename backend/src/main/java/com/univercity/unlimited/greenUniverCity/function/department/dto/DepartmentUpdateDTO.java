@@ -16,6 +16,7 @@ import java.util.List;
 
 public class DepartmentUpdateDTO {
     //** 임시 DTO 완성본 아닙니다 **
+    private Long departmentId;
     private String deptName; // 학과명
 
 }
