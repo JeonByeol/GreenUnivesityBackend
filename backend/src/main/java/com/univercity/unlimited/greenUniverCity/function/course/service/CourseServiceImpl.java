@@ -8,22 +8,13 @@ import com.univercity.unlimited.greenUniverCity.function.course.entity.Course;
 import com.univercity.unlimited.greenUniverCity.function.course.repository.CourseRepository;
 import com.univercity.unlimited.greenUniverCity.function.department.entity.Department;
 import com.univercity.unlimited.greenUniverCity.function.department.service.DepartmentService;
-import com.univercity.unlimited.greenUniverCity.function.offering.entity.CourseOffering;
-import com.univercity.unlimited.greenUniverCity.function.offering.service.CourseOfferingService;
-import com.univercity.unlimited.greenUniverCity.function.review.entity.Review;
-import com.univercity.unlimited.greenUniverCity.function.timetable.dto.TimeTableResponseDTO;
-import com.univercity.unlimited.greenUniverCity.function.timetable.entity.TimeTable;
-import com.univercity.unlimited.greenUniverCity.function.user.entity.User;
-import com.univercity.unlimited.greenUniverCity.function.user.service.UserService;
-import com.univercity.unlimited.greenUniverCity.function.util.MapperUtil;
+import com.univercity.unlimited.greenUniverCity.util.MapperUtil;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.util.*;
 
 @Service

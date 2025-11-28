@@ -1,4 +1,4 @@
-package com.univercity.unlimited.greenUniverCity.function.util;
+package com.univercity.unlimited.greenUniverCity.util;
 
 import org.springframework.format.Formatter;
 

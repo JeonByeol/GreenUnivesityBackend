@@ -34,8 +34,6 @@ public class TimeTableServiceImpl implements TimeTableService{
 
     private final UserService userService;
 
-    private final ModelMapper mapper;
-
     /**
      * T-A) TimeTable 엔티티를 (Response)DTO로 변환
      * - 각각의 crud 기능에 사용되는 서비스 구현부에 사용하기 위해 함수로 생성
@@ -132,7 +130,7 @@ public class TimeTableServiceImpl implements TimeTableService{
 
         return timeTables.stream()
                 .map(this::toResponseDTO)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     //T-2)특정 과목에 존재하는 모든 시간표를 조회하기 위한 서비스 구현부
@@ -149,7 +147,7 @@ public class TimeTableServiceImpl implements TimeTableService{
 
         return timeTables.stream()
                 .map(this::toResponseDTO)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     //T-3)특정 학생이 신청한 모든 과목의 시간표를 조회하기 위한 서비스 구현부
@@ -163,7 +161,7 @@ public class TimeTableServiceImpl implements TimeTableService{
 
         return timeTables.stream()
                 .map(this::toResponseDTO)
-                .collect(Collectors.toList());
+                .toList();
     }
     
     //T-4) 교수 or 관리자가 특정 강의에 대한 시간표를 생성하기 위한 서비스 구현부 -> 문제 좀 많음 수정 해야함

@@ -14,7 +14,7 @@ import java.util.List;
 @AllArgsConstructor //
 @NoArgsConstructor //파라미터가 없는 기본 생성자 생성
 @Getter
-//@Table(name = "tbl_user")
+@Table(name = "tbl_dummy")
 @ToString
 @Builder
 public class UserDummy{

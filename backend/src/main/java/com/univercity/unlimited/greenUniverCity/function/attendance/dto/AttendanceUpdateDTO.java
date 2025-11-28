@@ -13,6 +13,8 @@ import java.time.LocalDateTime;
 @Builder
 
 public class AttendanceUpdateDTO {
+    private Long attendanceId;
+
     private LocalDate attendanceDate; //출석 시간
 
     private String status; //출,결석 확인
