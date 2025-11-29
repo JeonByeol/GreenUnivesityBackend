@@ -14,7 +14,7 @@ public interface CommentService {
     List<CommentResponseDTO> findList();
 
     // 게시글별 댓글 목록
-    CommentDTO findByCommentCommentId(Long commentId);
+    CommentResponseDTO findByCommentCommentId(Long commentId);
 
     List<LegacyCommentDTO> getCommentsByPostId(Long postId);
 
@@ -31,7 +31,8 @@ public interface CommentService {
     List<CommentResponseDTO> findAll();
 
 
-    CommentResponseDTO create(CommentCreateDTO dto);
+
+    CommentResponseDTO createComment(CommentCreateDTO dto, String email);
 
     CommentResponseDTO updateComment(CommentUpdateDTO dto);
 

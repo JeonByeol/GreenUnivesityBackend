@@ -32,13 +32,14 @@ public ResponseEntity<List<CommentResponseDTO>> getAllComments() {
 }
     // C-2) 아이디로 한 개의 댓글만 조회 200
     @GetMapping("/one/{commentId}")
-    public List<CommentDTO> getById(@PathVariable("commentId") Long commentId){
+    public List<CommentResponseDTO> getById(@PathVariable("commentId") Long commentId){
         return List.of(commentService.findByCommentCommentId(commentId));
     };
     // C-5) 댓글 수정 200
     @PutMapping("/update")
     public ResponseEntity<CommentResponseDTO> updateComment(
-            @RequestBody CommentUpdateDTO dto) {
+            @RequestBody CommentUpdateDTO dto,
+            @RequestHeader(value="X-User-Email",required = false) String requesterEmail) {
         CommentResponseDTO updated = commentService.updateComment(dto);
         return ResponseEntity.ok(updated);
     }
@@ -51,9 +52,10 @@ public ResponseEntity<List<CommentResponseDTO>> getAllComments() {
     // C-7) 댓글 작성 201
     @PostMapping("/create")
     public ResponseEntity<CommentResponseDTO> createComment(
-            @RequestBody CommentCreateDTO dto
+            @RequestBody CommentCreateDTO dto,
+            @RequestHeader(value="X-User-Email",required = false) String requesterEmail
     ) {
-        CommentResponseDTO created = commentService.create(dto);
+        CommentResponseDTO created = commentService.createComment(dto,requesterEmail);
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 

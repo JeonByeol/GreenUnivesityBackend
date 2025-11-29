@@ -3,6 +3,8 @@ package com.univercity.unlimited.greenUniverCity.function.comment.service;
 import com.univercity.unlimited.greenUniverCity.function.comment.dto.*;
 import com.univercity.unlimited.greenUniverCity.function.comment.entity.Comment;
 import com.univercity.unlimited.greenUniverCity.function.comment.repository.CommentRepository;
+import com.univercity.unlimited.greenUniverCity.function.course.entity.Course;
+import com.univercity.unlimited.greenUniverCity.function.util.MapperUtil;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -32,9 +34,9 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public CommentDTO findByCommentCommentId(Long commentId) {
+    public CommentResponseDTO findByCommentCommentId(Long commentId) {
         log.info("해당 아이디의 코멘트를 조회 service->{}",commentId);
-        return mapper.map( commentRepository.findById(commentId), CommentDTO.class);
+        return mapper.map( commentRepository.findById(commentId), CommentResponseDTO.class);
     }
 
     @Override
@@ -84,7 +86,7 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public void deleteComment(Long commentId) {
-
+        commentRepository.deleteById(commentId);
     }
 
     @Override
@@ -97,9 +99,19 @@ public class CommentServiceImpl implements CommentService {
                 .toList();
     }
 
+
     @Override
-    public CommentResponseDTO create(CommentCreateDTO dto) {
-        return null;
+    public CommentResponseDTO createComment(CommentCreateDTO dto, String email) {
+        log.info("2)comment 추가 시작 comment : {}", dto);
+
+        Comment comment = new Comment();
+        MapperUtil.updateFrom(dto, comment, List.of("commentId"));
+        log.info("3)CourseCreateDTO -> comment : {}", comment);
+
+        Comment result = commentRepository.save(comment);
+        log.info("4)추가된 comment : {}", result);
+
+        return CommentResponseDTO.builder().build();
     }
 
     @Override
