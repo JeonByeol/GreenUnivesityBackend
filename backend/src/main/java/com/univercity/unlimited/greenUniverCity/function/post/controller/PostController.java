@@ -45,12 +45,13 @@ public class PostController {
     }
     // P-5) 게시물 수정 200
     @PutMapping("/update")
-    public ResponseEntity<PostResponseDTO> updatePost(
-            @RequestBody PostUpdateDTO dto,
-            @RequestHeader(value = "X-User-Email", required = false) String studentEmail){
-        PostResponseDTO updated = postService.postUpdate(dto.getPostId(), dto);
-        return ResponseEntity.ok(updated);
+    public ResponseEntity<PostResponseDTO> postUpdate(@RequestBody PostUpdateDTO dto) {
+
+        PostResponseDTO result = postService.postUpdate(dto.getPostId(), dto);
+
+        return ResponseEntity.ok(result);
     }
+
     // P-6) 게시물 삭제 204
     @DeleteMapping("/delete/{postId}")
     public ResponseEntity<Void> deletePost(@PathVariable Long postId,

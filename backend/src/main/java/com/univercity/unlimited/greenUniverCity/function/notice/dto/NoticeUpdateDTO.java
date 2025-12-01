@@ -20,7 +20,9 @@ public class NoticeUpdateDTO {
 
     private String content; //콘텐츠
 
-    private LocalDateTime createdAt; //날짜
+    private LocalDateTime createdAt; // 개시 날짜
+
+    private LocalDateTime updatedAt; //수정날짜
 
 
 

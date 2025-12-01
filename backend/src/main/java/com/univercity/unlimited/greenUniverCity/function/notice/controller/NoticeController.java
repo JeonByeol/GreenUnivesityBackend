@@ -42,9 +42,10 @@ public class NoticeController {
     public ResponseEntity<NoticeResponseDTO> updateNotice(
             @RequestBody NoticeUpdateDTO dto
     ) {
-        NoticeResponseDTO result = noticeService.updateNotice();
+        NoticeResponseDTO result = noticeService.updateNotice(dto); // ★ dto 넘겨야 함
         return ResponseEntity.ok(result);
     }
+
 
     // N-4) 공지 삭제
     @DeleteMapping("/delete/{noticeId}")
