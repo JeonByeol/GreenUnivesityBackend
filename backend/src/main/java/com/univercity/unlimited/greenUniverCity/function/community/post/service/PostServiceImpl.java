@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -40,6 +41,11 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
+    public void deletePost(Long postId) {
+        postRepository.deleteById(postId);
+        }
+
+    @Override
     public PostDTO postById(Long postId) {
         Optional<Post> findById = postRepository.findById(postId);
         PostDTO r =mapper.map(findById.get(), PostDTO.class);
@@ -64,19 +70,23 @@ public class PostServiceImpl implements PostService {
     @Override
     public PostResponseDTO postCreate(PostCreateDTO dto) {
         Post entity = mapper.map(dto, Post.class);
+        entity.setCreateAt(LocalDateTime.now());
         Post saved = postRepository.save(entity);
         PostResponseDTO response = mapper.map(saved, PostResponseDTO.class);
         return response;
     }
 
-    @Override
+   @Transactional
+   @Override
     public PostResponseDTO postUpdate(Long postId, PostUpdateDTO dto) {
+
+        // 1) 기존 게시글 조회 (board, user 다 살아있는 상태로 가져옴)
         Post entity = postRepository.findById(postId)
                 .orElseThrow(() -> new RuntimeException("게시물이 없습니다"));
         entity.setTitle(dto.getTitle());
         entity.setContent(dto.getContent());
         Post saved = postRepository.save(entity);
-        return mapper.map(entity, PostResponseDTO.class);
+        return  mapper.map(saved, PostResponseDTO.class);
     }
 
     @Override

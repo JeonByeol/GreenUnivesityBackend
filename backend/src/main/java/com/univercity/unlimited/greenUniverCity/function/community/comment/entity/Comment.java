@@ -29,12 +29,23 @@ public class Comment {
     private LocalDateTime updatedAt; //수정날짜
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-//  @ToString.Exclude
-    private User user;
-
-    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id")
-//  @ToString.Exclude
     private Post post;
+
+    @Column (name = "writer_Name")
+    private String writerName;
+
+    @Column (name = "board_Name")
+    private String boardName;
+
+
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "user_id")
+////  @ToString.Exclude
+//    private User user;
+//
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "post_id")
+////  @ToString.Exclude
+//    private Post post;
 }

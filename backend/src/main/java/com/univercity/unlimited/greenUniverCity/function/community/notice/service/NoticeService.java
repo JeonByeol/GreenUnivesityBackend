@@ -5,12 +5,24 @@ import com.univercity.unlimited.greenUniverCity.function.community.notice.dto.No
 import java.util.List;
 
 public interface NoticeService {
-    //강의 아이디,강의코드,강의명 전체조회
-    //교수id조회
-    //전체 강의 데이터 조회
-    List<NoticeDTO> findAllNotice();
-    //특정강의id와 강의명조회
-//    List<Course> findPartCourse( String course_id,String course_name);
-//
-//    ResponseEntity<String> addNotice(NoticeDTO noticeDTO);
+
+    // N-1 전체 공지
+    List<NoticeResponseDTO> findAllNotice();
+
+    // N-2 단일 공지
+    List<NoticeResponseDTO> findNotice(Long noticeId);
+
+    // N-3 수정
+    NoticeResponseDTO updateNotice();
+
+    // N-3) 수정 (조건 A: Body로 noticeId 포함해서 받는 방식)
+    NoticeResponseDTO updateNotice(NoticeUpdateDTO dto);
+
+    List<Course> findPartNotice(String noticeId, String noticeName);
+
+    // N-4 삭제
+    void deleteNotice(Long noticeId);
+
+    // N-5 생성
+    NoticeResponseDTO createNotice(NoticeCreateDTO dto);
 }

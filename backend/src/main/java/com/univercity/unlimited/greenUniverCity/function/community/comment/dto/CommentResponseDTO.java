@@ -20,11 +20,11 @@ public class CommentResponseDTO {
 
     private LocalDateTime updatedAt; //수정날짜
 
-    //User ** 추후 유라님이 필요한 칼럼 작성하실 예정 **
+    private Long postId;
+
     private String writerName;//작성자 이름
 
-    //Post (?) ** 추후 유라님이 필요한 칼럼 작성하실 예정 **
-    private String name; //게시글 이름(?) ** 확실한 역할 작성해주시거나/삭제 부탁드립니다 **
+    private String boardName;
 
 
 }

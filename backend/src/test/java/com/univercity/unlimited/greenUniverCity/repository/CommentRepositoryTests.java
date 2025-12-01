@@ -65,7 +65,6 @@ public class CommentRepositoryTests {
                 Comment dto = Comment.builder()
                         .content(comments[(int)(Math.random()*comments.length)])
                         .createdAt(LocalDateTime.now())
-                        .user(u)
                         .post(posts.get(postRan))
                         .build();
                 repository.save(dto);

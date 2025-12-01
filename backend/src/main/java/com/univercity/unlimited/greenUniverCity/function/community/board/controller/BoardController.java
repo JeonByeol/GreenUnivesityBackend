@@ -7,6 +7,8 @@ import com.univercity.unlimited.greenUniverCity.function.community.board.entity.
 import com.univercity.unlimited.greenUniverCity.function.community.board.service.BoardService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.modelmapper.ModelMapper;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,6 +21,8 @@ import java.util.List;
 public class BoardController {
 
     private final BoardService boardService;
+    private final ModelMapper mapper;
+    private final BoardRepository repository;
 
     // B-1) BOARD 전체 검색
     @GetMapping("/all")
@@ -34,24 +38,24 @@ public class BoardController {
 
     // B-3) BOARD 생성 (나중에 @PreAuthorize 붙이면 admin 전용)
     @PostMapping("/create")
-    public ResponseEntity<LegacyBoardDTO> createdBoard(
-            @RequestBody LegacyBoardDTO dto
+    public ResponseEntity<BoardResponseDTO> createBoard(
+            @RequestBody BoardCreateDTO dto
     ) {
-        LegacyBoardDTO created = boardService.createBoard(dto);
-        return ResponseEntity.ok(created); // 200
+        BoardResponseDTO created = boardService.createBoard(dto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(created);
+        // 또는 return ResponseEntity.ok(created);
     }
 
 
     // B-4) BOARD 수정
-    @PutMapping("/update/{Id}")
-    public ResponseEntity<BoardResponseDTO> updateBoard(
-            @PathVariable("Id") Long boardId,
-            @RequestBody BoardUpdateDTO dto
-    ) {
-        BoardResponseDTO updated = boardService.updateBoard(boardId,dto);
-        return ResponseEntity.ok(updated); // 200 OK
-        // 또는: return ResponseEntity.status(HttpStatus.OK).body(updated);
+    @PutMapping("/update")
+    public ResponseEntity<BoardResponseDTO> updateBoard(@RequestBody BoardUpdateDTO dto) {
+
+        // dto.boardId 안에 수정할 boardId가 들어 있어야 함
+        BoardResponseDTO updated = boardService.updateBoard(dto);
+        return ResponseEntity.ok(updated);
     }
+
 
     // B-5) BOARD 삭제
 

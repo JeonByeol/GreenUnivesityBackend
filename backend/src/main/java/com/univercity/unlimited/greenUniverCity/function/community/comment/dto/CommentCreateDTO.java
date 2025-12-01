@@ -11,11 +11,18 @@ import java.time.LocalDateTime;
 @ToString
 @Builder
 public class CommentCreateDTO {
-    //** 추후 유라님이 필요한 칼럼 작성하실 예정 ** 완성본 아닙니다
-    private Long postId; //게시글 고유 ID
+    //** 추후 유라님이 필요한 칼럼 작성하실 예정 ** 완성본 아닙니다.
 
     private String content; //댓글내용
 
     private LocalDateTime createdAt;//작성일시
+
+    private Long postId;
+
+
+
+
+
+
 
 }

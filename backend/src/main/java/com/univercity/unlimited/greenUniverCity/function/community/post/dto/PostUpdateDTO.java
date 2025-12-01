@@ -14,6 +14,4 @@ public class PostUpdateDTO {
     private String title;
     private String content;
     private Long postId;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
 }

@@ -43,32 +43,29 @@ public class PostController {
         return ResponseEntity.ok(result);
     }
     // P-5) 게시물 수정 200
-    @PutMapping("/update/{postId}")
+    @PutMapping("/update")
     public ResponseEntity<PostResponseDTO> updatePost(
-            @PathVariable("postId") Long postId,
-            @RequestBody PostUpdateDTO dto) {
-        PostResponseDTO updated = postService.postUpdate(postId, dto);
-        return ResponseEntity.ok(updated);
+            @RequestBody PostUpdateDTO dto
+    ) {
+        PostResponseDTO result = postService.postUpdate(dto.getPostId(), dto);
+        return ResponseEntity.ok(result);
     }
+
+
     // P-6) 게시물 삭제 204
     @DeleteMapping("/delete/{postId}")
-    public ResponseEntity<String> deletePost(@PathVariable("postId") Long PostId) {
-        postService.deleteByPost(PostId);
+    public ResponseEntity<Void> deletePost(@PathVariable Long postId,
+                                           @RequestHeader(value = "X-User-Email", required = false) String studentEmail) {
+        postService.deletePost(postId);
         return ResponseEntity.noContent().build(); // 204
     }
     // P-7) 게시물 작성 201
     @PostMapping("/create")
     public ResponseEntity<PostResponseDTO> createPost(@RequestBody PostCreateDTO dto) {
+        postService.postCreate(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(PostResponseDTO.builder().build());
     }
 
-
-    // P-8) 작성자 기준 게시물 조회
-    // P-9) 게시물 조회수
-    // P-10) 게시물 좋아요, 싫어요
-
-    // P-13) 게시물 신고
-    // P-14) 게시물 북마크, 즐겨찾기
 }
 
 
