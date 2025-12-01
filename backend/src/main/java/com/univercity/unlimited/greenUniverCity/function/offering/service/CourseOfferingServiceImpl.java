@@ -14,7 +14,7 @@ import com.univercity.unlimited.greenUniverCity.function.offering.exception.Cour
 import com.univercity.unlimited.greenUniverCity.function.offering.repository.CourseOfferingRepository;
 import com.univercity.unlimited.greenUniverCity.function.user.entity.User;
 import com.univercity.unlimited.greenUniverCity.function.user.service.UserService;
-import com.univercity.unlimited.greenUniverCity.function.util.MapperUtil;
+import com.univercity.unlimited.greenUniverCity.util.MapperUtil;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
