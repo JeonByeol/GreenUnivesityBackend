@@ -61,9 +61,9 @@ public class CourseOfferingRepositoryTests {
             return;
         }
 
-        // ⭐ 교수만 필터링
+        // ⭐ 교수 또는 ADMIN만 필터링
         List<User> professorList = userRepository.findAll().stream()
-                .filter(user -> user.getUserRoleList().contains(UserRole.PROFESSOR))
+                .filter(user -> (user.getUserRole().equals(UserRole.PROFESSOR) || user.getUserRole().equals(UserRole.ADMIN)))
                 .collect(Collectors.toList());
 
         if (professorList.isEmpty()) {
@@ -119,7 +119,7 @@ public class CourseOfferingRepositoryTests {
         // 교수 이름 세팅
         List<String> professorNames = new ArrayList<>();
         for(User user : userList) {
-            if(user.getUserRoleList().contains(UserRole.PROFESSOR)){
+            if((user.getUserRole().equals(UserRole.PROFESSOR) || user.getUserRole().equals(UserRole.ADMIN))){
                 professorNames.add(user.getNickname());
             }
         }
@@ -198,7 +198,7 @@ public class CourseOfferingRepositoryTests {
             // 교수 이름 세팅
             List<String> professorNames = new ArrayList<>();
             for(User user : userList) {
-                if(user.getUserRoleList().contains(UserRole.PROFESSOR)){
+                if((user.getUserRole().equals(UserRole.PROFESSOR) || user.getUserRole().equals(UserRole.ADMIN))){
                     professorNames.add(user.getNickname());
                 }
             }

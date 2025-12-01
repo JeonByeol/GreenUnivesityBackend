@@ -70,7 +70,7 @@ public class UserServiceImpl implements UserService {
                 .userId(u.getUserId())
                 .email(u.getEmail())
                 .nickname(u.getNickname())
-                .role(u.getUserRoleList().toString())
+                .role(u.getUserRole().toString())
                 .build();
     }
 
@@ -83,9 +83,9 @@ public class UserServiceImpl implements UserService {
         if(data.equals("학생")) {
 //            roles.add(UserRole.STUDENT);
 //           userVo.setUserRoleList(roles);
-           user.addRole(UserRole.STUDENT);
+           user.setUserRole(UserRole.STUDENT);
         } else if(data.equals("교수")){
-            user.addRole(UserRole.PROFESSOR);
+            user.setUserRole(UserRole.PROFESSOR);
         }
         log.info("2) IF 이후  :{}", user);
         userRepository.save(user);
@@ -97,7 +97,7 @@ public class UserServiceImpl implements UserService {
                 .userId(savedUser.getUserId())
                 .email(savedUser.getEmail())
                 .nickname(savedUser.getNickname())
-                .role(savedUser.getUserRoleList().get(0).name()) // (예시) 첫 번째 역할 반환
+                .role(savedUser.getUserRole().name()) // (예시) 첫 번째 역할 반환
                 .build();
     }
 
@@ -117,9 +117,9 @@ public class UserServiceImpl implements UserService {
         User user=userRepository.findProfessorById(userId)
                 .orElseThrow(()->new UserNotFoundException("사용자를 찾을 수 없습니다. id:"+ userId));
 
-        if (!user.getUserRoleList().contains(UserRole.PROFESSOR)) {
+        if (!user.getUserRole().equals(UserRole.PROFESSOR)) {
             throw new InvalidRoleException(
-                    "교수 권한이 없습니다. userId: " + userId + ", 현재 역할: " + user.getUserRoleList()
+                    "교수 권한이 없습니다. userId: " + userId + ", 현재 역할: " + user.getUserRole()
             );
         }
 

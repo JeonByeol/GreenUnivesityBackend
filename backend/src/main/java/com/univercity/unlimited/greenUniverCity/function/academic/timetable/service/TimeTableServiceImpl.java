@@ -67,13 +67,14 @@ public class TimeTableServiceImpl implements TimeTableService{
 
         // 2. 요청자의 교수 권한 확인
         // 1번 과정을 통하여 조회한 user의 정보를 가지고 교수의 역할을 검증한다
-        if (!requester.getUserRoleList().contains(UserRole.PROFESSOR)) {
+        if (!(requester.getUserRole() == UserRole.PROFESSOR
+                || requester.getUserRole() == UserRole.ADMIN)) {
             throw new InvalidRoleException(
                     String.format(
                             "4)보안 검사 시도 식별코드-: T-security-1 (시간표 %s) " +
                                     "교수 권한이 없습니다. " +
                                     "요청자: %s, userId: %s, 현재 역할: %s",
-                            action, requesterEmail, requester.getUserId(), requester.getUserRoleList())
+                            action, requesterEmail, requester.getUserId(), requester.getUserRole())
             );
         }
 
@@ -90,13 +91,13 @@ public class TimeTableServiceImpl implements TimeTableService{
         }
 
         // 4. 담당 교수의 역할 확인 (데이터 정합성)
-        if (!professor.getUserRoleList().contains(UserRole.PROFESSOR)) {
+        if (!(professor.getUserRole().equals(UserRole.PROFESSOR) || professor.getUserRole().equals(UserRole.ADMIN))) {
             throw new InvalidRoleException(
                     String.format(
                             "4)보안 검사 시도 식별코드-: T-security-3 (시간표 %s) " +
                                     "데이터 오류: 담당자가 교수 권한이 없습니다. " +
                                     "userId: %s, 현재 역할: %s",
-                            action, professor.getUserId(), professor.getUserRoleList())
+                            action, professor.getUserId(), professor.getUserRole())
             );
         }
 

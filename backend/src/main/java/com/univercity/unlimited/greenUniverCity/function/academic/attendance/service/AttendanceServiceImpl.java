@@ -60,13 +60,13 @@ public class AttendanceServiceImpl implements AttendanceService{
         User requester=userService.getUserByEmail(requesterEmail);
 
         // 2.요청자의 학생 권한 확인
-        if(!requester.getUserRoleList().contains(UserRole.STUDENT)){
+        if(!requester.getUserRole().equals(UserRole.STUDENT)){
             throw new InvalidRoleException(
                     String.format(
                          "4)보안 검사 시도 식별코드-: A-Security-1 (출결%s) " +
                                  "학생 권한이 없습니다. " +
                                  "요청자: %s,userId: %s, 현재역할: %s",
-                            action,requester.getUserId(),requester.getUserRoleList())
+                            action,requester.getUserId(),requester.getUserRole())
                     );
         }
 
@@ -84,13 +84,14 @@ public class AttendanceServiceImpl implements AttendanceService{
         User requester=userService.getUserByEmail(email);
 
         // 2. 요청자의 교수 권한 확인
-        if(!requester.getUserRoleList().contains(UserRole.PROFESSOR)){
+        if(!(requester.getUserRole() == UserRole.PROFESSOR
+                || requester.getUserRole() == UserRole.ADMIN)){
           throw new InvalidRoleException(
                   String.format(
                           "4)보안 검사 시도 식별코드-: A-Security-1 (출결%s) " +
                                   "교수 권한이 없습니다. " +
                                   "요청자: %s, userId: %s, 현재역할: %s",
-                          action,email,requester.getUserId(),requester.getUserRoleList())
+                          action,email,requester.getUserId(),requester.getUserRole())
               );
         }
 
@@ -107,13 +108,13 @@ public class AttendanceServiceImpl implements AttendanceService{
         }
 
         // 4. 담당 교수의 역할 확인 (데이터 정합성)
-        if (!professor.getUserRoleList().contains(UserRole.PROFESSOR)) {
+        if (!(professor.getUserRole().equals(UserRole.PROFESSOR) || professor.getUserRole().equals(UserRole.ADMIN))) {
             throw new InvalidRoleException(
                     String.format(
                             "4)보안 검사 시도 식별코드-: A-security-3 (출결 %s) " +
                                     "데이터 오류: 담당자가 교수 권한이 없습니다. " +
                                     "userId: %s, 현재 역할: %s",
-                            action, professor.getUserId(), professor.getUserRoleList())
+                            action, professor.getUserId(), professor.getUserRole())
             );
         }
 
