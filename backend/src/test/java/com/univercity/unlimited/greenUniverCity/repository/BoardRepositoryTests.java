@@ -1,6 +1,6 @@
 package com.univercity.unlimited.greenUniverCity.repository;
-import com.univercity.unlimited.greenUniverCity.function.board.entity.Board;
-import com.univercity.unlimited.greenUniverCity.function.board.repository.BoardRepository;
+import com.univercity.unlimited.greenUniverCity.function.community.board.entity.Board;
+import com.univercity.unlimited.greenUniverCity.function.community.board.repository.BoardRepository;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Tag;
