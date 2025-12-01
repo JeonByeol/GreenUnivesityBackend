@@ -1,7 +1,11 @@
 package com.univercity.unlimited.greenUniverCity.function.community.notice.service;
 
+import com.univercity.unlimited.greenUniverCity.function.academic.course.entity.Course;
 import com.univercity.unlimited.greenUniverCity.function.academic.course.repository.CourseRepository;
+import com.univercity.unlimited.greenUniverCity.function.community.notice.dto.NoticeCreateDTO;
 import com.univercity.unlimited.greenUniverCity.function.community.notice.dto.NoticeDTO;
+import com.univercity.unlimited.greenUniverCity.function.community.notice.dto.NoticeResponseDTO;
+import com.univercity.unlimited.greenUniverCity.function.community.notice.dto.NoticeUpdateDTO;
 import com.univercity.unlimited.greenUniverCity.function.community.notice.entity.Notice;
 import com.univercity.unlimited.greenUniverCity.function.community.notice.repository.NoticeRepository;
 import lombok.RequiredArgsConstructor;

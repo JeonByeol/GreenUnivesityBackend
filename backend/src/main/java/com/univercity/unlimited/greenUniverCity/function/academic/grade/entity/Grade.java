@@ -29,5 +29,5 @@ public class Grade{
 
     //private Integer gpa // 평점(3.1,4.0,4.5)
 
-//※ 분반(ClassSection)과 직접 연결되지 않고, 학생의 수강 내역(Enrollment)에 종속된다
+    //※ 분반(ClassSection)과 직접 연결되지 않고, 학생의 수강 내역(Enrollment)에 종속된다
 }

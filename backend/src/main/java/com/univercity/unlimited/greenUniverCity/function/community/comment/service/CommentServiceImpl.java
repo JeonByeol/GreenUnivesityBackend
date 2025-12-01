@@ -1,8 +1,13 @@
 package com.univercity.unlimited.greenUniverCity.function.community.comment.service;
 
+import com.univercity.unlimited.greenUniverCity.function.community.comment.dto.CommentCreateDTO;
+import com.univercity.unlimited.greenUniverCity.function.community.comment.dto.CommentResponseDTO;
+import com.univercity.unlimited.greenUniverCity.function.community.comment.dto.CommentUpdateDTO;
 import com.univercity.unlimited.greenUniverCity.function.community.comment.dto.LegacyCommentDTO;
 import com.univercity.unlimited.greenUniverCity.function.community.comment.entity.Comment;
 import com.univercity.unlimited.greenUniverCity.function.community.comment.repository.CommentRepository;
+import com.univercity.unlimited.greenUniverCity.util.MapperUtil;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;

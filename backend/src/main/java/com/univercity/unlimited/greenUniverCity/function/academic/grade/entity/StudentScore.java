@@ -26,13 +26,13 @@ public class StudentScore {
     @Column(name = "submission_date")
     private LocalDateTime submissionDate; // 제출일/응시일
 
-    // [핵심 변경] 누가(Enrollment) 점수를 받았는가?
+    // 핵심 변경 누가(Enrollment) 점수를 받았는가?
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "enrollment_id")
     @ToString.Exclude // 순환 참조 방지
     private Enrollment enrollment;
 
-    // [핵심 변경] 어떤 평가 항목(GradeItem)에 대한 점수인가?
+    //핵심 변경 어떤 평가 항목(GradeItem)에 대한 점수인가?
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "item_id")
     @ToString.Exclude // 순환 참조 방지

@@ -1,6 +1,7 @@
 package com.univercity.unlimited.greenUniverCity.function.community.board.service;
 
-import com.univercity.unlimited.greenUniverCity.function.board.dto.BoardCreateDTO;
+
+import com.univercity.unlimited.greenUniverCity.function.community.board.dto.BoardCreateDTO;
 import com.univercity.unlimited.greenUniverCity.function.community.board.dto.BoardResponseDTO;
 import com.univercity.unlimited.greenUniverCity.function.community.board.dto.BoardUpdateDTO;
 import com.univercity.unlimited.greenUniverCity.function.community.board.dto.LegacyBoardDTO;
@@ -16,7 +17,6 @@ import java.util.List;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-@Transactional
 public class BoardServiceImpl implements BoardService {
 
     private final BoardRepository repository;
