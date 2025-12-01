@@ -1,11 +1,9 @@
 package com.univercity.unlimited.greenUniverCity.repository;
 
 
-import com.univercity.unlimited.greenUniverCity.config.PasswordEncoderConfig;
-import com.univercity.unlimited.greenUniverCity.function.user.entity.UserDummy;
-import com.univercity.unlimited.greenUniverCity.function.user.entity.UserRole;
-import com.univercity.unlimited.greenUniverCity.function.user.repository.UserDummyRepository;
-import lombok.Setter;
+import com.univercity.unlimited.greenUniverCity.function.member.user.entity.UserDummy;
+import com.univercity.unlimited.greenUniverCity.function.member.user.entity.UserRole;
+import com.univercity.unlimited.greenUniverCity.function.member.user.repository.UserDummyRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;

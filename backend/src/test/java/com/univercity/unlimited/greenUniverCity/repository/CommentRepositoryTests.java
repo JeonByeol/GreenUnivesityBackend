@@ -1,10 +1,10 @@
 package com.univercity.unlimited.greenUniverCity.repository;
-import com.univercity.unlimited.greenUniverCity.function.comment.entity.Comment;
-import com.univercity.unlimited.greenUniverCity.function.comment.repository.CommentRepository;
-import com.univercity.unlimited.greenUniverCity.function.post.entity.Post;
-import com.univercity.unlimited.greenUniverCity.function.user.entity.User;
-import com.univercity.unlimited.greenUniverCity.function.post.repository.PostRepository;
-import com.univercity.unlimited.greenUniverCity.function.user.repository.UserRepository;
+import com.univercity.unlimited.greenUniverCity.function.community.comment.entity.Comment;
+import com.univercity.unlimited.greenUniverCity.function.community.comment.repository.CommentRepository;
+import com.univercity.unlimited.greenUniverCity.function.community.post.entity.Post;
+import com.univercity.unlimited.greenUniverCity.function.member.user.entity.User;
+import com.univercity.unlimited.greenUniverCity.function.community.post.repository.PostRepository;
+import com.univercity.unlimited.greenUniverCity.function.member.user.repository.UserRepository;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Tag;
@@ -65,7 +65,6 @@ public class CommentRepositoryTests {
                 Comment dto = Comment.builder()
                         .content(comments[(int)(Math.random()*comments.length)])
                         .createdAt(LocalDateTime.now())
-                        .user(u)
                         .post(posts.get(postRan))
                         .build();
                 repository.save(dto);

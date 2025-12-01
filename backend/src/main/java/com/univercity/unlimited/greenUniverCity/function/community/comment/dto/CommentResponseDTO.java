@@ -1,0 +1,30 @@
+package com.univercity.unlimited.greenUniverCity.function.community.comment.dto;
+
+import lombok.*;
+
+import java.time.LocalDateTime;
+
+@AllArgsConstructor
+@NoArgsConstructor
+@Setter
+@Getter
+@ToString
+@Builder
+public class CommentResponseDTO {
+    //Comment
+    private Long commentId; //댓글 고유 ID
+
+    private String content; //댓글내용
+
+    private LocalDateTime createdAt;//작성일시
+
+    private LocalDateTime updatedAt; //수정날짜
+
+    private Long postId;
+
+    private String writerName;//작성자 이름
+
+    private String boardName;
+
+
+}

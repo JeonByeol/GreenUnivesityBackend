@@ -1,18 +1,18 @@
 package com.univercity.unlimited.greenUniverCity.repository;
 
 
-import com.univercity.unlimited.greenUniverCity.function.course.dto.LegacyCourseDTO;
-import com.univercity.unlimited.greenUniverCity.function.course.repository.CourseRepository;
-import com.univercity.unlimited.greenUniverCity.function.offering.dto.LegacyCourseOfferingDTO;
-import com.univercity.unlimited.greenUniverCity.function.user.dto.UserDTO;
-import com.univercity.unlimited.greenUniverCity.function.course.entity.Course;
-import com.univercity.unlimited.greenUniverCity.function.offering.entity.CourseOffering;
-import com.univercity.unlimited.greenUniverCity.function.user.repository.UserRepository;
-import com.univercity.unlimited.greenUniverCity.function.user.entity.UserRole;
-import com.univercity.unlimited.greenUniverCity.function.user.entity.User;
-import com.univercity.unlimited.greenUniverCity.function.offering.repository.CourseOfferingRepository;
-import com.univercity.unlimited.greenUniverCity.function.offering.service.CourseOfferingService;
-import com.univercity.unlimited.greenUniverCity.function.user.service.UserService;
+import com.univercity.unlimited.greenUniverCity.function.academic.course.dto.LegacyCourseDTO;
+import com.univercity.unlimited.greenUniverCity.function.academic.course.repository.CourseRepository;
+import com.univercity.unlimited.greenUniverCity.function.academic.offering.dto.LegacyCourseOfferingDTO;
+import com.univercity.unlimited.greenUniverCity.function.member.user.dto.UserDTO;
+import com.univercity.unlimited.greenUniverCity.function.academic.course.entity.Course;
+import com.univercity.unlimited.greenUniverCity.function.academic.offering.entity.CourseOffering;
+import com.univercity.unlimited.greenUniverCity.function.member.user.repository.UserRepository;
+import com.univercity.unlimited.greenUniverCity.function.member.user.entity.UserRole;
+import com.univercity.unlimited.greenUniverCity.function.member.user.entity.User;
+import com.univercity.unlimited.greenUniverCity.function.academic.offering.repository.CourseOfferingRepository;
+import com.univercity.unlimited.greenUniverCity.function.academic.offering.service.CourseOfferingService;
+import com.univercity.unlimited.greenUniverCity.function.member.user.service.UserService;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Tag;

@@ -1,11 +1,9 @@
 package com.univercity.unlimited.greenUniverCity.config;
 
-import com.univercity.unlimited.greenUniverCity.function.review.exception.DuplicateReviewException;
+import com.univercity.unlimited.greenUniverCity.function.community.review.exception.DuplicateReviewException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.converter.HttpMessageNotReadableException;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 

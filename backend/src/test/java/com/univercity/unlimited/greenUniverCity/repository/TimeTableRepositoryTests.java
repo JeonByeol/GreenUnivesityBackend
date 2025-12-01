@@ -1,9 +1,9 @@
 package com.univercity.unlimited.greenUniverCity.repository;
 
-import com.univercity.unlimited.greenUniverCity.function.offering.entity.CourseOffering;
-import com.univercity.unlimited.greenUniverCity.function.timetable.entity.TimeTable;
-import com.univercity.unlimited.greenUniverCity.function.offering.repository.CourseOfferingRepository;
-import com.univercity.unlimited.greenUniverCity.function.timetable.repository.TimeTableRepository;
+import com.univercity.unlimited.greenUniverCity.function.academic.offering.entity.CourseOffering;
+import com.univercity.unlimited.greenUniverCity.function.academic.timetable.entity.TimeTable;
+import com.univercity.unlimited.greenUniverCity.function.academic.offering.repository.CourseOfferingRepository;
+import com.univercity.unlimited.greenUniverCity.function.academic.timetable.repository.TimeTableRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
