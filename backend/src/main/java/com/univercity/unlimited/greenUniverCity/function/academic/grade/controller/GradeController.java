@@ -1,9 +1,9 @@
 package com.univercity.unlimited.greenUniverCity.function.academic.grade.controller;
 
-import com.univercity.unlimited.greenUniverCity.function.academic.grade.dto.GradeDTO;
-import com.univercity.unlimited.greenUniverCity.function.academic.grade.dto.GradeProfessorDTO;
+import com.univercity.unlimited.greenUniverCity.function.academic.grade.dto.grade.GradeDTO;
+import com.univercity.unlimited.greenUniverCity.function.academic.grade.dto.grade.GradeProfessorDTO;
 import com.univercity.unlimited.greenUniverCity.function.academic.grade.service.GradeService;
-import com.univercity.unlimited.greenUniverCity.function.academic.grade.dto.GradeStudentDTO;
+import com.univercity.unlimited.greenUniverCity.function.academic.grade.dto.grade.GradeStudentDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;

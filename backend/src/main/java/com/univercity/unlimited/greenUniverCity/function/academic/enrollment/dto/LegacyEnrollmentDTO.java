@@ -6,7 +6,7 @@ import com.univercity.unlimited.greenUniverCity.function.academic.attendance.dto
 import com.univercity.unlimited.greenUniverCity.function.academic.offering.dto.LegacyCourseOfferingDTO;
 import com.univercity.unlimited.greenUniverCity.function.community.review.dto.LegacyReviewDTO;
 import com.univercity.unlimited.greenUniverCity.function.member.user.dto.UserDTO;
-import com.univercity.unlimited.greenUniverCity.function.academic.grade.dto.GradeDTO;
+import com.univercity.unlimited.greenUniverCity.function.academic.grade.dto.grade.GradeDTO;
 import lombok.*;
 
 import java.time.LocalDateTime;

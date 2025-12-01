@@ -1,9 +1,9 @@
 package com.univercity.unlimited.greenUniverCity.function.academic.grade.service;
 
 
-import com.univercity.unlimited.greenUniverCity.function.academic.grade.dto.GradeDTO;
-import com.univercity.unlimited.greenUniverCity.function.academic.grade.dto.GradeProfessorDTO;
-import com.univercity.unlimited.greenUniverCity.function.academic.grade.dto.GradeStudentDTO;
+import com.univercity.unlimited.greenUniverCity.function.academic.grade.dto.grade.GradeDTO;
+import com.univercity.unlimited.greenUniverCity.function.academic.grade.dto.grade.GradeProfessorDTO;
+import com.univercity.unlimited.greenUniverCity.function.academic.grade.dto.grade.GradeStudentDTO;
 
 import java.util.List;
 

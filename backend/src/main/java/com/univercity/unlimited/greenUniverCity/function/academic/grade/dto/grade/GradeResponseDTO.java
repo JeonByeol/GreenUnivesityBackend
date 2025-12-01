@@ -1,4 +1,4 @@
-package com.univercity.unlimited.greenUniverCity.function.academic.grade.dto;
+package com.univercity.unlimited.greenUniverCity.function.academic.grade.dto.grade;
 
 import lombok.*;
 

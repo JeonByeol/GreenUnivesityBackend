@@ -3,9 +3,9 @@ package com.univercity.unlimited.greenUniverCity.function.academic.grade.service
 import com.univercity.unlimited.greenUniverCity.function.academic.enrollment.entity.Enrollment;
 import com.univercity.unlimited.greenUniverCity.function.academic.enrollment.service.EnrollmentService;
 import com.univercity.unlimited.greenUniverCity.function.academic.grade.repository.GradeRepository;
-import com.univercity.unlimited.greenUniverCity.function.academic.grade.dto.GradeDTO;
-import com.univercity.unlimited.greenUniverCity.function.academic.grade.dto.GradeProfessorDTO;
-import com.univercity.unlimited.greenUniverCity.function.academic.grade.dto.GradeStudentDTO;
+import com.univercity.unlimited.greenUniverCity.function.academic.grade.dto.grade.GradeDTO;
+import com.univercity.unlimited.greenUniverCity.function.academic.grade.dto.grade.GradeProfessorDTO;
+import com.univercity.unlimited.greenUniverCity.function.academic.grade.dto.grade.GradeStudentDTO;
 import com.univercity.unlimited.greenUniverCity.function.academic.grade.entity.Grade;
 import com.univercity.unlimited.greenUniverCity.function.academic.offering.entity.CourseOffering;
 import com.univercity.unlimited.greenUniverCity.function.member.user.entity.User;

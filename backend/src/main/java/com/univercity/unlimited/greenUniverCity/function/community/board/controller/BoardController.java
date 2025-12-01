@@ -1,9 +1,11 @@
 package com.univercity.unlimited.greenUniverCity.function.community.board.controller;
 
+import com.univercity.unlimited.greenUniverCity.function.community.board.dto.BoardCreateDTO;
 import com.univercity.unlimited.greenUniverCity.function.community.board.dto.BoardResponseDTO;
 import com.univercity.unlimited.greenUniverCity.function.community.board.dto.BoardUpdateDTO;
 import com.univercity.unlimited.greenUniverCity.function.community.board.dto.LegacyBoardDTO;
 import com.univercity.unlimited.greenUniverCity.function.community.board.entity.Board;
+import com.univercity.unlimited.greenUniverCity.function.community.board.repository.BoardRepository;
 import com.univercity.unlimited.greenUniverCity.function.community.board.service.BoardService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
