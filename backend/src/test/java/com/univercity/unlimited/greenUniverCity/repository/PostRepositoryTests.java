@@ -1,10 +1,10 @@
 package com.univercity.unlimited.greenUniverCity.repository;
-import com.univercity.unlimited.greenUniverCity.function.board.entity.Board;
-import com.univercity.unlimited.greenUniverCity.function.board.repository.BoardRepository;
-import com.univercity.unlimited.greenUniverCity.function.post.entity.Post;
-import com.univercity.unlimited.greenUniverCity.function.post.repository.PostRepository;
-import com.univercity.unlimited.greenUniverCity.function.user.entity.User;
-import com.univercity.unlimited.greenUniverCity.function.user.repository.UserRepository;
+import com.univercity.unlimited.greenUniverCity.function.community.board.entity.Board;
+import com.univercity.unlimited.greenUniverCity.function.community.board.repository.BoardRepository;
+import com.univercity.unlimited.greenUniverCity.function.community.post.entity.Post;
+import com.univercity.unlimited.greenUniverCity.function.community.post.repository.PostRepository;
+import com.univercity.unlimited.greenUniverCity.function.member.user.entity.User;
+import com.univercity.unlimited.greenUniverCity.function.member.user.repository.UserRepository;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Tag;

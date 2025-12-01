@@ -1,15 +1,15 @@
 package com.univercity.unlimited.greenUniverCity.repository;
 
-import com.univercity.unlimited.greenUniverCity.function.offering.entity.CourseOffering;
-import com.univercity.unlimited.greenUniverCity.function.offering.dto.LegacyCourseOfferingDTO;
-import com.univercity.unlimited.greenUniverCity.function.enrollment.entity.Enrollment;
-import com.univercity.unlimited.greenUniverCity.function.enrollment.dto.LegacyEnrollmentDTO;
-import com.univercity.unlimited.greenUniverCity.function.user.entity.User;
-import com.univercity.unlimited.greenUniverCity.function.user.dto.UserDTO;
-import com.univercity.unlimited.greenUniverCity.function.enrollment.repository.EnrollmentRepository;
-import com.univercity.unlimited.greenUniverCity.function.enrollment.service.EnrollmentService;
-import com.univercity.unlimited.greenUniverCity.function.offering.repository.CourseOfferingRepository;
-import com.univercity.unlimited.greenUniverCity.function.user.repository.UserRepository;
+import com.univercity.unlimited.greenUniverCity.function.academic.offering.entity.CourseOffering;
+import com.univercity.unlimited.greenUniverCity.function.academic.offering.dto.LegacyCourseOfferingDTO;
+import com.univercity.unlimited.greenUniverCity.function.academic.enrollment.entity.Enrollment;
+import com.univercity.unlimited.greenUniverCity.function.academic.enrollment.dto.LegacyEnrollmentDTO;
+import com.univercity.unlimited.greenUniverCity.function.member.user.entity.User;
+import com.univercity.unlimited.greenUniverCity.function.member.user.dto.UserDTO;
+import com.univercity.unlimited.greenUniverCity.function.academic.enrollment.repository.EnrollmentRepository;
+import com.univercity.unlimited.greenUniverCity.function.academic.enrollment.service.EnrollmentService;
+import com.univercity.unlimited.greenUniverCity.function.academic.offering.repository.CourseOfferingRepository;
+import com.univercity.unlimited.greenUniverCity.function.member.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Tag;

@@ -1,9 +1,9 @@
 package com.univercity.unlimited.greenUniverCity.repository;
 
-import com.univercity.unlimited.greenUniverCity.function.notice.entity.Notice;
-import com.univercity.unlimited.greenUniverCity.function.user.entity.User;
-import com.univercity.unlimited.greenUniverCity.function.notice.repository.NoticeRepository;
-import com.univercity.unlimited.greenUniverCity.function.user.repository.UserRepository;
+import com.univercity.unlimited.greenUniverCity.function.community.notice.entity.Notice;
+import com.univercity.unlimited.greenUniverCity.function.member.user.entity.User;
+import com.univercity.unlimited.greenUniverCity.function.community.notice.repository.NoticeRepository;
+import com.univercity.unlimited.greenUniverCity.function.member.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Tag;

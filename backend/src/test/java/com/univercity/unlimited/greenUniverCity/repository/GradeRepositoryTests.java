@@ -1,12 +1,12 @@
 package com.univercity.unlimited.greenUniverCity.repository;
 
-import com.univercity.unlimited.greenUniverCity.function.enrollment.entity.Enrollment;
-import com.univercity.unlimited.greenUniverCity.function.enrollment.repository.EnrollmentRepository;
-import com.univercity.unlimited.greenUniverCity.function.grade.entity.Grade;
-import com.univercity.unlimited.greenUniverCity.function.user.entity.User;
-import com.univercity.unlimited.greenUniverCity.function.grade.repository.GradeRepository;
-import com.univercity.unlimited.greenUniverCity.function.offering.repository.CourseOfferingRepository;
-import com.univercity.unlimited.greenUniverCity.function.user.repository.UserRepository;
+import com.univercity.unlimited.greenUniverCity.function.academic.enrollment.entity.Enrollment;
+import com.univercity.unlimited.greenUniverCity.function.academic.enrollment.repository.EnrollmentRepository;
+import com.univercity.unlimited.greenUniverCity.function.academic.grade.entity.Grade;
+import com.univercity.unlimited.greenUniverCity.function.member.user.entity.User;
+import com.univercity.unlimited.greenUniverCity.function.academic.grade.repository.GradeRepository;
+import com.univercity.unlimited.greenUniverCity.function.academic.offering.repository.CourseOfferingRepository;
+import com.univercity.unlimited.greenUniverCity.function.member.user.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;

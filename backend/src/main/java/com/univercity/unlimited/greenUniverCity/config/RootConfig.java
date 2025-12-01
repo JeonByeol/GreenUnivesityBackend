@@ -1,10 +1,10 @@
 package com.univercity.unlimited.greenUniverCity.config;
 
 // [추가] DTO와 Entity import
-import com.univercity.unlimited.greenUniverCity.function.grade.dto.GradeDTO;
-import com.univercity.unlimited.greenUniverCity.function.user.dto.UserDTO;
-import com.univercity.unlimited.greenUniverCity.function.grade.entity.Grade;
-import com.univercity.unlimited.greenUniverCity.function.user.entity.User;
+import com.univercity.unlimited.greenUniverCity.function.academic.grade.dto.GradeDTO;
+import com.univercity.unlimited.greenUniverCity.function.member.user.dto.UserDTO;
+import com.univercity.unlimited.greenUniverCity.function.academic.grade.entity.Grade;
+import com.univercity.unlimited.greenUniverCity.function.member.user.entity.User;
 
 import org.modelmapper.AbstractConverter;
 import org.modelmapper.Converter;
