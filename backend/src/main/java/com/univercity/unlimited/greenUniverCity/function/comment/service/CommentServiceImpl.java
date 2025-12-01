@@ -12,6 +12,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -128,6 +129,7 @@ public class CommentServiceImpl implements CommentService {
         return CommentResponseDTO.builder()
                 .commentId(saved.getCommentId())
                 .content(saved.getContent())
+                .updatedAt(LocalDateTime.now())
                 .build();
     }
 

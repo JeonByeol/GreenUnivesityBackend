@@ -32,6 +32,9 @@ public class Post {
     @Column(name = "created_at")
     private LocalDateTime createAt; //개시 날짜
 
+    @Column(name = "update_at")
+    private LocalDateTime updateAt; //개시 날짜
+
     @Column(name = "view_count")
     private int viewCount; //뷰 수
 
