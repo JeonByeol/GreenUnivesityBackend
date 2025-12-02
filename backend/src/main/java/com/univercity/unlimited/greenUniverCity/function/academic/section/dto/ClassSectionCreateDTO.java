@@ -20,4 +20,5 @@ public class ClassSectionCreateDTO {
     @Min(value = 1, message = "정원은 최소 1명 이상이어야 합니다")
     @Max(value = 300, message = "정원은 최대 300명 이하여야 합니다")
     private Integer maxCapacity;//정원
+
 }

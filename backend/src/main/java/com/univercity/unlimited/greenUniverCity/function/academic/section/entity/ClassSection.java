@@ -9,6 +9,7 @@ import lombok.*;
 @NoArgsConstructor
 @Builder
 @Getter
+@Setter
 @Table(name = "tbl_class_section")
 @ToString
 public class ClassSection {

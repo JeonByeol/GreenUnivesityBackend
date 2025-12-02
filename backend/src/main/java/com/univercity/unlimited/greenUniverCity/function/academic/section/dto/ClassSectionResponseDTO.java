@@ -8,7 +8,7 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 public class ClassSectionResponseDTO {
-    //section의 분반의 기본 정보들
+    //Section 정보
     private Long sectionId; // 분반 ID
     private String sectionName; // 분반명 (예: A반, 주간반)
     private Integer maxCapacity; // 정원 (예: 40)
@@ -21,12 +21,12 @@ public class ClassSectionResponseDTO {
     private String semester; //개설학기
     private String professorName; //담당교수
 
-    // 계산 필드 (추가 권장)
+    // ** 계산 필드 - > 나중에 사용할 지 안할지 모름 현재는 사용 안함 / 사용 안하면 삭제
     private Integer availableSeats; // 남은 자리 = maxCapacity - currentCount
     private Boolean isFull; // 마감 여부 = currentCount >= maxCapacity
     private Double enrollmentRate; // 수강률 = (currentCount / maxCapacity) * 100
 
-    // 편의 메서드
+    // 편의 메서드- > 나중에 사용할 지 안할지 모름 현재는 사용 안함 / 사용 안하면 삭제
     public Integer getAvailableSeats() {
         return maxCapacity - currentCount;
     }

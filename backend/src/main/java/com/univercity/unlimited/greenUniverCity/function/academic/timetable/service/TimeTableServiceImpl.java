@@ -183,7 +183,7 @@ public class TimeTableServiceImpl implements TimeTableService{
 
         TimeTable saveTimeTable=repository.save(timeTable);
 
-        log.info("5) 시간표 생성 완료 -timetableId:{}, 교수:{}",saveTimeTable.getTimetableId(),requesterEmail);
+        log.info("5) 시간표 생성 완료 timetableId-:{}, 교수-:{}",saveTimeTable.getTimetableId(),requesterEmail);
 
         return toResponseDTO(saveTimeTable);
     }
@@ -198,7 +198,7 @@ public class TimeTableServiceImpl implements TimeTableService{
                         "3)보안 검사 시도 식별 코드 -:T-5 " +
                                 "시간표가 존재하지 않습니다. timeId:" + dto.getTimetableId()));
 
-        // T-security 보안검사보안 검사(소유권 검증)
+        // T-security 보안검사
         CourseOffering offering = timeTable.getCourseOffering();
         validateProfessorOwnership(offering,requesterEmail,"수정");
 
