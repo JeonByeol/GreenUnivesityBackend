@@ -21,7 +21,7 @@ public interface TimeTableRepository extends JpaRepository<TimeTable,Integer> {
             "JOIN Enrollment e ON e.courseOffering = co " +
             "JOIN e.user u " +
             "WHERE u.email = :email")
-    List<TimeTable> findTimetableByStudentEmail(String email);
+    List<TimeTable> findTimetableByStudentEmail(@Param("email") String email);
 
 
 

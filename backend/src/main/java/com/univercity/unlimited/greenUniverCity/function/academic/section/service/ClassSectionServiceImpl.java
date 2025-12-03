@@ -1,5 +1,6 @@
 package com.univercity.unlimited.greenUniverCity.function.academic.section.service;
 
+import com.univercity.unlimited.greenUniverCity.function.academic.enrollment.service.EnrollmentService;
 import com.univercity.unlimited.greenUniverCity.function.academic.offering.entity.CourseOffering;
 import com.univercity.unlimited.greenUniverCity.function.academic.offering.service.CourseOfferingService;
 import com.univercity.unlimited.greenUniverCity.function.academic.section.dto.ClassSectionCreateDTO;
@@ -28,6 +29,8 @@ public class ClassSectionServiceImpl implements ClassSectionService{
 
     private final UserService userService;
 
+    private final EnrollmentService enrollmentService;
+
     /**
      * SE-A) ClassSection 엔티티를 (Response)DTO로 변환
      * - 각각의 crud 기능에 사용되는 서비스 구현부에 사용하기 위해 함수로 생성
@@ -42,7 +45,7 @@ public class ClassSectionServiceImpl implements ClassSectionService{
                         .sectionId(section.getSectionId())
                         .sectionName(section.getSectionName())
                         .maxCapacity(section.getMaxCapacity())
-                        //.currentCount() ** enrollment에서 큐런트 카운트를 계산하는 쿼리가 필요함
+//                        .currentCount() ** enrollment에서 큐런트 카운트를 계산하는 쿼리가 필요함
                         .offeringId(courseOffering.getOfferingId())
                         .courseName(courseOffering.getCourseName())
                         .year(courseOffering.getYear())
