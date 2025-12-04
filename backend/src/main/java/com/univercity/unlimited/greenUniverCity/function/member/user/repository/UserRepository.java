@@ -12,11 +12,13 @@ import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<User,Long> {
 
-    @EntityGraph(attributePaths = ("userRoleList"))
+    //    @EntityGraph(attributePaths = ("userRoleList"))
     @Query("select m from User m where email = :email" )
     //select * from tbl_user u inner join user_vo_user_role_list ru on u.uno=ru.user_vo_uno;
     User getUserByEmail(@Param("email") String email);
-    @Query("SELECT u FROM User u JOIN u.userRoleList r WHERE r = :role")
+    //    @Query("SELECT u FROM User u JOIN u.userRoleList r WHERE r = :role")
+//    @Query("SELECT u FROM User u JOIN u.userRole r WHERE r = :role")
+    @Query("SELECT u FROM User u WHERE u.userRole = :role")
     List<User> findAllByRole(@Param("role") UserRole role);
 
 //    @Query("SELECT DISTINCT u FROM User u JOIN FETCH u.offerings o WHERE o.offeringId = :offeringId")
@@ -24,12 +26,13 @@ public interface UserRepository extends JpaRepository<User,Long> {
 //
 //    @Query("SELECT DISTINCT u FROM User u JOIN FETCH u.enrollments e WHERE e.enrollmentId = :enrollmentId")
 //    Optional<User> findByEnrollmentId(@Param("enrollmentId") Long enrollmentId);
-    
+
     // 유저의 정보를 찾기 위한 쿼리 선언
     User findByUserId(Long id);
 
     //PROFESSOR(교수) 역할을 가진 사용자만 조회하기 위한 service선언에 활용될 쿼리
-    @Query("SELECT u FROM User u JOIN u.userRoleList role WHERE u.userId = :userId AND role = 'PROFESSOR'")
+//    @Query("SELECT u FROM User u JOIN u.userRoleList role WHERE u.userId = :userId AND role = 'PROFESSOR'")
+    @Query("SELECT u FROM User u JOIN u.userRole role WHERE u.userId = :userId AND role = 'PROFESSOR'")
     Optional<User> findProfessorById(@Param("userId") Long userId);
 
     //Email을 통해 사용자조회

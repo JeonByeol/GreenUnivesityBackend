@@ -37,8 +37,8 @@ public class RootConfig {
         // String -> List 오류(register) 해결
         // UserDTO의 'role'(String) 필드가 UserVo의 'userRoleList'(List)에
         // 자동 매핑되는 것을 방지합니다. (register 메서드용)
-        mapper.typeMap(UserDTO.class, User.class)
-                .addMappings(m -> m.skip(User::setUserRoleList));
+//        mapper.typeMap(UserDTO.class, User.class)
+//                .addMappings(m -> m.skip(User::setUserRoleList));
 
         //Grad→ Enrollment→ CourseOffering → Course   → courseName
         mapper.typeMap(Grade.class, GradeDTO.class).addMappings(m ->

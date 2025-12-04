@@ -67,13 +67,14 @@ public class TimeTableServiceImpl implements TimeTableService{
 
         // 2. 요청자의 교수 권한 확인
         // 1번 과정을 통하여 조회한 user의 정보를 가지고 교수의 역할을 검증한다
-        if (!requester.getUserRoleList().contains(UserRole.PROFESSOR)) {
+        if (!(requester.getUserRole() == UserRole.PROFESSOR
+                || requester.getUserRole() == UserRole.ADMIN)) {
             throw new InvalidRoleException(
                     String.format(
                             "4)보안 검사 시도 식별코드-: T-security-1 (시간표 %s) " +
                                     "교수 권한이 없습니다. " +
                                     "요청자: %s, userId: %s, 현재 역할: %s",
-                            action, requesterEmail, requester.getUserId(), requester.getUserRoleList())
+                            action, requesterEmail, requester.getUserId(), requester.getUserRole())
             );
         }
 
@@ -90,13 +91,13 @@ public class TimeTableServiceImpl implements TimeTableService{
         }
 
         // 4. 담당 교수의 역할 확인 (데이터 정합성)
-        if (!professor.getUserRoleList().contains(UserRole.PROFESSOR)) {
+        if (!(professor.getUserRole().equals(UserRole.PROFESSOR) || professor.getUserRole().equals(UserRole.ADMIN))) {
             throw new InvalidRoleException(
                     String.format(
                             "4)보안 검사 시도 식별코드-: T-security-3 (시간표 %s) " +
                                     "데이터 오류: 담당자가 교수 권한이 없습니다. " +
                                     "userId: %s, 현재 역할: %s",
-                            action, professor.getUserId(), professor.getUserRoleList())
+                            action, professor.getUserId(), professor.getUserRole())
             );
         }
 
@@ -122,7 +123,7 @@ public class TimeTableServiceImpl implements TimeTableService{
     public List<TimeTableResponseDTO> findAllTimeTable() {
         log.info("2) 시간표 전체조회 시작");
         List<TimeTable> timeTables=repository.findAll();
-        
+
         log.info("3) 시간표 전체조회 성공");
 
         return timeTables.stream()
@@ -139,7 +140,7 @@ public class TimeTableServiceImpl implements TimeTableService{
     public List<TimeTableResponseDTO> offeringOfTimeTable(Long offeringId) {
         log.info("2) 특정 시간표 조회 시작 offeringId-:{}",offeringId);
         List<TimeTable> timeTables=repository.findTimeTableByOfferingId(offeringId);
-        
+
         log.info("3) 시간표 조회 성공 offeringId-:{}",offeringId);
 
         return timeTables.stream()
@@ -160,9 +161,9 @@ public class TimeTableServiceImpl implements TimeTableService{
                 .map(this::toResponseDTO)
                 .toList();
     }
-    
+
     //T-4) 교수 or 관리자가 특정 강의에 대한 시간표를 생성하기 위한 서비스 구현부 -> 문제 좀 많음 수정 해야함
-    // -> 시간표에 대한 생성 기능은 구현 o 하지만 시간표를 생성할떄 그 강의 
+    // -> 시간표에 대한 생성 기능은 구현 o 하지만 시간표를 생성할떄 그 강의
     // 구상: serviceImpl 구현부내에 userId값을 받아서 검증하는 함수를 만들어서 검증예정
     @Override
     public TimeTableResponseDTO createTimeTableForProfessor(TimeTableCreateDTO dto, String requesterEmail) {
@@ -183,7 +184,7 @@ public class TimeTableServiceImpl implements TimeTableService{
 
         TimeTable saveTimeTable=repository.save(timeTable);
 
-        log.info("5) 시간표 생성 완료 timetableId-:{}, 교수-:{}",saveTimeTable.getTimetableId(),requesterEmail);
+        log.info("5) 시간표 생성 완료 -timetableId:{}, 교수:{}",saveTimeTable.getTimetableId(),requesterEmail);
 
         return toResponseDTO(saveTimeTable);
     }
@@ -198,7 +199,7 @@ public class TimeTableServiceImpl implements TimeTableService{
                         "3)보안 검사 시도 식별 코드 -:T-5 " +
                                 "시간표가 존재하지 않습니다. timeId:" + dto.getTimetableId()));
 
-        // T-security 보안검사
+        // T-security 보안검사보안 검사(소유권 검증)
         CourseOffering offering = timeTable.getCourseOffering();
         validateProfessorOwnership(offering,requesterEmail,"수정");
 

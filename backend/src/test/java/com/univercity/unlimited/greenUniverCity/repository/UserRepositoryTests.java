@@ -29,7 +29,9 @@ public class UserRepositoryTests {
                 "george@aaa.com",
                 "hannah@aaa.com",
                 "ian@aaa.com",
-                "julia@aaa.com"
+                "julia@aaa.com",
+
+                "root@aaa.com"
         };
 
         String[] nicknames = {
@@ -48,7 +50,7 @@ public class UserRepositoryTests {
 
                 "루트"
         };
-        
+
         // 데이터 추가
         for(int i=0;i<11;i++){
             int roleNumber = 0;
@@ -56,7 +58,7 @@ public class UserRepositoryTests {
             User user= null;
             if(i == 10){
                 user = User.builder()
-                        .email("root")
+                        .email("root@aaa.com")
                         .password("1111")
                         .nickname(nicknames[i])
                         .build();
@@ -72,10 +74,10 @@ public class UserRepositoryTests {
                 roleNumber = (int)(Math.random()*8) + 1;
             }
 
-            user.addRole(UserRole.GUEST);
-            if(roleNumber>3) user.addRole(UserRole.STUDENT);
-            if(roleNumber>5) user.addRole(UserRole.PROFESSOR);
-            if(roleNumber>7) user.addRole(UserRole.ADMIN);
+            user.setUserRole(UserRole.GUEST);
+            if(roleNumber>3) user.setUserRole(UserRole.STUDENT);
+            if(roleNumber>5) user.setUserRole(UserRole.PROFESSOR);
+            if(roleNumber>7) user.setUserRole(UserRole.ADMIN);
             userRepository.save(user);
         }
     }
@@ -84,6 +86,6 @@ public class UserRepositoryTests {
     public void testEamil(){
         User a = userRepository.getUserByEmail("user9@aaa.com");
         log.info("user= {}",a);
-        log.info("user roles= {}", a.getUserRoleList());
+        log.info("user roles= {}", a.getUserRole());
     }
 }
