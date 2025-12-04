@@ -26,13 +26,17 @@ public class User {
     private String password;
     private String nickname;
 
-    @ElementCollection(fetch = FetchType.LAZY)
-    @Builder.Default
+    @Column
     @Enumerated(EnumType.STRING)
-    @ToString.Exclude
-    private List<UserRole> userRoleList=new ArrayList<>();
+    private UserRole userRole;
 
-    public void addRole(UserRole memberRole){userRoleList.add(memberRole);}
+//    @ElementCollection(fetch = FetchType.LAZY)
+//    @Builder.Default
+//    @Enumerated(EnumType.STRING)
+//    @ToString.Exclude
+//    private List<UserRole> userRoleList=new ArrayList<>();
+//
+//    public void addRole(UserRole memberRole){userRoleList.add(memberRole);}
 
 }
 
