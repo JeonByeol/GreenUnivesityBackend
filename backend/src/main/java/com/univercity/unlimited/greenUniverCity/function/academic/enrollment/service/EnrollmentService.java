@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 public interface EnrollmentService {
+    // -- Enrollment -- (E)
     //E-1)Enroll에 존재하는 모든 데이터 조회
     List<LegacyEnrollmentDTO> legacyFindAllEnrollment();
 
@@ -18,15 +19,20 @@ public interface EnrollmentService {
     EnrollmentResponseDTO createEnrollmentByAuthorizedUser(EnrollmentCreateDTO dto, String email);
     EnrollmentResponseDTO updateEnrollmentByAuthorizedUser(EnrollmentUpdateDTO dto, String email);
     Map<String,String> deleteByEnrollmentId(Long enrollmentId, String email);
-
-
-
     //E-2) **(기능 입력 바랍니다/사용 안할거면 삭제 부탁드립니다)**
     int addEnrollment(LegacyEnrollmentDTO legacyEnrollmentDTO);
 
-    //E3)다른 service에서 enrollment와 여기에 속한 상위 테이블의 정보를 실질적으로 사용하기 위한 service
+    // -- 전체 Entity --
+    //E.All)다른 service에서 enrollment와 여기에 속한 상위 테이블의 정보를 실질적으로 사용하기 위한 service
     Enrollment getEnrollmentEntity(Long id);
 
+    // -- ClassSection -- (SE)
+    //E.SE-1) ClassSection에 존재하는 단일분반의 정원에 대한 값을 계산하기 위해 Service 선언
+    Integer getCurrentEnrollmentCount(Long sectionId);
+
+    //E.SE-2) ClassSection에 존재하는 복수분반의 정원의 값을 계산하기 위해 Service 선언
+    // Map <분반Id,수강인원>
+    Map<Long,Integer> getCurrentEnrollmentCounts(List<Long> sectionIds);
 
 }
 /**

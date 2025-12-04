@@ -1,6 +1,7 @@
 package com.univercity.unlimited.greenUniverCity.function.academic.enrollment.entity;
 
 import com.univercity.unlimited.greenUniverCity.function.academic.offering.entity.CourseOffering;
+import com.univercity.unlimited.greenUniverCity.function.academic.section.entity.ClassSection;
 import com.univercity.unlimited.greenUniverCity.function.member.user.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
@@ -27,34 +28,16 @@ public class Enrollment {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "offering_id")
 //    @ToString.Exclude
-    private CourseOffering courseOffering; //강의 개설
+    private CourseOffering courseOffering; //강의 개설 ClassSection 등장으로 삭제 예정
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
 //    @ToString.Exclude
-    private User user; //유저
-
-//    @OneToMany(mappedBy = "enrollment",fetch = FetchType.LAZY)
-//    @Builder.Default
-//    @ToString.Exclude
-//    private List<Attendance> attendances = new ArrayList<>(); //출석들
-//
-//    @OneToMany(mappedBy = "enrollment", fetch = FetchType.LAZY)
-//    @Builder.Default
-//    @ToString.Exclude
-//    private List<Review> reviews = new ArrayList<>(); //리뷰들
-//
-//    @OneToMany(mappedBy = "enrollment", fetch = FetchType.LAZY)
-//    @Builder.Default
-//    @ToString.Exclude
-//    private List<Grade> grades = new ArrayList<>(); //성적들
-
-
-//    public void addAttendance(Attendance attendance){
-//        attendances.add(attendance);
-//    }
-//    public void addReview(Review review) {
-//        reviews.add(review);
-//    }
-//    public void addGrade(Grade grade){grades.add(grade);}
+    private User user; //유저 
+    
+    //12-02 추가 CoursOffering->ClassSection으로 변경
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "section_id")
+    @ToString.Exclude
+    private ClassSection classSection; //분반
 }

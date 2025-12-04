@@ -1,7 +1,6 @@
-package com.univercity.unlimited.greenUniverCity.function.notice.dto;
+package com.univercity.unlimited.greenUniverCity.function.community.notice.dto;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.univercity.unlimited.greenUniverCity.function.user.dto.UserDTO;
+
 import lombok.*;
 
 import java.time.LocalDateTime;

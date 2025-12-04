@@ -1,6 +1,9 @@
 package com.univercity.unlimited.greenUniverCity.function.community.comment.controller;
 
-import com.univercity.unlimited.greenUniverCity.function.community.comment.dto.LegacyCommentDTO;
+
+import com.univercity.unlimited.greenUniverCity.function.community.comment.dto.CommentCreateDTO;
+import com.univercity.unlimited.greenUniverCity.function.community.comment.dto.CommentResponseDTO;
+import com.univercity.unlimited.greenUniverCity.function.community.comment.dto.CommentUpdateDTO;
 import com.univercity.unlimited.greenUniverCity.function.community.comment.service.CommentService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
