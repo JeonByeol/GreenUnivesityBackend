@@ -8,6 +8,7 @@ import com.univercity.unlimited.greenUniverCity.function.academic.enrollment.ent
 import com.univercity.unlimited.greenUniverCity.function.academic.enrollment.exception.EnrollmentNotFoundException;
 import com.univercity.unlimited.greenUniverCity.function.academic.enrollment.exception.UserNotFoundException;
 import com.univercity.unlimited.greenUniverCity.function.academic.enrollment.repository.EnrollmentRepository;
+import static com.univercity.unlimited.greenUniverCity.function.academic.enrollment.repository.EnrollmentRepository.SectionCountSummary;
 import com.univercity.unlimited.greenUniverCity.function.academic.offering.entity.CourseOffering;
 import com.univercity.unlimited.greenUniverCity.function.academic.offering.exception.CourseOfferingNotFoundException;
 import com.univercity.unlimited.greenUniverCity.function.academic.offering.service.CourseOfferingService;
@@ -19,10 +20,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -47,6 +46,10 @@ public class EnrollmentServiceImpl implements EnrollmentService {
                         .userId(user != null ? user.getUserId() : -1)
                         .build();
     }
+
+    /**
+     *  -- Enrollment --
+     */
 
     //E-1)Enroll에 존재하는 모든 데이터 조회 서비스 구현부
     @Override
@@ -171,8 +174,11 @@ public class EnrollmentServiceImpl implements EnrollmentService {
         return 1;
     }
 
-    //E-3)다른 service에서 enrollment와 여기에 속한 상위 테이블의 정보를 실질적으로 사용하기 위한 service 구현부
-    //현재 사용위치: reviewServiceImpl에서 [ R-3) - 리뷰 생성 테이블에서 사용 ]
+    /**
+     *  -- 전체 Entity --
+     */
+
+    //E.All) 다른 service에서 enrollment와 여기에 속한 상위 테이블의 정보를 실질적으로 사용하기 위한 service 구현부
     @Override
     public Enrollment getEnrollmentEntity(Long id) {
         Enrollment enrollment = repository.findByEnrollmentId(id);
@@ -180,7 +186,7 @@ public class EnrollmentServiceImpl implements EnrollmentService {
         //Enrollment 수강 내역 id에 대한 검증
         if (enrollment == null) {
             throw new EnrollmentNotFoundException(
-                    "3) 보안 검사 시도 식별코드 -:E-3" +
+                    "3) 보안 검사 시도 식별코드 -:E-All" +
                             "수강 정보를 찾을 수 없습니다. id: " + id);
         }
 
@@ -195,6 +201,55 @@ public class EnrollmentServiceImpl implements EnrollmentService {
         }
 
         return enrollment;
+    }
+
+    /**
+     *  -- ClassSection -- <-- SE
+     */
+
+    //E.SE-1) 특정 분반의 현재 수강 인원 조회 Service 구현부
+    @Override
+    public Integer getCurrentEnrollmentCount(Long sectionId) {
+        log.info("2) 분반 수강 인원 조회 시작 sectionId-:{}",sectionId);
+
+        Integer count=repository.countByClassSection_SectionId(sectionId);
+
+        if (count == null) {
+            log.info("2-1)조회 결과 없으면 null대신 0으로 대입 (sectionId: {})", sectionId);
+            count = 0;
+        }
+
+        log.info("3) 분반 수강 인원 조회 완료 sectionId-:{}, count-:{}",sectionId,count);
+
+        return count;
+    }
+
+    //E.SE-2) 여러 분반의 현재 수강 인원을 한 번에 조회 Service 구현부
+    @Override
+    public Map<Long, Integer> getCurrentEnrollmentCounts(List<Long> sectionIds) {
+        log.info("2) 여러분반 수강 인원 조회 시작 sectionId-:{}",sectionIds);
+
+        // 1 유효성 검사
+        if (sectionIds == null || sectionIds.isEmpty()) {
+            return Collections.emptyMap();
+        }
+
+        List<SectionCountSummary> summaries = repository.countBySectionIds(sectionIds);
+
+        Map<Long,Integer> result = toCountMap(summaries);
+
+        log.debug("여러 분반 수강 인원 조회 완료 - {}건", result.size());
+
+        return result;
+    }
+
+    //E.SE-Function
+    private Map<Long,Integer> toCountMap(List<SectionCountSummary> summaries){
+       return summaries.stream()
+                .collect(Collectors.toMap(
+                        SectionCountSummary::getSectionId,      // Key: 분반 ID
+                        summary -> summary.getCount().intValue() // Value: Long → Integer 변환
+                ));
     }
 }
 

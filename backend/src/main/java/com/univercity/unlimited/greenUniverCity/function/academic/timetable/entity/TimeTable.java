@@ -12,7 +12,6 @@ import java.time.LocalDateTime;
 @Setter
 @Builder
 @ToString
-
 @Table(
         name = "tbl_timetable", indexes = {
         @Index(columnList = "offering_id", name = "idx_timetable_offering")

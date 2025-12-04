@@ -1,0 +1,39 @@
+package com.univercity.unlimited.greenUniverCity.function.academic.grade.dto.gradeitem;
+
+import jakarta.validation.constraints.*;
+import lombok.*;
+
+@Builder
+@Setter
+@Getter
+@NoArgsConstructor
+@AllArgsConstructor
+
+public class GradeItemUpdateDTO {
+    @NotNull(message = "평가 항목 ID는 필수입니다")
+    private Long itemId; // 평가 항목 ID
+
+    @NotBlank(message = "평가 항목명은 필수입니다")
+    @Size(min = 1, max = 50, message = "평가 항목명은 1-50자 이내여야 합니다")
+    private String itemName; // 중간고사, 기말고사, 과제1
+
+    @NotBlank(message = "평가 유형은 필수입니다")
+    @Pattern(
+            regexp = "EXAM|ASSIGNMENT|QUIZ|ATTENDANCE|PROJECT",
+            message = "평가 유형은 EXAM, ASSIGNMENT, QUIZ, ATTENDANCE, PROJECT 중 하나여야 합니다"
+    )
+    private String itemType; // EXAM, ASSIGNMENT, QUIZ, ATTENDANCE, PROJECT
+
+    @NotNull(message = "만점은 필수입니다")
+    @Min(value = 1, message = "만점은 최소 1점 이상이어야 합니다")
+    @Max(value = 1000, message = "만점은 최대 1000점 이하여야 합니다")
+    private Integer maxScore; // 만점 (예: 100)
+
+    @NotNull(message = "반영 비율은 필수입니다")
+    @Min(value = 0, message = "반영 비율은 0% 이상이어야 합니다")
+    @Max(value = 100, message = "반영 비율은 100% 이하여야 합니다")
+    private Integer weightPercent; // 반영 비율 (예: 30%)
+
+    @Size(max = 500, message = "설명은 500자 이내여야 합니다")
+    private String description; // 평가 항목 설명 (선택사항)
+}
