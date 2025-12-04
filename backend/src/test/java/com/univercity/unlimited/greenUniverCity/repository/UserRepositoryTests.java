@@ -48,11 +48,13 @@ public class UserRepositoryTests {
                 "줄리아",
 
 
-                "루트"
+                "루트",
+                "학생",
+                "교수"
         };
 
         // 데이터 추가
-        for(int i=0;i<11;i++){
+        for(int i=0;i<13;i++){
             int roleNumber = 0;
 
             User user= null;
@@ -64,7 +66,24 @@ public class UserRepositoryTests {
                         .build();
 
                 roleNumber = 9;
-            } else {
+            } else if(i == 11) {
+                user = User.builder()
+                        .email("student@aaa.com")
+                        .password("1111")
+                        .nickname(nicknames[i])
+                        .build();
+
+                roleNumber = 4;
+            } else if(i == 12){
+                user = User.builder()
+                        .email("professor@aaa.com")
+                        .password("1111")
+                        .nickname(nicknames[i])
+                        .build();
+
+                roleNumber = 6;
+            }
+            else {
                 user = User.builder()
                         .email(emails[i])
                         .password("1111")
