@@ -14,7 +14,7 @@ import lombok.ToString;
 @Builder
 @ToString
 public class SearchResultDTO {
-
+    private Long userId;
     private String keyword;    // 어떤 검색어로 검색했는지
     private Integer resultCount; // 검색 결과 개수 (지금은 더미)
 

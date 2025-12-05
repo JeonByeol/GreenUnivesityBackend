@@ -25,16 +25,12 @@ public class SearchController {
     // 예: GET /api/search/all?userId=1&keyword=자바&page=0&size=10
     @GetMapping("/all")
     public ResponseEntity<SearchResultDTO> searchAll(
-            @RequestParam Long userId,
-            @RequestParam String keyword,
             Pageable pageable
     ) {
-        log.info("전체 검색 요청 userId={}, keyword={}", userId, keyword);
+        log.info("전체 검색 요청 userId={}, keyword={}");
 
         // DTO 만들어서 서비스로 넘기기
         SearchCreateDTO dto = new SearchCreateDTO();
-        dto.setUserId(userId);
-        dto.setKeyword(keyword);
 
         SearchResultDTO result = searchService.searchAll(dto, pageable);
         return ResponseEntity.ok(result);
