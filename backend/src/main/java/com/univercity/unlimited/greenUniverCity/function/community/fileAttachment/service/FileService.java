@@ -25,5 +25,11 @@ public interface FileService {
     FileResponseDTO updateFile(Long fileId, FileUpdateDTO dto);
 
     List<FileResponseDTO> getFilesByPostId(Long postId);
-}
+
+
+    List<FileResponseDTO> getAllFiles();
+
+    }
+
+
 

@@ -31,14 +31,12 @@ public class FileController {
 
         return email;
     }
-    // p-1)
+    // p-1) postId를 기준으로 파일 확인
     @GetMapping("/all")
-    public ResponseEntity<List<FileResponseDTO>> getFilesByPostId(
-            @RequestParam("postId") Long postId
-    ) {
-        log.info("파일 리스트 조회 요청 - postId: {}", postId);
+    public ResponseEntity<List<FileResponseDTO>> getAllFiles() {
+        log.info("전체 파일 조회 요청");
 
-        List<FileResponseDTO> files = fileService.getFilesByPostId(postId);
+        List<FileResponseDTO> files = fileService.getAllFiles();
         return ResponseEntity.ok(files);
     }
 
