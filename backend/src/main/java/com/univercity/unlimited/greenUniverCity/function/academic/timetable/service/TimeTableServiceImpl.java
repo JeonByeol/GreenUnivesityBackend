@@ -1,5 +1,6 @@
 package com.univercity.unlimited.greenUniverCity.function.academic.timetable.service;
 
+import com.univercity.unlimited.greenUniverCity.function.academic.common.AcademicSecurityValidator;
 import com.univercity.unlimited.greenUniverCity.function.community.review.exception.DataIntegrityException;
 import com.univercity.unlimited.greenUniverCity.function.community.review.exception.InvalidRoleException;
 import com.univercity.unlimited.greenUniverCity.function.community.review.exception.TimeTableNotFoundException;
@@ -29,7 +30,7 @@ public class TimeTableServiceImpl implements TimeTableService{
 
     private final CourseOfferingService offeringService;
 
-    private final UserService userService;
+    private final AcademicSecurityValidator validator;
 
     /**
      * T-A) TimeTable 엔티티를 (Response)DTO로 변환
@@ -53,71 +54,6 @@ public class TimeTableServiceImpl implements TimeTableService{
                         .build();
     }
 
-    /**
-     * T-security) 보안 검사:
-     * - 교수 권한 검증: CourseOffering의 담당 교수와 요청자가 일치하는지 확인
-     * (T-4/T-5/T-6)
-     */
-
-    private void validateProfessorOwnership(CourseOffering offering, String requesterEmail,String action) {
-        log.info("4) 시간표 {} - 교수 권한 검증 시작: {}", action, requesterEmail);
-
-        // 1. 요청자 조회 - userService에 존재하는 U-E service 구현부에 requesterEmail을 전달하여 유저를 조회한다
-        User requester = userService.getUserByEmail(requesterEmail);
-
-        // 2. 요청자의 교수 권한 확인
-        // 1번 과정을 통하여 조회한 user의 정보를 가지고 교수의 역할을 검증한다
-        if (!(requester.getUserRole() == UserRole.PROFESSOR
-                || requester.getUserRole() == UserRole.ADMIN)) {
-            throw new InvalidRoleException(
-                    String.format(
-                            "4)보안 검사 시도 식별코드-: T-security-1 (시간표 %s) " +
-                                    "교수 권한이 없습니다. " +
-                                    "요청자: %s, userId: %s, 현재 역할: %s",
-                            action, requesterEmail, requester.getUserId(), requester.getUserRole())
-            );
-        }
-
-        // 3. 담당 교수가 존재하는지 확인
-        User professor = offering.getProfessor();
-
-        if (professor == null) {
-            throw new DataIntegrityException(
-                    String.format(
-                            "4)보안 검사 시도 식별코드-: T-security-2 (시간표 %s) " +
-                                    "데이터 오류: 개설 강의에 담당 교수가 없습니다. offeringId: %s",
-                            action, offering.getOfferingId())
-            );
-        }
-
-        // 4. 담당 교수의 역할 확인 (데이터 정합성)
-        if (!(professor.getUserRole().equals(UserRole.PROFESSOR) || professor.getUserRole().equals(UserRole.ADMIN))) {
-            throw new InvalidRoleException(
-                    String.format(
-                            "4)보안 검사 시도 식별코드-: T-security-3 (시간표 %s) " +
-                                    "데이터 오류: 담당자가 교수 권한이 없습니다. " +
-                                    "userId: %s, 현재 역할: %s",
-                            action, professor.getUserId(), professor.getUserRole())
-            );
-        }
-
-        // 5. 요청자와 담당 교수 일치 확인
-        if (!professor.getUserId().equals(requester.getUserId())) {
-            throw new UnauthorizedException(
-                    String.format(
-                            "4)보안 검사 시도 식별코드-: T-security-4 (시간표 %s) " +
-                                    "해당 강의의 담당 교수만 시간표를 %s할 수 있습니다. " +
-                                    "담당 교수: %s (userId: %s), 요청자: %s (userId: %s)",
-                            action, action,
-                            professor.getEmail(), professor.getUserId(),
-                            requesterEmail, requester.getUserId())
-            );
-        }
-
-        log.info("4) 교수 권한 검증 완료 - 교수: {}, 작업: {}", requesterEmail, action);
-    }
-
-    //T-1) 리뷰 테이블에 존재하는 모든 데이터를 조회하기 위한 서비스 구현부
     @Transactional
     @Override
     public List<TimeTableResponseDTO> findAllTimeTable() {
@@ -172,8 +108,8 @@ public class TimeTableServiceImpl implements TimeTableService{
         CourseOffering offering=offeringService.getCourseOfferingEntity(dto.getOfferingId());
 
         // T-security 보안검사
-        validateProfessorOwnership(offering,requesterEmail,"생성");
-
+        validator.validateProfessorOwnership(offering,requesterEmail,"시간표 생성");
+        
         TimeTable timeTable=TimeTable.builder()
                 .courseOffering(offering)
                 .dayOfWeek(dto.getDayOfWeek())
@@ -201,7 +137,7 @@ public class TimeTableServiceImpl implements TimeTableService{
 
         // T-security 보안검사보안 검사(소유권 검증)
         CourseOffering offering = timeTable.getCourseOffering();
-        validateProfessorOwnership(offering,requesterEmail,"수정");
+        validator.validateProfessorOwnership(offering,requesterEmail,"시간표 수정");
 
         timeTable.setLocation(dto.getLocation());
         timeTable.setDayOfWeek(dto.getDayOfWeek());
@@ -234,16 +170,11 @@ public class TimeTableServiceImpl implements TimeTableService{
 
         // T-security 보안검사
         CourseOffering offering = timeTable.getCourseOffering();
-        validateProfessorOwnership(offering,requesterEmail,"삭제");
+        validator.validateProfessorOwnership(offering,requesterEmail,"시간표 삭제");
 
         repository.delete(timeTable);
 
         log.info("5)시간표 삭제 성공 -교수: {},timetableId: {}",requesterEmail,timetableId);
     }
 
-    //T-EX) ** 필요한 기능에 대한 설명 입력 부탁드립니다/없으면 삭제 부탁드립니다 ** 
-//    @Override
-//    public ResponseEntity<String> addTimeTable(TimeTableDTO timeTableDTO) {
-//        return null;
-//    }
 }

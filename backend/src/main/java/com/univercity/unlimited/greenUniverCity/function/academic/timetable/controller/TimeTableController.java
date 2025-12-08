@@ -18,11 +18,7 @@ import java.util.List;
 public class TimeTableController {
     private final TimeTableService timeTableService;
 
-    /**
-     * [전체 조회] 시간표 테이블의 모든 데이터를 조회합니다.
-     * (T-1)
-     */
-    //T-GET) 시간표 테이블에 존재하는 모든 시간표를 조회하기 위해 컨트롤러 내에 선언된 crud(get)
+    //T-1) 시간표 테이블에 존재하는 모든 시간표를 조회하기 위해 컨트롤러 내에 선언된 crud(get)
     @GetMapping("/all")
     public List<TimeTableResponseDTO> postmanTestTimeTable(){
         log.info("1) 여기는 시간표 전체조회Controller 입니다");

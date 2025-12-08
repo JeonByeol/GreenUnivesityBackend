@@ -1,5 +1,6 @@
 package com.univercity.unlimited.greenUniverCity.function.academic.section.service;
 
+import com.univercity.unlimited.greenUniverCity.function.academic.common.AcademicSecurityValidator;
 import com.univercity.unlimited.greenUniverCity.function.academic.enrollment.service.EnrollmentService;
 import com.univercity.unlimited.greenUniverCity.function.academic.offering.entity.CourseOffering;
 import com.univercity.unlimited.greenUniverCity.function.academic.offering.service.CourseOfferingService;
@@ -27,7 +28,7 @@ public class ClassSectionServiceImpl implements ClassSectionService{
 
     private final CourseOfferingService offeringService;
 
-    private final UserService userService;
+    private final AcademicSecurityValidator validator;
 
     private final EnrollmentService enrollmentService;
 
@@ -54,68 +55,6 @@ public class ClassSectionServiceImpl implements ClassSectionService{
                         .build();
     }
 
-    /**
-     * SE-security) 보안 검사:
-     * - 교수 권한 검증: CourseOffering의 담당 교수와 요청자가 일치하는지 확인
-     */
-
-    private void validateProfessorOwnerShip(CourseOffering offering,String email,String action){
-        log.info("4) 분반-:{} 교수 권함 검증 시작-:{}",action,email);
-        
-        // 1. 요청자 조회 userService에 존재하는 U-E service 구현부에 requesterEmail을 전달하여 유저를 조회한다
-        User requester= userService.getUserByEmail(email);
-
-        // 2. 요청자의 교수 권한을 확인
-        if(!requester.getUserRole().equals(UserRole.PROFESSOR)){
-            throw new InvalidRoleException(
-                    String.format(
-                            "4)보안검사 시도 식별코드 -: SE-security-1 (분반 %s) " +
-                                    "교수 권한이 존재하지 않습니다 " +
-                                    "요청자-: %s, userid-: %s, 현재 역할-: %s",
-                            action,email,requester.getUserId(),requester.getUserRole())
-            );
-        }
-
-        // 3. 담당 교수가 존재하는지 확인
-        User professor=offering.getProfessor();
-
-        if(professor == null){
-            throw new DataIntegrityException(
-                    String.format(
-                            "4)보안검사 시도 식별코드 -: SE-security-2 (분반 %s) " +
-                                    "데이터 오류: 개설 강의에 담당 교수가 없습니다. offeringId-: %s",
-                            action,offering.getOfferingId())
-            );
-        }
-
-        // 4.담당 교수의 역할 확인
-        if(!professor.getUserRole().equals(UserRole.PROFESSOR)){
-            throw new InvalidRoleException(
-                    String.format(
-                            "4)보안검사 시도 식별코드 -: SE-security-3 (분반 %s) " +
-                                    "데이터 오류: 담당자가 교수 권한이 없습니다. " +
-                                    "userId-: %s, 현재 역할-: %s",
-                            action,professor.getUserId(),professor.getUserRole())
-            );
-        }
-
-        // 5.요청자와 담당 교수 일치 확인
-        if(!professor.getUserId().equals(requester.getUserId())){
-            throw new UnauthorizedException(
-                    String.format(
-                            "4)보안검사 시도 식별코드 -: SE-security-4 (분반 %s) " +
-                                    "해당 강의의 담당 교수만 시간표를 %s 할 수 있습니다. " +
-                                    "담당 교수: %s (userId: %s), 요청자: %s (userId: %s)",
-                            action,action,
-                            professor.getEmail(),professor.getUserId(),
-                            email,requester.getUserId())
-            );
-        }
-        log.info("4)교수 권한 검증 완료 교수-:{}, 작업-:{}",email,action);
-    }
-
-
-    //SE-1) 분반 테이블에 존재하는 모든 데이터를 조회하기 위한 서비스 구현부
     @Override
     public List<ClassSectionResponseDTO> findAllSection() {
         log.info("2) 분반 전체조회 시작");
@@ -149,7 +88,7 @@ public class ClassSectionServiceImpl implements ClassSectionService{
         CourseOffering offering=offeringService.getCourseOfferingEntity(dto.getOfferingId());
 
         //SE-security 보안검사
-        validateProfessorOwnerShip(offering,email,"생성");
+        validator.validateProfessorOwnership(offering,email,"분반 생성");
 
         ClassSection classSection= ClassSection.builder()
                 .courseOffering(offering)
@@ -176,7 +115,7 @@ public class ClassSectionServiceImpl implements ClassSectionService{
         
         //SE-security 보안검사
         CourseOffering offering= classSection.getCourseOffering();
-        validateProfessorOwnerShip(offering,email,"수정");
+        validator.validateProfessorOwnership(offering,email,"분반 수정");
 
         classSection.setSectionName(dto.getSectionName());
         classSection.setMaxCapacity(dto.getMaxCapacity());
@@ -205,7 +144,7 @@ public class ClassSectionServiceImpl implements ClassSectionService{
                                 "분반이 존재하지 않습니다. sectionId:" + sectionId));
 
         CourseOffering offering=classSection.getCourseOffering();
-        validateProfessorOwnerShip(offering,email,"삭제");
+        validator.validateProfessorOwnership(offering,email,"분반 삭제");
 
         repository.delete(classSection);
 
