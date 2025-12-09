@@ -1,5 +1,6 @@
 package com.univercity.unlimited.greenUniverCity.function.academic.grade.dto.grade;
 
+import jakarta.validation.constraints.*;
 import lombok.*;
 
 @Getter
@@ -8,11 +9,16 @@ import lombok.*;
 @NoArgsConstructor
 @Builder
 public class GradeCreateDTO {
-    //** 임시 DTO 완성본 아닙니다 **
-    private Long enrollmentId; //수강내역 Id
-    private String gradeValue; //성적(A+,A,B)
 
-    //** 필요한 추가 필드 **
-    private Double score;//점수(0~100)
-    private String semester; //학기 정보(2024-1/2024-2)
+    @NotNull(message = "등록 ID는 필수입니다")
+    private Long enrollmentId; // 수강신청Id
+
+    @NotNull(message = "총점은 필수입니다")
+    @DecimalMin(value = "0.0", message = "총점은 0 이상이어야 합니다")
+    @DecimalMax(value = "100.0", message = "총점은 100 이하여야 합니다")
+    private Float totalScore; //총점 
+
+    @NotBlank(message = "등급은 필수입니다")
+    @Pattern(regexp = "^(A\\\\+?|B\\\\+?|C\\\\+?|D\\\\+?|F)$", message = "등급 형식이 올바르지 않습니다. (A+, A, B+, B, C+, C, D+, D, F 형식만 허용됩니다.)")
+    private String letterGrade; //등급
 }

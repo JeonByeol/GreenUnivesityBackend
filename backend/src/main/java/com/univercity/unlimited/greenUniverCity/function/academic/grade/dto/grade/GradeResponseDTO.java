@@ -11,12 +11,23 @@ import java.time.LocalDateTime;
 @Builder
 @ToString
 public class GradeResponseDTO {
-    private Integer gradeId;
-    private String gradeValue;
-    private Double score;
-    private Long enrollmentId;
-    private String studentName;
-    private String courseName;
-    private String message;           // "성적이 등록되었습니다" 등
-    private LocalDateTime createdAt;
+    //Grade
+    private Long gradeId;// 성적Id
+
+    private Float totalScore; //총점
+
+    private String letterGrade;//등급
+
+    private LocalDateTime createdAt;//생성시간
+
+    private LocalDateTime updatedAt;//수정시간\
+
+    //Enrollment
+    private Long enrollmentId;// 수강신청Id
+
+    //User
+    private String studentName;//학생이름
+
+    //CourseOffering
+    private String courseName;//과목명
 }

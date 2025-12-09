@@ -11,7 +11,7 @@ import lombok.*;
 @Setter
 @Builder
 @ToString
-public class GradeDTO {
+public class LegacyGradeDTO {
     private Integer gradeId; //성적 아이디
 
     private String gradeValue; //성적 벨류

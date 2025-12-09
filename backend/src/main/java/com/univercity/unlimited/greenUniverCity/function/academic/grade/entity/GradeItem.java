@@ -27,10 +27,10 @@ public class GradeItem {
     private String itemType; //유형
 
     @Column(name = "max_score", nullable = false)
-    private int maxScore; // 만점 기준 (예: 100)
+    private Float maxScore; // 만점 기준 (예: 100)
 
     @Column(name = "weight_percent", nullable = false)
-    private int weightPercent; // 반영 비율 (예: 30 -> 30%)
+    private Float weightPercent; // 반영 비율 (예: 30 -> 30%)
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "offering_id")

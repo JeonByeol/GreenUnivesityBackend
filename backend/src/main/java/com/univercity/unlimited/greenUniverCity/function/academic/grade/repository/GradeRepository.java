@@ -9,8 +9,8 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 import java.util.Optional;
 
-public interface GradeRepository extends JpaRepository<Grade,Integer> {
-    //G-2)학생이 본인이 수강한 모든 과목의 성적과 과목명을 조회하기 위한 쿼리
+public interface GradeRepository extends JpaRepository<Grade,Long> {
+    //G-2)특정 학생이 본인이 수강한 모든 과목의 성적과 과목명을 조회하기 위한 쿼리
     @Query("SELECT g FROM Grade g " +
             "JOIN FETCH g.enrollment e " +
             "JOIN FETCH e.courseOffering co " +
@@ -26,8 +26,11 @@ public interface GradeRepository extends JpaRepository<Grade,Integer> {
             "ORDER BY u.nickname ASC")
     List<Grade> findByOfferingGrade(@Param("offeringId") Long offeringId);
 
-    //G-4) 교수가 학생에 대한 정보를 받아와서 성적의 대한 값을 수정하기 위한 쿼리
+    //G-4) 교수가 학생에 대한 정보를 받아와서 성적의 대한 값을 수정하기 위한 쿼리 (특정 수강신청의 성적을 조회한다)
     Optional<Grade> findByEnrollment_enrollmentId(Long enrollmentId);
+
+    //**추가** 특정 수강신청에 성적이 존재하는지 확인하기 위한 쿼리
+    boolean existsByEnrollment_EnrollmentId(Long enrollmentId);
 
 
 

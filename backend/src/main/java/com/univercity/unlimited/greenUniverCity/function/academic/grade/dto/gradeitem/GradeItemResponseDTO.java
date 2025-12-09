@@ -7,6 +7,8 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import lombok.*;
 
+import java.time.LocalDateTime;
+
 @Builder
 @Setter
 @Getter
@@ -14,17 +16,27 @@ import lombok.*;
 @AllArgsConstructor
 public class GradeItemResponseDTO {
     //GradeItem 정보
-    private Long itemId; // 항목 ID
+    private Long itemId;//평가항목 Id
 
-    private String itemName; // 항목명 ex(중간고사,기말고사,과제1)
+    private String itemName;//항목명 ex(중간고사,기말고사,과제1)
 
-    private String itemType; //유형
+    private String itemType;//유형
 
-    private int maxScore; // 만점 기준 ex(100,94)
+    private Float maxScore;//만점 기준 ex(100,94)
 
-    private int weightPercent; // 반영 비율 ex(30 -> 30%)
+    private Float weightPercent; //반영 비율 ex(30 -> 30%)
+
+    private LocalDateTime createdAt;//생성시간
+
+    private LocalDateTime updatedAt;//수정시간
+
     
     //CourseOffering 정보
-    private Long offeringId; // 개설강의 id
+    private Long offeringId;// 개설강의 id
+    
+    private String courseName;//과목명
+
+    //User
+    private Integer studentCount;//학생 점수
 }
 
