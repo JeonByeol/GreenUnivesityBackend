@@ -1,4 +1,4 @@
-package com.univercity.unlimited.greenUniverCity.function.community.review.entity;
+package com.univercity.unlimited.greenUniverCity.function.academic.review.entity;
 import com.univercity.unlimited.greenUniverCity.function.academic.enrollment.entity.Enrollment;
 import jakarta.persistence.*;
 import lombok.*;

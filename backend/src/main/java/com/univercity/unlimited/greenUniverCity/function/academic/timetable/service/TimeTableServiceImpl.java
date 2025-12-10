@@ -1,10 +1,7 @@
 package com.univercity.unlimited.greenUniverCity.function.academic.timetable.service;
 
 import com.univercity.unlimited.greenUniverCity.function.academic.common.AcademicSecurityValidator;
-import com.univercity.unlimited.greenUniverCity.function.community.review.exception.DataIntegrityException;
-import com.univercity.unlimited.greenUniverCity.function.community.review.exception.InvalidRoleException;
-import com.univercity.unlimited.greenUniverCity.function.community.review.exception.TimeTableNotFoundException;
-import com.univercity.unlimited.greenUniverCity.function.community.review.exception.UnauthorizedException;
+import com.univercity.unlimited.greenUniverCity.function.academic.review.exception.TimeTableNotFoundException;
 import com.univercity.unlimited.greenUniverCity.function.academic.offering.entity.CourseOffering;
 import com.univercity.unlimited.greenUniverCity.function.academic.offering.service.CourseOfferingService;
 import com.univercity.unlimited.greenUniverCity.function.academic.timetable.dto.TimeTableCreateDTO;
@@ -13,8 +10,6 @@ import com.univercity.unlimited.greenUniverCity.function.academic.timetable.dto.
 import com.univercity.unlimited.greenUniverCity.function.academic.timetable.entity.TimeTable;
 import com.univercity.unlimited.greenUniverCity.function.academic.timetable.repository.TimeTableRepository;
 import com.univercity.unlimited.greenUniverCity.function.member.user.entity.User;
-import com.univercity.unlimited.greenUniverCity.function.member.user.entity.UserRole;
-import com.univercity.unlimited.greenUniverCity.function.member.user.service.UserService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

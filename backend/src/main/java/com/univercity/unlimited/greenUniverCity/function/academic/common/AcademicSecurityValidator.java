@@ -1,9 +1,9 @@
 package com.univercity.unlimited.greenUniverCity.function.academic.common;
 
 import com.univercity.unlimited.greenUniverCity.function.academic.offering.entity.CourseOffering;
-import com.univercity.unlimited.greenUniverCity.function.community.review.exception.DataIntegrityException;
-import com.univercity.unlimited.greenUniverCity.function.community.review.exception.InvalidRoleException;
-import com.univercity.unlimited.greenUniverCity.function.community.review.exception.UnauthorizedException;
+import com.univercity.unlimited.greenUniverCity.function.academic.review.exception.DataIntegrityException;
+import com.univercity.unlimited.greenUniverCity.function.academic.review.exception.InvalidRoleException;
+import com.univercity.unlimited.greenUniverCity.function.academic.review.exception.UnauthorizedException;
 import com.univercity.unlimited.greenUniverCity.function.member.user.entity.User;
 import com.univercity.unlimited.greenUniverCity.function.member.user.entity.UserRole;
 import com.univercity.unlimited.greenUniverCity.function.member.user.service.UserService;
@@ -23,6 +23,7 @@ public class AcademicSecurityValidator {
      *  사용처:
      *  T-:(T-4/T-5/T-6)
      *  SE-:(SE-3/SE-4/SE-5)
+     *  G,GI,SS-:(Grade)
      */
     public void validateProfessorOwnership(CourseOffering offering, String requesterEmail, String action) {
         log.info("4) {} - 교수 권한 검증 시작: {}", action, requesterEmail);

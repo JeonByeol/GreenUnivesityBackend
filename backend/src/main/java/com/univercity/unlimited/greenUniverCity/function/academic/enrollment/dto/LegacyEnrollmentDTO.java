@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.univercity.unlimited.greenUniverCity.function.academic.attendance.dto.LegacyAttendanceDTO;
 import com.univercity.unlimited.greenUniverCity.function.academic.offering.dto.LegacyCourseOfferingDTO;
-import com.univercity.unlimited.greenUniverCity.function.community.review.dto.LegacyReviewDTO;
+import com.univercity.unlimited.greenUniverCity.function.academic.review.dto.LegacyReviewDTO;
 import com.univercity.unlimited.greenUniverCity.function.member.user.dto.UserDTO;
 import com.univercity.unlimited.greenUniverCity.function.academic.grade.dto.grade.LegacyGradeDTO;
 import lombok.*;

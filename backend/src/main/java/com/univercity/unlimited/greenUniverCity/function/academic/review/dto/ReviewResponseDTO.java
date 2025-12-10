@@ -1,4 +1,4 @@
-package com.univercity.unlimited.greenUniverCity.function.community.review.dto;
+package com.univercity.unlimited.greenUniverCity.function.academic.review.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;

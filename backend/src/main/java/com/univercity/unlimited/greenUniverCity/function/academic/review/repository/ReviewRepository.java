@@ -1,7 +1,7 @@
-package com.univercity.unlimited.greenUniverCity.function.community.review.repository;
+package com.univercity.unlimited.greenUniverCity.function.academic.review.repository;
 
 import com.univercity.unlimited.greenUniverCity.function.academic.enrollment.entity.Enrollment;
-import com.univercity.unlimited.greenUniverCity.function.community.review.entity.Review;
+import com.univercity.unlimited.greenUniverCity.function.academic.review.entity.Review;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

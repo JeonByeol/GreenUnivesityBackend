@@ -1,17 +1,17 @@
-package com.univercity.unlimited.greenUniverCity.function.community.review.service;
+package com.univercity.unlimited.greenUniverCity.function.academic.review.service;
 
 import com.univercity.unlimited.greenUniverCity.function.academic.enrollment.entity.Enrollment;
 import com.univercity.unlimited.greenUniverCity.function.academic.enrollment.service.EnrollmentService;
 import com.univercity.unlimited.greenUniverCity.function.academic.offering.entity.CourseOffering;
-import com.univercity.unlimited.greenUniverCity.function.community.review.dto.ReviewCreateDTO;
-import com.univercity.unlimited.greenUniverCity.function.community.review.dto.LegacyReviewDTO;
-import com.univercity.unlimited.greenUniverCity.function.community.review.dto.ReviewResponseDTO;
-import com.univercity.unlimited.greenUniverCity.function.community.review.dto.ReviewUpdateDTO;
-import com.univercity.unlimited.greenUniverCity.function.community.review.entity.Review;
-import com.univercity.unlimited.greenUniverCity.function.community.review.exception.DuplicateReviewException;
-import com.univercity.unlimited.greenUniverCity.function.community.review.exception.ReviewNotFoundException;
-import com.univercity.unlimited.greenUniverCity.function.community.review.exception.UnauthorizedReviewException;
-import com.univercity.unlimited.greenUniverCity.function.community.review.repository.ReviewRepository;
+import com.univercity.unlimited.greenUniverCity.function.academic.review.dto.ReviewCreateDTO;
+import com.univercity.unlimited.greenUniverCity.function.academic.review.dto.LegacyReviewDTO;
+import com.univercity.unlimited.greenUniverCity.function.academic.review.dto.ReviewResponseDTO;
+import com.univercity.unlimited.greenUniverCity.function.academic.review.dto.ReviewUpdateDTO;
+import com.univercity.unlimited.greenUniverCity.function.academic.review.entity.Review;
+import com.univercity.unlimited.greenUniverCity.function.academic.review.exception.DuplicateReviewException;
+import com.univercity.unlimited.greenUniverCity.function.academic.review.exception.ReviewNotFoundException;
+import com.univercity.unlimited.greenUniverCity.function.academic.review.exception.UnauthorizedReviewException;
+import com.univercity.unlimited.greenUniverCity.function.academic.review.repository.ReviewRepository;
 import com.univercity.unlimited.greenUniverCity.function.member.user.entity.User;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;

@@ -5,8 +5,7 @@ import com.univercity.unlimited.greenUniverCity.function.academic.classroom.dto.
 import com.univercity.unlimited.greenUniverCity.function.academic.classroom.dto.ClassroomUpdateDTO;
 import com.univercity.unlimited.greenUniverCity.function.academic.classroom.entity.Classroom;
 import com.univercity.unlimited.greenUniverCity.function.academic.classroom.repository.ClassroomRepository;
-import com.univercity.unlimited.greenUniverCity.function.community.review.exception.InvalidRoleException;
-import com.univercity.unlimited.greenUniverCity.function.community.review.exception.TimeTableNotFoundException;
+import com.univercity.unlimited.greenUniverCity.function.academic.review.exception.InvalidRoleException;
 import com.univercity.unlimited.greenUniverCity.function.member.user.entity.User;
 import com.univercity.unlimited.greenUniverCity.function.member.user.entity.UserRole;
 import com.univercity.unlimited.greenUniverCity.function.member.user.service.UserService;

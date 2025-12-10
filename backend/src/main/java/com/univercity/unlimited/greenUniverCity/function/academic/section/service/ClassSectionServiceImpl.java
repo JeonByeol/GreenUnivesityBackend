@@ -4,15 +4,13 @@ import com.univercity.unlimited.greenUniverCity.function.academic.common.Academi
 import com.univercity.unlimited.greenUniverCity.function.academic.enrollment.service.EnrollmentService;
 import com.univercity.unlimited.greenUniverCity.function.academic.offering.entity.CourseOffering;
 import com.univercity.unlimited.greenUniverCity.function.academic.offering.service.CourseOfferingService;
+import com.univercity.unlimited.greenUniverCity.function.academic.review.exception.ClassSectionNotFoundException;
 import com.univercity.unlimited.greenUniverCity.function.academic.section.dto.ClassSectionCreateDTO;
 import com.univercity.unlimited.greenUniverCity.function.academic.section.dto.ClassSectionResponseDTO;
 import com.univercity.unlimited.greenUniverCity.function.academic.section.dto.ClassSectionUpdateDTO;
 import com.univercity.unlimited.greenUniverCity.function.academic.section.entity.ClassSection;
 import com.univercity.unlimited.greenUniverCity.function.academic.section.repository.ClassSectionRepository;
-import com.univercity.unlimited.greenUniverCity.function.community.review.exception.*;
 import com.univercity.unlimited.greenUniverCity.function.member.user.entity.User;
-import com.univercity.unlimited.greenUniverCity.function.member.user.entity.UserRole;
-import com.univercity.unlimited.greenUniverCity.function.member.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

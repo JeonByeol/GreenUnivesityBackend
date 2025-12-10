@@ -16,7 +16,7 @@ public interface GradeRepository extends JpaRepository<Grade,Long> {
             "JOIN FETCH e.courseOffering co " +
             "JOIN FETCH e.user u " +
             "WHERE u.email = :email")
-    List<Grade> findByMyGrade(@Param("email")String email);
+    List<Grade> findByStudentEmail(@Param("email")String email);
 
     //G-3)교수가 특정 과목의 수업을 듣는 전체학생 조회하기 위한 쿼리
     @Query("SELECT g FROM Grade g " +
