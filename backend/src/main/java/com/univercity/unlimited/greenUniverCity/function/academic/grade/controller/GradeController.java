@@ -2,6 +2,7 @@ package com.univercity.unlimited.greenUniverCity.function.academic.grade.control
 
 import com.univercity.unlimited.greenUniverCity.function.academic.grade.dto.grade.GradeCreateDTO;
 import com.univercity.unlimited.greenUniverCity.function.academic.grade.dto.grade.GradeResponseDTO;
+import com.univercity.unlimited.greenUniverCity.function.academic.grade.dto.grade.GradeUpdateDTO;
 import com.univercity.unlimited.greenUniverCity.function.academic.grade.dto.grade.LegacyGradeDTO;
 import com.univercity.unlimited.greenUniverCity.function.academic.grade.service.GradeService;
 import jakarta.validation.Valid;
@@ -136,8 +137,52 @@ public class GradeController {
         return ResponseEntity.ok(responses);
     }
 
+    //NEW-G-5) 최종 성적을 수정 하기 위해 컨트롤러 내부에 선언된 Crud(get)
+    @GetMapping("/{gradeId}")
+    public ResponseEntity<GradeResponseDTO> updateGrade(
+            @PathVariable Long gradeId,
+            @Valid @RequestBody GradeUpdateDTO dto,
+            @RequestHeader (value = "X-User-Email", required = false) String professorEmail){
 
+        log.info("1) 최종 성적 수정 요청 -gradeId-:{}, 교수-:{}", gradeId, professorEmail);
 
+        // Postman 테스트용
+        if (professorEmail == null || professorEmail.isEmpty()) {
+            log.warn("X-User-Email 헤더가 없습니다. 테스트용 기본값 사용");
+            professorEmail = "hannah@aaa.com";
+        }
+
+        GradeResponseDTO response= gradeService.updateGrade(gradeId, dto, professorEmail);
+
+        log.info("Complete: 최종 성적 수정 완료 - gradeId-:{}, letterGrade-:{}",
+                response.getGradeId(), response.getLetterGrade());
+
+        return ResponseEntity.ok(response);
+    }
+
+    //NEW-G-6) 최종 성적 자동 계산 및 저장하기 위해 컨트롤러 내부에 선언된 crud(post)
+    @PostMapping("/enrollments/{enrollmentId}/calculate")
+    public ResponseEntity<GradeResponseDTO> calculateAndSaveGrade(
+            @PathVariable Long enrollmentId,
+            @RequestHeader(value = "X-User-Email", required = false) String professorEmail) {
+
+        log.info("1) 최종 성적 자동 계산 요청 - enrollmentId: {}, 교수: {}",
+                enrollmentId, professorEmail);
+
+        // Postman 테스트용
+        if (professorEmail == null || professorEmail.isEmpty()) {
+            log.warn("X-User-Email 헤더가 없습니다. 테스트용 기본값 사용");
+            professorEmail = "hannah@aaa.com";
+        }
+
+        GradeResponseDTO response = gradeService.calculateAndSaveGrade(enrollmentId, professorEmail);
+
+        log.info("최종 성적 계산 완료 - gradeId: {}, totalScore: {}, letterGrade: {}",
+                response.getGradeId(), response.getTotalScore(), response.getLetterGrade());
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+}
 
 
 
@@ -148,4 +193,4 @@ public class GradeController {
 //        String mail=dto.getEnrollment().getUser().getEmail();
 //        return gradeService.postNewGrade(enrollment,value,mail);
 //    }
-}
+
