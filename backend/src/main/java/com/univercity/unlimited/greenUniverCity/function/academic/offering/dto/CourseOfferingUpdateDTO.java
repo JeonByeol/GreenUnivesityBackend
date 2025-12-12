@@ -17,5 +17,5 @@ public class CourseOfferingUpdateDTO {
     private String courseName; // 개설 강의명
 
     private int year; // 개설 년도
-    private int semester; // 개설 학기 ex) 1학기 2학기
+    private String semester; // 개설 학기 ex) 1학기 2학기
 }

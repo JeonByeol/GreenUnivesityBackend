@@ -25,6 +25,6 @@ public interface StudentScoreRepository extends JpaRepository<StudentScore,Long>
     Long countByEnrollment_EnrollmentId(Long enrollmentId);
 
     //중복 점수 등록 확인
-    boolean existByEnrollment_EnrollmentIdAndGradeItem_ItemId(Long enrollmentId,Long ItemId);
+    boolean existsByEnrollment_EnrollmentIdAndGradeItem_ItemId(Long enrollmentId,Long ItemId);
 
 }

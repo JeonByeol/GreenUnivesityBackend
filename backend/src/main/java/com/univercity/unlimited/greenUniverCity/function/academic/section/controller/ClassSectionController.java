@@ -26,8 +26,8 @@ public class ClassSectionController {
         return sectionService.findAllSection();
     }
 
-    //SE-2) 특정 분반에 대한 정보를 조회하기 위해 컨트롤러 내에 선언된 CRUD(GET)
-    @GetMapping("/one/{offeringId}")
+    //SE-2) 특정 '강의(Offering)'에 속한 분반 목록을 조회하기 위해 컨트롤러 내에 선언된 CRUD(GET)
+    @GetMapping("/list/offering/{offeringId}")
     public List<ClassSectionResponseDTO> postmanTestOneSection(@PathVariable("offeringId") Long offeringId){
         log.info("1) 특정 분반에 대한 정보 조회 요청");
         return sectionService.findSectionsByOfferingId(offeringId);
@@ -86,6 +86,14 @@ public class ClassSectionController {
         }
 
         sectionService.deleteSection(sectionId,email);
+    }
+
+    //SE-6)웹에서 '한건조회' 버튼을 누를 때 이 API를호출
+    @GetMapping("/one/{sectionId}")
+    public ResponseEntity<ClassSectionResponseDTO> getSectionDetail(@PathVariable("sectionId") Long sectionId) {
+        log.info("1) 특정 분반(sectionId: {}) 상세 조회 요청", sectionId);
+        ClassSectionResponseDTO response = sectionService.getSection(sectionId);
+        return ResponseEntity.ok(response);
     }
 
 

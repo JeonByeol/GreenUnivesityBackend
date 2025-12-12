@@ -67,7 +67,7 @@ public class StudentScoreServiceImpl implements StudentScoreService{
         }
 
         //중복 점수 등록 확인
-        if(repository.existByEnrollment_EnrollmentIdAndGradeItem_ItemId(
+        if(repository.existsByEnrollment_EnrollmentIdAndGradeItem_ItemId(
                 dto.getEnrollmentId(),dto.getItemId())){
             throw new IllegalArgumentException("이미 해당 평가항목의 점수갇 등록되어 있습니다,");
         }

@@ -29,7 +29,7 @@ public class CourseOffering {
     private int year; // 개설 년도
 
     @Column(name = "semester")
-    private int semester; // 개설 학기 ex) 1학기 2학기
+    private String semester; // 개설 학기 ex) 1학기 2학기
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "course_id")

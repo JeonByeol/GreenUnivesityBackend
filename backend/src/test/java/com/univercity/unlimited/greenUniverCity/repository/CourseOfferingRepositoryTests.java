@@ -72,7 +72,7 @@ public class CourseOfferingRepositoryTests {
         }
 
         for (Course course : courseList) {
-            int semester = 1;
+            String semester=1+"학기";
             char alphabet = 'A';
 
             // ⭐ 교수 리스트에서 랜덤 선택
@@ -126,7 +126,7 @@ public class CourseOfferingRepositoryTests {
 
         // 기본 데이터 세팅
         String professorName = professorNames.get((int)(Math.random()*professorNames.size()));
-        int semester = (int) (Math.random() * 2) + 1;
+        String semester = (int) (Math.random() * 2) + 1+"학기";
         Course course = courseList.get((int)(Math.random()*courseList.size()));
         LegacyCourseDTO legacyCourseDTO = mapper.map(course, LegacyCourseDTO.class);
         LegacyCourseOfferingDTO legacyCourseOfferingDTO = LegacyCourseOfferingDTO.builder()
@@ -205,7 +205,7 @@ public class CourseOfferingRepositoryTests {
 
             // 기본 데이터 세팅
             String professorName = professorNames.get((int)(Math.random()*professorNames.size()));
-            int semester = (int) (Math.random() * 2) + 1;
+            String semester = (int) (Math.random() * 2) + 1+"학기";
             Course course = courseList.get((int)(Math.random()*courseList.size()));
             LegacyCourseDTO legacyCourseDTO = mapper.map(course, LegacyCourseDTO.class);
             LegacyCourseOfferingDTO legacyCourseOfferingDTO = LegacyCourseOfferingDTO.builder()

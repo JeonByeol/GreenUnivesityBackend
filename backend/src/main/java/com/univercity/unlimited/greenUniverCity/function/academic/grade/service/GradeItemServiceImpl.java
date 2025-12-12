@@ -53,7 +53,7 @@ public class GradeItemServiceImpl implements GradeItemService{
 
         validator.validateProfessorOwnership(offering, professorEmail, "평가항목 생성");
         
-        if(repository.existByCourseOffering_OfferingIdAndItemName(
+        if(repository.existsByCourseOffering_OfferingIdAndItemName(
                 dto.getOfferingId(), dto.getItemName())){
             throw new IllegalStateException("이미 같은 이름의 평가 항목이 존재합니다");
         }

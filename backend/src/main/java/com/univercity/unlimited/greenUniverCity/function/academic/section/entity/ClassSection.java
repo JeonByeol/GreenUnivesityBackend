@@ -1,5 +1,6 @@
 package com.univercity.unlimited.greenUniverCity.function.academic.section.entity;
 
+import com.univercity.unlimited.greenUniverCity.function.academic.classroom.entity.Classroom;
 import com.univercity.unlimited.greenUniverCity.function.academic.offering.entity.CourseOffering;
 import jakarta.persistence.*;
 import lombok.*;
@@ -29,4 +30,9 @@ public class ClassSection {
     @JoinColumn(name = "offering_id", nullable = false)
     @ToString.Exclude // Lombok 무한 루프 방지
     private CourseOffering courseOffering;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "classroom_id")
+    @ToString.Exclude
+    private Classroom classroom;
 }

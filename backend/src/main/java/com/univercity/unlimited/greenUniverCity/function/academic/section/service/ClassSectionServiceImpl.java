@@ -39,18 +39,58 @@ public class ClassSectionServiceImpl implements ClassSectionService{
         CourseOffering courseOffering=section.getCourseOffering();
         User user=courseOffering.getProfessor();
 
-        return
-                ClassSectionResponseDTO.builder()
+        // 1. 현재 수강 인원 계산 (EnrollmentService 사용)
+        Integer currentCount = enrollmentService.getCurrentEnrollmentCount(section.getSectionId());
+
+        ClassSectionResponseDTO response= ClassSectionResponseDTO.builder()
                         .sectionId(section.getSectionId())
                         .sectionName(section.getSectionName())
                         .maxCapacity(section.getMaxCapacity())
-//                        .currentCount() ** enrollment에서 큐런트 카운트를 계산하는 쿼리가 필요함
+                        .currentCount(currentCount != null ? currentCount : 0)
                         .offeringId(courseOffering.getOfferingId())
                         .courseName(courseOffering.getCourseName())
                         .year(courseOffering.getYear())
-                        //.semester(courseOffering.getSemester()) ** courseOffering에서 semester String 변경필요 혹은 삭제
+                        .semester(courseOffering.getSemester())
                         .professorName(user.getNickname())
                         .build();
+        // 3. 계산 필드 추가 (Service에서 계산)
+        calculateAndSetAdditionalFields(response);
+
+        return response;
+    }
+
+    /**
+     * 계산 필드를 계산하여 DTO에 설정
+     *
+     * ✅ null-safe 처리
+     * - maxCapacity가 null이면 계산하지 않음
+     * - currentCount는 이미 null-safe 처리됨 (toResponseDTO에서 0으로 변환)
+     */
+    private void calculateAndSetAdditionalFields(ClassSectionResponseDTO response) {
+        Integer maxCapacity = response.getMaxCapacity();
+        Integer currentCount = response.getCurrentCount();
+
+        // maxCapacity가 null이면 계산 불가
+        if (maxCapacity == null) {
+            response.setAvailableSeats(null);
+            response.setIsFull(false);
+            response.setEnrollmentRate(null);
+            return;
+        }
+
+        // 1. 남은 자리 계산
+        Integer availableSeats = maxCapacity - currentCount;
+        response.setAvailableSeats(availableSeats);
+
+        // 2. 마감 여부 계산
+        Boolean isFull = currentCount >= maxCapacity;
+        response.setIsFull(isFull);
+
+        // 3. 수강률 계산 (백분율)
+        Double enrollmentRate = maxCapacity > 0
+                ? (currentCount.doubleValue() / maxCapacity.doubleValue()) * 100.0
+                : 0.0;
+        response.setEnrollmentRate(enrollmentRate);
     }
 
     @Override
@@ -147,5 +187,15 @@ public class ClassSectionServiceImpl implements ClassSectionService{
         repository.delete(classSection);
 
         log.info("5)분반 삭제 요청 성공 교수-:{},sectionId-:{}",email,sectionId);
+    }
+    
+    //SE-6) 개발환경 sectionId를 통해 데이터 조회
+    @Override
+    public ClassSectionResponseDTO getSection(Long sectionId) {
+        log.info("2) 특정 분반 상세 조회 시작 sectionId-:{}", sectionId);
+        ClassSection section = repository.findById(sectionId)
+                .orElseThrow(() -> new ClassSectionNotFoundException(
+                        "분반이 존재하지 않습니다. sectionId:" + sectionId));
+        return toResponseDTO(section);
     }
 }

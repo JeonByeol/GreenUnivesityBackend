@@ -19,5 +19,5 @@ public interface GradeItemRepository extends JpaRepository<GradeItem,Long> {
     Long countByCourseOffering_OfferingId(Long offeringId);
 
     //특정 강의에 같은 이름의 평가항목이 존재하는지 확인하기 위한 쿼리문(중복방지)
-    boolean existByCourseOffering_OfferingIdAndItemName(Long offeringId,String itemName);
+    boolean existsByCourseOffering_OfferingIdAndItemName(Long offeringId,String itemName);
 }

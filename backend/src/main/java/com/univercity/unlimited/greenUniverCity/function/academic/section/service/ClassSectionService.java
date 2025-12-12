@@ -3,6 +3,7 @@ package com.univercity.unlimited.greenUniverCity.function.academic.section.servi
 import com.univercity.unlimited.greenUniverCity.function.academic.section.dto.ClassSectionCreateDTO;
 import com.univercity.unlimited.greenUniverCity.function.academic.section.dto.ClassSectionResponseDTO;
 import com.univercity.unlimited.greenUniverCity.function.academic.section.dto.ClassSectionUpdateDTO;
+import com.univercity.unlimited.greenUniverCity.function.academic.section.entity.ClassSection;
 
 import java.util.List;
 
@@ -23,4 +24,7 @@ public interface ClassSectionService {
 
     //SE-5)(관리자or교수) SE에 선언된 postmanTestUpdateSection의 요청을 받아서 특정 강의를 잘못만들었을때 삭제하기 위한 서비스를 선언
     void deleteSection(Long sectionId, String email);
+
+    //SE-6) 개발단계 SectionId를 통해 한건 조회를 하기위한 service선언부
+    ClassSectionResponseDTO getSection(Long sectionId);
 }
