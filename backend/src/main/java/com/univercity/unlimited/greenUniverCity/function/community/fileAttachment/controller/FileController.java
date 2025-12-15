@@ -1,11 +1,13 @@
 package com.univercity.unlimited.greenUniverCity.function.community.fileAttachment.controller;
 
+import com.univercity.unlimited.greenUniverCity.function.community.fileAttachment.dto.FileCreateDTO;
 import com.univercity.unlimited.greenUniverCity.function.community.fileAttachment.dto.FileResponseDTO;
 import com.univercity.unlimited.greenUniverCity.function.community.fileAttachment.dto.FileUpdateDTO;
 import com.univercity.unlimited.greenUniverCity.function.community.fileAttachment.service.FileService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -31,28 +33,28 @@ public class FileController {
 
         return email;
     }
-    // p-1)
+    // p-1) postId를 기준으로 파일 확인
     @GetMapping("/all")
-    public ResponseEntity<List<FileResponseDTO>> getFilesByPostId(
-            @RequestParam("postId") Long postId
-    ) {
-        log.info("파일 리스트 조회 요청 - postId: {}", postId);
+    public ResponseEntity<List<FileResponseDTO>> getAllFiles() {
+        log.info("전체 파일 조회 요청");
 
-        List<FileResponseDTO> files = fileService.getFilesByPostId(postId);
+        List<FileResponseDTO> files = fileService.getAllFiles();
         return ResponseEntity.ok(files);
     }
 
     // p-2) 파일 업로드
-    @PostMapping("/create")
+    @PostMapping(
+            value = "/create",
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE
+    )
     public ResponseEntity<List<FileResponseDTO>> createFiles(
-            HttpServletRequest request,                          // Content-Type 확인용
-            @RequestParam("files") List<MultipartFile> files,    // form-data → key: files (File)
-            @RequestParam("postId") Long postId                  // form-data → key: postId (Text)
+            @RequestPart("meta") FileCreateDTO meta,
+            @RequestPart("files") List<MultipartFile> files
     ) {
-        log.info("파일 업로드 요청 - Content-Type: {}", request.getContentType());
-        log.info("postId: {}, files: {}", postId, files.size());
+        log.info("meta: {}", meta);
+        log.info("filesCount: {}", files.size());
 
-        List<FileResponseDTO> result = fileService.saveFiles(files, postId);
+        List<FileResponseDTO> result = fileService.saveFiles(files, meta.getPostId());
         return ResponseEntity.ok(result);
     }
     // P-3 ) 파일 삭제

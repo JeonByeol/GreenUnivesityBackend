@@ -4,11 +4,13 @@ import com.univercity.unlimited.greenUniverCity.function.community.fileAttachmen
 import com.univercity.unlimited.greenUniverCity.function.community.fileAttachment.repository.FileRepository;
 import com.univercity.unlimited.greenUniverCity.function.community.post.entity.Post;
 import com.univercity.unlimited.greenUniverCity.function.community.post.repository.PostRepository;
+import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.Commit;
 
 import java.util.List;
 
@@ -24,35 +26,64 @@ public class FileAttachmentRepositoryTests {
     @Autowired
     private PostRepository postRepository;
 
+
     @Test
     @Tag("push")
-    public void fileCreated() {
+    @Transactional
+    @Commit
+    public void createDummyFileAttachments() {
 
-        // 1. Post 하나 가져오기
+        // 1. Post 데이터가 있는지 확인
         List<Post> posts = postRepository.findAll();
 
+        Post post;
         if (posts.isEmpty()) {
-            throw new IllegalStateException("Post 데이터가 없습니다. 최소 1개 이상 필요합니다!");
+            log.info("Post 데이터가 없습니다. 테스트용 Post를 새로 생성합니다.");
+
+            // title, content 정도는 거의 필수일 가능성이 큼.
+            post = Post.builder()
+                    .title("파일 첨부 테스트용 게시글")
+                    .content("FileAttachment 레포지토리 테스트용 더미 게시글입니다.")
+                    // TODO: Post 엔티티에 nullable=false 필드가 더 있다면 여기에 추가로 설정해야 함.
+                    // 예: .writer(user)  / .board(board) 등
+                    .build();
+
+            post = postRepository.save(post);
+        } else {
+            // 기존 게시글이 있으면 첫 번째 게시글 사용
+            post = posts.get(0);
         }
 
-        Post post = posts.get(0); // 첫 번째 게시글에 파일을 붙인다고 가정
+        // 2. 선택된 Post에 파일 10개 붙이기
+        for (int i = 1; i <= 10; i++) {
 
-        // 2. 테스트용 FileAttachment 엔티티 생성
-        FileAttachment file = FileAttachment.builder()
-                .post(post)
-                .originalName("test-image.png")
-                .storedName("1.png")
-                .storedPath("/uploads/2025/12/2025_12_04_test-image.png")
-                .size(12345L)
-                .contentType("image/png")
-                .build();
+            FileAttachment fileAttachment = FileAttachment.builder()
+                    .post(post)
+                    .originalName("dummy-file-" + i + ".png")
+                    .storedName("dummy-" + i + ".png")
+                    .storedPath("/uploads/2025/12/dummy-" + i + ".png")
+                    .size((long) (1000 * i))
+                    .contentType("image/png")
+                    .build();
 
-        // 3. 저장
-        FileAttachment saved = fileRepository.save(file);
+            FileAttachment saved = fileRepository.save(fileAttachment);
 
-        // 4. 검증 + 로그
-        assertThat(saved.getId()).isNotNull();
-        assertThat(saved.getPost()).isNotNull();
-        log.info("저장된 파일 첨부: {}", saved);
+            // 저장 검증
+            assertThat(saved.getId()).isNotNull();
+            assertThat(saved.getPost()).isNotNull();
+
+            log.info("저장된 더미 파일 {}개차: {}", i, saved);
+        }
+    }
+
+
+    @Test
+    public void readAllFiles() {
+        List<FileAttachment> list = fileRepository.findAll();
+
+        assertThat(list).isNotEmpty();
+        log.info("전체 파일 첨부 개수: {}", list.size());
+
+        list.forEach(f -> log.info("파일 첨부: {}", f));
     }
 }

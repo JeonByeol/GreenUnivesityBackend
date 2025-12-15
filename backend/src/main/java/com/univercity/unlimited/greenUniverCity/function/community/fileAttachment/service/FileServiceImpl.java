@@ -213,4 +213,12 @@ public class FileServiceImpl implements FileService {
         // 사용 안 함 (지금은 saveFiles로 통일)
         return null;
     }
+
+    @Override
+    public List<FileResponseDTO> getAllFiles() {
+        return fileRepository.findAll()
+                .stream()
+                .map(FileResponseDTO::fromEntity)
+                .toList();
+    }
 }
