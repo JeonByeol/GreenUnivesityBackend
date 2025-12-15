@@ -37,7 +37,7 @@ public class ClassroomController {
     //CR-2-1)웹에서 '한건조회' 버튼을 누를 때 이 API를호출
     @GetMapping("/one/{classroomId}")
     public ResponseEntity<ClassroomResponseDTO> getClassroom(@PathVariable("classroomId") Long classroomId) {
-        log.info("1) 특정 분반(sectionId: {}) 상세 조회 요청", classroomId);
+        log.info("1) 특정 강의실(classroomId: {}) 상세 조회 요청", classroomId);
 
         ClassroomResponseDTO response = classroomService.getRoom(classroomId);
 

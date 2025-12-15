@@ -40,7 +40,7 @@ public class RootConfig {
 
         //Grad→ Enrollment→ CourseOffering → Course   → courseName
         mapper.typeMap(Grade.class, GradeResponseDTO.class).addMappings(m ->
-                m.map(src -> src.getEnrollment().getCourseOffering().getCourse().getCourseName(),
+                m.map(src -> src.getEnrollment().getClassSection().getCourseOffering().getCourse().getCourseName(),
                         GradeResponseDTO::setCourseName)
         );
 //        mapper.typeMap(Grade.class, GradeDTO.class)

@@ -32,11 +32,13 @@ public class TimeTable{
     @Column(name = "location", length = 50) // ** classroom이라는 장소에 대한 테이블 생성으로 삭제 예정 **
     private String location; //장소
 
-    @ManyToOne(fetch = FetchType.LAZY) // ** 관계가 timetable이 fk로 offering을 받는것에서 section을 받는것으로 변경 삭제 예정 **
-    @JoinColumn(name = "offering_id")
-    private CourseOffering courseOffering;
-
     @ManyToOne(fetch = FetchType.LAZY) // fk로 section을 받는게 맞음
     @JoinColumn(name="section_id")
     private ClassSection classSection;
+
+//    @ManyToOne(fetch = FetchType.LAZY) // ** 관계가 timetable이 fk로 offering을 받는것에서 section을 받는것으로 변경 삭제 예정 **
+//    @JoinColumn(name = "offering_id")
+//    private CourseOffering courseOffering;
+
+
 }

@@ -95,14 +95,14 @@ public class AttendanceServiceImpl implements AttendanceService{
         }
 
         // 3. 담당 교수가 존재하는지 확인
-        User professor=enrollment.getCourseOffering().getProfessor();
+        User professor=enrollment.getClassSection().getCourseOffering().getProfessor();
 
         if (professor == null) {
             throw new DataIntegrityException(
                     String.format(
                             "4)보안 검사 시도 식별코드-: A-security-2 (출결 %s) " +
                                     "데이터 오류: 개설 강의에 담당 교수가 없습니다. offeringId: %s",
-                            action, enrollment.getCourseOffering().getOfferingId())
+                            action, enrollment.getClassSection().getCourseOffering().getOfferingId())
             );
         }
 

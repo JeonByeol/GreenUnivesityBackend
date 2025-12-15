@@ -26,12 +26,6 @@ public class EnrollmentResponseDTO {
     //User 테이블에 필요한 DTO를 채우거나 사용 안하면 삭제 예정
     private Long userId;//유저 식별코드
 
-    //CourseOffering 테이블에 필요한 DTO를 채우거나 사용 안하면 삭제 예정
-
-    //Grade 테이블에 필요한 DTO를 채우거나 사용 안하면 삭제 예정
-
-    //Review 테이블에 필요한 DTO를 채우거나 사용 안하면 삭제 예정
-
-    //Attendance 테이블에 필요한 DTO를 채우거나 사용 안하면 삭제 예정
+    private Long sectionId;
 
 }

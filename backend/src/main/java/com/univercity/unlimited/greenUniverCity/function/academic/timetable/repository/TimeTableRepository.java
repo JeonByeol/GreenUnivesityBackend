@@ -11,14 +11,16 @@ public interface TimeTableRepository extends JpaRepository<TimeTable,Long> {
 
     //T-2)에 선언된
     @Query("SELECT t FROM TimeTable t " +
-            "JOIN FETCH t.courseOffering co " +
+            "JOIN FETCH t.classSection cs " +
+            "JOIN FETCH cs.courseOffering co " +
             "WHERE co.offeringId =:offeringId")
     List<TimeTable> findTimeTableByOfferingId(@Param("offeringId") Long offeringId);
 
 
-    @Query("SELECT t FROM TimeTable t " +
-            "JOIN t.courseOffering co " +
-            "JOIN Enrollment e ON e.courseOffering = co " +
+    @Query("SELECT t FROM TimeTable t" +
+            "JOIN t.classSection cs " +
+            "JOIN cs.courseOffering co " +
+            "JOIN Enrollment e ON e.classSection = cs " +
             "JOIN e.user u " +
             "WHERE u.email = :email")
     List<TimeTable> findTimetableByStudentEmail(@Param("email") String email);

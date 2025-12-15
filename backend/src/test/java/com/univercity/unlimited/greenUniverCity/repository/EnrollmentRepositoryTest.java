@@ -1,7 +1,12 @@
 package com.univercity.unlimited.greenUniverCity.repository;
 
+import com.univercity.unlimited.greenUniverCity.function.academic.enrollment.dto.EnrollmentResponseDTO;
 import com.univercity.unlimited.greenUniverCity.function.academic.offering.entity.CourseOffering;
 import com.univercity.unlimited.greenUniverCity.function.academic.enrollment.entity.Enrollment;
+import com.univercity.unlimited.greenUniverCity.function.academic.section.dto.ClassSectionResponseDTO;
+import com.univercity.unlimited.greenUniverCity.function.academic.section.entity.ClassSection;
+import com.univercity.unlimited.greenUniverCity.function.academic.section.repository.ClassSectionRepository;
+import com.univercity.unlimited.greenUniverCity.function.academic.section.service.ClassSectionService;
 import com.univercity.unlimited.greenUniverCity.function.member.user.entity.User;
 import com.univercity.unlimited.greenUniverCity.function.member.user.dto.UserDTO;
 import com.univercity.unlimited.greenUniverCity.function.academic.enrollment.repository.EnrollmentRepository;
@@ -15,6 +20,7 @@ import org.junit.jupiter.api.Test;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.test.annotation.Commit;
 
 import java.time.LocalDateTime;
@@ -33,6 +39,9 @@ public class EnrollmentRepositoryTest {
     private UserRepository userRepository;
 
     @Autowired
+    private ClassSectionRepository sectionRepository;
+
+    @Autowired
     private EnrollmentService enrollmentService;
 
     @Autowired
@@ -42,6 +51,7 @@ public class EnrollmentRepositoryTest {
     @Tag("push")
     public void insertInitData(){
         // 데이터 세팅
+        List<ClassSection> sections=sectionRepository.findAll();
         List<CourseOffering> offerings = offeringRepository.findAll();
         List<User> users = userRepository.findAll();
 
@@ -59,57 +69,74 @@ public class EnrollmentRepositoryTest {
         }
 
         // 데이터 저장
-        for(CourseOffering offering : offerings) {
+        for(ClassSection section:sections){
             for(User user:users){
                 if((int)(Math.random()*10)>=4){
                     continue;
                 }
                 Enrollment enrollment = Enrollment.builder()
-                        .courseOffering(offering)
+                        .classSection(section)
                         .enrollDate(LocalDateTime.now())
                         .user(user)
                         .build();
 
                 repository.save(enrollment);
             }
-
         }
+
+//        for(CourseOffering offering : offerings) {
+//            for(User user:users){
+//                if((int)(Math.random()*10)>=4){
+//                    continue;
+//                }
+//                Enrollment enrollment = Enrollment.builder()
+//                        .courseOffering(offering)
+//                        .enrollDate(LocalDateTime.now())
+//                        .user(user)
+//                        .build();
+//
+//                repository.save(enrollment);
+//            }
+//
+//        }
     }
 
-    @Transactional
-    @Commit
-    @Test
-    public void insertEnrollmentData() {
-        // 데이터 세팅
-        List<CourseOffering> offerings = offeringRepository.findAll();
-        List<User> users = userRepository.findAll();
-
-        // 데이터 체크
-        if(offerings.isEmpty() == true)
-        {
-            log.info("Offering 데이터가 없습니다.");
-            return;
-        }
-
-        if(users.isEmpty() == true)
-        {
-            log.info("User 데이터가 없습니다.");
-            return;
-        }
-
-        CourseOffering offering = offerings.get((int)(Math.random()*offerings.size()));
-        LegacyCourseOfferingDTO offeringDTO = mapper.map(offering, LegacyCourseOfferingDTO.class);
-        User user = users.get((int)(Math.random()*users.size()));
-        UserDTO userDTO = mapper.map(user,UserDTO.class);
-
-        LegacyEnrollmentDTO legacyEnrollmentDTO = LegacyEnrollmentDTO.builder()
-                .courseOffering(offeringDTO)
-                .enrollDate(LocalDateTime.now())
-                .user(userDTO)
-                .build();
-
-        enrollmentService.addEnrollment(legacyEnrollmentDTO);
-
-
-    }
+//    @Transactional
+//    @Commit
+//    @Test
+//    public void insertEnrollmentData() {
+//        // 데이터 세팅
+//        List<ClassSection> sections=sectionRepository.findAll();
+//        List<CourseOffering> offerings = offeringRepository.findAll();
+//        List<User> users = userRepository.findAll();
+//
+//        // 데이터 체크
+//        if(offerings.isEmpty() == true)
+//        {
+//            log.info("Offering 데이터가 없습니다.");
+//            return;
+//        }
+//
+//        if(users.isEmpty() == true)
+//        {
+//            log.info("User 데이터가 없습니다.");
+//            return;
+//        }
+//
+//        CourseOffering offering = offerings.get((int)(Math.random()*offerings.size()));
+//        ClassSection section=sections.get((int)(Math.random()*sections.size()));
+////        LegacyCourseOfferingDTO offeringDTO = mapper.map(offering, LegacyCourseOfferingDTO.class);
+//        ClassSectionResponseDTO sectionDTO=mapper.map(section,ClassSectionResponseDTO.class);
+//        User user = users.get((int)(Math.random()*users.size()));
+//        UserDTO userDTO = mapper.map(user,UserDTO.class);
+//
+//        EnrollmentResponseDTO responseDTO = EnrollmentResponseDTO.builder()
+//                .enrollDate(LocalDateTime.now())
+//                .user(userDTO)
+//                .build();
+//
+//        enrollmentService.addEnrollment(responseDTO);
+//
+//
+//    }
 }

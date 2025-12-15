@@ -56,7 +56,7 @@ public class TimeTableController {
             @RequestBody TimeTableCreateDTO dto,
             @RequestHeader(value="X-User-Email",required = false) String requesterEmail){
 
-        log.info("1) 시간표 생성 요청 -교수:{},offeringId:{}",requesterEmail,dto.getOfferingId());
+        log.info("1) 시간표 생성 요청 -교수:{},sectionId-:{}",requesterEmail,dto.getSectionId());
 
         // Postman 테스트용: Header가 없으면 기본값 사용 (개발 환경에서만)
         if (requesterEmail == null || requesterEmail.isEmpty()) {
@@ -76,9 +76,8 @@ public class TimeTableController {
             @RequestBody TimeTableUpdateDTO dto,
             @RequestHeader(value="X-User-Email",required = false) String requesterEmail){
 
-        log.info("1) 시간표 수정 요청 timetableId-:{},강의실-:{},요일-:{},시작시간-:{},종료시간-:{}",
+        log.info("1) 시간표 수정 요청 timetableId-:{},요일-:{},시작시간-:{},종료시간-:{}",
                 dto.getTimetableId(),
-                dto.getLocation(),
                 dto.getDayOfWeek(),
                 dto.getStartTime(),
                 dto.getEndTime()

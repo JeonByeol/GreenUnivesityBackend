@@ -96,10 +96,10 @@ public class ClassroomServiceImpl implements ClassroomService{
     //CR-2-1)
     @Override
     public ClassroomResponseDTO getRoom(Long classroomId) {
-        log.info("2) 분반 단건 조회 시작 - classroomId-:{}", classroomId);
+        log.info("2) 강의실 단건 조회 시작 - classroomId-:{}", classroomId);
 
         Classroom classroom= repository.findById(classroomId)
-                .orElseThrow(()-> new IllegalArgumentException("분반 정보를 찾을 수 없습니다."));
+                .orElseThrow(()-> new IllegalArgumentException("강의실 정보를 찾을 수 없습니다."));
 
         return toResponseDTO(classroom);
     }

@@ -12,6 +12,7 @@ import com.univercity.unlimited.greenUniverCity.function.academic.grade.reposito
 import com.univercity.unlimited.greenUniverCity.function.academic.grade.entity.Grade;
 import com.univercity.unlimited.greenUniverCity.function.academic.offering.entity.CourseOffering;
 import com.univercity.unlimited.greenUniverCity.function.academic.offering.service.CourseOfferingService;
+import com.univercity.unlimited.greenUniverCity.function.academic.section.entity.ClassSection;
 import com.univercity.unlimited.greenUniverCity.function.member.user.entity.User;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -131,7 +132,7 @@ public class GradeServiceImpl implements GradeService{
             throw new IllegalStateException("3) 이미 성적이 등록되어 있습니다.");
         }
 
-        CourseOffering offering = enrollment.getCourseOffering();
+        CourseOffering offering = enrollment.getClassSection().getCourseOffering();
         validator.validateProfessorOwnership(offering, professorEmail, "성적생성");
 
         Grade grade=Grade.builder()
@@ -157,7 +158,7 @@ public class GradeServiceImpl implements GradeService{
         Grade grade=repository.findById(gradeId)
                 .orElseThrow(()->new IllegalArgumentException("3) 성적 정보를 찾을 수 없습니다."));
 
-        CourseOffering offering = grade.getEnrollment().getCourseOffering();
+        CourseOffering offering = grade.getEnrollment().getClassSection().getCourseOffering();
         validator.validateProfessorOwnership(offering, professorEmail, "성적수정");
 
         grade.setTotalScore(dto.getTotalScore());
@@ -180,7 +181,7 @@ public class GradeServiceImpl implements GradeService{
 
         Enrollment enrollment= enrollmentService.getEnrollmentEntity(enrollmentId);
 
-        CourseOffering offering= enrollment.getCourseOffering();
+        CourseOffering offering= enrollment.getClassSection().getCourseOffering();
         validator.validateProfessorOwnership(offering, professorEmail, "성적계산");
 
         List<StudentScoreResponseDTO> scoreResponseDTOS=
@@ -256,7 +257,8 @@ public class GradeServiceImpl implements GradeService{
      */
     private GradeResponseDTO illWishChainResponse(Grade grade){
         Enrollment enrollment=grade.getEnrollment();
-        CourseOffering offering=enrollment.getCourseOffering();
+        ClassSection section=enrollment.getClassSection();
+        CourseOffering offering=section.getCourseOffering();
         User user=enrollment.getUser();
 
         return
@@ -292,7 +294,8 @@ public class GradeServiceImpl implements GradeService{
         List<GradeResponseDTO> myGrade= grades.stream()
                 .map(g -> {
                     Enrollment enrollment=g.getEnrollment();
-                    CourseOffering offering=enrollment.getCourseOffering();
+                    ClassSection section=enrollment.getClassSection();
+                    CourseOffering offering=section.getCourseOffering();
                     User user=enrollment.getUser();
 //                    EnrollmentTestDTO info=
 //                   enrollmentService.getEnrollmentForGrade(g.getEnrollment().getEnrollmentId());//todo E-2)

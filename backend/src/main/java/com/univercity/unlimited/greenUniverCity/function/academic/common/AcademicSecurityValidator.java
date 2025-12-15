@@ -1,9 +1,11 @@
 package com.univercity.unlimited.greenUniverCity.function.academic.common;
 
+import com.univercity.unlimited.greenUniverCity.function.academic.enrollment.entity.Enrollment;
 import com.univercity.unlimited.greenUniverCity.function.academic.offering.entity.CourseOffering;
 import com.univercity.unlimited.greenUniverCity.function.academic.review.exception.DataIntegrityException;
 import com.univercity.unlimited.greenUniverCity.function.academic.review.exception.InvalidRoleException;
 import com.univercity.unlimited.greenUniverCity.function.academic.review.exception.UnauthorizedException;
+import com.univercity.unlimited.greenUniverCity.function.academic.section.entity.ClassSection;
 import com.univercity.unlimited.greenUniverCity.function.member.user.entity.User;
 import com.univercity.unlimited.greenUniverCity.function.member.user.entity.UserRole;
 import com.univercity.unlimited.greenUniverCity.function.member.user.service.UserService;
@@ -87,4 +89,51 @@ public class AcademicSecurityValidator {
 
         log.info("4) 교수 권한 검증 완료 - 교수: {}, 작업: {}", requesterEmail, action);
     }
+
+
+    /**
+     * AC-security) 보안검사 - ClassSection 기준 (오버로딩)
+     * ClassSection에서 CourseOffering을 추출하여 기존 검증 로직 재사용
+     */
+    public void validateProfessorOwnership(ClassSection section, String requesterEmail, String action) {
+        log.info("4) {} - ClassSection 기준 교수 권한 검증: sectionId={}", action, section.getSectionId());
+
+        CourseOffering offering = section.getCourseOffering();
+
+        if (offering == null) {
+            throw new DataIntegrityException(
+                    String.format(
+                            "4)보안 검사 시도 식별코드-: AC-security-5 (%s) " +
+                                    "데이터 오류: 분반에 개설 강의 정보가 없습니다. sectionId: %s",
+                            action, section.getSectionId())
+            );
+        }
+
+        // 기존 검증 로직 재사용
+        validateProfessorOwnership(offering, requesterEmail, action);
+    }
+
+    /**
+     * AC-security) 보안검사 - Enrollment 기준 (오버로딩)
+     * Enrollment에서 ClassSection → CourseOffering을 추출하여 검증
+     */
+    public void validateProfessorOwnership(Enrollment enrollment, String requesterEmail, String action) {
+        log.info("4) {} - Enrollment 기준 교수 권한 검증: enrollmentId={}", action, enrollment.getEnrollmentId());
+
+        ClassSection section = enrollment.getClassSection();
+
+        if (section == null) {
+            throw new DataIntegrityException(
+                    String.format(
+                            "4)보안 검사 시도 식별코드-: AC-security-6 (%s) " +
+                                    "데이터 오류: 수강신청에 분반 정보가 없습니다. enrollmentId: %s",
+                            action, enrollment.getEnrollmentId())
+            );
+        }
+
+        // ClassSection 검증 로직 재사용 (내부적으로 CourseOffering 검증으로 이어짐)
+        validateProfessorOwnership(section, requesterEmail, action);
+    }
 }
+
+

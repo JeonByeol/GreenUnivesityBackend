@@ -26,11 +26,6 @@ public class Enrollment {
     private LocalDateTime enrollDate; //신청 날짜
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "offering_id")
-//    @ToString.Exclude
-    private CourseOffering courseOffering; //강의 개설 ClassSection 등장으로 삭제 예정
-
-    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
 //    @ToString.Exclude
     private User user; //유저 
@@ -40,4 +35,9 @@ public class Enrollment {
     @JoinColumn(name = "section_id")
     @ToString.Exclude
     private ClassSection classSection; //분반
+
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "offering_id")
+////    @ToString.Exclude
+//    private CourseOffering courseOffering; //강의 개설 ClassSection 등장으로 삭제 예정
 }

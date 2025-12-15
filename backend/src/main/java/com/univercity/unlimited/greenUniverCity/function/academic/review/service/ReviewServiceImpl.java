@@ -11,6 +11,7 @@ import com.univercity.unlimited.greenUniverCity.function.academic.review.excepti
 import com.univercity.unlimited.greenUniverCity.function.academic.review.exception.ReviewNotFoundException;
 import com.univercity.unlimited.greenUniverCity.function.academic.review.exception.UnauthorizedReviewException;
 import com.univercity.unlimited.greenUniverCity.function.academic.review.repository.ReviewRepository;
+import com.univercity.unlimited.greenUniverCity.function.academic.section.entity.ClassSection;
 import com.univercity.unlimited.greenUniverCity.function.member.user.entity.User;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -43,7 +44,8 @@ public class ReviewServiceImpl implements ReviewService{
 
     private ReviewResponseDTO toResponseDTO(Review review) {
         Enrollment enrollment = review.getEnrollment();
-        CourseOffering courseOffering=enrollment.getCourseOffering();
+        ClassSection section=enrollment.getClassSection();
+        CourseOffering courseOffering=section.getCourseOffering();
         User user=enrollment.getUser();
 
         return ReviewResponseDTO.builder()

@@ -198,4 +198,11 @@ public class ClassSectionServiceImpl implements ClassSectionService{
                         "분반이 존재하지 않습니다. sectionId:" + sectionId));
         return toResponseDTO(section);
     }
+
+    //SE-E) 외부 Service에서 classSection 정보 조회 및 활용
+    @Override
+    public ClassSection getClassSectionEntity(Long sectionId) {
+        return repository.findById(sectionId)
+                .orElseThrow(()->new IllegalArgumentException("분반이 존재하지 않습니다."));
+    }
 }
