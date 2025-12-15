@@ -7,9 +7,9 @@ import com.univercity.unlimited.greenUniverCity.function.academic.attendance.dto
 import com.univercity.unlimited.greenUniverCity.function.academic.attendance.entity.Attendance;
 import com.univercity.unlimited.greenUniverCity.function.academic.enrollment.entity.Enrollment;
 import com.univercity.unlimited.greenUniverCity.function.academic.enrollment.service.EnrollmentService;
-import com.univercity.unlimited.greenUniverCity.function.community.review.exception.DataIntegrityException;
-import com.univercity.unlimited.greenUniverCity.function.community.review.exception.InvalidRoleException;
-import com.univercity.unlimited.greenUniverCity.function.community.review.exception.UnauthorizedException;
+import com.univercity.unlimited.greenUniverCity.function.academic.review.exception.DataIntegrityException;
+import com.univercity.unlimited.greenUniverCity.function.academic.review.exception.InvalidRoleException;
+import com.univercity.unlimited.greenUniverCity.function.academic.review.exception.UnauthorizedException;
 import com.univercity.unlimited.greenUniverCity.function.member.user.entity.User;
 import com.univercity.unlimited.greenUniverCity.function.academic.attendance.repository.AttendanceRepository;
 import com.univercity.unlimited.greenUniverCity.function.member.user.entity.UserRole;

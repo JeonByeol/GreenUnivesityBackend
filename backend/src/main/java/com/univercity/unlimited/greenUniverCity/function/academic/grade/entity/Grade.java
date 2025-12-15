@@ -2,6 +2,10 @@ package com.univercity.unlimited.greenUniverCity.function.academic.grade.entity;
 import com.univercity.unlimited.greenUniverCity.function.academic.enrollment.entity.Enrollment;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "tbl_grade") // 최종성적 테이블
@@ -15,19 +19,42 @@ public class Grade{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "grade_id")
-    private Integer gradeId; // 성적id
+    private Long gradeId; // 성적id
 
-    @Column(name = "grade_value", length = 5)
-    private String gradeValue; //학점(등급)
+    @Column(name = "total_score", nullable = false)
+    private Float totalScore;//총점
+
+    @Column(name = "letter_grade", nullable = false, length = 2)
+    private String letterGrade;//등급
+
+    @CreationTimestamp
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private LocalDateTime createdAt;//생성일자
+    
+    @UpdateTimestamp
+    @Column(name = "updated_at", nullable = false)
+    private LocalDateTime updatedAt;//수정일자
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "enrollment_id")
-    private Enrollment enrollment; //enrollment
+    private Enrollment enrollment;//수강신청
 
-    //@Column(name = "score", nullable = false)  12/01 추가 써야함
-    //private String totalScore; //총점(95.0)상세점수 합계
+    //총점을 기반으로 등급을 계산하는 함수
+    public static String calculateGrade(Float score) {
+        if (score >= 95.0) return "A+";
+        if (score >= 90.0) return "A";
+        if (score >= 85.0) return "B+";
+        if (score >= 80.0) return "B";
+        if (score >= 75.0) return "C+";
+        if (score >= 70.0) return "C";
+        if (score >= 65.0) return "D+";
+        if (score >= 60.0) return "D";
+        return "F";
+    }
 
-    //private Integer gpa // 평점(3.1,4.0,4.5)
-
-    //※ 분반(ClassSection)과 직접 연결되지 않고, 학생의 수강 내역(Enrollment)에 종속된다
+    //총점을 기반으로 등급을 계산하는 함수를 받아서 자동으로 등급을 생성하는 함수
+    public void setTotalScoreAndCalculateGrade(Float totalScore) {
+        this.totalScore = totalScore;
+        this.letterGrade = calculateGrade(totalScore);
+    }
 }

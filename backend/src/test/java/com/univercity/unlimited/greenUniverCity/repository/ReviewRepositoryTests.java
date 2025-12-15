@@ -3,8 +3,8 @@ package com.univercity.unlimited.greenUniverCity.repository;
 
 import com.univercity.unlimited.greenUniverCity.function.academic.enrollment.entity.Enrollment;
 import com.univercity.unlimited.greenUniverCity.function.academic.enrollment.repository.EnrollmentRepository;
-import com.univercity.unlimited.greenUniverCity.function.community.review.entity.Review;
-import com.univercity.unlimited.greenUniverCity.function.community.review.repository.ReviewRepository;
+import com.univercity.unlimited.greenUniverCity.function.academic.review.entity.Review;
+import com.univercity.unlimited.greenUniverCity.function.academic.review.repository.ReviewRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;

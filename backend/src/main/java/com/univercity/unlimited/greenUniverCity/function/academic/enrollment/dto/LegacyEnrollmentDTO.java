@@ -4,9 +4,9 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.univercity.unlimited.greenUniverCity.function.academic.attendance.dto.LegacyAttendanceDTO;
 import com.univercity.unlimited.greenUniverCity.function.academic.offering.dto.LegacyCourseOfferingDTO;
-import com.univercity.unlimited.greenUniverCity.function.community.review.dto.LegacyReviewDTO;
+import com.univercity.unlimited.greenUniverCity.function.academic.review.dto.LegacyReviewDTO;
 import com.univercity.unlimited.greenUniverCity.function.member.user.dto.UserDTO;
-import com.univercity.unlimited.greenUniverCity.function.academic.grade.dto.grade.GradeDTO;
+import com.univercity.unlimited.greenUniverCity.function.academic.grade.dto.grade.LegacyGradeDTO;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -37,7 +37,7 @@ public class LegacyEnrollmentDTO {
 
     @Builder.Default
     @JsonManagedReference("enrollment-grade")
-    private List<GradeDTO> grades=new ArrayList<>();//성적 모음
+    private List<LegacyGradeDTO> grades=new ArrayList<>();//성적 모음
 
     @Builder.Default
     @JsonManagedReference("enrollment-attendance")

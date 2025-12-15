@@ -1,6 +1,6 @@
 package com.univercity.unlimited.greenUniverCity.config;
 
-import com.univercity.unlimited.greenUniverCity.function.community.review.exception.DuplicateReviewException;
+import com.univercity.unlimited.greenUniverCity.function.academic.review.exception.DuplicateReviewException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

@@ -27,15 +27,15 @@ public class ClassSectionResponseDTO {
     private Double enrollmentRate; // 수강률 = (currentCount / maxCapacity) * 100
 
     // 편의 메서드- > 나중에 사용할 지 안할지 모름 현재는 사용 안함 / 사용 안하면 삭제
-    public Integer getAvailableSeats() {
-        return maxCapacity - currentCount;
-    }
-
-    public Boolean getIsFull() {
-        return currentCount >= maxCapacity;
-    }
-
-    public Double getEnrollmentRate() {
-        return maxCapacity > 0 ? (currentCount * 100.0 / maxCapacity) : 0.0;
-    }
+//    public Integer getAvailableSeats() {
+//        return maxCapacity - currentCount;
+//    }
+//
+//    public Boolean getIsFull() {
+//        return currentCount >= maxCapacity;
+//    }
+//
+//    public Double getEnrollmentRate() {
+//        return maxCapacity > 0 ? (currentCount * 100.0 / maxCapacity) : 0.0;
+//    }
 }

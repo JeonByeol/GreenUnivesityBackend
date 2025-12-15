@@ -25,7 +25,7 @@ public class LegacyCourseOfferingDTO {
     private String courseName;
 
     private int year; // 개설 년도
-    private int semester; // 개설 학기 ex) 1학기 2학기
+    private String semester; // 개설 학기 ex) 1학기 2학기
 
     @JsonBackReference("course-offering")
     @ToString.Exclude

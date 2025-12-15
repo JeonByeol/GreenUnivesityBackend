@@ -19,7 +19,7 @@ public class CourseOfferingResponseDTO {
     private String courseName; // 개설 강의 이름
 
     private int year; // 개설 년도
-    private int semester; // 개설 학기 ex) 1학기 2학기
+    private String semester; // 개설 학기 ex) 1학기 2학기
 
     //Course 테이블에 필요한 DTO를 채우거나 사용 안하면 삭제 예정
     private Long courseId;

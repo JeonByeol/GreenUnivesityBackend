@@ -18,11 +18,7 @@ import java.util.List;
 public class TimeTableController {
     private final TimeTableService timeTableService;
 
-    /**
-     * [전체 조회] 시간표 테이블의 모든 데이터를 조회합니다.
-     * (T-1)
-     */
-    //T-GET) 시간표 테이블에 존재하는 모든 시간표를 조회하기 위해 컨트롤러 내에 선언된 crud(get)
+    //T-1) 시간표 테이블에 존재하는 모든 시간표를 조회하기 위해 컨트롤러 내에 선언된 crud(get)
     @GetMapping("/all")
     public List<TimeTableResponseDTO> postmanTestTimeTable(){
         log.info("1) 여기는 시간표 전체조회Controller 입니다");
@@ -34,6 +30,18 @@ public class TimeTableController {
     public List<TimeTableResponseDTO> postmanTestCourseTimeTable(@PathVariable("offeringId") Long offeringId){
         log.info("1)왜안됨?:{}",offeringId);
         return timeTableService.offeringOfTimeTable(offeringId);
+    }
+
+    //T-2-1) 본인 id를 활용하여 단건 조회를 하기 위해 구현
+    @GetMapping("/one/{timetableId}")
+    public ResponseEntity<TimeTableResponseDTO> getTimeTable(@PathVariable("timetableId")Long timetableId){
+        log.info("1) 시간표 단건 조회 요청 - timetableId-:{}", timetableId);
+
+        TimeTableResponseDTO response= timeTableService.getTimeTable(timetableId);
+
+        log.info("Complete: 시간표 단건 조회 완료 - timetableId-:{}", response.getTimetableId());
+
+        return ResponseEntity.ok(response);
     }
 
     //T-3) 특정 학생이 수강신청한 모든 시간표를 조회하기 위해 컨트롤러 내에 선언된 crud(get)
@@ -93,7 +101,7 @@ public class TimeTableController {
     //T-6) 교수 or 관리자가 개설된 강의에 대한 시간표를 삭제하기 위한 컨트롤러 내에 선언된 crud(delete)
     @DeleteMapping("/delete/{timetableId}")
     public void postmanDeleteTimeTable(
-            @PathVariable("timetableId") Integer timetableId,
+            @PathVariable("timetableId") Long timetableId,
             @RequestHeader(value="X-User-Email",required = false) String requesterEmail){
 
         log.info("1) 시간표 삭제 요청 timetableId-:{}, requesterEmail:{}",
@@ -107,5 +115,7 @@ public class TimeTableController {
 
         timeTableService.deleteByTimeTable(timetableId,requesterEmail);
     }
+
+
 
 }
