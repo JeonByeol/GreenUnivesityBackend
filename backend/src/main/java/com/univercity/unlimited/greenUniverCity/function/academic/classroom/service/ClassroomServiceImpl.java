@@ -92,7 +92,18 @@ public class ClassroomServiceImpl implements ClassroomService{
                 .map(this::toResponseDTO)
                 .toList();
     }
-    
+
+    //CR-2-1)
+    @Override
+    public ClassroomResponseDTO getRoom(Long classroomId) {
+        log.info("2) 분반 단건 조회 시작 - classroomId-:{}", classroomId);
+
+        Classroom classroom= repository.findById(classroomId)
+                .orElseThrow(()-> new IllegalArgumentException("분반 정보를 찾을 수 없습니다."));
+
+        return toResponseDTO(classroom);
+    }
+
     //CR-3) 새로운 강의실을 생성하기 위한 서비스 구현부 | //보안검사 추가해야함
     @Override
     @Transactional

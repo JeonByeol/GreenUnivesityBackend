@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 public class LegacyReviewDTO {
     //사용안하고 삭제하기 위한 Legacy 표시입니다
 
-    private Integer reviewId; //리뷰 아이디
+    private Long reviewId; //리뷰 아이디
 
     private Integer rating; //리뷰 점수
 

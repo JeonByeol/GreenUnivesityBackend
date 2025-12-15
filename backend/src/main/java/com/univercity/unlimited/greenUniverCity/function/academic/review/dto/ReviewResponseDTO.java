@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @Builder
 
 public class ReviewResponseDTO {
-    private Integer reviewId; //리뷰 아이디
+    private Long reviewId; //리뷰 아이디
 
     private Integer rating; //리뷰 점수
 

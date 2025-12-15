@@ -58,7 +58,7 @@ public class ReviewController {
     //R-4) 학생이 기존에 작성했던 리뷰에 대해 수정하는 컨트롤러
     @PutMapping("/update/{reviewId}")
     public ResponseEntity<ReviewResponseDTO> postmanUpdateReview(
-            @PathVariable("reviewId") Integer reviewId,
+            @PathVariable("reviewId") Long reviewId,
             @RequestBody ReviewUpdateDTO dto,
             @RequestHeader(value = "X-User-Email", required = false) String studentEmail){
 
@@ -83,7 +83,7 @@ public class ReviewController {
     //R-5) 학생이 작성한 리뷰를 삭제하기 위해 컨트롤러 내에 선언된 crud
     @DeleteMapping("/delete/{reviewId}")
     public void postmanDeleteReview(
-            @PathVariable("reviewId") Integer reviewId,
+            @PathVariable("reviewId") Long reviewId,
             @RequestHeader(value = "X-User-Email", required = false) String studentEmail){
 
         log.info("1) 리뷰 삭제 요청 reviewId-:{},studentEmail:{}",
@@ -96,6 +96,18 @@ public class ReviewController {
         }
 
         reviewService.deleteByReview(reviewId,studentEmail);
+    }
+
+    //R-6) 성적 단건 조회를 위해 one 주소 사용
+    @GetMapping("/one/{reviewId}")
+    public ResponseEntity<ReviewResponseDTO> getReviews(@PathVariable("reviewId") Long reviewId){
+        log.info("1) 리뷰 단건 조회 요청 - reviewId-:{}", reviewId);
+
+        ReviewResponseDTO response= reviewService.getReview(reviewId);
+
+        log.info("CompleteL: 리뷰 단건 조회 완료 - reviewId-:{}", response.getReviewId());
+
+        return ResponseEntity.ok(response);
     }
 
 }

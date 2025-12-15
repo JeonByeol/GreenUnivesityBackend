@@ -18,7 +18,7 @@ public class TimeTable{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "timetable_id")
-    private Integer timetableId; //시간표아이디
+    private Long timetableId; //시간표아이디
 
     @Column(name = "day_of_week", length = 10, nullable = false)
     private String dayOfWeek; //요일

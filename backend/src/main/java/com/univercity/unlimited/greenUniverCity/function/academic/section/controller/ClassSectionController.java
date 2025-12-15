@@ -92,7 +92,9 @@ public class ClassSectionController {
     @GetMapping("/one/{sectionId}")
     public ResponseEntity<ClassSectionResponseDTO> getSectionDetail(@PathVariable("sectionId") Long sectionId) {
         log.info("1) 특정 분반(sectionId: {}) 상세 조회 요청", sectionId);
+
         ClassSectionResponseDTO response = sectionService.getSection(sectionId);
+
         return ResponseEntity.ok(response);
     }
 

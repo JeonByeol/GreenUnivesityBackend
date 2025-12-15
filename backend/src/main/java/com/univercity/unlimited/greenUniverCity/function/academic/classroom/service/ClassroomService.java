@@ -16,6 +16,9 @@ public interface ClassroomService {
     //예: "공학관" 검색 -> [공학관 101호, 공학관 102호, ...] 반환
     List<ClassroomResponseDTO> findByLocation(String keyword);
 
+    //CR-2-1) 본인 Id를 활용하여 한건조회를 할 수 있게 만든 service선언
+    ClassroomResponseDTO getRoom(Long classroomId);
+
     //CR-3(교수OR관리자) CR에 선언된 postmanTest -- 의 요청을 받아서 새로운 강의실을 작성하기 위해 동작하는 서비스 선언
     ClassroomResponseDTO createClassroom(ClassroomCreateDTO dto,String email);
 

@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @Builder
 public class TimeTableResponseDTO {
     //TimeTable 필드에 담긴 정보
-    private Integer timetableId; //시간표 아이디
+    private Long timetableId; //시간표 아이디
 
     private String dayOfWeek; //요일
 

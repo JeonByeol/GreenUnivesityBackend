@@ -23,7 +23,7 @@ public class Review{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "review_id")
-    private Integer reviewId; //리뷰 아이디
+    private Long reviewId; //리뷰 아이디
 
     @Column(name = "rating", nullable = false)
     private Integer rating; //리뷰 점수

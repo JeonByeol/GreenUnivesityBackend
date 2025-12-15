@@ -171,7 +171,7 @@ public class ReviewServiceImpl implements ReviewService{
     //R-4) 학생 본인이 기존에 작성한 리뷰를 수정하는 서비스 구현부
     //-> 90% 완료? 나중에 보안security를 추가하면 그거에 맞춰서 보안 작업에 대한 부분만 리팩토링 하면 됨
     @Override
-    public ReviewResponseDTO myReviewUpdate(Integer reviewId, ReviewUpdateDTO dto, String studentEmail) {
+    public ReviewResponseDTO myReviewUpdate(Long reviewId, ReviewUpdateDTO dto, String studentEmail) {
 
         log.info("2)리뷰 수정 시작 - reviewId: {}, 학생: {}", reviewId, studentEmail);
 
@@ -200,7 +200,7 @@ public class ReviewServiceImpl implements ReviewService{
     // -> 삭제 기능은 구현 o 하지만 학생과 운영자를 구분해서 삭제를 하는 기능을 만들어야함
     // 구상: serviceImpl 구현부내에 userId값을 받아서 검증하는 함수를 만들어서 검증예정
     @Override
-    public void  deleteByReview(Integer reviewId,String studentEmail) {
+    public void  deleteByReview(Long reviewId,String studentEmail) {
         log.info("2)리뷰 삭제 요청 -학생:{}, reviewId:{}",studentEmail,reviewId);
 
         //리뷰 조회
@@ -215,6 +215,16 @@ public class ReviewServiceImpl implements ReviewService{
         repository.delete(review);
 
         log.info("5) 리뷰 삭제 성공 -학생:{}, reviewId:{}",studentEmail,reviewId);
+    }
+
+    @Override
+    public ReviewResponseDTO getReview(Long reviewId) {
+        log.info("2) 리뷰 단건 조회 시작 - reviewId-:{}", reviewId);
+
+        Review review= repository.findById(reviewId)
+                .orElseThrow(()->new IllegalArgumentException("리뷰 정보를 찾을 수 없습니다."));
+
+        return toResponseDTO(review);
     }
 
     @Override//R-A) **(기능 작성 부탁드리거나/삭제 부탁드립니다) **

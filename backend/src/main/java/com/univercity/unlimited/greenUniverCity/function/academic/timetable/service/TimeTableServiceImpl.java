@@ -78,6 +78,17 @@ public class TimeTableServiceImpl implements TimeTableService{
                 .map(this::toResponseDTO)
                 .toList();
     }
+    
+    //T-2-1) 본인 id를 활용하여 단건 조회를 할 수 있는 service구현부
+    @Override
+    public TimeTableResponseDTO getTimeTable(Long timetableId) {
+        log.info("2) 시간표 단건 조회 시작 - timetableId-:{}",timetableId);
+
+        TimeTable timeTable=repository.findById(timetableId)
+                .orElseThrow(()->new TimeTableNotFoundException("시간표를 찾을 수 없습니다."));
+
+        return toResponseDTO(timeTable);
+    }
 
     //T-3)특정 학생이 신청한 모든 과목의 시간표를 조회하기 위한 서비스 구현부
     @Override
@@ -154,7 +165,7 @@ public class TimeTableServiceImpl implements TimeTableService{
 
     //T-6) 교수 or 관리자가 개설된 강의에 대한 시간표를 삭제하기 위한 서비스 구현부
     @Override
-    public void deleteByTimeTable(Integer timetableId,String requesterEmail) {
+    public void deleteByTimeTable(Long timetableId,String requesterEmail) {
         log.info("2) 시간표 삭제 요청 -교수: {} ,timetableId: {}",requesterEmail,timetableId);
 
         //시간표 조회

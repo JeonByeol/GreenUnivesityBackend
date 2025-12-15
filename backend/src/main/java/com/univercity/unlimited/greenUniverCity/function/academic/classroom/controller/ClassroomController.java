@@ -4,6 +4,7 @@ import com.univercity.unlimited.greenUniverCity.function.academic.classroom.dto.
 import com.univercity.unlimited.greenUniverCity.function.academic.classroom.dto.ClassroomResponseDTO;
 import com.univercity.unlimited.greenUniverCity.function.academic.classroom.dto.ClassroomUpdateDTO;
 import com.univercity.unlimited.greenUniverCity.function.academic.classroom.service.ClassroomService;
+import com.univercity.unlimited.greenUniverCity.function.academic.section.dto.ClassSectionResponseDTO;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,6 +32,16 @@ public class ClassroomController {
     public List<ClassroomResponseDTO> postmanTestOneClassroom(@PathVariable("keyword") String keyword){
         log.info("1) 특정 강의실 조회 요청");
         return classroomService.findByLocation(keyword);
+    }
+
+    //CR-2-1)웹에서 '한건조회' 버튼을 누를 때 이 API를호출
+    @GetMapping("/one/{classroomId}")
+    public ResponseEntity<ClassroomResponseDTO> getClassroom(@PathVariable("classroomId") Long classroomId) {
+        log.info("1) 특정 분반(sectionId: {}) 상세 조회 요청", classroomId);
+
+        ClassroomResponseDTO response = classroomService.getRoom(classroomId);
+
+        return ResponseEntity.ok(response);
     }
 
     //CR-3) 새로운 강의실에 대한 정보를 입력하여 생성하기 위해 컨트롤러 내에 선언된 CRUD(POST)

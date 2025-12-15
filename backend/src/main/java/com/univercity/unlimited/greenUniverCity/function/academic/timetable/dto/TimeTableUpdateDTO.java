@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @Builder
 public class TimeTableUpdateDTO {
     @NotNull(message = "id는 필수입니다.")
-    private Integer timetableId; // 타임테이블 id
+    private Long timetableId; // 타임테이블 id
 
     @NotNull(message = "요일은 필수입니다.")
     private String dayOfWeek; // 요일

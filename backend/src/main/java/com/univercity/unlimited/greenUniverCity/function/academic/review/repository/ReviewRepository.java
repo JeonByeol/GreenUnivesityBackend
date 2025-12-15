@@ -8,7 +8,7 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
-public interface ReviewRepository extends JpaRepository<Review,Integer> {
+public interface ReviewRepository extends JpaRepository<Review,Long> {
     //주석-1) ReviewService=RS
     //주석-2) ReviewServiceImpl=RSL
 
