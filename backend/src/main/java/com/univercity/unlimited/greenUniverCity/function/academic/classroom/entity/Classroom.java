@@ -9,7 +9,7 @@ import lombok.*;
 @AllArgsConstructor
 @ToString
 @NoArgsConstructor
-@Table(name = "classroom") // DB 테이블명 명시
+@Table(name = "tbl_classroom") // DB 테이블명 명시
 @Builder
 public class Classroom {
     @Id

@@ -7,7 +7,7 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
-public interface TimeTableRepository extends JpaRepository<TimeTable,Integer> {
+public interface TimeTableRepository extends JpaRepository<TimeTable,Long> {
 
     //T-2)에 선언된
     @Query("SELECT t FROM TimeTable t " +
