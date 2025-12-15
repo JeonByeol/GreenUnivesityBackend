@@ -28,7 +28,7 @@ public class ClassroomController {
     }
 
     //CR-2) 특정 강의실에 대한 정보를 조회하기 위해 컨트롤러 내에 선언된 crud(get)
-    @GetMapping("/one/{keyword}")
+    @GetMapping("/list/{keyword}")
     public List<ClassroomResponseDTO> postmanTestOneClassroom(@PathVariable("keyword") String keyword){
         log.info("1) 특정 강의실 조회 요청");
         return classroomService.findByLocation(keyword);

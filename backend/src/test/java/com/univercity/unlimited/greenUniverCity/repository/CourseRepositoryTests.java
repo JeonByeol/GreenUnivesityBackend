@@ -1,7 +1,6 @@
 package com.univercity.unlimited.greenUniverCity.repository;
 
 
-import com.univercity.unlimited.greenUniverCity.function.academic.course.dto.LegacyCourseDTO;
 import com.univercity.unlimited.greenUniverCity.function.academic.course.entity.Course;
 import com.univercity.unlimited.greenUniverCity.function.academic.course.repository.CourseRepository;
 import com.univercity.unlimited.greenUniverCity.function.academic.course.service.CourseService;

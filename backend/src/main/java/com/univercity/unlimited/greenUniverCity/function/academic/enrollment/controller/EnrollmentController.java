@@ -3,7 +3,6 @@ package com.univercity.unlimited.greenUniverCity.function.academic.enrollment.co
 import com.univercity.unlimited.greenUniverCity.function.academic.enrollment.dto.EnrollmentCreateDTO;
 import com.univercity.unlimited.greenUniverCity.function.academic.enrollment.dto.EnrollmentResponseDTO;
 import com.univercity.unlimited.greenUniverCity.function.academic.enrollment.dto.EnrollmentUpdateDTO;
-import com.univercity.unlimited.greenUniverCity.function.academic.enrollment.dto.LegacyEnrollmentDTO;
 import com.univercity.unlimited.greenUniverCity.function.academic.enrollment.service.EnrollmentService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -32,8 +31,8 @@ public class EnrollmentController {
     }
 
     @GetMapping("/all2")
-    public List<LegacyEnrollmentDTO> postmanTestEnrollment(){
-        List<LegacyEnrollmentDTO> list=enrollmentService.legacyFindAllEnrollment();
+    public List<EnrollmentResponseDTO> postmanTestEnrollment(){
+        List<EnrollmentResponseDTO> list=enrollmentService.legacyFindAllEnrollment();
         return list;
     }
 

@@ -1,7 +1,6 @@
 package com.univercity.unlimited.greenUniverCity.function.academic.attendance.service;
 
 import com.univercity.unlimited.greenUniverCity.function.academic.attendance.dto.AttendanceCreateDTO;
-import com.univercity.unlimited.greenUniverCity.function.academic.attendance.dto.LegacyAttendanceDTO;
 import com.univercity.unlimited.greenUniverCity.function.academic.attendance.dto.AttendanceResponseDTO;
 import com.univercity.unlimited.greenUniverCity.function.academic.attendance.dto.AttendanceUpdateDTO;
 import org.springframework.http.ResponseEntity;
@@ -26,6 +25,4 @@ public interface AttendanceService {
     //A-5) A에 선언된 postmanUpdateAttendance의 요청을 받아서 교수가 학생에 대한 출결을 수정하기 위해 동작하는 서비스 선언
     AttendanceResponseDTO updateAttendanceForProfessor(AttendanceUpdateDTO dto,String professorEmail);
 
-    //A-A) ** 필요한 기능 입력 부탁드립니다 | 사용 안하면 삭제 서비스구현 삭제 부탁드립니다 **
-    ResponseEntity<String> addAttendance(LegacyAttendanceDTO legacyAttendanceDTO);
 }

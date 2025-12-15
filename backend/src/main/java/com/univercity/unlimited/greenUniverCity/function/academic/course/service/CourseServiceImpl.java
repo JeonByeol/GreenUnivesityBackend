@@ -3,7 +3,6 @@ package com.univercity.unlimited.greenUniverCity.function.academic.course.servic
 import com.univercity.unlimited.greenUniverCity.function.academic.course.dto.CourseCreateDTO;
 import com.univercity.unlimited.greenUniverCity.function.academic.course.dto.CourseResponseDTO;
 import com.univercity.unlimited.greenUniverCity.function.academic.course.dto.CourseUpdateDTO;
-import com.univercity.unlimited.greenUniverCity.function.academic.course.dto.LegacyCourseDTO;
 import com.univercity.unlimited.greenUniverCity.function.academic.course.entity.Course;
 import com.univercity.unlimited.greenUniverCity.function.academic.course.repository.CourseRepository;
 import com.univercity.unlimited.greenUniverCity.function.member.department.entity.Department;
@@ -41,10 +40,10 @@ public class CourseServiceImpl implements CourseService{
 
 
     @Override
-    public List<LegacyCourseDTO> legacyFindAllCourse() {
-        List<LegacyCourseDTO> dtoList=new ArrayList<>();
+    public List<CourseResponseDTO> legacyFindAllCourse() {
+        List<CourseResponseDTO> dtoList=new ArrayList<>();
         for(Course i:repository.findAll()){
-            LegacyCourseDTO r=mapper.map(i, LegacyCourseDTO.class);
+            CourseResponseDTO r=mapper.map(i, CourseResponseDTO.class);
             dtoList.add(r);
         }
         return dtoList;

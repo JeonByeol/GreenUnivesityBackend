@@ -3,7 +3,6 @@ package com.univercity.unlimited.greenUniverCity.function.academic.enrollment.se
 import com.univercity.unlimited.greenUniverCity.function.academic.enrollment.dto.EnrollmentCreateDTO;
 import com.univercity.unlimited.greenUniverCity.function.academic.enrollment.dto.EnrollmentResponseDTO;
 import com.univercity.unlimited.greenUniverCity.function.academic.enrollment.dto.EnrollmentUpdateDTO;
-import com.univercity.unlimited.greenUniverCity.function.academic.enrollment.dto.LegacyEnrollmentDTO;
 import com.univercity.unlimited.greenUniverCity.function.academic.enrollment.entity.Enrollment;
 import com.univercity.unlimited.greenUniverCity.function.academic.enrollment.exception.EnrollmentNotFoundException;
 import com.univercity.unlimited.greenUniverCity.function.academic.enrollment.exception.UserNotFoundException;
@@ -53,10 +52,10 @@ public class EnrollmentServiceImpl implements EnrollmentService {
 
     //E-1)Enroll에 존재하는 모든 데이터 조회 서비스 구현부
     @Override
-    public List<LegacyEnrollmentDTO> legacyFindAllEnrollment() {
-        List<LegacyEnrollmentDTO> dtoList = new ArrayList<>();
+    public List<EnrollmentResponseDTO> legacyFindAllEnrollment() {
+        List<EnrollmentResponseDTO> dtoList = new ArrayList<>();
         for (Enrollment i : repository.findAll()) {
-            LegacyEnrollmentDTO r = mapper.map(i, LegacyEnrollmentDTO.class);
+            EnrollmentResponseDTO r = mapper.map(i, EnrollmentResponseDTO.class);
             dtoList.add(r);
         }
         return dtoList;
@@ -162,7 +161,7 @@ public class EnrollmentServiceImpl implements EnrollmentService {
 
     //E-2) **(기능 입력 바랍니다/사용 안할시 삭제 부탁드립니다)**
     @Override
-    public int addEnrollment(LegacyEnrollmentDTO legacyEnrollmentDTO) {
+    public int addEnrollment(EnrollmentResponseDTO legacyEnrollmentDTO) {
         log.info("1) 확인 : {}", legacyEnrollmentDTO);
         Enrollment enrollment = mapper.map(legacyEnrollmentDTO, Enrollment.class);
         log.info("확인 : {}", enrollment);

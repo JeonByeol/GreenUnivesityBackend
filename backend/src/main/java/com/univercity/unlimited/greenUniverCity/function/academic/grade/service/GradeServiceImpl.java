@@ -9,7 +9,6 @@ import com.univercity.unlimited.greenUniverCity.function.academic.grade.dto.grad
 import com.univercity.unlimited.greenUniverCity.function.academic.grade.dto.gradeitem.GradeItemResponseDTO;
 import com.univercity.unlimited.greenUniverCity.function.academic.grade.dto.studentscore.StudentScoreResponseDTO;
 import com.univercity.unlimited.greenUniverCity.function.academic.grade.repository.GradeRepository;
-import com.univercity.unlimited.greenUniverCity.function.academic.grade.dto.grade.LegacyGradeDTO;
 import com.univercity.unlimited.greenUniverCity.function.academic.grade.entity.Grade;
 import com.univercity.unlimited.greenUniverCity.function.academic.offering.entity.CourseOffering;
 import com.univercity.unlimited.greenUniverCity.function.academic.offering.service.CourseOfferingService;
@@ -273,11 +272,11 @@ public class GradeServiceImpl implements GradeService{
 
     //G-1)성적 전체 조회
     @Override
-    public List<LegacyGradeDTO> findAllGrade() {
+    public List<GradeResponseDTO> findAllGrade() {
         log.info("전체 성적 조회");
-        List<LegacyGradeDTO> dto=new ArrayList<>();
+        List<GradeResponseDTO> dto=new ArrayList<>();
         for(Grade i:repository.findAll()){
-            LegacyGradeDTO r=mapper.map(i, LegacyGradeDTO.class);
+            GradeResponseDTO r=mapper.map(i, GradeResponseDTO.class);
             dto.add(r);
         }
         return dto;
@@ -336,7 +335,7 @@ public class GradeServiceImpl implements GradeService{
 
     //G-4) 교수가 학생에 대한 정보를 받아와서 성적의 대한 값을 수정하기 위한 service 구현부
     @Override
-    public LegacyGradeDTO updateNewGrade(Long enrollmentId, String letterGrade) {
+    public GradeResponseDTO updateNewGrade(Long enrollmentId, String letterGrade) {
 
         //Enrollment enrollment1=enrollmentRepository.findByEnrollmentId(enrollmentId);
         Enrollment enrollment=enrollmentService.getEnrollmentEntity(enrollmentId);//E-2)
@@ -361,6 +360,6 @@ public class GradeServiceImpl implements GradeService{
         log.info("성공:  학생 [{}]에게 성적 [{}] 입력 완료",
                 enrollment.getUser().getEmail(), letterGrade);
 
-        return mapper.map(saveGrade, LegacyGradeDTO.class);
+        return mapper.map(saveGrade, GradeResponseDTO.class);
     }
 }

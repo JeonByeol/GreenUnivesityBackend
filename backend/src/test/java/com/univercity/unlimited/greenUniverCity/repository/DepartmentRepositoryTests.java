@@ -2,7 +2,6 @@ package com.univercity.unlimited.greenUniverCity.repository;
 
 
 import com.univercity.unlimited.greenUniverCity.function.member.department.repository.DepartmentRepository;
-import com.univercity.unlimited.greenUniverCity.function.member.department.dto.LegacyDepartmentDTO;
 import com.univercity.unlimited.greenUniverCity.function.member.department.entity.Department;
 import com.univercity.unlimited.greenUniverCity.function.member.department.service.DepartmentService;
 import lombok.extern.slf4j.Slf4j;

@@ -1,7 +1,7 @@
 package com.univercity.unlimited.greenUniverCity.config;
 
 // [추가] DTO와 Entity import
-import com.univercity.unlimited.greenUniverCity.function.academic.grade.dto.grade.LegacyGradeDTO;
+import com.univercity.unlimited.greenUniverCity.function.academic.grade.dto.grade.GradeResponseDTO;
 import com.univercity.unlimited.greenUniverCity.function.academic.grade.entity.Grade;
 
 import org.modelmapper.AbstractConverter;
@@ -39,9 +39,9 @@ public class RootConfig {
 //                .addMappings(m -> m.skip(User::setUserRoleList));
 
         //Grad→ Enrollment→ CourseOffering → Course   → courseName
-        mapper.typeMap(Grade.class, LegacyGradeDTO.class).addMappings(m ->
+        mapper.typeMap(Grade.class, GradeResponseDTO.class).addMappings(m ->
                 m.map(src -> src.getEnrollment().getCourseOffering().getCourse().getCourseName(),
-                        LegacyGradeDTO::setCourseName)
+                        GradeResponseDTO::setCourseName)
         );
 //        mapper.typeMap(Grade.class, GradeDTO.class)
 //                .addMappings(g->g.skip(GradeDTO::setCourseName));

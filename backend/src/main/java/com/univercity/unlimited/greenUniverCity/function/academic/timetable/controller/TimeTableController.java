@@ -26,7 +26,7 @@ public class TimeTableController {
     }
 
     //T-2) 특정 과목에 대한 시간표를 조회하기 위해 컨트롤러 내에 선언된 crud(get)
-    @GetMapping("/one/{offeringId}")
+    @GetMapping("/list/offering/{offeringId}")
     public List<TimeTableResponseDTO> postmanTestCourseTimeTable(@PathVariable("offeringId") Long offeringId){
         log.info("1)왜안됨?:{}",offeringId);
         return timeTableService.offeringOfTimeTable(offeringId);
