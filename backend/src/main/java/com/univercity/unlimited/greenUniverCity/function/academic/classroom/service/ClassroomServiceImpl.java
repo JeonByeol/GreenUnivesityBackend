@@ -135,10 +135,6 @@ public class ClassroomServiceImpl implements ClassroomService{
                         "3)보안 검사 시도 식별 코드 -:CR-4 " +
                                 "강의실 정보가 존재하지 않습니다 classroomId " + dto.getClassroomId()));
 
-//        classroom.setCapacity(dto.getCapacity());
-//        classroom.setLocation(dto.getLocation());
-//        Classroom updateClassroom=repository.save(classroom);
-
         validateOwnerShip(email,"수정");
 
         classroom.updateClassroomInfo(dto.getLocation(), dto.getCapacity());

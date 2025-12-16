@@ -1,5 +1,6 @@
 package com.univercity.unlimited.greenUniverCity.function.academic.section.dto;
 
+import com.univercity.unlimited.greenUniverCity.function.academic.section.entity.SectionType;
 import lombok.*;
 
 @Getter
@@ -13,7 +14,15 @@ public class ClassSectionResponseDTO {
     private String sectionName; // 분반명 (예: A반, 주간반)
     private Integer maxCapacity; // 정원 (예: 40)
     private Integer currentCount; // 현재 수강 신청한 인원 수 (Enrollment 테이블 count 결과)
+    
+    //SectionType 정보
+    private SectionType sectionType;
+    private String sectionTypeDisplay; // "온라인", "오프라인", "혼합형"
 
+    //Classroom 정보
+    private Long classroomId;
+    private String classroomLocation; // 강의실 위치
+    
     //CourseOffering 정보
     private Long offeringId; //개설강의 id
     private String courseName; //강의명

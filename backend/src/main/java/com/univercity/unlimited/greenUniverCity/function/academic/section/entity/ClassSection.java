@@ -2,6 +2,7 @@ package com.univercity.unlimited.greenUniverCity.function.academic.section.entit
 
 import com.univercity.unlimited.greenUniverCity.function.academic.classroom.entity.Classroom;
 import com.univercity.unlimited.greenUniverCity.function.academic.offering.entity.CourseOffering;
+import com.univercity.unlimited.greenUniverCity.function.member.user.entity.UserRole;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -24,6 +25,10 @@ public class ClassSection {
 
     @Column(name = "max_capacity", nullable = false)
     private Integer maxCapacity; // 정원 (예: 40)
+
+    @Column(name = "section_type", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private SectionType sectionType; //사용가능,사용불가 ...
 
     // 핵심 어떤 강의의 분반인지 연결 (N:1)
     @ManyToOne(fetch = FetchType.LAZY)
