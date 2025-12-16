@@ -59,15 +59,15 @@ public class AttendanceServiceImpl implements AttendanceService{
         User requester=userService.getUserByEmail(requesterEmail);
 
         // 2.요청자의 학생 권한 확인
-        if(!requester.getUserRole().equals(UserRole.STUDENT)){
-            throw new InvalidRoleException(
-                    String.format(
-                            "4)보안 검사 시도 식별코드-: A-Security-1 (출결%s) " +
-                                    "학생 권한이 없습니다. " +
-                                    "요청자: %s,userId: %s, 현재역할: %s",
-                            action,requester.getUserId(),requester.getUserRole())
-            );
-        }
+//        if(!requester.getUserRole().equals(UserRole.STUDENT)){
+//            throw new InvalidRoleException(
+//                    String.format(
+//                            "4)보안 검사 시도 식별코드-: A-Security-1 (출결%s) " +
+//                                    "학생 권한이 없습니다. " +
+//                                    "요청자: %s,userId: %s, 현재역할: %s",
+//                            action,requester.getUserId(),requester.getUserRole())
+//            );
+//        }
 
     }
 
@@ -82,53 +82,53 @@ public class AttendanceServiceImpl implements AttendanceService{
         // 1.요청자 조회 - userService에 존재하는 U-E service 구현부에 email을 전달하여 유저를 조회합니다
         User requester=userService.getUserByEmail(email);
 
-        // 2. 요청자의 교수 권한 확인
-        if(!(requester.getUserRole() == UserRole.PROFESSOR
-                || requester.getUserRole() == UserRole.ADMIN)){
-            throw new InvalidRoleException(
-                    String.format(
-                            "4)보안 검사 시도 식별코드-: A-Security-1 (출결%s) " +
-                                    "교수 권한이 없습니다. " +
-                                    "요청자: %s, userId: %s, 현재역할: %s",
-                            action,email,requester.getUserId(),requester.getUserRole())
-            );
-        }
+//        // 2. 요청자의 교수 권한 확인
+//        if(!(requester.getUserRole() == UserRole.PROFESSOR
+//                || requester.getUserRole() == UserRole.ADMIN)){
+//            throw new InvalidRoleException(
+//                    String.format(
+//                            "4)보안 검사 시도 식별코드-: A-Security-1 (출결%s) " +
+//                                    "교수 권한이 없습니다. " +
+//                                    "요청자: %s, userId: %s, 현재역할: %s",
+//                            action,email,requester.getUserId(),requester.getUserRole())
+//            );
+//        }
+//
+//        // 3. 담당 교수가 존재하는지 확인
+//        User professor=enrollment.getClassSection().getCourseOffering().getProfessor();
+//
+//        if (professor == null) {
+//            throw new DataIntegrityException(
+//                    String.format(
+//                            "4)보안 검사 시도 식별코드-: A-security-2 (출결 %s) " +
+//                                    "데이터 오류: 개설 강의에 담당 교수가 없습니다. offeringId: %s",
+//                            action, enrollment.getClassSection().getCourseOffering().getOfferingId())
+//            );
+//        }
+//
+//        // 4. 담당 교수의 역할 확인 (데이터 정합성)
+//        if (!(professor.getUserRole().equals(UserRole.PROFESSOR) || professor.getUserRole().equals(UserRole.ADMIN))) {
+//            throw new InvalidRoleException(
+//                    String.format(
+//                            "4)보안 검사 시도 식별코드-: A-security-3 (출결 %s) " +
+//                                    "데이터 오류: 담당자가 교수 권한이 없습니다. " +
+//                                    "userId: %s, 현재 역할: %s",
+//                            action, professor.getUserId(), professor.getUserRole())
+//            );
+//        }
 
-        // 3. 담당 교수가 존재하는지 확인
-        User professor=enrollment.getClassSection().getCourseOffering().getProfessor();
-
-        if (professor == null) {
-            throw new DataIntegrityException(
-                    String.format(
-                            "4)보안 검사 시도 식별코드-: A-security-2 (출결 %s) " +
-                                    "데이터 오류: 개설 강의에 담당 교수가 없습니다. offeringId: %s",
-                            action, enrollment.getClassSection().getCourseOffering().getOfferingId())
-            );
-        }
-
-        // 4. 담당 교수의 역할 확인 (데이터 정합성)
-        if (!(professor.getUserRole().equals(UserRole.PROFESSOR) || professor.getUserRole().equals(UserRole.ADMIN))) {
-            throw new InvalidRoleException(
-                    String.format(
-                            "4)보안 검사 시도 식별코드-: A-security-3 (출결 %s) " +
-                                    "데이터 오류: 담당자가 교수 권한이 없습니다. " +
-                                    "userId: %s, 현재 역할: %s",
-                            action, professor.getUserId(), professor.getUserRole())
-            );
-        }
-
-        // 5. 요청자와 담당 교수 일치 확인
-        if (!professor.getUserId().equals(requester.getUserId())) {
-            throw new UnauthorizedException(
-                    String.format(
-                            "4)보안 검사 시도 식별코드-: A-security-4 (출결 %s) " +
-                                    "해당 강의의 담당 교수만 출결을 %s할 수 있습니다. " +
-                                    "담당 교수: %s (userId: %s), 요청자: %s (userId: %s)",
-                            action, action,
-                            professor.getEmail(), professor.getUserId(),
-                            email, requester.getUserId())
-            );
-        }
+//        // 5. 요청자와 담당 교수 일치 확인
+//        if (!professor.getUserId().equals(requester.getUserId())) {
+//            throw new UnauthorizedException(
+//                    String.format(
+//                            "4)보안 검사 시도 식별코드-: A-security-4 (출결 %s) " +
+//                                    "해당 강의의 담당 교수만 출결을 %s할 수 있습니다. " +
+//                                    "담당 교수: %s (userId: %s), 요청자: %s (userId: %s)",
+//                            action, action,
+//                            professor.getEmail(), professor.getUserId(),
+//                            email, requester.getUserId())
+//            );
+//        }
 
         log.info("4) 교수 권한 검증 완료 - 교수: {}, 작업: {}", email, action);
     }

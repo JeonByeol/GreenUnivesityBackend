@@ -45,25 +45,25 @@ public class ClassroomServiceImpl implements ClassroomService{
      * CR-security) 보안검사:
      * - 권한 검증: 교수 or 관리자의 권한을 확인
      */
-    private void validateOwnerShip(String requesterEmail,String action){
-        log.info("4) 보안 검증 시작 - 강의실 {}  요청자-:   {},",action,requesterEmail);
+    private void validateOwnerShip(String requesterEmail, String action) {
+        log.info("4) 보안 검증 시작 - 강의실 {} 요청자-: {}", action, requesterEmail);
 
-        User requester= userService.getUserByEmail(requesterEmail);
+        User requester = userService.getUserByEmail(requesterEmail);
 
-        if(!(requester.getUserRole() == UserRole.PROFESSOR
-                || requester.getUserRole() == UserRole.ADMIN)){
+        if (!requester.hasAnyRole(UserRole.PROFESSOR, UserRole.ADMIN)) {
             throw new InvalidRoleException(
                     String.format(
-                            "4)보안 검사 시도 식별코드-: CR-security-1 (강의실   %s) " +
-                                    "권한이 존재하지 않습니다 " +
-                                    "요청자: %s, userId: %s, 현재역할: %s",
-                            action,requesterEmail,requester.getUserId(),requester.getUserRole())
-                    );
-
+                            "4)보안 검사 시도 식별코드-: CR-security-1 (강의실 %s) " +
+                                    "권한이 존재하지 않습니다 요청자: %s, userId: %s, 현재역할목록: %s",
+                            action,
+                            requesterEmail,
+                            requester.getUserId(),
+                            requester.getUserRoleList()
+                    )
+            );
         }
 
-        log.info("4) 보안 검증 완료 - 강의실-:{} 요청자-:{}, ",action,requesterEmail);
-
+        log.info("4) 보안 검증 완료 - 강의실-:{} 요청자-:{}, ", action, requesterEmail);
     }
 
 

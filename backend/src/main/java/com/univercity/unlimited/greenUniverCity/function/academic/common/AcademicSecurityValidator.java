@@ -30,51 +30,52 @@ public class AcademicSecurityValidator {
     public void validateProfessorOwnership(CourseOffering offering, String requesterEmail, String action) {
         log.info("4) {} - 교수 권한 검증 시작: {}", action, requesterEmail);
 
-        // 1. 요청자 조회
+        // 1) 요청자 조회
         User requester = userService.getUserByEmail(requesterEmail);
 
-        // 2. 관리자는 모든 작업 허용
-        if (requester.getUserRole() == UserRole.ADMIN) {
+        // 2) 관리자는 모든 작업 허용
+        if (requester.hasAnyRole(UserRole.ADMIN)) {
             log.info("4) 관리자 권한 확인됨 - {} 허용: {}", action, requesterEmail);
             return;
         }
 
-        // 3. 요청자의 교수 권한 확인
-        if (requester.getUserRole() != UserRole.PROFESSOR) {
+        // 3) 요청자의 교수 권한 확인 (ADMIN은 위에서 return 했으니 PROFESSOR만 체크해도 됨)
+        if (!requester.hasAnyRole(UserRole.PROFESSOR)) {
             throw new InvalidRoleException(
                     String.format(
                             "4)보안 검사 시도 식별코드-: AC-security-1 (%s) " +
                                     "교수 권한이 없습니다. " +
-                                    "요청자: %s, userId: %s, 현재 역할: %s",
-                            action, requesterEmail, requester.getUserId(), requester.getUserRole())
+                                    "요청자: %s, userId: %s, 현재 역할목록: %s",
+                            action, requesterEmail, requester.getUserId(), requester.getUserRoleList()
+                    )
             );
         }
 
-        // 4. 담당 교수 확인
+        // 4) 담당 교수 확인
         User professor = offering.getProfessor();
-
         if (professor == null) {
             throw new DataIntegrityException(
                     String.format(
                             "4)보안 검사 시도 식별코드-: AC-security-2 (%s) " +
                                     "데이터 오류: 개설 강의에 담당 교수가 없습니다. offeringId: %s",
-                            action, offering.getOfferingId())
+                            action, offering.getOfferingId()
+                    )
             );
         }
 
-        // 5. 담당 교수의 역할 확인
-        if (professor.getUserRole() != UserRole.PROFESSOR
-                && professor.getUserRole() != UserRole.ADMIN) {
+        // 5) 담당 교수의 역할 확인 (데이터 정합성)
+        if (!professor.hasAnyRole(UserRole.PROFESSOR, UserRole.ADMIN)) {
             throw new InvalidRoleException(
                     String.format(
                             "4)보안 검사 시도 식별코드-: AC-security-3 (%s) " +
-                                    "데이터 오류: 담당자가 교수 권한이 없습니다. " +
-                                    "userId: %s, 현재 역할: %s",
-                            action, professor.getUserId(), professor.getUserRole())
+                                    "데이터 오류: 담당자가 교수/관리자 권한이 없습니다. " +
+                                    "userId: %s, 현재 역할목록: %s",
+                            action, professor.getUserId(), professor.getUserRoleList()
+                    )
             );
         }
 
-        // 6. 요청자와 담당 교수 일치 확인
+        // 6) 요청자와 담당 교수 일치 확인 (ADMIN은 2번에서 이미 return)
         if (!professor.getUserId().equals(requester.getUserId())) {
             throw new UnauthorizedException(
                     String.format(
@@ -83,7 +84,8 @@ public class AcademicSecurityValidator {
                                     "담당 교수: %s (userId: %s), 요청자: %s (userId: %s)",
                             action,
                             professor.getEmail(), professor.getUserId(),
-                            requesterEmail, requester.getUserId())
+                            requesterEmail, requester.getUserId()
+                    )
             );
         }
 

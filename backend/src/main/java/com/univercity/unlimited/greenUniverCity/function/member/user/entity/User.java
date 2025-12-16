@@ -40,6 +40,13 @@ public class User {
     @Column(name = "user_role_list")
     private List<UserRole> userRoleList = new ArrayList<>();
 
+    public boolean hasAnyRole(UserRole... targets) {
+        if (userRoleList == null) return false;
+        for (UserRole t : targets) {
+            if (userRoleList.contains(t)) return true;
+        }
+        return false;
+    }
 
 //    @ElementCollection(fetch = FetchType.LAZY)
 //    @Builder.Default

@@ -2,7 +2,7 @@ package com.univercity.unlimited.greenUniverCity.function.member.user.service;
 
 import com.univercity.unlimited.greenUniverCity.config.PasswordEncoderConfig;
 import com.univercity.unlimited.greenUniverCity.function.academic.enrollment.exception.UserNotFoundException;
-import com.univercity.unlimited.greenUniverCity.function.community.review.exception.InvalidRoleException;
+import com.univercity.unlimited.greenUniverCity.function.academic.review.exception.InvalidRoleException;
 import com.univercity.unlimited.greenUniverCity.function.member.user.dto.UserDTO;
 import com.univercity.unlimited.greenUniverCity.function.member.user.entity.User;
 import com.univercity.unlimited.greenUniverCity.function.member.user.entity.UserRole;

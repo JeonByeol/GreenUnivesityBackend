@@ -23,9 +23,9 @@ public class CustomServletConfig implements WebMvcConfigurer {
 //                .maxAge(300)
 //                .allowedHeaders("Authorization","Cache-Control","Content-Type");
 //    }
-@Bean
-public PasswordEncoder passwordEncoder(){
-    return  new BCryptPasswordEncoder();//비밀번호 암호화 ,단방향 암호화
-}
+//@Bean
+//public PasswordEncoder passwordEncoder(){
+//    return  new BCryptPasswordEncoder();//비밀번호 암호화 ,단방향 암호화
+//}
 
 }
