@@ -1,14 +1,15 @@
 package com.univercity.unlimited.greenUniverCity.function.academic.attendance.service;
 
 import com.univercity.unlimited.greenUniverCity.function.academic.attendance.dto.AttendanceCreateDTO;
+import com.univercity.unlimited.greenUniverCity.function.academic.attendance.dto.LegacyAttendanceDTO;
 import com.univercity.unlimited.greenUniverCity.function.academic.attendance.dto.AttendanceResponseDTO;
 import com.univercity.unlimited.greenUniverCity.function.academic.attendance.dto.AttendanceUpdateDTO;
 import com.univercity.unlimited.greenUniverCity.function.academic.attendance.entity.Attendance;
 import com.univercity.unlimited.greenUniverCity.function.academic.enrollment.entity.Enrollment;
 import com.univercity.unlimited.greenUniverCity.function.academic.enrollment.service.EnrollmentService;
-import com.univercity.unlimited.greenUniverCity.function.academic.review.exception.DataIntegrityException;
-import com.univercity.unlimited.greenUniverCity.function.academic.review.exception.InvalidRoleException;
-import com.univercity.unlimited.greenUniverCity.function.academic.review.exception.UnauthorizedException;
+import com.univercity.unlimited.greenUniverCity.function.community.review.exception.DataIntegrityException;
+import com.univercity.unlimited.greenUniverCity.function.community.review.exception.InvalidRoleException;
+import com.univercity.unlimited.greenUniverCity.function.community.review.exception.UnauthorizedException;
 import com.univercity.unlimited.greenUniverCity.function.member.user.entity.User;
 import com.univercity.unlimited.greenUniverCity.function.academic.attendance.repository.AttendanceRepository;
 import com.univercity.unlimited.greenUniverCity.function.member.user.entity.UserRole;
@@ -59,13 +60,13 @@ public class AttendanceServiceImpl implements AttendanceService{
         User requester=userService.getUserByEmail(requesterEmail);
 
         // 2.요청자의 학생 권한 확인
-        if(!requester.getUserRole().equals(UserRole.STUDENT)){
+        if(!requester.getUserRoleList().equals(UserRole.STUDENT)){
             throw new InvalidRoleException(
                     String.format(
                             "4)보안 검사 시도 식별코드-: A-Security-1 (출결%s) " +
                                     "학생 권한이 없습니다. " +
                                     "요청자: %s,userId: %s, 현재역할: %s",
-                            action,requester.getUserId(),requester.getUserRole())
+                            action,requester.getUserId(),requester.getUserRoleList())
             );
         }
 
@@ -83,37 +84,37 @@ public class AttendanceServiceImpl implements AttendanceService{
         User requester=userService.getUserByEmail(email);
 
         // 2. 요청자의 교수 권한 확인
-        if(!(requester.getUserRole() == UserRole.PROFESSOR
-                || requester.getUserRole() == UserRole.ADMIN)){
+        if(!(requester.getUserRoleList().get(0) == UserRole.PROFESSOR
+                || requester.getUserRoleList().get(0) == UserRole.ADMIN)){
             throw new InvalidRoleException(
                     String.format(
                             "4)보안 검사 시도 식별코드-: A-Security-1 (출결%s) " +
                                     "교수 권한이 없습니다. " +
                                     "요청자: %s, userId: %s, 현재역할: %s",
-                            action,email,requester.getUserId(),requester.getUserRole())
+                            action,email,requester.getUserId(),requester.getUserId())
             );
         }
 
         // 3. 담당 교수가 존재하는지 확인
-        User professor=enrollment.getClassSection().getCourseOffering().getProfessor();
+        User professor=enrollment.getCourseOffering().getProfessor();
 
         if (professor == null) {
             throw new DataIntegrityException(
                     String.format(
                             "4)보안 검사 시도 식별코드-: A-security-2 (출결 %s) " +
                                     "데이터 오류: 개설 강의에 담당 교수가 없습니다. offeringId: %s",
-                            action, enrollment.getClassSection().getCourseOffering().getOfferingId())
+                            action, enrollment.getCourseOffering().getOfferingId())
             );
         }
 
         // 4. 담당 교수의 역할 확인 (데이터 정합성)
-        if (!(professor.getUserRole().equals(UserRole.PROFESSOR) || professor.getUserRole().equals(UserRole.ADMIN))) {
+        if (!(professor.getUserRoleList().equals(UserRole.PROFESSOR) || professor.getUserRoleList().equals(UserRole.ADMIN))) {
             throw new InvalidRoleException(
                     String.format(
                             "4)보안 검사 시도 식별코드-: A-security-3 (출결 %s) " +
                                     "데이터 오류: 담당자가 교수 권한이 없습니다. " +
                                     "userId: %s, 현재 역할: %s",
-                            action, professor.getUserId(), professor.getUserRole())
+                            action, professor.getUserId(), professor.getUserRoleList())
             );
         }
 
@@ -216,4 +217,10 @@ public class AttendanceServiceImpl implements AttendanceService{
     }
 
 
+    //A-A) ** 필요한 기능 입력 부탁드립니다 | 사용 안하면 삭제 서비스구현 삭제 부탁드립니다 **
+    @Override
+    public ResponseEntity<String> addAttendance(LegacyAttendanceDTO legacyAttendanceDTO) {
+
+        return null;
+    }
 }

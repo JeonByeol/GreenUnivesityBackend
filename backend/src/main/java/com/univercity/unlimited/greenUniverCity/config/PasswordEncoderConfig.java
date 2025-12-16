@@ -14,9 +14,11 @@ public class PasswordEncoderConfig {
     //매번 토큰 형식으로 자동변환 시켜줌
     
     
-    @Bean //Static으로 저장을 하면 서버 시작하자 메모리로 불러와서 매우 편하다 
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
+//    @Bean //Static으로 저장을 하면 서버 시작하자 메모리로 불러와서 매우 편하다
+//    public PasswordEncoder passwordEncoder() {
+//        return new BCryptPasswordEncoder();
+//    }
+//
+
 
 }
