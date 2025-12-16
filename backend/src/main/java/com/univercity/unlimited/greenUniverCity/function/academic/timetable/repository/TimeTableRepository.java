@@ -17,7 +17,7 @@ public interface TimeTableRepository extends JpaRepository<TimeTable,Long> {
     List<TimeTable> findTimeTableByOfferingId(@Param("offeringId") Long offeringId);
 
 
-    @Query("SELECT t FROM TimeTable t" +
+    @Query("SELECT t FROM TimeTable t " +
             "JOIN t.classSection cs " +
             "JOIN cs.courseOffering co " +
             "JOIN Enrollment e ON e.classSection = cs " +

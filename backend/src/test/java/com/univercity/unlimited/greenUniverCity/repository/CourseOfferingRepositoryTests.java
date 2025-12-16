@@ -1,7 +1,9 @@
 package com.univercity.unlimited.greenUniverCity.repository;
 
 
+import com.univercity.unlimited.greenUniverCity.function.academic.course.dto.CourseResponseDTO;
 import com.univercity.unlimited.greenUniverCity.function.academic.course.repository.CourseRepository;
+import com.univercity.unlimited.greenUniverCity.function.academic.offering.dto.CourseOfferingResponseDTO;
 import com.univercity.unlimited.greenUniverCity.function.member.user.dto.UserDTO;
 import com.univercity.unlimited.greenUniverCity.function.academic.course.entity.Course;
 import com.univercity.unlimited.greenUniverCity.function.academic.offering.entity.CourseOffering;
@@ -90,161 +92,161 @@ public class CourseOfferingRepositoryTests {
 
 
     // 데이터 한 개 추가
-    @Transactional
-    @Commit
-    @Test
-    public void insertCourseOfferingData() {
-        // 데이터 세팅
-        List<CourseOffering> courseOfferings = repository.findAll();
-        List<User> userList = userRepository.findAll();
-        List<Course> courseList = courseRepository.findAll();
-
-        if(courseOfferings.isEmpty() == true) {
-            log.info("코스 데이터가 없습니다.");
-            return;
-        }
-
-        if(userList.isEmpty() == true) {
-            log.info("유저 데이터가 없습니다.");
-            return;
-        }
-
-        if(courseList.isEmpty() == true) {
-            log.info("코스 데이터가 없습니다.");
-            return;
-        }
-
-        // 교수 이름 세팅
-        List<String> professorNames = new ArrayList<>();
-        for(User user : userList) {
-            if((user.getUserRole().equals(UserRole.PROFESSOR) || user.getUserRole().equals(UserRole.ADMIN))){
-                professorNames.add(user.getNickname());
-            }
-        }
-
-        // 기본 데이터 세팅
-        String professorName = professorNames.get((int)(Math.random()*professorNames.size()));
-        String semester = (int) (Math.random() * 2) + 1+"학기";
-        Course course = courseList.get((int)(Math.random()*courseList.size()));
-        LegacyCourseDTO legacyCourseDTO = mapper.map(course, LegacyCourseDTO.class);
-        LegacyCourseOfferingDTO legacyCourseOfferingDTO = LegacyCourseOfferingDTO.builder()
-                .professorName(professorName)
-                .year(2025)
-                .semester(semester)
-                .course(legacyCourseDTO)
-                .build();
-
-        char alphabat = 'A';
-        int cnt = 0;
-        int maxCnt = courseOfferings.size();
-        String courseName = "EMPTY";
-        boolean isContain = false;
-        while (alphabat != 'Z'){
-            // 체크 하면서 중복이면 break로 탈출
-            for(CourseOffering courseOffering : courseOfferings){
-                if(courseOffering.getCourseName().equals(course.getCourseName() + alphabat)) {
-                    isContain = true;
-                    break;
-                }
-            }
-
-            // 중복이 있을경우 처리
-            if(isContain == true) {
-                isContain = false;
-                alphabat++;
-
-                if(alphabat == 'Z') {
-                    log.info("조합을 찾을 수 없습니다.");
-                    break;
-                }
-            } else {
-                // 중복이 없으면 처리 완료
-                legacyCourseOfferingDTO.setCourseName(course.getCourseName() + alphabat);
-                service.addCourseOffering(legacyCourseOfferingDTO);
-                break;
-            }
-        }
-    }
-
-    // 데이터 여러개 추가
-    // 즉 중복 확인
-    @Transactional
-    @Commit
-    @Test
-    public void insertManyCourseOfferingData() {
-        for(int i=0; i<5; i++) {
-            // 데이터 세팅
-            List<CourseOffering> courseOfferings = repository.findAll();
-            List<User> userList = userRepository.findAll();
-            List<Course> courseList = courseRepository.findAll();
-
-            if(courseOfferings.isEmpty() == true) {
-                log.info("코스 데이터가 없습니다.");
-                return;
-            }
-
-            if(userList.isEmpty() == true) {
-                log.info("유저 데이터가 없습니다.");
-                return;
-            }
-
-            if(courseList.isEmpty() == true) {
-                log.info("코스 데이터가 없습니다.");
-                return;
-            }
-
-            // 교수 이름 세팅
-            List<String> professorNames = new ArrayList<>();
-            for(User user : userList) {
-                if((user.getUserRole().equals(UserRole.PROFESSOR) || user.getUserRole().equals(UserRole.ADMIN))){
-                    professorNames.add(user.getNickname());
-                }
-            }
-
-            // 기본 데이터 세팅
-            String professorName = professorNames.get((int)(Math.random()*professorNames.size()));
-            String semester = (int) (Math.random() * 2) + 1+"학기";
-            Course course = courseList.get((int)(Math.random()*courseList.size()));
-            LegacyCourseDTO legacyCourseDTO = mapper.map(course, LegacyCourseDTO.class);
-            LegacyCourseOfferingDTO legacyCourseOfferingDTO = LegacyCourseOfferingDTO.builder()
-                    .professorName(professorName)
-                    .year(2025)
-                    .semester(semester)
-                    .course(legacyCourseDTO)
-                    .build();
-
-            char alphabat = 'A';
-            int cnt = 0;
-            int maxCnt = courseOfferings.size();
-            String courseName = "EMPTY";
-            boolean isContain = false;
-            while (alphabat != 'Z'){
-                // 체크 하면서 중복이면 break로 탈출
-                for(CourseOffering courseOffering : courseOfferings){
-                    if(courseOffering.getCourseName().equals(course.getCourseName() + alphabat)) {
-                        isContain = true;
-                        break;
-                    }
-                }
-
-                // 중복이 있을경우 처리
-                if(isContain == true) {
-                    isContain = false;
-                    alphabat++;
-
-                    if(alphabat == 'Z') {
-                        log.info("조합을 찾을 수 없습니다.");
-                        break;
-                    }
-                } else {
-                    // 중복이 없으면 처리 완료
-                    legacyCourseOfferingDTO.setCourseName(course.getCourseName() + alphabat);
-                    UserDTO userDTO = mapper.map(userList.get((int)(Math.random()*userList.size())),UserDTO.class);
-                    legacyCourseOfferingDTO.setUser(userDTO);
-                    service.addCourseOffering(legacyCourseOfferingDTO);
-                    break;
-                }
-            }
-        }
-    }
+//    @Transactional
+//    @Commit
+//    @Test
+//    public void insertCourseOfferingData() {
+//        // 데이터 세팅
+//        List<CourseOffering> courseOfferings = repository.findAll();
+//        List<User> userList = userRepository.findAll();
+//        List<Course> courseList = courseRepository.findAll();
+//
+//        if(courseOfferings.isEmpty() == true) {
+//            log.info("코스 데이터가 없습니다.");
+//            return;
+//        }
+//
+//        if(userList.isEmpty() == true) {
+//            log.info("유저 데이터가 없습니다.");
+//            return;
+//        }
+//
+//        if(courseList.isEmpty() == true) {
+//            log.info("코스 데이터가 없습니다.");
+//            return;
+//        }
+//
+//        // 교수 이름 세팅
+//        List<String> professorNames = new ArrayList<>();
+//        for(User user : userList) {
+//            if((user.getUserRole().equals(UserRole.PROFESSOR) || user.getUserRole().equals(UserRole.ADMIN))){
+//                professorNames.add(user.getNickname());
+//            }
+//        }
+//
+//        // 기본 데이터 세팅
+//        String professorName = professorNames.get((int)(Math.random()*professorNames.size()));
+//        String semester = (int) (Math.random() * 2) + 1+"학기";
+//        Course course = courseList.get((int)(Math.random()*courseList.size()));
+//        CourseResponseDTO responseDTO = mapper.map(course, CourseResponseDTO.class);
+//        CourseOfferingResponseDTO legacyCourseOfferingDTO = CourseOfferingResponseDTO.builder()
+//                .professorName(professorName)
+//                .year(2025)
+//                .semester(semester)
+//                .courseId(responseDTO.getCourseId())
+//                .build();
+//
+//        char alphabat = 'A';
+//        int cnt = 0;
+//        int maxCnt = courseOfferings.size();
+//        String courseName = "EMPTY";
+//        boolean isContain = false;
+//        while (alphabat != 'Z'){
+//            // 체크 하면서 중복이면 break로 탈출
+//            for(CourseOffering courseOffering : courseOfferings){
+//                if(courseOffering.getCourseName().equals(course.getCourseName() + alphabat)) {
+//                    isContain = true;
+//                    break;
+//                }
+//            }
+//
+//            // 중복이 있을경우 처리
+//            if(isContain == true) {
+//                isContain = false;
+//                alphabat++;
+//
+//                if(alphabat == 'Z') {
+//                    log.info("조합을 찾을 수 없습니다.");
+//                    break;
+//                }
+//            } else {
+//                // 중복이 없으면 처리 완료
+//                legacyCourseOfferingDTO.setCourseName(course.getCourseName() + alphabat);
+//                service.addCourseOffering(legacyCourseOfferingDTO);
+//                break;
+//            }
+//        }
+//    }
+//
+//    // 데이터 여러개 추가
+//    // 즉 중복 확인
+//    @Transactional
+//    @Commit
+//    @Test
+//    public void insertManyCourseOfferingData() {
+//        for(int i=0; i<5; i++) {
+//            // 데이터 세팅
+//            List<CourseOffering> courseOfferings = repository.findAll();
+//            List<User> userList = userRepository.findAll();
+//            List<Course> courseList = courseRepository.findAll();
+//
+//            if(courseOfferings.isEmpty() == true) {
+//                log.info("코스 데이터가 없습니다.");
+//                return;
+//            }
+//
+//            if(userList.isEmpty() == true) {
+//                log.info("유저 데이터가 없습니다.");
+//                return;
+//            }
+//
+//            if(courseList.isEmpty() == true) {
+//                log.info("코스 데이터가 없습니다.");
+//                return;
+//            }
+//
+//            // 교수 이름 세팅
+//            List<String> professorNames = new ArrayList<>();
+//            for(User user : userList) {
+//                if((user.getUserRole().equals(UserRole.PROFESSOR) || user.getUserRole().equals(UserRole.ADMIN))){
+//                    professorNames.add(user.getNickname());
+//                }
+//            }
+//
+//            // 기본 데이터 세팅
+//            String professorName = professorNames.get((int)(Math.random()*professorNames.size()));
+//            String semester = (int) (Math.random() * 2) + 1+"학기";
+//            Course course = courseList.get((int)(Math.random()*courseList.size()));
+//            CourseResponseDTO responseDTO = mapper.map(course, CourseResponseDTO.class);
+//            CourseOfferingResponseDTO legacyCourseOfferingDTO = CourseOfferingResponseDTO.builder()
+//                    .professorName(professorName)
+//                    .year(2025)
+//                    .semester(semester)
+//                    .courseId(responseDTO.getCourseId())
+//                    .build();
+//
+//            char alphabat = 'A';
+//            int cnt = 0;
+//            int maxCnt = courseOfferings.size();
+//            String courseName = "EMPTY";
+//            boolean isContain = false;
+//            while (alphabat != 'Z'){
+//                // 체크 하면서 중복이면 break로 탈출
+//                for(CourseOffering courseOffering : courseOfferings){
+//                    if(courseOffering.getCourseName().equals(course.getCourseName() + alphabat)) {
+//                        isContain = true;
+//                        break;
+//                    }
+//                }
+//
+//                // 중복이 있을경우 처리
+//                if(isContain == true) {
+//                    isContain = false;
+//                    alphabat++;
+//
+//                    if(alphabat == 'Z') {
+//                        log.info("조합을 찾을 수 없습니다.");
+//                        break;
+//                    }
+//                } else {
+//                    // 중복이 없으면 처리 완료
+//                    legacyCourseOfferingDTO.setCourseName(course.getCourseName() + alphabat);
+//                    UserDTO userDTO = mapper.map(userList.get((int)(Math.random()*userList.size())),UserDTO.class);
+//                    legacyCourseOfferingDTO.setUser(userDTO);
+//                    service.addCourseOffering(legacyCourseOfferingDTO);
+//                    break;
+//                }
+//            }
+//        }
+//    }
 }

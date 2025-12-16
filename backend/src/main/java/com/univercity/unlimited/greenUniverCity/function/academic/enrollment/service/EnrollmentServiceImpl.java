@@ -32,11 +32,11 @@ public class EnrollmentServiceImpl implements EnrollmentService {
 
     private final ModelMapper mapper;
 
-    private final CourseOfferingService offeringService;
-
     private final ClassSectionService sectionService;
 
     private final UserService userService;
+
+    private final EnrollmentCountService enrollmentCountService;
 
     private EnrollmentResponseDTO toResponseDTO(Enrollment enrollment){
         User user = enrollment.getUser();
@@ -217,47 +217,17 @@ public class EnrollmentServiceImpl implements EnrollmentService {
     //E.SE-1) 특정 분반의 현재 수강 인원 조회 Service 구현부
     @Override
     public Integer getCurrentEnrollmentCount(Long sectionId) {
-        log.info("2) 분반 수강 인원 조회 시작 sectionId-:{}",sectionId);
-
-        Integer count=repository.countByClassSection_SectionId(sectionId);
-
-        if (count == null) {
-            log.info("2-1)조회 결과 없으면 null대신 0으로 대입 (sectionId: {})", sectionId);
-            count = 0;
-        }
-
-        log.info("3) 분반 수강 인원 조회 완료 sectionId-:{}, count-:{}",sectionId,count);
-
-        return count;
+        return enrollmentCountService.getCurrentEnrollmentCount(sectionId);
     }
 
     //E.SE-2) 여러 분반의 현재 수강 인원을 한 번에 조회 Service 구현부
     @Override
     public Map<Long, Integer> getCurrentEnrollmentCounts(List<Long> sectionIds) {
-        log.info("2) 여러분반 수강 인원 조회 시작 sectionId-:{}",sectionIds);
+        return enrollmentCountService.getCurrentEnrollmentCounts(sectionIds);
 
-        // 1 유효성 검사
-        if (sectionIds == null || sectionIds.isEmpty()) {
-            return Collections.emptyMap();
-        }
-
-        List<SectionCountSummary> summaries = repository.countBySectionIds(sectionIds);
-
-        Map<Long,Integer> result = toCountMap(summaries);
-
-        log.debug("여러 분반 수강 인원 조회 완료 - {}건", result.size());
-
-        return result;
     }
 
-    //E.SE-Function
-    private Map<Long,Integer> toCountMap(List<SectionCountSummary> summaries){
-       return summaries.stream()
-                .collect(Collectors.toMap(
-                        SectionCountSummary::getSectionId,      // Key: 분반 ID
-                        summary -> summary.getCount().intValue() // Value: Long → Integer 변환
-                ));
-    }
+
 }
 
 /**

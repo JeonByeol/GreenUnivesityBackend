@@ -55,8 +55,8 @@ public class EnrollmentCountService {
     private Map<Long, Integer> toCountMap(List<SectionCountSummary> summaries){
         return summaries.stream()
                 .collect(Collectors.toMap(
-                        SectionCountSummary::getSectionId,
-                        summary -> summary.getCount().intValue()
+                        SectionCountSummary::getSectionId, //Key:분반 id
+                        summary -> summary.getCount().intValue() //Value:Long->Integer 변환
                 ));
     }
 }

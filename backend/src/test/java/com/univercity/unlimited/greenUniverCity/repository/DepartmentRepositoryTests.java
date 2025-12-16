@@ -37,26 +37,26 @@ public class DepartmentRepositoryTests {
         }
     }
 
-    @Test
-    public void insertDepartmentData() {
-        String[] departmentArray = {
-                "기계",
-                "화학",
-                "생명과학",
-                "환경공학",
-                "건축",
-                "산업디자인",
-                "경영",
-                "경제",
-                "심리학",
-                "체육"
-        };
-        String department = departmentArray[(int)(Math.random()*departmentArray.length)];
-        LegacyDepartmentDTO legacyDepartmentDTO = LegacyDepartmentDTO.builder()
-                .deptName(department)
-                .build();
-
-        service.addDepartment(legacyDepartmentDTO);
-    }
+//    @Test
+//    public void insertDepartmentData() {
+//        String[] departmentArray = {
+//                "기계",
+//                "화학",
+//                "생명과학",
+//                "환경공학",
+//                "건축",
+//                "산업디자인",
+//                "경영",
+//                "경제",
+//                "심리학",
+//                "체육"
+//        };
+//        String department = departmentArray[(int)(Math.random()*departmentArray.length)];
+//        LegacyDepartmentDTO legacyDepartmentDTO = LegacyDepartmentDTO.builder()
+//                .deptName(department)
+//                .build();
+//
+//        service.addDepartment(legacyDepartmentDTO);
+//    }
 
 }

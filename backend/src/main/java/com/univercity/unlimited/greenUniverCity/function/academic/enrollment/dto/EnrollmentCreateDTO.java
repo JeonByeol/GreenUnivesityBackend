@@ -14,6 +14,6 @@ import java.time.LocalDateTime;
 public class EnrollmentCreateDTO {
     //** 임시 DTO 완성본 아닙니다 **
     private LocalDateTime enrollDate;//해당 날짜
-    private Long sectionId; //강의 개설id
+    private Long sectionId; //분반id
     private Long userId;//유저 식별코드
 }
