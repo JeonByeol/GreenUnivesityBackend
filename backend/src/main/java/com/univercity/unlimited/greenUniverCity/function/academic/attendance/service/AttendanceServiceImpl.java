@@ -1,7 +1,6 @@
 package com.univercity.unlimited.greenUniverCity.function.academic.attendance.service;
 
 import com.univercity.unlimited.greenUniverCity.function.academic.attendance.dto.AttendanceCreateDTO;
-import com.univercity.unlimited.greenUniverCity.function.academic.attendance.dto.LegacyAttendanceDTO;
 import com.univercity.unlimited.greenUniverCity.function.academic.attendance.dto.AttendanceResponseDTO;
 import com.univercity.unlimited.greenUniverCity.function.academic.attendance.dto.AttendanceUpdateDTO;
 import com.univercity.unlimited.greenUniverCity.function.academic.attendance.entity.Attendance;
@@ -96,14 +95,14 @@ public class AttendanceServiceImpl implements AttendanceService{
         }
 
         // 3. 담당 교수가 존재하는지 확인
-        User professor=enrollment.getCourseOffering().getProfessor();
+        User professor=enrollment.getClassSection().getCourseOffering().getProfessor();
 
         if (professor == null) {
             throw new DataIntegrityException(
                     String.format(
                             "4)보안 검사 시도 식별코드-: A-security-2 (출결 %s) " +
                                     "데이터 오류: 개설 강의에 담당 교수가 없습니다. offeringId: %s",
-                            action, enrollment.getCourseOffering().getOfferingId())
+                            action, enrollment.getClassSection().getCourseOffering().getOfferingId())
             );
         }
 
@@ -217,10 +216,4 @@ public class AttendanceServiceImpl implements AttendanceService{
     }
 
 
-    //A-A) ** 필요한 기능 입력 부탁드립니다 | 사용 안하면 삭제 서비스구현 삭제 부탁드립니다 **
-    @Override
-    public ResponseEntity<String> addAttendance(LegacyAttendanceDTO legacyAttendanceDTO) {
-
-        return null;
-    }
 }

@@ -13,7 +13,8 @@ public interface GradeRepository extends JpaRepository<Grade,Long> {
     //G-2)특정 학생이 본인이 수강한 모든 과목의 성적과 과목명을 조회하기 위한 쿼리
     @Query("SELECT g FROM Grade g " +
             "JOIN FETCH g.enrollment e " +
-            "JOIN FETCH e.courseOffering co " +
+            "JOIN FETCH e.classSection se " +
+            "JOIN FETCH se.courseOffering co " +
             "JOIN FETCH e.user u " +
             "WHERE u.email = :email")
     List<Grade> findByStudentEmail(@Param("email")String email);
@@ -21,8 +22,9 @@ public interface GradeRepository extends JpaRepository<Grade,Long> {
     //G-3)교수가 특정 과목의 수업을 듣는 전체학생 조회하기 위한 쿼리
     @Query("SELECT g FROM Grade g " +
             "JOIN FETCH g.enrollment e " +
+            "JOIN FETCH e.classSection se " +
             "JOIN FETCH e.user u " +
-            "WHERE e.courseOffering.offeringId =:offeringId " +
+            "WHERE se.courseOffering.offeringId =:offeringId " +
             "ORDER BY u.nickname ASC")
     List<Grade> findByOfferingGrade(@Param("offeringId") Long offeringId);
 

@@ -5,7 +5,6 @@ import com.univercity.unlimited.greenUniverCity.function.academic.course.service
 import com.univercity.unlimited.greenUniverCity.function.academic.offering.dto.CourseOfferingCreateDTO;
 import com.univercity.unlimited.greenUniverCity.function.academic.offering.dto.CourseOfferingResponseDTO;
 import com.univercity.unlimited.greenUniverCity.function.academic.offering.dto.CourseOfferingUpdateDTO;
-import com.univercity.unlimited.greenUniverCity.function.academic.offering.dto.LegacyCourseOfferingDTO;
 import com.univercity.unlimited.greenUniverCity.function.academic.offering.entity.CourseOffering;
 import com.univercity.unlimited.greenUniverCity.function.academic.offering.exception.CourseOfferingNotFoundException;
 import com.univercity.unlimited.greenUniverCity.function.academic.offering.repository.CourseOfferingRepository;
@@ -65,12 +64,12 @@ public class CourseOfferingServiceImpl implements CourseOfferingService{
     }
 
     @Override
-    public Optional<List<LegacyCourseOfferingDTO>> findAllCourseOfferingDTO() {
+    public Optional<List<CourseOfferingResponseDTO>> findAllCourseOfferingDTO() {
         List<CourseOffering> courseOfferings = repository.findAll();
-        List<LegacyCourseOfferingDTO> legacyCourseOfferingDTOS = courseOfferings.stream().map(courseOffering ->
-                mapper.map(courseOffering, LegacyCourseOfferingDTO.class)).toList();
+        List<CourseOfferingResponseDTO> legacyCourseOfferingDTOS = courseOfferings.stream().map(courseOffering ->
+                mapper.map(courseOffering, CourseOfferingResponseDTO.class)).toList();
 
-        Optional<List<LegacyCourseOfferingDTO>> optionalCourseOfferingDTOS = Optional.of(legacyCourseOfferingDTOS);
+        Optional<List<CourseOfferingResponseDTO>> optionalCourseOfferingDTOS = Optional.of(legacyCourseOfferingDTOS);
         return optionalCourseOfferingDTOS;
     }
 
@@ -166,7 +165,7 @@ public class CourseOfferingServiceImpl implements CourseOfferingService{
 
 
     @Override
-    public int addCourseOffering(LegacyCourseOfferingDTO legacyCourseOfferingDTO) {
+    public int addCourseOffering(CourseOfferingResponseDTO legacyCourseOfferingDTO) {
         log.info("1) 확인 : {}", legacyCourseOfferingDTO);
         CourseOffering courseOffering = mapper.map(legacyCourseOfferingDTO,CourseOffering.class);
         log.info("확인 : {}",courseOffering);

@@ -3,7 +3,6 @@ package com.univercity.unlimited.greenUniverCity.function.academic.grade.control
 import com.univercity.unlimited.greenUniverCity.function.academic.grade.dto.grade.GradeCreateDTO;
 import com.univercity.unlimited.greenUniverCity.function.academic.grade.dto.grade.GradeResponseDTO;
 import com.univercity.unlimited.greenUniverCity.function.academic.grade.dto.grade.GradeUpdateDTO;
-import com.univercity.unlimited.greenUniverCity.function.academic.grade.dto.grade.LegacyGradeDTO;
 import com.univercity.unlimited.greenUniverCity.function.academic.grade.service.GradeService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

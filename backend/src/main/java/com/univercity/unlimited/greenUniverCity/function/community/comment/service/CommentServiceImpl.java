@@ -3,7 +3,6 @@ package com.univercity.unlimited.greenUniverCity.function.community.comment.serv
 import com.univercity.unlimited.greenUniverCity.function.community.comment.dto.CommentCreateDTO;
 import com.univercity.unlimited.greenUniverCity.function.community.comment.dto.CommentResponseDTO;
 import com.univercity.unlimited.greenUniverCity.function.community.comment.dto.CommentUpdateDTO;
-import com.univercity.unlimited.greenUniverCity.function.community.comment.dto.LegacyCommentDTO;
 import com.univercity.unlimited.greenUniverCity.function.community.comment.entity.Comment;
 import com.univercity.unlimited.greenUniverCity.function.community.comment.repository.CommentRepository;
 import com.univercity.unlimited.greenUniverCity.util.MapperUtil;
@@ -43,23 +42,23 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public List<LegacyCommentDTO> getCommentsByPostId(Long postId) {
+    public List<CommentResponseDTO> getCommentsByPostId(Long postId) {
         log.info("해당 게시글 아이디의 코멘트를을  조회 -> service :{} " ,postId);
-        return commentRepository.findCommentsByPostId(postId).stream().map(i->mapper.map(i, LegacyCommentDTO.class)).toList();
+        return commentRepository.findCommentsByPostId(postId).stream().map(i->mapper.map(i, CommentResponseDTO.class)).toList();
     }
 
     @Override
-    public ResponseEntity<String> addComment(LegacyCommentDTO legacyCommentDTO) {
+    public ResponseEntity<String> addComment(CommentResponseDTO legacyCommentDTO) {
         return null;
     }
 
     @Override
-    public Optional<List<LegacyCommentDTO>> findAllCommentDTO() {
+    public Optional<List<CommentResponseDTO>> findAllCommentDTO() {
         List<Comment> comments = commentRepository.findAll();
-        List<LegacyCommentDTO> legacyCommentDTOS = comments.stream().map(comment ->
-                mapper.map(comment, LegacyCommentDTO.class)).toList();
+        List<CommentResponseDTO> legacyCommentDTOS = comments.stream().map(comment ->
+                mapper.map(comment, CommentResponseDTO.class)).toList();
 
-        Optional<List<LegacyCommentDTO>> optionalCommentDTOS = Optional.of(legacyCommentDTOS);
+        Optional<List<CommentResponseDTO>> optionalCommentDTOS = Optional.of(legacyCommentDTOS);
         return optionalCommentDTOS;
     }
     @Override

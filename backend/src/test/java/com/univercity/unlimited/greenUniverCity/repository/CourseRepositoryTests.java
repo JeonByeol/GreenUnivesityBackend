@@ -1,7 +1,6 @@
 package com.univercity.unlimited.greenUniverCity.repository;
 
 
-import com.univercity.unlimited.greenUniverCity.function.academic.course.dto.LegacyCourseDTO;
 import com.univercity.unlimited.greenUniverCity.function.academic.course.entity.Course;
 import com.univercity.unlimited.greenUniverCity.function.academic.course.repository.CourseRepository;
 import com.univercity.unlimited.greenUniverCity.function.academic.course.service.CourseService;
@@ -83,46 +82,46 @@ public class CourseRepositoryTests {
         }
     }
 
-    @Test
-    public void insertCourseData() {
-        String[] newCourseNameArray = {
-                "컴퓨터비전",
-                "자연어처리",
-                "정보보안",
-                "클라우드컴퓨팅",
-                "빅데이터분석",
-
-                "모바일앱개발",
-                "게임프로그래밍",
-                "로봇공학",
-                "컴파일러구현",
-                "소셜미디어분석"
-        };
-
-        String[] newCourseDescriptionArray = {
-                "영상 및 이미지 처리 기초, 객체 인식, 딥러닝 기반 시각 인식 기술 실습",
-                "텍스트 전처리, 언어 모델, 감성 분석 및 챗봇 개발 실습",
-                "암호화, 인증, 네트워크 보안, 해킹 대응 및 보안 정책 수립",
-                "AWS, Azure 기반 인프라 구축, 가상화, 컨테이너 및 DevOps 실습",
-                "Hadoop, Spark 기반 데이터 처리 및 시각화, 통계 분석 기법",
-
-                "Android/iOS 앱 개발, UI/UX 설계, 배포 및 유지보수 실습",
-                "게임 엔진 활용, 물리 엔진, 그래픽스, 게임 로직 구현 실습",
-                "센서 제어, ROS 기반 로봇 프로그래밍 및 자율주행 알고리즘",
-                "어휘 분석, 구문 분석, 중간 코드 생성 및 최적화 기법",
-                "SNS 데이터 수집, 텍스트 마이닝, 사용자 행동 분석 및 시각화"
-        };
-
-        String courseName = newCourseNameArray[(int)(Math.random()* newCourseNameArray.length)];
-        String description = newCourseDescriptionArray[(int)(Math.random()* newCourseDescriptionArray.length)];
-        int credits = (int)(Math.random()*3)+1;
-
-        LegacyCourseDTO legacyCourseDTO = LegacyCourseDTO.builder()
-                .courseName(courseName)
-                .description(description)
-                .credits(credits)
-                .build();
-
-//        service.addCourse(legacyCourseDTO);
-    }
+//    @Test
+//    public void insertCourseData() {
+//        String[] newCourseNameArray = {
+//                "컴퓨터비전",
+//                "자연어처리",
+//                "정보보안",
+//                "클라우드컴퓨팅",
+//                "빅데이터분석",
+//
+//                "모바일앱개발",
+//                "게임프로그래밍",
+//                "로봇공학",
+//                "컴파일러구현",
+//                "소셜미디어분석"
+//        };
+//
+//        String[] newCourseDescriptionArray = {
+//                "영상 및 이미지 처리 기초, 객체 인식, 딥러닝 기반 시각 인식 기술 실습",
+//                "텍스트 전처리, 언어 모델, 감성 분석 및 챗봇 개발 실습",
+//                "암호화, 인증, 네트워크 보안, 해킹 대응 및 보안 정책 수립",
+//                "AWS, Azure 기반 인프라 구축, 가상화, 컨테이너 및 DevOps 실습",
+//                "Hadoop, Spark 기반 데이터 처리 및 시각화, 통계 분석 기법",
+//
+//                "Android/iOS 앱 개발, UI/UX 설계, 배포 및 유지보수 실습",
+//                "게임 엔진 활용, 물리 엔진, 그래픽스, 게임 로직 구현 실습",
+//                "센서 제어, ROS 기반 로봇 프로그래밍 및 자율주행 알고리즘",
+//                "어휘 분석, 구문 분석, 중간 코드 생성 및 최적화 기법",
+//                "SNS 데이터 수집, 텍스트 마이닝, 사용자 행동 분석 및 시각화"
+//        };
+//
+//        String courseName = newCourseNameArray[(int)(Math.random()* newCourseNameArray.length)];
+//        String description = newCourseDescriptionArray[(int)(Math.random()* newCourseDescriptionArray.length)];
+//        int credits = (int)(Math.random()*3)+1;
+//
+//        LegacyCourseDTO legacyCourseDTO = LegacyCourseDTO.builder()
+//                .courseName(courseName)
+//                .description(description)
+//                .credits(credits)
+//                .build();
+//
+////        service.addCourse(legacyCourseDTO);
+//    }
 }

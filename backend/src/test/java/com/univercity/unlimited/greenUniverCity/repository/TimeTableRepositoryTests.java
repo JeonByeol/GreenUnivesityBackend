@@ -1,6 +1,8 @@
 package com.univercity.unlimited.greenUniverCity.repository;
 
 import com.univercity.unlimited.greenUniverCity.function.academic.offering.entity.CourseOffering;
+import com.univercity.unlimited.greenUniverCity.function.academic.section.entity.ClassSection;
+import com.univercity.unlimited.greenUniverCity.function.academic.section.repository.ClassSectionRepository;
 import com.univercity.unlimited.greenUniverCity.function.academic.timetable.entity.TimeTable;
 import com.univercity.unlimited.greenUniverCity.function.academic.offering.repository.CourseOfferingRepository;
 import com.univercity.unlimited.greenUniverCity.function.academic.timetable.repository.TimeTableRepository;
@@ -20,7 +22,7 @@ public class TimeTableRepositoryTests {
     TimeTableRepository repository;
 
     @Autowired
-    CourseOfferingRepository courseOfferingRepository;
+    ClassSectionRepository classSectionRepository;
 
     @Test
     @Tag("push")
@@ -50,22 +52,22 @@ public class TimeTableRepositoryTests {
         };
         String [] week={"월","화","수","목","금"};
 
-        List<CourseOffering> courseOfferings = courseOfferingRepository.findAll();
+        List<ClassSection> classSections = classSectionRepository.findAll();
 
         // 데이터 체크
-        if(courseOfferings.isEmpty() == true) {
+        if(classSections.isEmpty() == true) {
             log.info("CourseOfferings 데이터가 없습니다.");
             return;
         }
 
         // 데이터 추가
-        for(CourseOffering courseOffering : courseOfferings) {
+        for(ClassSection classSection : classSections) {
             TimeTable timeTable = TimeTable.builder()
                     .dayOfWeek(week[(int)(Math.random()*week.length)])
                     .startTime(LocalDateTime.now())
                     .endTime(LocalDateTime.now())
                     .location(dummyLocations[(int)(Math.random()*dummyLocations.length)])
-                    .courseOffering(courseOffering)
+                    .classSection(classSection)
                     .build();
 
             repository.save(timeTable);

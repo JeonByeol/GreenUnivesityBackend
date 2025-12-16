@@ -3,7 +3,6 @@ package com.univercity.unlimited.greenUniverCity.function.community.board.contro
 import com.univercity.unlimited.greenUniverCity.function.community.board.dto.BoardCreateDTO;
 import com.univercity.unlimited.greenUniverCity.function.community.board.dto.BoardResponseDTO;
 import com.univercity.unlimited.greenUniverCity.function.community.board.dto.BoardUpdateDTO;
-import com.univercity.unlimited.greenUniverCity.function.community.board.dto.LegacyBoardDTO;
 import com.univercity.unlimited.greenUniverCity.function.community.board.entity.Board;
 import com.univercity.unlimited.greenUniverCity.function.community.board.repository.BoardRepository;
 import com.univercity.unlimited.greenUniverCity.function.community.board.service.BoardService;
@@ -28,13 +27,13 @@ public class BoardController {
 
     // B-1) BOARD 전체 검색
     @GetMapping("/all")
-    public List<LegacyBoardDTO> postAllSearch() {
+    public List<BoardResponseDTO> postAllSearch() {
         return boardService.findAllBoard();
     }
 
     // B-2) BOARD 1개만 검색
     @GetMapping("/one/{id}")
-    public List<LegacyBoardDTO> postIdSearch(@PathVariable("id") Long boardId) {
+    public List<BoardResponseDTO> postIdSearch(@PathVariable("id") Long boardId) {
         return List.of(boardService.findIdBoard(boardId));
     }
 

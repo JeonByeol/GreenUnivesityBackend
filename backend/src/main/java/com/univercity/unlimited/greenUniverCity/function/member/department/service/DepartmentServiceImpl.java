@@ -5,7 +5,6 @@ import com.univercity.unlimited.greenUniverCity.function.member.department.dto.D
 import com.univercity.unlimited.greenUniverCity.function.member.department.dto.DepartmentUpdateDTO;
 import com.univercity.unlimited.greenUniverCity.function.member.department.entity.Department;
 import com.univercity.unlimited.greenUniverCity.function.member.department.repository.DepartmentRepository;
-import com.univercity.unlimited.greenUniverCity.function.member.department.dto.LegacyDepartmentDTO;
 import com.univercity.unlimited.greenUniverCity.util.MapperUtil;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -36,10 +35,10 @@ public class DepartmentServiceImpl implements DepartmentService{
     }
 
     @Override
-    public List<LegacyDepartmentDTO> regacyFindAllDepartment() {
-        List<LegacyDepartmentDTO> dtoList=new ArrayList<>();
+    public List<DepartmentResponseDTO> regacyFindAllDepartment() {
+        List<DepartmentResponseDTO> dtoList=new ArrayList<>();
         for(Department i:repository.findAll()){
-            LegacyDepartmentDTO r=mapper.map(i, LegacyDepartmentDTO.class);
+            DepartmentResponseDTO r=mapper.map(i, DepartmentResponseDTO.class);
             dtoList.add(r);
         }
         return dtoList;
@@ -133,7 +132,7 @@ public class DepartmentServiceImpl implements DepartmentService{
     }
 
     @Override
-    public int addDepartment(LegacyDepartmentDTO legacyDepartmentDTO) {
+    public int addDepartment(DepartmentResponseDTO legacyDepartmentDTO) {
         log.info("1) 확인 : {}", legacyDepartmentDTO);
         Department department = mapper.map(legacyDepartmentDTO,Department.class);
         log.info("확인 : {}",department);
