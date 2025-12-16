@@ -1,6 +1,10 @@
 package com.univercity.unlimited.greenUniverCity.function.member.user.dto;
 
+import com.univercity.unlimited.greenUniverCity.function.member.user.entity.UserRole;
 import lombok.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -18,6 +22,6 @@ public class UserDTO {
     private String password; //패스워드
     private String nickname; //닉네임
 
-    private String  role; //역할(권한)
+    private List<UserRole> roleNames = new ArrayList<>();  // 🔥 통일된 필드명
 
 }

@@ -3,6 +3,7 @@ package com.univercity.unlimited.greenUniverCity.function.member.user.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import javax.management.relation.RoleList;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,9 +27,19 @@ public class User {
     private String password;
     private String nickname;
 
-    @Column
+//    @Column
+//    @Enumerated(EnumType.STRING)
+//    private UserRole userRole;
+
+    @ElementCollection(fetch = FetchType.LAZY)
     @Enumerated(EnumType.STRING)
-    private UserRole userRole;
+    @CollectionTable(
+            name = "user_user_role_list",
+            joinColumns = @JoinColumn(name = "user_user_id")
+    )
+    @Column(name = "user_role_list")
+    private List<UserRole> userRoleList = new ArrayList<>();
+
 
 //    @ElementCollection(fetch = FetchType.LAZY)
 //    @Builder.Default
