@@ -3,7 +3,6 @@ package com.univercity.unlimited.greenUniverCity.function.academic.enrollment.se
 import com.univercity.unlimited.greenUniverCity.function.academic.enrollment.dto.EnrollmentCreateDTO;
 import com.univercity.unlimited.greenUniverCity.function.academic.enrollment.dto.EnrollmentResponseDTO;
 import com.univercity.unlimited.greenUniverCity.function.academic.enrollment.dto.EnrollmentUpdateDTO;
-import com.univercity.unlimited.greenUniverCity.function.academic.enrollment.dto.LegacyEnrollmentDTO;
 import com.univercity.unlimited.greenUniverCity.function.academic.enrollment.entity.Enrollment;
 import com.univercity.unlimited.greenUniverCity.function.academic.enrollment.exception.EnrollmentNotFoundException;
 import com.univercity.unlimited.greenUniverCity.function.academic.enrollment.exception.UserNotFoundException;
@@ -12,6 +11,8 @@ import static com.univercity.unlimited.greenUniverCity.function.academic.enrollm
 import com.univercity.unlimited.greenUniverCity.function.academic.offering.entity.CourseOffering;
 import com.univercity.unlimited.greenUniverCity.function.academic.offering.exception.CourseOfferingNotFoundException;
 import com.univercity.unlimited.greenUniverCity.function.academic.offering.service.CourseOfferingService;
+import com.univercity.unlimited.greenUniverCity.function.academic.section.entity.ClassSection;
+import com.univercity.unlimited.greenUniverCity.function.academic.section.service.ClassSectionService;
 import com.univercity.unlimited.greenUniverCity.function.member.user.entity.User;
 import com.univercity.unlimited.greenUniverCity.function.member.user.service.UserService;
 import com.univercity.unlimited.greenUniverCity.util.MapperUtil;
@@ -31,12 +32,16 @@ public class EnrollmentServiceImpl implements EnrollmentService {
 
     private final ModelMapper mapper;
 
-    private final CourseOfferingService offeringService;
+    private final ClassSectionService sectionService;
+
     private final UserService userService;
+
+    private final EnrollmentCountService enrollmentCountService;
 
     private EnrollmentResponseDTO toResponseDTO(Enrollment enrollment){
         User user = enrollment.getUser();
-        CourseOffering offering = enrollment.getCourseOffering();
+        ClassSection section=enrollment.getClassSection();
+        CourseOffering offering = section.getCourseOffering();
 
         return
                 EnrollmentResponseDTO.builder()
@@ -53,10 +58,10 @@ public class EnrollmentServiceImpl implements EnrollmentService {
 
     //E-1)Enroll에 존재하는 모든 데이터 조회 서비스 구현부
     @Override
-    public List<LegacyEnrollmentDTO> legacyFindAllEnrollment() {
-        List<LegacyEnrollmentDTO> dtoList = new ArrayList<>();
+    public List<EnrollmentResponseDTO> legacyFindAllEnrollment() {
+        List<EnrollmentResponseDTO> dtoList = new ArrayList<>();
         for (Enrollment i : repository.findAll()) {
-            LegacyEnrollmentDTO r = mapper.map(i, LegacyEnrollmentDTO.class);
+            EnrollmentResponseDTO r = mapper.map(i, EnrollmentResponseDTO.class);
             dtoList.add(r);
         }
         return dtoList;
@@ -97,14 +102,15 @@ public class EnrollmentServiceImpl implements EnrollmentService {
         log.info("3)EnrollmentCreateDTO -> Enrollment : {}", enrollment);
 
         User user = userService.getUserById(dto.getUserId());
-        CourseOffering offering = offeringService.getCourseOfferingEntity(dto.getOfferingId());
+        ClassSection section=sectionService.getClassSectionEntity(dto.getSectionId());
+//        CourseOffering offering = offeringService.getCourseOfferingEntity(dto.getOfferingId());
 
-        log.info("3-1)Offering 탐색 : {}", offering);
+        log.info("3-1)Offering 탐색 : {}", section);
         log.info("3-2)유저 탐색 : {}", user);
 
         MapperUtil.updateFrom(dto,enrollment,List.of("enrollmentId"));
         enrollment.setUser(user);
-        enrollment.setCourseOffering(offering);
+        enrollment.setClassSection(section);
 
         log.info("4)Offering 을 추가한 이후 Course : {}", enrollment);
 
@@ -127,14 +133,15 @@ public class EnrollmentServiceImpl implements EnrollmentService {
         Enrollment enrollment = enrollmentOptional.get();
 
         User user = userService.getUserById(dto.getUserId());
-        CourseOffering offering = offeringService.getCourseOfferingEntity(dto.getOfferingId());
-        log.info("3-1)Offering 탐색 : {}", offering);
+        ClassSection section=sectionService.getClassSectionEntity(dto.getSectionId());
+//        CourseOffering offering = offeringService.getCourseOfferingEntity(dto.getOfferingId());
+        log.info("3-1)Offering 탐색 : {}", section);
         log.info("3-2)유저 탐색 : {}", user);
 
         log.info("3) 수정 이전 Enrollment : {}",enrollment);
         MapperUtil.updateFrom(dto,enrollment,List.of("enrollmentId"));
         enrollment.setUser(user);
-        enrollment.setCourseOffering(offering);
+        enrollment.setClassSection(section);
 
         log.info("5) 기존 Enrollment : {}",enrollment);
         Enrollment updateCourse=repository.save(enrollment);
@@ -162,7 +169,7 @@ public class EnrollmentServiceImpl implements EnrollmentService {
 
     //E-2) **(기능 입력 바랍니다/사용 안할시 삭제 부탁드립니다)**
     @Override
-    public int addEnrollment(LegacyEnrollmentDTO legacyEnrollmentDTO) {
+    public int addEnrollment(EnrollmentResponseDTO legacyEnrollmentDTO) {
         log.info("1) 확인 : {}", legacyEnrollmentDTO);
         Enrollment enrollment = mapper.map(legacyEnrollmentDTO, Enrollment.class);
         log.info("확인 : {}", enrollment);
@@ -195,9 +202,9 @@ public class EnrollmentServiceImpl implements EnrollmentService {
             throw new UserNotFoundException("수강 정보에 연결된 사용자가 존재하지 않습니다 id:."+id);
         }
 
-        //Offering 개설 강의 Id에 대한 검증
-        if (enrollment.getCourseOffering() == null) {
-            throw new CourseOfferingNotFoundException( "데이터 오류: 수강 정보에 개설 강의가 없습니다. id: " + id);
+        //Section 분반 Id에 대한 검증
+        if (enrollment.getClassSection() == null) {
+            throw new CourseOfferingNotFoundException( "데이터 오류: 수강 정보에 분반이 없습니다. id: " + id);
         }
 
         return enrollment;
@@ -210,47 +217,17 @@ public class EnrollmentServiceImpl implements EnrollmentService {
     //E.SE-1) 특정 분반의 현재 수강 인원 조회 Service 구현부
     @Override
     public Integer getCurrentEnrollmentCount(Long sectionId) {
-        log.info("2) 분반 수강 인원 조회 시작 sectionId-:{}",sectionId);
-
-        Integer count=repository.countByClassSection_SectionId(sectionId);
-
-        if (count == null) {
-            log.info("2-1)조회 결과 없으면 null대신 0으로 대입 (sectionId: {})", sectionId);
-            count = 0;
-        }
-
-        log.info("3) 분반 수강 인원 조회 완료 sectionId-:{}, count-:{}",sectionId,count);
-
-        return count;
+        return enrollmentCountService.getCurrentEnrollmentCount(sectionId);
     }
 
     //E.SE-2) 여러 분반의 현재 수강 인원을 한 번에 조회 Service 구현부
     @Override
     public Map<Long, Integer> getCurrentEnrollmentCounts(List<Long> sectionIds) {
-        log.info("2) 여러분반 수강 인원 조회 시작 sectionId-:{}",sectionIds);
+        return enrollmentCountService.getCurrentEnrollmentCounts(sectionIds);
 
-        // 1 유효성 검사
-        if (sectionIds == null || sectionIds.isEmpty()) {
-            return Collections.emptyMap();
-        }
-
-        List<SectionCountSummary> summaries = repository.countBySectionIds(sectionIds);
-
-        Map<Long,Integer> result = toCountMap(summaries);
-
-        log.debug("여러 분반 수강 인원 조회 완료 - {}건", result.size());
-
-        return result;
     }
 
-    //E.SE-Function
-    private Map<Long,Integer> toCountMap(List<SectionCountSummary> summaries){
-       return summaries.stream()
-                .collect(Collectors.toMap(
-                        SectionCountSummary::getSectionId,      // Key: 분반 ID
-                        summary -> summary.getCount().intValue() // Value: Long → Integer 변환
-                ));
-    }
+
 }
 
 /**

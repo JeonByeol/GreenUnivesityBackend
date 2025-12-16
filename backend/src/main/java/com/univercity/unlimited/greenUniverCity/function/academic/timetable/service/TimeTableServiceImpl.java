@@ -4,6 +4,8 @@ import com.univercity.unlimited.greenUniverCity.function.academic.common.Academi
 import com.univercity.unlimited.greenUniverCity.function.academic.review.exception.TimeTableNotFoundException;
 import com.univercity.unlimited.greenUniverCity.function.academic.offering.entity.CourseOffering;
 import com.univercity.unlimited.greenUniverCity.function.academic.offering.service.CourseOfferingService;
+import com.univercity.unlimited.greenUniverCity.function.academic.section.entity.ClassSection;
+import com.univercity.unlimited.greenUniverCity.function.academic.section.service.ClassSectionService;
 import com.univercity.unlimited.greenUniverCity.function.academic.timetable.dto.TimeTableCreateDTO;
 import com.univercity.unlimited.greenUniverCity.function.academic.timetable.dto.TimeTableResponseDTO;
 import com.univercity.unlimited.greenUniverCity.function.academic.timetable.dto.TimeTableUpdateDTO;
@@ -23,7 +25,7 @@ import java.util.List;
 public class TimeTableServiceImpl implements TimeTableService{
     private final TimeTableRepository repository;
 
-    private final CourseOfferingService offeringService;
+    private final ClassSectionService sectionService;
 
     private final AcademicSecurityValidator validator;
 
@@ -33,7 +35,8 @@ public class TimeTableServiceImpl implements TimeTableService{
      */
 
     private TimeTableResponseDTO toResponseDTO(TimeTable timeTable){
-        CourseOffering courseOffering=timeTable.getCourseOffering();
+        ClassSection section=timeTable.getClassSection();
+        CourseOffering courseOffering=section.getCourseOffering();
         User user=courseOffering.getProfessor();
 
         return
@@ -41,7 +44,6 @@ public class TimeTableServiceImpl implements TimeTableService{
                         .timetableId(timeTable.getTimetableId())
                         .startTime(timeTable.getStartTime())
                         .endTime(timeTable.getEndTime())
-                        .location(timeTable.getLocation())
                         .dayOfWeek(timeTable.getDayOfWeek())
                         .courseName(courseOffering.getCourseName())
                         .professorNickname(user.getNickname())
@@ -109,19 +111,19 @@ public class TimeTableServiceImpl implements TimeTableService{
     // 구상: serviceImpl 구현부내에 userId값을 받아서 검증하는 함수를 만들어서 검증예정
     @Override
     public TimeTableResponseDTO createTimeTableForProfessor(TimeTableCreateDTO dto, String requesterEmail) {
-        log.info("2) 시간표 생성 -교수:{}, offeringId:{}",requesterEmail,dto.getOfferingId());
+        log.info("2) 시간표 생성 -교수:{}, getSectionId:{}",requesterEmail,dto.getSectionId());
 
-        CourseOffering offering=offeringService.getCourseOfferingEntity(dto.getOfferingId());
+        ClassSection section=sectionService.getClassSectionEntity(dto.getSectionId());
+        CourseOffering offering=section.getCourseOffering();
 
         // T-security 보안검사
         validator.validateProfessorOwnership(offering,requesterEmail,"시간표 생성");
         
         TimeTable timeTable=TimeTable.builder()
-                .courseOffering(offering)
+                .classSection(section)
                 .dayOfWeek(dto.getDayOfWeek())
                 .startTime(dto.getStartTime())
                 .endTime(dto.getEndTime())
-                .location(dto.getLocation())
                 .build();
 
         TimeTable saveTimeTable=repository.save(timeTable);
@@ -142,20 +144,18 @@ public class TimeTableServiceImpl implements TimeTableService{
                                 "시간표가 존재하지 않습니다. timeId:" + dto.getTimetableId()));
 
         // T-security 보안검사보안 검사(소유권 검증)
-        CourseOffering offering = timeTable.getCourseOffering();
+        CourseOffering offering = timeTable.getClassSection().getCourseOffering();
         validator.validateProfessorOwnership(offering,requesterEmail,"시간표 수정");
 
-        timeTable.setLocation(dto.getLocation());
         timeTable.setDayOfWeek(dto.getDayOfWeek());
         timeTable.setStartTime(dto.getStartTime());
         timeTable.setEndTime(dto.getEndTime());
 
         TimeTable updateTimeTable=repository.save(timeTable);
 
-        log.info("5) 시간표 수정 성공 -교수:{}, timetableId:{},강의실:{},요일:{},시작시간:{},종료시간:{}",
+        log.info("5) 시간표 수정 성공 -교수:{}, timetableId:{},요일:{},시작시간:{},종료시간:{}",
                 requesterEmail,
                 dto.getTimetableId(),
-                dto.getLocation(),
                 dto.getDayOfWeek(),
                 dto.getStartTime(),
                 dto.getEndTime());
@@ -175,7 +175,7 @@ public class TimeTableServiceImpl implements TimeTableService{
                                 "시간표가 존재하지 않습니다. timeId:" + timetableId));
 
         // T-security 보안검사
-        CourseOffering offering = timeTable.getCourseOffering();
+        CourseOffering offering = timeTable.getClassSection().getCourseOffering();
         validator.validateProfessorOwnership(offering,requesterEmail,"시간표 삭제");
 
         repository.delete(timeTable);

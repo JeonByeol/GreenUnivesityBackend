@@ -55,7 +55,7 @@ public class StudentScoreServiceImpl implements StudentScoreService{
 
         Enrollment enrollment= enrollmentService.getEnrollmentEntity(dto.getEnrollmentId());
 
-        CourseOffering offering= enrollment.getCourseOffering();
+        CourseOffering offering= enrollment.getClassSection().getCourseOffering();
         validator.validateProfessorOwnership(offering, professorEmail, "점수입력");
 
         GradeItem gradeItem = itemService.getGradeItemEntity(dto.getItemId());
@@ -135,7 +135,7 @@ public class StudentScoreServiceImpl implements StudentScoreService{
         StudentScore studentScore=repository.findById(scoreId)
                 .orElseThrow(()->new IllegalArgumentException("점수 정보를 찾을 수 없습니다"));
         
-        CourseOffering offering= studentScore.getEnrollment().getCourseOffering();
+        CourseOffering offering= studentScore.getEnrollment().getClassSection().getCourseOffering();
         validator.validateProfessorOwnership(offering, professorEmail, "점수수정");
 
         //만점 초과 검증

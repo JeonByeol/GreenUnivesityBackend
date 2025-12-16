@@ -16,9 +16,10 @@ public interface ReviewRepository extends JpaRepository<Review,Long> {
     //특정 과목에 대해 존재하는 리뷰 목록 조회 쿼리 식별
     @Query("SELECT r FROM Review r " +
             "JOIN FETCH r.enrollment e " +
-            "JOIN FETCH e.courseOffering co " +
+            "JOIN FETCH e.classSection se " +
             "JOIN FETCH e.user u " +
-            "WHERE e.courseOffering.offeringId = :offeringId")
+            "JOIN FETCH se.courseOffering co " +
+            "WHERE co.offeringId = :offeringId")
     List<Review> findReviewsByCourseOfferingId(@Param("offeringId") Long offeringId);
 
     //R-3)RS에 선언된 writeReviewStudent의 RSL에서 중복 리뷰를 확인하기 위해 선언된

@@ -146,7 +146,7 @@ public class GradeRepositoryTests {
         for (Enrollment enrollment : enrollments) {
             // 해당 강의의 평가항목 조회
             List<GradeItem> gradeItems = gradeItemRepository
-                    .findByOfferingId(enrollment.getCourseOffering().getOfferingId());
+                    .findByOfferingId(enrollment.getClassSection().getCourseOffering().getOfferingId());
 
             if (gradeItems.isEmpty()) {
                 log.warn("수강신청 ID [{}]의 강의에 평가항목이 없습니다. 건너뜁니다.",

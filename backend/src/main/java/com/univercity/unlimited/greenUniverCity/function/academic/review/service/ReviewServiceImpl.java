@@ -4,7 +4,6 @@ import com.univercity.unlimited.greenUniverCity.function.academic.enrollment.ent
 import com.univercity.unlimited.greenUniverCity.function.academic.enrollment.service.EnrollmentService;
 import com.univercity.unlimited.greenUniverCity.function.academic.offering.entity.CourseOffering;
 import com.univercity.unlimited.greenUniverCity.function.academic.review.dto.ReviewCreateDTO;
-import com.univercity.unlimited.greenUniverCity.function.academic.review.dto.LegacyReviewDTO;
 import com.univercity.unlimited.greenUniverCity.function.academic.review.dto.ReviewResponseDTO;
 import com.univercity.unlimited.greenUniverCity.function.academic.review.dto.ReviewUpdateDTO;
 import com.univercity.unlimited.greenUniverCity.function.academic.review.entity.Review;
@@ -12,6 +11,7 @@ import com.univercity.unlimited.greenUniverCity.function.academic.review.excepti
 import com.univercity.unlimited.greenUniverCity.function.academic.review.exception.ReviewNotFoundException;
 import com.univercity.unlimited.greenUniverCity.function.academic.review.exception.UnauthorizedReviewException;
 import com.univercity.unlimited.greenUniverCity.function.academic.review.repository.ReviewRepository;
+import com.univercity.unlimited.greenUniverCity.function.academic.section.entity.ClassSection;
 import com.univercity.unlimited.greenUniverCity.function.member.user.entity.User;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -44,7 +44,8 @@ public class ReviewServiceImpl implements ReviewService{
 
     private ReviewResponseDTO toResponseDTO(Review review) {
         Enrollment enrollment = review.getEnrollment();
-        CourseOffering courseOffering=enrollment.getCourseOffering();
+        ClassSection section=enrollment.getClassSection();
+        CourseOffering courseOffering=section.getCourseOffering();
         User user=enrollment.getUser();
 
         return ReviewResponseDTO.builder()
@@ -117,12 +118,12 @@ public class ReviewServiceImpl implements ReviewService{
     //구상:modelMapper를 좀 더 깔끔하거나 좋은 방식으로 수정하거나 mapper를 사용 안 할 예정
     @Transactional
     @Override
-    public List<LegacyReviewDTO> findAllReview() {
+    public List<ReviewResponseDTO> findAllReview() {
         int cnt=0;
         log.info("2) 여기는 전체 리뷰 조회 service입니다 service ");
-        List<LegacyReviewDTO> dtoList=new ArrayList<>();
+        List<ReviewResponseDTO> dtoList=new ArrayList<>();
         for(Review i:repository.findAll()){
-            LegacyReviewDTO r=mapper.map(i, LegacyReviewDTO.class);
+            ReviewResponseDTO r=mapper.map(i, ReviewResponseDTO.class);
             log.info("5 ) cnt= {} 여기는 전체 리뷰 조회 service입니다 service,{}  " , cnt++ , i);
             dtoList.add(r);
         }
@@ -227,8 +228,4 @@ public class ReviewServiceImpl implements ReviewService{
         return toResponseDTO(review);
     }
 
-    @Override//R-A) **(기능 작성 부탁드리거나/삭제 부탁드립니다) **
-    public ResponseEntity<String> addReview(LegacyReviewDTO legacyReviewDTO) {
-        return null;
-    }
 }

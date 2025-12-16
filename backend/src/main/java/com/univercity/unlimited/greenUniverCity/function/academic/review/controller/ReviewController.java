@@ -1,7 +1,6 @@
 package com.univercity.unlimited.greenUniverCity.function.academic.review.controller;
 
 import com.univercity.unlimited.greenUniverCity.function.academic.review.dto.ReviewCreateDTO;
-import com.univercity.unlimited.greenUniverCity.function.academic.review.dto.LegacyReviewDTO;
 import com.univercity.unlimited.greenUniverCity.function.academic.review.dto.ReviewResponseDTO;
 import com.univercity.unlimited.greenUniverCity.function.academic.review.dto.ReviewUpdateDTO;
 import com.univercity.unlimited.greenUniverCity.function.academic.review.service.ReviewService;
@@ -23,7 +22,7 @@ public class ReviewController {
 
     //R-1) 리뷰 전체 조회
     @GetMapping("/all")
-    public List<LegacyReviewDTO> postmanTestReview(){
+    public List<ReviewResponseDTO> postmanTestReview(){
         log.info("1) 여기는 리뷰 전체 조회 Controller 입니다");
         return reviewService.findAllReview();
     }

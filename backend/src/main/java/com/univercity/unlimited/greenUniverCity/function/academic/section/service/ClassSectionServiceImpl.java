@@ -1,6 +1,7 @@
 package com.univercity.unlimited.greenUniverCity.function.academic.section.service;
 
 import com.univercity.unlimited.greenUniverCity.function.academic.common.AcademicSecurityValidator;
+import com.univercity.unlimited.greenUniverCity.function.academic.enrollment.service.EnrollmentCountService;
 import com.univercity.unlimited.greenUniverCity.function.academic.enrollment.service.EnrollmentService;
 import com.univercity.unlimited.greenUniverCity.function.academic.offering.entity.CourseOffering;
 import com.univercity.unlimited.greenUniverCity.function.academic.offering.service.CourseOfferingService;
@@ -28,7 +29,7 @@ public class ClassSectionServiceImpl implements ClassSectionService{
 
     private final AcademicSecurityValidator validator;
 
-    private final EnrollmentService enrollmentService;
+    private final EnrollmentCountService enrollmentCountService;
 
     /**
      * SE-A) ClassSection 엔티티를 (Response)DTO로 변환
@@ -40,7 +41,7 @@ public class ClassSectionServiceImpl implements ClassSectionService{
         User user=courseOffering.getProfessor();
 
         // 1. 현재 수강 인원 계산 (EnrollmentService 사용)
-        Integer currentCount = enrollmentService.getCurrentEnrollmentCount(section.getSectionId());
+        Integer currentCount = enrollmentCountService.getCurrentEnrollmentCount(section.getSectionId());
 
         ClassSectionResponseDTO response= ClassSectionResponseDTO.builder()
                         .sectionId(section.getSectionId())
@@ -53,6 +54,7 @@ public class ClassSectionServiceImpl implements ClassSectionService{
                         .semester(courseOffering.getSemester())
                         .professorName(user.getNickname())
                         .build();
+
         // 3. 계산 필드 추가 (Service에서 계산)
         calculateAndSetAdditionalFields(response);
 
@@ -197,5 +199,12 @@ public class ClassSectionServiceImpl implements ClassSectionService{
                 .orElseThrow(() -> new ClassSectionNotFoundException(
                         "분반이 존재하지 않습니다. sectionId:" + sectionId));
         return toResponseDTO(section);
+    }
+
+    //SE-E) 외부 Service에서 classSection 정보 조회 및 활용
+    @Override
+    public ClassSection getClassSectionEntity(Long sectionId) {
+        return repository.findById(sectionId)
+                .orElseThrow(()->new IllegalArgumentException("분반이 존재하지 않습니다."));
     }
 }

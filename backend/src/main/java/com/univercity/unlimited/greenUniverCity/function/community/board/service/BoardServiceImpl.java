@@ -4,7 +4,6 @@ package com.univercity.unlimited.greenUniverCity.function.community.board.servic
 import com.univercity.unlimited.greenUniverCity.function.community.board.dto.BoardCreateDTO;
 import com.univercity.unlimited.greenUniverCity.function.community.board.dto.BoardResponseDTO;
 import com.univercity.unlimited.greenUniverCity.function.community.board.dto.BoardUpdateDTO;
-import com.univercity.unlimited.greenUniverCity.function.community.board.dto.LegacyBoardDTO;
 import com.univercity.unlimited.greenUniverCity.function.community.board.entity.Board;
 import com.univercity.unlimited.greenUniverCity.function.community.board.repository.BoardRepository;
 import lombok.RequiredArgsConstructor;
@@ -24,19 +23,19 @@ public class BoardServiceImpl implements BoardService {
 
     // 1) 전체 조회
     @Override
-    public List<LegacyBoardDTO> findAllBoard() {
+    public List<BoardResponseDTO> findAllBoard() {
         return repository.findAll()
                 .stream()
-                .map(board -> mapper.map(board, LegacyBoardDTO.class))
+                .map(board -> mapper.map(board, BoardResponseDTO.class))
                 .toList();
     }
 
     // 2) 단건 조회
     @Override
-    public LegacyBoardDTO findIdBoard(Long boardId) {
+    public BoardResponseDTO findIdBoard(Long boardId) {
         Board board = repository.findById(boardId)
                 .orElseThrow(() -> new RuntimeException("게시물이 없습니다."));
-        return mapper.map(board, LegacyBoardDTO.class);
+        return mapper.map(board, BoardResponseDTO.class);
     }
 
     // 3) 생성 (create)

@@ -23,7 +23,7 @@ public class TimeTableUpdateDTO {
     @NotNull(message = "종료시간은 필수입니다.")
     private LocalDateTime endTime; //종료시간
 
-    private String location; //강의실 **삭제예정**
+//    private String location; //강의실 **삭제예정**
 
 
 }

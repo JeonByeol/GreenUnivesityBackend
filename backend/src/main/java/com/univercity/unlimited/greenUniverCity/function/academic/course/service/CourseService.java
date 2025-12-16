@@ -3,14 +3,13 @@ package com.univercity.unlimited.greenUniverCity.function.academic.course.servic
 import com.univercity.unlimited.greenUniverCity.function.academic.course.dto.CourseCreateDTO;
 import com.univercity.unlimited.greenUniverCity.function.academic.course.dto.CourseResponseDTO;
 import com.univercity.unlimited.greenUniverCity.function.academic.course.dto.CourseUpdateDTO;
-import com.univercity.unlimited.greenUniverCity.function.academic.course.dto.LegacyCourseDTO;
 import com.univercity.unlimited.greenUniverCity.function.academic.course.entity.Course;
 
 import java.util.List;
 import java.util.Map;
 
 public interface CourseService {
-    List<LegacyCourseDTO> legacyFindAllCourse();
+    List<CourseResponseDTO> legacyFindAllCourse();
     List<CourseResponseDTO> findAllCourse();
     List<CourseResponseDTO> findById(Long courseId);
     CourseResponseDTO createCourseByAuthorizedUser(CourseCreateDTO dto, String email);
