@@ -25,5 +25,4 @@ public class ClassSectionUpdateDTO {
     @NotNull(message = "수업 유형은 필수입니다.")
     private SectionType sectionType;
 
-    private Long classroomId;
 }

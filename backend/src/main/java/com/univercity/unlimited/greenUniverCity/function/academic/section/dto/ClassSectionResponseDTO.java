@@ -1,7 +1,10 @@
 package com.univercity.unlimited.greenUniverCity.function.academic.section.dto;
 
 import com.univercity.unlimited.greenUniverCity.function.academic.section.entity.SectionType;
+import com.univercity.unlimited.greenUniverCity.function.academic.timetable.dto.TimeTableResponseDTO;
 import lombok.*;
+
+import java.util.List;
 
 @Getter
 @Setter
@@ -19,16 +22,15 @@ public class ClassSectionResponseDTO {
     private SectionType sectionType;
     private String sectionTypeDisplay; // "온라인", "오프라인", "혼합형"
 
-    //Classroom 정보
-    private Long classroomId;
-    private String classroomLocation; // 강의실 위치
-    
     //CourseOffering 정보
     private Long offeringId; //개설강의 id
     private String courseName; //강의명
     private Integer year; //개설년도
     private String semester; //개설학기
     private String professorName; //담당교수
+
+    //TimeTable의 정보
+    private List<TimeTableResponseDTO> timeTables; // 여러 개의 시간표(요일/시간/강의실)를 리스트로 내려줍니다.
 
     // ** 계산 필드 - > 나중에 사용할 지 안할지 모름 현재는 사용 안함 / 사용 안하면 삭제
     private Integer availableSeats; // 남은 자리 = maxCapacity - currentCount

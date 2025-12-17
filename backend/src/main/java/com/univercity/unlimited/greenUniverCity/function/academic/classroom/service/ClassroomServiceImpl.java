@@ -162,4 +162,11 @@ public class ClassroomServiceImpl implements ClassroomService{
 
         log.info("5) 강의실 정보 삭제 성공 교수-:{}, classroomId-:{}",email,classroomId);
     }
+
+    //CR-6) 외부 service에서 classroom의 정보를 조회하기 위한 service선언부
+    @Override
+    public Classroom getClassroomEntity(Long classroomId) {
+        return repository.findById(classroomId)
+                .orElseThrow(()->new IllegalArgumentException("강의실 정보를 찾을 수 없습니다."));
+    }
 }
