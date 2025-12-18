@@ -135,10 +135,6 @@ public class ClassroomServiceImpl implements ClassroomService{
                         "3)보안 검사 시도 식별 코드 -:CR-4 " +
                                 "강의실 정보가 존재하지 않습니다 classroomId " + dto.getClassroomId()));
 
-//        classroom.setCapacity(dto.getCapacity());
-//        classroom.setLocation(dto.getLocation());
-//        Classroom updateClassroom=repository.save(classroom);
-
         validateOwnerShip(email,"수정");
 
         classroom.updateClassroomInfo(dto.getLocation(), dto.getCapacity());
@@ -165,5 +161,12 @@ public class ClassroomServiceImpl implements ClassroomService{
         repository.delete(classroom);
 
         log.info("5) 강의실 정보 삭제 성공 교수-:{}, classroomId-:{}",email,classroomId);
+    }
+
+    //CR-6) 외부 service에서 classroom의 정보를 조회하기 위한 service선언부
+    @Override
+    public Classroom getClassroomEntity(Long classroomId) {
+        return repository.findById(classroomId)
+                .orElseThrow(()->new IllegalArgumentException("강의실 정보를 찾을 수 없습니다."));
     }
 }

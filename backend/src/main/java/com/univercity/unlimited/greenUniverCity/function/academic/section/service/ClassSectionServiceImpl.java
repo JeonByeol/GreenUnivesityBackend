@@ -1,5 +1,7 @@
 package com.univercity.unlimited.greenUniverCity.function.academic.section.service;
 
+import com.univercity.unlimited.greenUniverCity.function.academic.classroom.entity.Classroom;
+import com.univercity.unlimited.greenUniverCity.function.academic.classroom.service.ClassroomService;
 import com.univercity.unlimited.greenUniverCity.function.academic.common.AcademicSecurityValidator;
 import com.univercity.unlimited.greenUniverCity.function.academic.enrollment.service.EnrollmentCountService;
 import com.univercity.unlimited.greenUniverCity.function.academic.enrollment.service.EnrollmentService;
@@ -11,6 +13,10 @@ import com.univercity.unlimited.greenUniverCity.function.academic.section.dto.Cl
 import com.univercity.unlimited.greenUniverCity.function.academic.section.dto.ClassSectionUpdateDTO;
 import com.univercity.unlimited.greenUniverCity.function.academic.section.entity.ClassSection;
 import com.univercity.unlimited.greenUniverCity.function.academic.section.repository.ClassSectionRepository;
+import com.univercity.unlimited.greenUniverCity.function.academic.timetable.dto.TimeTableResponseDTO;
+import com.univercity.unlimited.greenUniverCity.function.academic.timetable.entity.TimeTable;
+import com.univercity.unlimited.greenUniverCity.function.academic.timetable.service.TimeTableService;
+import com.univercity.unlimited.greenUniverCity.function.academic.timetable.service.TimeTableValidationService;
 import com.univercity.unlimited.greenUniverCity.function.member.user.entity.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,9 +33,14 @@ public class ClassSectionServiceImpl implements ClassSectionService{
 
     private final CourseOfferingService offeringService;
 
+    private final EnrollmentCountService enrollmentCountService;
+
+    private final ClassroomService classroomService;
+
     private final AcademicSecurityValidator validator;
 
-    private final EnrollmentCountService enrollmentCountService;
+    private final TimeTableValidationService timeTableValidationService;
+
 
     /**
      * SE-A) ClassSection 엔티티를 (Response)DTO로 변환
@@ -42,17 +53,31 @@ public class ClassSectionServiceImpl implements ClassSectionService{
 
         // 1. 현재 수강 인원 계산 (EnrollmentService 사용)
         Integer currentCount = enrollmentCountService.getCurrentEnrollmentCount(section.getSectionId());
+        int safeCount = (currentCount != null) ? currentCount : 0;
+
+        // 2. 시간표 정보 변환 (Entity List -> DTO List)
+        List<TimeTableResponseDTO> timeTableDTOs = section.getTimeTables().stream()
+                .map(tt -> TimeTableResponseDTO.builder()
+                        .dayOfWeek(tt.getDayOfWeek())
+                        .startTime(tt.getStartTime())
+                        .endTime(tt.getEndTime())
+                        .classroomId(tt.getClassroom() != null ? tt.getClassroom().getClassroomId() : null)
+                        .classroomName(tt.getClassroom() != null ? tt.getClassroom().getLocation() : "미정")
+                        .build())
+                .toList();
 
         ClassSectionResponseDTO response= ClassSectionResponseDTO.builder()
                         .sectionId(section.getSectionId())
                         .sectionName(section.getSectionName())
                         .maxCapacity(section.getMaxCapacity())
-                        .currentCount(currentCount != null ? currentCount : 0)
+                        .currentCount(safeCount)
+                        .sectionType(section.getSectionType())
                         .offeringId(courseOffering.getOfferingId())
                         .courseName(courseOffering.getCourseName())
                         .year(courseOffering.getYear())
                         .semester(courseOffering.getSemester())
                         .professorName(user.getNickname())
+                        .timeTables(timeTableDTOs) // 시간표 포함
                         .build();
 
         // 3. 계산 필드 추가 (Service에서 계산)
@@ -63,38 +88,54 @@ public class ClassSectionServiceImpl implements ClassSectionService{
 
     /**
      * 계산 필드를 계산하여 DTO에 설정
-     *
-     * ✅ null-safe 처리
      * - maxCapacity가 null이면 계산하지 않음
      * - currentCount는 이미 null-safe 처리됨 (toResponseDTO에서 0으로 변환)
      */
     private void calculateAndSetAdditionalFields(ClassSectionResponseDTO response) {
-        Integer maxCapacity = response.getMaxCapacity();
-        Integer currentCount = response.getCurrentCount();
+        Integer max = response.getMaxCapacity();
+        Integer current = response.getCurrentCount();
 
-        // maxCapacity가 null이면 계산 불가
-        if (maxCapacity == null) {
-            response.setAvailableSeats(null);
-            response.setIsFull(false);
-            response.setEnrollmentRate(null);
-            return;
-        }
-
+        // max가 null이면 계산 불가
+        if (max == null) return;
         // 1. 남은 자리 계산
-        Integer availableSeats = maxCapacity - currentCount;
-        response.setAvailableSeats(availableSeats);
+        response.setAvailableSeats(max - current);
 
         // 2. 마감 여부 계산
-        Boolean isFull = currentCount >= maxCapacity;
-        response.setIsFull(isFull);
+        response.setIsFull(current >= max);
 
         // 3. 수강률 계산 (백분율)
-        Double enrollmentRate = maxCapacity > 0
-                ? (currentCount.doubleValue() / maxCapacity.doubleValue()) * 100.0
-                : 0.0;
-        response.setEnrollmentRate(enrollmentRate);
+        response.setEnrollmentRate(max > 0 ? (current.doubleValue() / max) * 100.0 : 0.0);
     }
+    
+    //시간표 등록 로직
+    private void registerTimeTables(ClassSection section, List<TimeTableResponseDTO> timeTables) {
+        if (timeTables == null || timeTables.isEmpty()) return;
 
+        for (TimeTableResponseDTO ttDto : timeTables) {
+            Classroom classroom = classroomService.getClassroomEntity(ttDto.getClassroomId());
+
+            // 중복 검사
+            boolean isOverlap = timeTableValidationService.validateTimeOverlap(
+                    classroom.getClassroomId(), ttDto.getDayOfWeek(),
+                    ttDto.getStartTime(), ttDto.getEndTime()
+            );
+
+            if (isOverlap) {
+                throw new IllegalStateException("시간표 중복 발생: " + classroom.getLocation());
+            }
+
+            // 생성 및 연결
+            TimeTable timeTable = TimeTable.builder()
+                    .dayOfWeek(ttDto.getDayOfWeek())
+                    .startTime(ttDto.getStartTime())
+                    .endTime(ttDto.getEndTime())
+                    .classroom(classroom)
+                    .classSection(section)
+                    .build();
+
+            section.addTimeTable(timeTable);
+        }
+    }
     @Override
     public List<ClassSectionResponseDTO> findAllSection() {
         log.info("2) 분반 전체조회 시작");
@@ -123,22 +164,29 @@ public class ClassSectionServiceImpl implements ClassSectionService{
     //SE-3) 특정 개설강의에 대한 새로운 분반을 생성하기 위한 서비스 구현부 
     @Override
     public ClassSectionResponseDTO createSection(ClassSectionCreateDTO dto, String email) {
-        log.info("2) 분반 생성 교수-:{}, offeringId-:{}",email,dto.getOfferingId());
+        log.info("2) 분반 생성 교수-:{}, offeringId-:{}",
+                email, dto.getOfferingId());
 
         CourseOffering offering=offeringService.getCourseOfferingEntity(dto.getOfferingId());
 
         //SE-security 보안검사
-        validator.validateProfessorOwnership(offering,email,"분반 생성");
+        validator.validateProfessorOwnership(offering, email,"분반 생성");
+
 
         ClassSection classSection= ClassSection.builder()
                 .courseOffering(offering)
                 .maxCapacity(dto.getMaxCapacity())
                 .sectionName(dto.getSectionName())
+                .sectionType(dto.getSectionType())
                 .build();
+
+        // 2. 시간표 리스트 처리 (Method A: 한 번에 저장)
+        registerTimeTables(classSection, dto.getTimeTables());
 
         ClassSection saveClassSection=repository.save(classSection);
 
-        log.info("5) 분반 생성 완료 sectionId-:{}, 교수-:{}",saveClassSection.getSectionId(),email);
+        log.info("5) 분반 생성 완료 sectionId-:{}, 교수-:{}",
+                saveClassSection.getSectionId(), email);
 
         return toResponseDTO(saveClassSection);
     }
@@ -146,7 +194,8 @@ public class ClassSectionServiceImpl implements ClassSectionService{
     //SE-4) 특정 강의에 생성 된 분반의 내용을 수정하기 위한 서비스 구현부
     @Override
     public ClassSectionResponseDTO updateSection(ClassSectionUpdateDTO dto, String email) {
-        log.info("2) 분반 수정 시작 sectionId-:{}, 교수-:{}",dto.getSectionId(),email);
+        log.info("2) 분반 수정 시작 sectionId-:{}, 교수-:{}",
+                dto.getSectionId(), email);
 
         ClassSection classSection=repository.findById(dto.getSectionId())
                 .orElseThrow(()->new ClassSectionNotFoundException(
@@ -159,6 +208,7 @@ public class ClassSectionServiceImpl implements ClassSectionService{
 
         classSection.setSectionName(dto.getSectionName());
         classSection.setMaxCapacity(dto.getMaxCapacity());
+        classSection.setSectionType(dto.getSectionType());
 
         ClassSection updateClassSection=repository.save(classSection);
 

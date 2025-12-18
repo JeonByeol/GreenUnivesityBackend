@@ -4,6 +4,8 @@ import com.univercity.unlimited.greenUniverCity.function.academic.timetable.dto.
 import com.univercity.unlimited.greenUniverCity.function.academic.timetable.dto.TimeTableResponseDTO;
 import com.univercity.unlimited.greenUniverCity.function.academic.timetable.dto.TimeTableUpdateDTO;
 
+import java.time.DayOfWeek;
+import java.time.LocalTime;
 import java.util.List;
 
 public interface TimeTableService {
@@ -32,6 +34,11 @@ public interface TimeTableService {
     //T-6) T에 선언된 postmanDeleteTimeTable의 요청을 받아서 기존에 존재하는 강의에 대한 시간표를 삭제하기 위해 동작하는 서비스 선언
     void deleteByTimeTable(Long timetableId,String requesterEmail);
 
+    /**
+     * 해당 강의실, 요일, 시간에 이미 수업이 있는지 검사합니다.
+     * @return true: 중복 있음 (등록 불가), false: 중복 없음 (등록 가능)
+     */
+    boolean validateTimeOverlap(Long classroomId, DayOfWeek day, LocalTime start, LocalTime end);
 
 
 }

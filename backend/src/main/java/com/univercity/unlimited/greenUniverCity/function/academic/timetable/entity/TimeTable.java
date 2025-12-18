@@ -1,10 +1,13 @@
 package com.univercity.unlimited.greenUniverCity.function.academic.timetable.entity;
+import com.univercity.unlimited.greenUniverCity.function.academic.classroom.entity.Classroom;
 import com.univercity.unlimited.greenUniverCity.function.academic.offering.entity.CourseOffering;
 import com.univercity.unlimited.greenUniverCity.function.academic.section.entity.ClassSection;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.DayOfWeek;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 @Entity
 @AllArgsConstructor
@@ -20,25 +23,27 @@ public class TimeTable{
     @Column(name = "timetable_id")
     private Long timetableId; //시간표아이디
 
-    @Column(name = "day_of_week", length = 10, nullable = false)
-    private String dayOfWeek; //요일
+    // String → DayOfWeek Enum으로 변경
+    @Enumerated(EnumType.STRING)
+    @Column(name = "day_of_week", nullable = false)
+    private DayOfWeek dayOfWeek; // MONDAY, TUESDAY, ...
 
+    // LocalDateTime → LocalTime으로 변경
     @Column(name = "start_time", nullable = false)
-    private LocalDateTime startTime; //시작시간
+    private LocalTime startTime; // 09:00
 
     @Column(name = "end_time", nullable = false)
-    private LocalDateTime endTime; //종료시간
-    
-    @Column(name = "location", length = 50) // ** classroom이라는 장소에 대한 테이블 생성으로 삭제 예정 **
-    private String location; //장소
+    private LocalTime endTime; // 11:00
 
     @ManyToOne(fetch = FetchType.LAZY) // fk로 section을 받는게 맞음
     @JoinColumn(name="section_id")
     private ClassSection classSection;
 
-//    @ManyToOne(fetch = FetchType.LAZY) // ** 관계가 timetable이 fk로 offering을 받는것에서 section을 받는것으로 변경 삭제 예정 **
-//    @JoinColumn(name = "offering_id")
-//    private CourseOffering courseOffering;
+    // ✅ 강의실은 시간표에 속함 (TimeTable N : Classroom 1)
+    // 이유: 월요일은 101호, 수요일은 202호일 수 있음
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "classroom_id", nullable = false)
+    private Classroom classroom;
 
 
 }

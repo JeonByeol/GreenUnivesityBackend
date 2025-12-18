@@ -1,5 +1,7 @@
 package com.univercity.unlimited.greenUniverCity.function.academic.timetable.service;
 
+import com.univercity.unlimited.greenUniverCity.function.academic.classroom.entity.Classroom;
+import com.univercity.unlimited.greenUniverCity.function.academic.classroom.service.ClassroomService;
 import com.univercity.unlimited.greenUniverCity.function.academic.common.AcademicSecurityValidator;
 import com.univercity.unlimited.greenUniverCity.function.academic.review.exception.TimeTableNotFoundException;
 import com.univercity.unlimited.greenUniverCity.function.academic.offering.entity.CourseOffering;
@@ -10,6 +12,7 @@ import com.univercity.unlimited.greenUniverCity.function.academic.timetable.dto.
 import com.univercity.unlimited.greenUniverCity.function.academic.timetable.dto.TimeTableResponseDTO;
 import com.univercity.unlimited.greenUniverCity.function.academic.timetable.dto.TimeTableUpdateDTO;
 import com.univercity.unlimited.greenUniverCity.function.academic.timetable.entity.TimeTable;
+import com.univercity.unlimited.greenUniverCity.function.academic.timetable.exception.ClassroomConflictException;
 import com.univercity.unlimited.greenUniverCity.function.academic.timetable.repository.TimeTableRepository;
 import com.univercity.unlimited.greenUniverCity.function.member.user.entity.User;
 import jakarta.transaction.Transactional;
@@ -17,6 +20,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.time.DayOfWeek;
+import java.time.LocalTime;
 import java.util.List;
 
 @Service
@@ -27,6 +32,10 @@ public class TimeTableServiceImpl implements TimeTableService{
 
     private final ClassSectionService sectionService;
 
+    private final ClassroomService classroomService;
+
+    private final TimeTableValidationService validationService;
+
     private final AcademicSecurityValidator validator;
 
     /**
@@ -35,20 +44,22 @@ public class TimeTableServiceImpl implements TimeTableService{
      */
 
     private TimeTableResponseDTO toResponseDTO(TimeTable timeTable){
-        ClassSection section=timeTable.getClassSection();
-        CourseOffering courseOffering=section.getCourseOffering();
-        User user=courseOffering.getProfessor();
+        ClassSection section = timeTable.getClassSection();
+        CourseOffering courseOffering = section.getCourseOffering();
+        User user = courseOffering.getProfessor();
+        Classroom classroom = timeTable.getClassroom();
 
-        return
-                TimeTableResponseDTO.builder()
-                        .timetableId(timeTable.getTimetableId())
-                        .startTime(timeTable.getStartTime())
-                        .endTime(timeTable.getEndTime())
-                        .dayOfWeek(timeTable.getDayOfWeek())
-                        .courseName(courseOffering.getCourseName())
-                        .professorNickname(user.getNickname())
-                        .offeringId(courseOffering.getOfferingId())
-                        .build();
+        return TimeTableResponseDTO.builder()
+                .timetableId(timeTable.getTimetableId())
+                .dayOfWeek(timeTable.getDayOfWeek())
+                .startTime(timeTable.getStartTime())
+                .endTime(timeTable.getEndTime())
+                .classroomId(classroom.getClassroomId())
+                .classroomName(classroom.getLocation())
+                .sectionId(section.getSectionId())
+                .sectionName(section.getSectionName())
+                .courseName(courseOffering.getCourseName())
+                .build();
     }
 
     @Transactional
@@ -118,8 +129,22 @@ public class TimeTableServiceImpl implements TimeTableService{
 
         // T-security 보안검사
         validator.validateProfessorOwnership(offering,requesterEmail,"시간표 생성");
-        
-        TimeTable timeTable=TimeTable.builder()
+
+        // 강의실 조회
+        Classroom classroom = classroomService.getClassroomEntity(dto.getClassroomId());
+
+        // 중복 검사
+        boolean isOverlap = validationService.validateTimeOverlap(
+                classroom.getClassroomId(), dto.getDayOfWeek(),
+                dto.getStartTime(), dto.getEndTime()
+        );
+
+        if (isOverlap) {
+            throw new IllegalStateException("강의실 중복: 해당 시간에 이미 수업이 있습니다.");
+        }
+
+
+            TimeTable timeTable=TimeTable.builder()
                 .classSection(section)
                 .dayOfWeek(dto.getDayOfWeek())
                 .startTime(dto.getStartTime())
@@ -128,7 +153,13 @@ public class TimeTableServiceImpl implements TimeTableService{
 
         TimeTable saveTimeTable=repository.save(timeTable);
 
-        log.info("5) 시간표 생성 완료 -timetableId:{}, 교수:{}",saveTimeTable.getTimetableId(),requesterEmail);
+        log.info("5) 시간표 생성 완료 -timetableId:{}, 교수:{}, 강의실:{}, 요일-:{}  시간-:{}~{}",
+                saveTimeTable.getTimetableId(),
+                requesterEmail,
+                classroom.getLocation(),
+                dto.getDayOfWeek(),
+                dto.getStartTime(),
+                dto.getEndTime());
 
         return toResponseDTO(saveTimeTable);
     }
@@ -147,9 +178,24 @@ public class TimeTableServiceImpl implements TimeTableService{
         CourseOffering offering = timeTable.getClassSection().getCourseOffering();
         validator.validateProfessorOwnership(offering,requesterEmail,"시간표 수정");
 
+        // 강의실 조회
+        Classroom classroom = classroomService.getClassroomEntity(dto.getClassroomId());
+
+        // 2. 중복 검사 (수정용)
+        boolean isOverlap = validationService.validateTimeOverlapExcludingId(
+                classroom.getClassroomId(), dto.getDayOfWeek(),
+                dto.getStartTime(), dto.getEndTime(),
+                dto.getTimetableId()
+        );
+
+        if (isOverlap) {
+            throw new IllegalStateException("강의실 중복: 변경하려는 시간에 이미 다른 수업이 있습니다.");
+        }
+
         timeTable.setDayOfWeek(dto.getDayOfWeek());
         timeTable.setStartTime(dto.getStartTime());
         timeTable.setEndTime(dto.getEndTime());
+        timeTable.setClassroom(classroom);
 
         TimeTable updateTimeTable=repository.save(timeTable);
 
@@ -181,6 +227,12 @@ public class TimeTableServiceImpl implements TimeTableService{
         repository.delete(timeTable);
 
         log.info("5)시간표 삭제 성공 -교수: {},timetableId: {}",requesterEmail,timetableId);
+    }
+    
+    //T-7) 강의실 조회 서비스선언
+    @Override
+    public boolean  validateTimeOverlap(Long classroomId, DayOfWeek day, LocalTime start, LocalTime end) {
+        return validationService.validateTimeOverlap(classroomId, day, start, end);
     }
 
 }

@@ -1,6 +1,10 @@
 package com.univercity.unlimited.greenUniverCity.function.academic.section.dto;
 
+import com.univercity.unlimited.greenUniverCity.function.academic.section.entity.SectionType;
+import com.univercity.unlimited.greenUniverCity.function.academic.timetable.dto.TimeTableResponseDTO;
 import lombok.*;
+
+import java.util.List;
 
 @Getter
 @Setter
@@ -13,6 +17,10 @@ public class ClassSectionResponseDTO {
     private String sectionName; // 분반명 (예: A반, 주간반)
     private Integer maxCapacity; // 정원 (예: 40)
     private Integer currentCount; // 현재 수강 신청한 인원 수 (Enrollment 테이블 count 결과)
+    
+    //SectionType 정보
+    private SectionType sectionType;
+    private String sectionTypeDisplay; // "온라인", "오프라인", "혼합형"
 
     //CourseOffering 정보
     private Long offeringId; //개설강의 id
@@ -20,6 +28,9 @@ public class ClassSectionResponseDTO {
     private Integer year; //개설년도
     private String semester; //개설학기
     private String professorName; //담당교수
+
+    //TimeTable의 정보
+    private List<TimeTableResponseDTO> timeTables; // 여러 개의 시간표(요일/시간/강의실)를 리스트로 내려줍니다.
 
     // ** 계산 필드 - > 나중에 사용할 지 안할지 모름 현재는 사용 안함 / 사용 안하면 삭제
     private Integer availableSeats; // 남은 자리 = maxCapacity - currentCount

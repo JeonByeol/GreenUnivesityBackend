@@ -34,9 +34,3 @@ public interface EnrollmentService {
     Map<Long,Integer> getCurrentEnrollmentCounts(List<Long> sectionIds);
 
 }
-/**
- * 다른 클래스에 정보를 전달할 때 repository가 옳은지 service가 옳은지 검증 후 추후 사용 혹은 삭제 예정
- */
-//EnrollmentTestDTO getEnrollmentForGrade(Long id);//E-4)다른 service에서 enrollment에 대한 정보를 받아서 단순 조회하는 service
-//List<EnrollmentDTO> getEnrollmentFindUser(Long id);//E-5)다른 service에서 enrollment에 대한 정보를 받아오기 위해 만든 service
-///
