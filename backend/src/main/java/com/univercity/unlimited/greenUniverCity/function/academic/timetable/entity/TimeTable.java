@@ -39,7 +39,7 @@ public class TimeTable{
     @JoinColumn(name="section_id")
     private ClassSection classSection;
 
-    // ✅ 강의실은 시간표에 속함 (TimeTable N : Classroom 1)
+    //강의실은 시간표에 속함 (TimeTable N : Classroom 1)
     // 이유: 월요일은 101호, 수요일은 202호일 수 있음
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "classroom_id", nullable = false)

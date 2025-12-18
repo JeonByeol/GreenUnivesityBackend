@@ -23,13 +23,14 @@ public class ReviewController {
     //R-1) 리뷰 전체 조회
     @GetMapping("/all")
     public List<ReviewResponseDTO> postmanTestReview(){
-        log.info("1) 여기는 리뷰 전체 조회 Controller 입니다");
+        log.info("1) 리뷰 전체 조회 요청");
         return reviewService.findAllReview();
     }
 
     //R-2) 특정 과목에 대해 존재하는 리뷰 목록 조회 컨트롤러
     @GetMapping("/course/{offeringId}")
     public List<ReviewResponseDTO> postmanTestStudent(@PathVariable("offeringId") Long offeringId){
+        log.info("1) 특정 과목에 대한 리뷰 조회요청 - offeringId-:{}",offeringId);
         return reviewService.findOfferingForReview(offeringId);
     }
 
@@ -55,14 +56,13 @@ public class ReviewController {
     }
 
     //R-4) 학생이 기존에 작성했던 리뷰에 대해 수정하는 컨트롤러
-    @PutMapping("/update/{reviewId}")
+    @PutMapping("/update")
     public ResponseEntity<ReviewResponseDTO> postmanUpdateReview(
-            @PathVariable("reviewId") Long reviewId,
             @RequestBody ReviewUpdateDTO dto,
             @RequestHeader(value = "X-User-Email", required = false) String studentEmail){
 
         log.info("1) 리뷰 수정 요청 reviewId-:{},comment:{},rating:{}",
-                reviewId,dto.getComment(),dto.getRating());
+                dto.getReviewId(),dto.getComment(),dto.getRating());
 
         // Postman 테스트용: Header가 없으면 기본값 사용 (개발 환경에서만)
         if (studentEmail == null || studentEmail.isEmpty()) {
@@ -71,7 +71,6 @@ public class ReviewController {
         }
 
         ReviewResponseDTO updateReview=reviewService.myReviewUpdate(
-                reviewId,
                 dto,
                 studentEmail
         );

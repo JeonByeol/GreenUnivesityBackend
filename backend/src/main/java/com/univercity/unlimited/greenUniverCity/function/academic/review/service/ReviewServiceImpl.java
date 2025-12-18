@@ -1,5 +1,6 @@
 package com.univercity.unlimited.greenUniverCity.function.academic.review.service;
 
+import com.univercity.unlimited.greenUniverCity.function.academic.common.AcademicSecurityValidator;
 import com.univercity.unlimited.greenUniverCity.function.academic.enrollment.entity.Enrollment;
 import com.univercity.unlimited.greenUniverCity.function.academic.enrollment.service.EnrollmentService;
 import com.univercity.unlimited.greenUniverCity.function.academic.offering.entity.CourseOffering;
@@ -32,6 +33,8 @@ public class ReviewServiceImpl implements ReviewService{
 
     private final EnrollmentService enrollmentService;
 
+    private final AcademicSecurityValidator validator;
+
     private final ModelMapper mapper;
 
     /**
@@ -56,27 +59,10 @@ public class ReviewServiceImpl implements ReviewService{
                 .updatedAt(review.getUpdatedAt())
                 .courseName(courseOffering.getCourseName())
                 .studentNickname(user!= null ? user.getNickname() : "탈퇴한 사용자")
+                .enrollmentId(enrollment.getEnrollmentId())
                 .build();
     }
-
-    /**
-     * R-3-1) 보안 검사:
-     * -로그인한 학생이 해당 수강신청의 주인인지 확인하는 함수
-     */
-
-    private void validateStudentOwnership(Enrollment enrollment, String studentEmail) {
-        String enrollmentOwnerEmail = enrollment.getUser().getEmail();
-
-        if (!enrollmentOwnerEmail.equals(studentEmail)) {
-            log.warn("권한 없는 리뷰 작성 시도 - 로그인: {}, 수강신청 주인: {}",
-                    studentEmail, enrollmentOwnerEmail);
-            throw new UnauthorizedReviewException(
-                    "4) 보안 검사 시도 식별코드 -:R-3-1" +
-                            "본인이 수강한 과목에만 리뷰를 작성할 수 있습니다.");
-        }
-
-        log.info("4) 권한 검증 통과 - 학생: {}", studentEmail);
-    }
+    
 
     /**
      * R-3-2) 중복 리뷰 검사: 이미 해당 수강신청에 리뷰를 작성했는지 확인하는 함수
@@ -95,23 +81,6 @@ public class ReviewServiceImpl implements ReviewService{
         log.info("4) 중복 검사 통과 - enrollmentId: {}", enrollment.getEnrollmentId());
     }
 
-    /**
-     * R-4-1) 리뷰 소유권 검사: 로그인한 학생이 해당 리뷰의 작성자인지 확인하는 함수
-     */
-    private void validateReviewOwnership(Review review, String studentEmail) {
-        String reviewOwnerEmail = review.getEnrollment().getUser().getEmail();
-
-        if (!reviewOwnerEmail.equals(studentEmail)) {
-            log.warn("리뷰 수정 권한 없음 - 요청자: {}, 작성자: {}",
-                    studentEmail, reviewOwnerEmail);
-            throw new UnauthorizedReviewException(
-                    "4) 보안 검사 시도 식별코드 -:R-4-1" +
-                    "본인이 작성한 리뷰만 수정할 수 있습니다.");
-        }
-
-        log.info("4) 리뷰 소유권 검증 통과 - 학생: {}, reviewId: {}", studentEmail, review.getReviewId());
-    }
-
 
     //R-1) 리뷰 테이블에 존재하는 모든 데이터를 조회하는 서비스 구현부
     //->60% 완료
@@ -119,26 +88,38 @@ public class ReviewServiceImpl implements ReviewService{
     @Transactional
     @Override
     public List<ReviewResponseDTO> findAllReview() {
-        int cnt=0;
-        log.info("2) 여기는 전체 리뷰 조회 service입니다 service ");
-        List<ReviewResponseDTO> dtoList=new ArrayList<>();
-        for(Review i:repository.findAll()){
-            ReviewResponseDTO r=mapper.map(i, ReviewResponseDTO.class);
-            log.info("5 ) cnt= {} 여기는 전체 리뷰 조회 service입니다 service,{}  " , cnt++ , i);
-            dtoList.add(r);
-        }
-        return dtoList;
+        log.info("2) 리뷰 전체조회 시작");
+        List<Review> reviews=repository.findAllWithDetails();
+
+        log.info("3) 리뷰 전체조회 성공");
+
+        return reviews.stream()
+                .map(this::toResponseDTO)
+                .toList();
     }
 
     //R-2)특정 과목에 대해 존재하는 리뷰 목록 조회 서비스 구현부
     // -> 98.9% 완료 나중에 구상 혹은 프론트앤드에서 작업할 때 추가 수정 하거나 그대로 사용 하면 될 듯?
     @Override
     public List<ReviewResponseDTO> findOfferingForReview(Long offeringId) {
+        log.info("2 특정 과목에 존재하는 리뷰 조회 시작 - offeringId-:{}", offeringId);
         List<Review> reviews=repository.findReviewsByCourseOfferingId(offeringId);
-        
+
+        log.info("3)특정 과목 리뷰 조회 성공 - offeringId-:{}",offeringId);
         return reviews.stream()
                 .map(this::toResponseDTO)
                 .toList();
+    }
+    
+    //R-2-1) 본인 id를 활용하여 단건 조회를 할 수 있는 service구현부
+    @Override
+    public ReviewResponseDTO getReview(Long reviewId) {
+        log.info("2) 리뷰 단건 조회 시작 - reviewId-:{}", reviewId);
+
+        Review review= repository.findById(reviewId)
+                .orElseThrow(()->new IllegalArgumentException("리뷰 정보를 찾을 수 없습니다."));
+
+        return toResponseDTO(review);
     }
 
     //R-3) 학생이 수강중이거나 완료한 과목에 대한 리뷰를 작성하는 서비스 구현부
@@ -149,10 +130,10 @@ public class ReviewServiceImpl implements ReviewService{
 
         Enrollment enrollment = enrollmentService.getEnrollmentEntity(dto.getEnrollmentId());
 
-        //R-3-1)보안 검사
-        validateStudentOwnership(enrollment, studentEmail);
+        // 보안 검사
+        validator.validateStudentEnrollmentOwnership(enrollment,studentEmail,"리뷰생성");
 
-        //R-3-2)중복 리뷰 검사
+        // 중복 리뷰 검사
         validateDuplicateReview(enrollment);
 
         Review review = Review.builder()
@@ -172,18 +153,19 @@ public class ReviewServiceImpl implements ReviewService{
     //R-4) 학생 본인이 기존에 작성한 리뷰를 수정하는 서비스 구현부
     //-> 90% 완료? 나중에 보안security를 추가하면 그거에 맞춰서 보안 작업에 대한 부분만 리팩토링 하면 됨
     @Override
-    public ReviewResponseDTO myReviewUpdate(Long reviewId, ReviewUpdateDTO dto, String studentEmail) {
+    public ReviewResponseDTO myReviewUpdate(ReviewUpdateDTO dto, String studentEmail) {
 
-        log.info("2)리뷰 수정 시작 - reviewId: {}, 학생: {}", reviewId, studentEmail);
+        log.info("2)리뷰 수정 시작 - reviewId: {}, 학생: {}",
+                dto.getReviewId(), studentEmail);
 
-        //1.리뷰 조회
-        Review review = repository.findById(reviewId)
+        // 리뷰 조회
+        Review review = repository.findById(dto.getReviewId())
                 .orElseThrow(() -> new ReviewNotFoundException(
                         "3) 보안 검사 시도 식별코드 -:R-4" +
-                                "리뷰가 존재하지 않습니다. reviewId: " + reviewId));
+                                "리뷰가 존재하지 않습니다. reviewId: " + dto.getReviewId()));
 
-        //R-4-1)소유권 검증 (현재 로그인한 학생이 해당 리뷰의 작성자인지)
-        validateReviewOwnership(review, studentEmail);
+        // 보안검사
+        validator.validateReviewOwnership(review, studentEmail,"리뷰수정");
 
         review.setComment(dto.getComment());
         review.setRating(dto.getRating());
@@ -192,7 +174,7 @@ public class ReviewServiceImpl implements ReviewService{
         Review updateReview=repository.save(review);
 
         log.info("5) 리뷰 수정 성공 -학생:{}, reviewId: {},수강평:{},평점:{}",
-                studentEmail, reviewId, dto.getComment(),dto.getRating());
+                studentEmail, dto.getReviewId(), dto.getComment(),dto.getRating());
         
         return toResponseDTO(updateReview);
     }
@@ -211,21 +193,11 @@ public class ReviewServiceImpl implements ReviewService{
                                 "리뷰가 존재하지 않습니다. reviewId: " + reviewId));
 
         //R-4-1)소유권검증
-        validateReviewOwnership(review,studentEmail);
+        validator.validateReviewOwnership(review,studentEmail,"리뷰삭제");
 
         repository.delete(review);
 
         log.info("5) 리뷰 삭제 성공 -학생:{}, reviewId:{}",studentEmail,reviewId);
-    }
-
-    @Override
-    public ReviewResponseDTO getReview(Long reviewId) {
-        log.info("2) 리뷰 단건 조회 시작 - reviewId-:{}", reviewId);
-
-        Review review= repository.findById(reviewId)
-                .orElseThrow(()->new IllegalArgumentException("리뷰 정보를 찾을 수 없습니다."));
-
-        return toResponseDTO(review);
     }
 
 }

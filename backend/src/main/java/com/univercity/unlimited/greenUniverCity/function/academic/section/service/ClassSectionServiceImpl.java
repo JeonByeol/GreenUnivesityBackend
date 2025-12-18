@@ -80,7 +80,7 @@ public class ClassSectionServiceImpl implements ClassSectionService{
                         .timeTables(timeTableDTOs) // 시간표 포함
                         .build();
 
-        // 3. 계산 필드 추가 (Service에서 계산)
+        // 계산 필드 추가 (Service에서 계산)
         calculateAndSetAdditionalFields(response);
 
         return response;
@@ -139,7 +139,7 @@ public class ClassSectionServiceImpl implements ClassSectionService{
     @Override
     public List<ClassSectionResponseDTO> findAllSection() {
         log.info("2) 분반 전체조회 시작");
-        List<ClassSection> classSections=repository.findAll();
+        List<ClassSection> classSections=repository.findAllWithDetails();
 
         log.info("3) 분반 전체조회 성공");
 

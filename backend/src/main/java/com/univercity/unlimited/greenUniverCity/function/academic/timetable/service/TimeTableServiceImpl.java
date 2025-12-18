@@ -66,7 +66,7 @@ public class TimeTableServiceImpl implements TimeTableService{
     @Override
     public List<TimeTableResponseDTO> findAllTimeTable() {
         log.info("2) 시간표 전체조회 시작");
-        List<TimeTable> timeTables=repository.findAll();
+        List<TimeTable> timeTables=repository.findAllWithDetails();
 
         log.info("3) 시간표 전체조회 성공");
 

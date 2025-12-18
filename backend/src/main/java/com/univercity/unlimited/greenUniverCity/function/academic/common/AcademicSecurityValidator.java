@@ -2,6 +2,7 @@ package com.univercity.unlimited.greenUniverCity.function.academic.common;
 
 import com.univercity.unlimited.greenUniverCity.function.academic.enrollment.entity.Enrollment;
 import com.univercity.unlimited.greenUniverCity.function.academic.offering.entity.CourseOffering;
+import com.univercity.unlimited.greenUniverCity.function.academic.review.entity.Review;
 import com.univercity.unlimited.greenUniverCity.function.academic.review.exception.DataIntegrityException;
 import com.univercity.unlimited.greenUniverCity.function.academic.review.exception.InvalidRoleException;
 import com.univercity.unlimited.greenUniverCity.function.academic.review.exception.UnauthorizedException;
@@ -113,6 +114,7 @@ public class AcademicSecurityValidator {
         validateProfessorOwnership(offering, requesterEmail, action);
     }
 
+
     /**
      * AC-security) 보안검사 - Enrollment 기준 (오버로딩)
      * Enrollment에서 ClassSection → CourseOffering을 추출하여 검증
@@ -133,6 +135,67 @@ public class AcademicSecurityValidator {
 
         // ClassSection 검증 로직 재사용 (내부적으로 CourseOffering 검증으로 이어짐)
         validateProfessorOwnership(section, requesterEmail, action);
+    }
+
+    /*
+    ===================================== Review =====================================
+     */
+
+    /**
+     * AC-security) 보안검사 - 학생 수강신청 소유권 확인
+     * 사용처: R-:(R-3-1) 리뷰 작성 시
+     */
+    public void validateStudentEnrollmentOwnership(Enrollment enrollment, String requesterEmail, String action) {
+        log.info("4) {} - 학생 수강신청 소유권 검증: enrollmentId={}", action, enrollment.getEnrollmentId());
+
+        User enrollmentOwner = enrollment.getUser();
+
+        if (enrollmentOwner == null) {
+            throw new DataIntegrityException(
+                    String.format(
+                            "4)보안 검사 시도 식별코드-: AC-security-7 (%s) " +
+                                    "데이터 오류: 수강신청에 학생 정보가 없습니다. enrollmentId: %s",
+                            action, enrollment.getEnrollmentId())
+            );
+        }
+
+        if (!enrollmentOwner.getEmail().equals(requesterEmail)) {
+            throw new UnauthorizedException(
+                    String.format(
+                            "4)보안 검사 시도 식별코드-: AC-security-8 (%s) " +
+                                    "본인이 수강한 과목에만 작업할 수 있습니다. " +
+                                    "수강신청 학생: %s (userId: %s), 요청자: %s",
+                            action,
+                            enrollmentOwner.getEmail(), enrollmentOwner.getUserId(),
+                            requesterEmail)
+            );
+        }
+
+        log.info("4) 학생 수강신청 소유권 검증 완료 - 학생: {}, 작업: {}", requesterEmail, action);
+    }
+
+    /**
+     * AC-security) 보안검사 - 리뷰 소유권 확인
+     * 사용처: R-:(R-4-1) 리뷰 수정/삭제 시
+     */
+    public void validateReviewOwnership(Review review, String requesterEmail, String action) {
+        log.info("4) {} - 리뷰 소유권 검증: reviewId={}", action, review.getReviewId());
+
+        Enrollment enrollment = review.getEnrollment();
+
+        if (enrollment == null) {
+            throw new DataIntegrityException(
+                    String.format(
+                            "4)보안 검사 시도 식별코드-: AC-security-9 (%s) " +
+                                    "데이터 오류: 리뷰에 수강신청 정보가 없습니다. reviewId: %s",
+                            action, review.getReviewId())
+            );
+        }
+
+        // Enrollment을 통해 학생 소유권 검증 (기존 로직 재사용)
+        validateStudentEnrollmentOwnership(enrollment, requesterEmail, action);
+
+        log.info("4) 리뷰 소유권 검증 완료 - 학생: {}, reviewId: {}", requesterEmail, review.getReviewId());
     }
 }
 
