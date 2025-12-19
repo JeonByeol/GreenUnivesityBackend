@@ -16,6 +16,7 @@ import com.univercity.unlimited.greenUniverCity.function.academic.section.entity
 import com.univercity.unlimited.greenUniverCity.function.academic.section.service.ClassSectionService;
 import com.univercity.unlimited.greenUniverCity.function.member.user.entity.User;
 import com.univercity.unlimited.greenUniverCity.function.member.user.service.UserService;
+import com.univercity.unlimited.greenUniverCity.util.EntityMapper;
 import com.univercity.unlimited.greenUniverCity.util.MapperUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -38,21 +39,10 @@ public class EnrollmentServiceImpl implements EnrollmentService {
 
     private final UserService userService;
 
+    private final EntityMapper entityMapper;
+
     private final EnrollmentCountService enrollmentCountService;
-
-    private EnrollmentResponseDTO toResponseDTO(Enrollment enrollment){
-        User user = enrollment.getUser();
-        ClassSection section=enrollment.getClassSection();
-
-        return
-                EnrollmentResponseDTO.builder()
-                        .enrollmentId(enrollment.getEnrollmentId())
-                        .sectionId(section != null ?  section.getSectionId() : -1)
-                        .enrollDate(enrollment.getEnrollDate())
-                        .userId(user != null ? user.getUserId() : -1)
-                        .build();
-    }
-
+    
     //중복수강신청 검증
     private void validateDuplicateEnrollment(Long userId, Long sectionId) {
         boolean exists = repository.existsByUserUserIdAndClassSectionSectionId(userId, sectionId);
@@ -103,7 +93,7 @@ public class EnrollmentServiceImpl implements EnrollmentService {
         log.info("3) Enrollment 전체조회 성공");
 
         return enrollments.stream()
-                .map(this::toResponseDTO).toList();
+                .map(entityMapper::toEnrollmentResponseDTO).toList();
     }
 
     @Override
@@ -116,7 +106,7 @@ public class EnrollmentServiceImpl implements EnrollmentService {
             throw new RuntimeException("Enrollment 를 찾을 수없습니다." + enrollmentId);
         }
 
-        EnrollmentResponseDTO responseDTO = toResponseDTO(enrollmentOptional.get());
+        EnrollmentResponseDTO responseDTO = entityMapper.toEnrollmentResponseDTO(enrollmentOptional.get());
         return List.of(responseDTO);
     }
 
@@ -153,7 +143,7 @@ public class EnrollmentServiceImpl implements EnrollmentService {
         try {
             Enrollment result = repository.save(enrollment);
             log.info("4)추가된 Course : {}", result);
-            return toResponseDTO(result);
+            return entityMapper.toEnrollmentResponseDTO(result);
 
         } catch (DataIntegrityViolationException e) {
             // DB 제약조건 위반 시 (UNIQUE 제약) - 2중 방어
@@ -203,7 +193,7 @@ public class EnrollmentServiceImpl implements EnrollmentService {
 
         log.info("6) Course 수정 성공 updateCourse:  {}",updateCourse);
 
-        return toResponseDTO(updateCourse);
+        return entityMapper.toEnrollmentResponseDTO(updateCourse);
     }
 
     @Override

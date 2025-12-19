@@ -13,6 +13,7 @@ import com.univercity.unlimited.greenUniverCity.function.member.user.entity.User
 import com.univercity.unlimited.greenUniverCity.function.academic.attendance.repository.AttendanceRepository;
 import com.univercity.unlimited.greenUniverCity.function.member.user.entity.UserRole;
 import com.univercity.unlimited.greenUniverCity.function.member.user.service.UserService;
+import com.univercity.unlimited.greenUniverCity.util.EntityMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -32,25 +33,9 @@ public class AttendanceServiceImpl implements AttendanceService{
 
     private final EnrollmentService enrollmentService;
 
+    private final EntityMapper entityMapper;
+
     private final ModelMapper mapper;
-
-    /**
-     * A-A) Attendance 엔티티를 (Response) DTO로 변환
-     * - 각각의 crud 기능에 사용되는 서비스 구현부에 사용하기 위해 함수로 생성
-     */
-    private AttendanceResponseDTO toResponseDTO(Attendance attendance){
-        Enrollment enrollment=attendance.getEnrollment();
-        User user=enrollment.getUser();
-
-        return
-                AttendanceResponseDTO.builder()
-                        .attendanceId(attendance.getAttendanceId())
-                        .enrollmentId(enrollment.getEnrollmentId())
-                        .attendanceDate(attendance.getAttendanceDate())
-                        .status(attendance.getStatus())
-                        .studentNickName(user.getNickname())
-                        .build();
-    }
 
     private void validateStudentOwnerShip(String requesterEmail,String targetEmail,String action){
         log.info("4) 학생 권한 검증 시작 요청자 -:{}, 대상자 -:{}, 작업 -:{}",requesterEmail,targetEmail,action);
@@ -141,7 +126,7 @@ public class AttendanceServiceImpl implements AttendanceService{
         List<Attendance> attendances=repository.findAll();
 
         return attendances.stream()
-                .map(this::toResponseDTO)
+                .map(entityMapper::toattendanceResponseDTO)
                 .collect(Collectors.toList());
     }
 
@@ -153,7 +138,7 @@ public class AttendanceServiceImpl implements AttendanceService{
         List<Attendance> attendances=repository.findByEnrollmentId(enrollmentId);
 
         return attendances.stream()
-                .map(this::toResponseDTO)
+                .map(entityMapper::toattendanceResponseDTO)
                 .collect(Collectors.toList());
     }
 
@@ -165,7 +150,7 @@ public class AttendanceServiceImpl implements AttendanceService{
         List<Attendance> attendances=repository.findByEmail(email);
 
         return attendances.stream()
-                .map(this::toResponseDTO)
+                .map(entityMapper::toattendanceResponseDTO)
                 .collect(Collectors.toList());
     }
 
@@ -189,7 +174,7 @@ public class AttendanceServiceImpl implements AttendanceService{
 
         log.info("5) 출결 작성 완료 -attendanceId:{}, 교수:{}",createAttendance.getAttendanceId(),professorEmail);
 
-        return toResponseDTO(createAttendance);
+        return entityMapper.toattendanceResponseDTO(createAttendance);
     }
 
     //A-5) 교수가 학생에 대한 출결을 수정하기 위한 서비스 구현부
@@ -212,7 +197,7 @@ public class AttendanceServiceImpl implements AttendanceService{
 
         log.info("5) 출결 수정 성공 교수-:{}, attendanceId-:{}",professorEmail,dto.getAttendanceId());
 
-        return toResponseDTO(updateAttendance);
+        return entityMapper.toattendanceResponseDTO(updateAttendance);
     }
 
 

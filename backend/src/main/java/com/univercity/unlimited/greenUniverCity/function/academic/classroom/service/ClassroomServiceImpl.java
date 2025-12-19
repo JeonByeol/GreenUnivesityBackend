@@ -9,6 +9,7 @@ import com.univercity.unlimited.greenUniverCity.function.academic.review.excepti
 import com.univercity.unlimited.greenUniverCity.function.member.user.entity.User;
 import com.univercity.unlimited.greenUniverCity.function.member.user.entity.UserRole;
 import com.univercity.unlimited.greenUniverCity.function.member.user.service.UserService;
+import com.univercity.unlimited.greenUniverCity.util.EntityMapper;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,20 +27,8 @@ public class ClassroomServiceImpl implements ClassroomService{
     private final ClassroomRepository repository;
 
     private final UserService userService;
-    /**
-     * CR-A) Classroom 엔티티를 (Response)DTO로 변환
-     * - 각각의 crud 기능에 사용되는 서비스 구현부에 사용하기 위해 함수로 생성
-     */
-    private ClassroomResponseDTO toResponseDTO(Classroom classroom){
-        return 
-                ClassroomResponseDTO.builder()
-                        .classroomId(classroom.getClassroomId())
-                        .capacity(classroom.getCapacity())
-                        .location(classroom.getLocation())
-                        .build();
-        
-    }
 
+    private final EntityMapper entityMapper;
 
     /**
      * CR-security) 보안검사:
@@ -76,7 +65,7 @@ public class ClassroomServiceImpl implements ClassroomService{
         log.info("3) 강의실 전체조회 성공");
 
         return classrooms.stream()
-                .map(this::toResponseDTO)
+                .map(entityMapper::toClassroomResponseDTO)
                 .toList();
     }
     
@@ -89,7 +78,7 @@ public class ClassroomServiceImpl implements ClassroomService{
         log.info("3) 특정 키워드에 해당하는 강의실 조회 성공 keyword-:{}",keyword);
 
         return classrooms.stream()
-                .map(this::toResponseDTO)
+                .map(entityMapper::toClassroomResponseDTO)
                 .toList();
     }
 
@@ -101,7 +90,7 @@ public class ClassroomServiceImpl implements ClassroomService{
         Classroom classroom= repository.findById(classroomId)
                 .orElseThrow(()-> new IllegalArgumentException("강의실 정보를 찾을 수 없습니다."));
 
-        return toResponseDTO(classroom);
+        return entityMapper.toClassroomResponseDTO(classroom);
     }
 
     //CR-3) 새로운 강의실을 생성하기 위한 서비스 구현부 | //보안검사 추가해야함
@@ -121,7 +110,7 @@ public class ClassroomServiceImpl implements ClassroomService{
 
         log.info("5)강의실 생성 완료 교수-:{}",email);
 
-        return toResponseDTO(savedClassroom);
+        return entityMapper.toClassroomResponseDTO(savedClassroom);
     }
     
     //CR-4) 기존에 존재하는 강의실의 정보를 수정하기 위한 서비스 구현부
@@ -142,7 +131,7 @@ public class ClassroomServiceImpl implements ClassroomService{
         log.info("5) 강의실 정보 수정 성공 교수-:{}, classroomId-{}, 정원-:{}, 장소-:{}",
                 email,dto.getClassroomId(),dto.getCapacity(),dto.getLocation());
 
-        return toResponseDTO(classroom);
+        return entityMapper.toClassroomResponseDTO(classroom);
     }
     
     //CR-5) 존재하는 강의실을 삭제하기 위한 서비스 구현부

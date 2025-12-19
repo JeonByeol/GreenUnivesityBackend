@@ -14,6 +14,7 @@ import com.univercity.unlimited.greenUniverCity.function.academic.offering.entit
 import com.univercity.unlimited.greenUniverCity.function.academic.offering.service.CourseOfferingService;
 import com.univercity.unlimited.greenUniverCity.function.academic.section.entity.ClassSection;
 import com.univercity.unlimited.greenUniverCity.function.member.user.entity.User;
+import com.univercity.unlimited.greenUniverCity.util.EntityMapper;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -39,6 +40,8 @@ public class GradeServiceImpl implements GradeService{
     private final GradeItemService itemService;
 
     private final CourseOfferingService offeringService;
+
+    private final EntityMapper entityMapper;
 
     private final AcademicSecurityValidator validator;
 
@@ -67,7 +70,7 @@ public class GradeServiceImpl implements GradeService{
        log.info("3) 성적 테이블 전체조회 성공");
                 
         return grades.stream()
-                .map(this::toResponseDTO)
+                .map(entityMapper::toGradeResponseDTO)
                 .toList();
     }
 
@@ -79,7 +82,7 @@ public class GradeServiceImpl implements GradeService{
         Grade grade = repository.findById(gradeId)
                 .orElseThrow(() -> new IllegalArgumentException("성적 정보를 찾을 수 없습니다"));
 
-        return toResponseDTO(grade);
+        return entityMapper.toGradeResponseDTO(grade);
     }
 
     //G-3) 학생의 모든 성적 조회 (학생)
@@ -98,7 +101,7 @@ public class GradeServiceImpl implements GradeService{
                 studentEmail, grades.size());
 
         return grades.stream()
-                .map(this::toResponseDTO)
+                .map(entityMapper::toGradeResponseDTO)
                 .toList();
     }
     
@@ -117,7 +120,7 @@ public class GradeServiceImpl implements GradeService{
                 offeringId, grades.size());
 
         return grades.stream()
-                .map(this::toResponseDTO)
+                .map(entityMapper::toGradeResponseDTO)
                 .toList();
     }
 
@@ -146,7 +149,7 @@ public class GradeServiceImpl implements GradeService{
         log.info("5) 성적 생성 완료 - gradeId-:{}, 교수-:{}",
                 saveGrade.getGradeId(), professorEmail);
 
-        return toResponseDTO(saveGrade);
+        return entityMapper.toGradeResponseDTO(saveGrade);
     }
 
     //G-6) 성적 수정 (교수)
@@ -169,7 +172,7 @@ public class GradeServiceImpl implements GradeService{
         log.info("3) 성적 수정 완료 - gradeId-:{}, 교수-:{}",
                 updateGrade.getGradeId(), professorEmail);
 
-        return toResponseDTO(updateGrade);
+        return entityMapper.toGradeResponseDTO(updateGrade);
     }
 
     //G-7) 최종 성적 자동 계산 및 저장(StudentScore를 통해 점수 조회 후 평균 계산 (교수)
@@ -209,7 +212,7 @@ public class GradeServiceImpl implements GradeService{
         log.info("5) 최종 성적 계산 완료 - totalScore-:{}, letterGrade-:{}, 교수-:{}",
                 totalScore, letterGrade, professorEmail);
 
-        return toResponseDTO(saveGrade);
+        return entityMapper.toGradeResponseDTO(saveGrade);
     }
     
     //G-8 외부 Service에서 grade에 대한 정보 조회
@@ -272,97 +275,97 @@ public class GradeServiceImpl implements GradeService{
 
     }
 
-    //G-1)성적 전체 조회
-    @Override
-    public List<GradeResponseDTO> findAllGrade() {
-        log.info("전체 성적 조회");
-        List<GradeResponseDTO> dto=new ArrayList<>();
-        for(Grade i:repository.findAll()){
-            GradeResponseDTO r=mapper.map(i, GradeResponseDTO.class);
-            dto.add(r);
-        }
-        return dto;
-    }
-
-    //G-2) 학생이 본인이 수강한 모든 과목의 성적과 과목명을 조회하기 위한 서비스 구현부 todo
-    @Override
-    public List<GradeResponseDTO> myGrade(String email) {
-        List<Grade> grades= repository.findByStudentEmail(email);
-
-        log.info("1)학생이 수강한 모든 과목의 성적을 조회하는 service가 맞냐:{}",grades);
-
-        List<GradeResponseDTO> myGrade= grades.stream()
-                .map(g -> {
-                    Enrollment enrollment=g.getEnrollment();
-                    ClassSection section=enrollment.getClassSection();
-                    CourseOffering offering=section.getCourseOffering();
-                    User user=enrollment.getUser();
-//                    EnrollmentTestDTO info=
-//                   enrollmentService.getEnrollmentForGrade(g.getEnrollment().getEnrollmentId());//todo E-2)
-                    return
-                            GradeResponseDTO.builder()
-                                    .gradeId(g.getGradeId())
-                                    .letterGrade(g.getLetterGrade())
-                                    .courseName(offering.getCourseName())
-                                    .enrollmentId(g.getEnrollment().getEnrollmentId())
-                                    .studentName(user.getNickname())
-                                    .build();
-
-                })
-                .collect(Collectors.toList());
-
-        return myGrade;
-    }
-
-
-    //G-3) 교수가 특정 과목의 수업을 듣는 전체학생 조회하기 위한 service 구현부
-    @Override
-    public List<GradeResponseDTO> offeringOfGrade(Long offeringId) {
-
-        List<Grade> grades=repository.findByOfferingGrade(offeringId);
-
-        return grades.stream()
-                .map(g-> {
-                    Enrollment enrollment=g.getEnrollment();
-                    User user=enrollment.getUser();
-                    return
-                            GradeResponseDTO.builder()
-                                    .gradeId(g.getGradeId())
-                                    .letterGrade(g.getLetterGrade())
-                                    .studentName(user.getNickname())
-                                    .build();
-                })
-                .collect(Collectors.toList());
-    }
-
-
-    //G-4) 교수가 학생에 대한 정보를 받아와서 성적의 대한 값을 수정하기 위한 service 구현부
-    @Override
-    public GradeResponseDTO updateNewGrade(Long enrollmentId, String letterGrade) {
-
-        //Enrollment enrollment1=enrollmentRepository.findByEnrollmentId(enrollmentId);
-        Enrollment enrollment=enrollmentService.getEnrollmentEntity(enrollmentId);//E-2)
-
-        //Service에서 전달된 교수의 email, 수강신청(enroll)에 연결된 과목(offering)의 담당 교수(user)의
-        //email이 일치하는지 보안검사에 대한 코드 "feat Gemini"
-//        User professor= enrollment.getCourseOffering().getUser();
-//        if(professor == null || !professor.getEmail().equals(professorEmail)){
-//            log.warn("권한이 없다: 교수[{}]가 타 과목(Id:{}) 성적 입력을 시도.",professorEmail,enrollmentId);
-//            throw new IllegalArgumentException("이 과목의 성적을 입력할 권한이 없습니다.");
+//    //G-1)성적 전체 조회
+//    @Override
+//    public List<GradeResponseDTO> findAllGrade() {
+//        log.info("전체 성적 조회");
+//        List<GradeResponseDTO> dto=new ArrayList<>();
+//        for(Grade i:repository.findAll()){
+//            GradeResponseDTO r=mapper.map(i, GradeResponseDTO.class);
+//            dto.add(r);
 //        }
-
-        //성적과 연결된 enrollmentId를 찾고 없으면 신규 객체를 생성한다
-        Grade grade=repository.findByEnrollment_enrollmentId(enrollmentId)
-                .orElse(new Grade());
-
-        grade.setLetterGrade(letterGrade);
-        grade.setEnrollment(enrollment);
-
-        Grade saveGrade= repository.save(grade);
-
-        log.info("성공:  학생 [{}]에게 성적 [{}] 입력 완료",
-                enrollment.getUser().getEmail(), letterGrade);
-
-        return mapper.map(saveGrade, GradeResponseDTO.class);
-    }
+//        return dto;
+//    }
+//
+//    //G-2) 학생이 본인이 수강한 모든 과목의 성적과 과목명을 조회하기 위한 서비스 구현부 todo
+//    @Override
+//    public List<GradeResponseDTO> myGrade(String email) {
+//        List<Grade> grades= repository.findByStudentEmail(email);
+//
+//        log.info("1)학생이 수강한 모든 과목의 성적을 조회하는 service가 맞냐:{}",grades);
+//
+//        List<GradeResponseDTO> myGrade= grades.stream()
+//                .map(g -> {
+//                    Enrollment enrollment=g.getEnrollment();
+//                    ClassSection section=enrollment.getClassSection();
+//                    CourseOffering offering=section.getCourseOffering();
+//                    User user=enrollment.getUser();
+////                    EnrollmentTestDTO info=
+////                   enrollmentService.getEnrollmentForGrade(g.getEnrollment().getEnrollmentId());//todo E-2)
+//                    return
+//                            GradeResponseDTO.builder()
+//                                    .gradeId(g.getGradeId())
+//                                    .letterGrade(g.getLetterGrade())
+//                                    .courseName(offering.getCourseName())
+//                                    .enrollmentId(g.getEnrollment().getEnrollmentId())
+//                                    .studentName(user.getNickname())
+//                                    .build();
+//
+//                })
+//                .collect(Collectors.toList());
+//
+//        return myGrade;
+//    }
+//
+//
+//    //G-3) 교수가 특정 과목의 수업을 듣는 전체학생 조회하기 위한 service 구현부
+//    @Override
+//    public List<GradeResponseDTO> offeringOfGrade(Long offeringId) {
+//
+//        List<Grade> grades=repository.findByOfferingGrade(offeringId);
+//
+//        return grades.stream()
+//                .map(g-> {
+//                    Enrollment enrollment=g.getEnrollment();
+//                    User user=enrollment.getUser();
+//                    return
+//                            GradeResponseDTO.builder()
+//                                    .gradeId(g.getGradeId())
+//                                    .letterGrade(g.getLetterGrade())
+//                                    .studentName(user.getNickname())
+//                                    .build();
+//                })
+//                .collect(Collectors.toList());
+//    }
+//
+//
+//    //G-4) 교수가 학생에 대한 정보를 받아와서 성적의 대한 값을 수정하기 위한 service 구현부
+//    @Override
+//    public GradeResponseDTO updateNewGrade(Long enrollmentId, String letterGrade) {
+//
+//        //Enrollment enrollment1=enrollmentRepository.findByEnrollmentId(enrollmentId);
+//        Enrollment enrollment=enrollmentService.getEnrollmentEntity(enrollmentId);//E-2)
+//
+//        //Service에서 전달된 교수의 email, 수강신청(enroll)에 연결된 과목(offering)의 담당 교수(user)의
+//        //email이 일치하는지 보안검사에 대한 코드 "feat Gemini"
+////        User professor= enrollment.getCourseOffering().getUser();
+////        if(professor == null || !professor.getEmail().equals(professorEmail)){
+////            log.warn("권한이 없다: 교수[{}]가 타 과목(Id:{}) 성적 입력을 시도.",professorEmail,enrollmentId);
+////            throw new IllegalArgumentException("이 과목의 성적을 입력할 권한이 없습니다.");
+////        }
+//
+//        //성적과 연결된 enrollmentId를 찾고 없으면 신규 객체를 생성한다
+//        Grade grade=repository.findByEnrollment_enrollmentId(enrollmentId)
+//                .orElse(new Grade());
+//
+//        grade.setLetterGrade(letterGrade);
+//        grade.setEnrollment(enrollment);
+//
+//        Grade saveGrade= repository.save(grade);
+//
+//        log.info("성공:  학생 [{}]에게 성적 [{}] 입력 완료",
+//                enrollment.getUser().getEmail(), letterGrade);
+//
+//        return mapper.map(saveGrade, GradeResponseDTO.class);
+//    }
 }

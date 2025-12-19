@@ -15,6 +15,7 @@ import com.univercity.unlimited.greenUniverCity.function.academic.timetable.enti
 import com.univercity.unlimited.greenUniverCity.function.academic.timetable.exception.ClassroomConflictException;
 import com.univercity.unlimited.greenUniverCity.function.academic.timetable.repository.TimeTableRepository;
 import com.univercity.unlimited.greenUniverCity.function.member.user.entity.User;
+import com.univercity.unlimited.greenUniverCity.util.EntityMapper;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -38,29 +39,7 @@ public class TimeTableServiceImpl implements TimeTableService{
 
     private final AcademicSecurityValidator validator;
 
-    /**
-     * T-A) TimeTable 엔티티를 (Response)DTO로 변환
-     * - 각각의 crud 기능에 사용되는 서비스 구현부에 사용하기 위해 함수로 생성
-     */
-
-    private TimeTableResponseDTO toResponseDTO(TimeTable timeTable){
-        ClassSection section = timeTable.getClassSection();
-        CourseOffering courseOffering = section.getCourseOffering();
-        User user = courseOffering.getProfessor();
-        Classroom classroom = timeTable.getClassroom();
-
-        return TimeTableResponseDTO.builder()
-                .timetableId(timeTable.getTimetableId())
-                .dayOfWeek(timeTable.getDayOfWeek())
-                .startTime(timeTable.getStartTime())
-                .endTime(timeTable.getEndTime())
-                .classroomId(classroom.getClassroomId())
-                .classroomName(classroom.getLocation())
-                .sectionId(section.getSectionId())
-                .sectionName(section.getSectionName())
-                .courseName(courseOffering.getCourseName())
-                .build();
-    }
+    private final EntityMapper entityMapper;
 
     @Transactional
     @Override
@@ -71,7 +50,7 @@ public class TimeTableServiceImpl implements TimeTableService{
         log.info("3) 시간표 전체조회 성공");
 
         return timeTables.stream()
-                .map(this::toResponseDTO)
+                .map(entityMapper::toTimeTableResponseDTO)
                 .toList();
     }
 
@@ -88,7 +67,7 @@ public class TimeTableServiceImpl implements TimeTableService{
         log.info("3) 시간표 조회 성공 offeringId-:{}",offeringId);
 
         return timeTables.stream()
-                .map(this::toResponseDTO)
+                .map(entityMapper::toTimeTableResponseDTO)
                 .toList();
     }
     
@@ -100,7 +79,7 @@ public class TimeTableServiceImpl implements TimeTableService{
         TimeTable timeTable=repository.findById(timetableId)
                 .orElseThrow(()->new TimeTableNotFoundException("시간표를 찾을 수 없습니다."));
 
-        return toResponseDTO(timeTable);
+        return entityMapper.toTimeTableResponseDTO(timeTable);
     }
 
     //T-3)특정 학생이 신청한 모든 과목의 시간표를 조회하기 위한 서비스 구현부
@@ -113,7 +92,7 @@ public class TimeTableServiceImpl implements TimeTableService{
         log.info("3) 학생의 시간표 조회 성공 학생-:{}",email);
 
         return timeTables.stream()
-                .map(this::toResponseDTO)
+                .map(entityMapper::toTimeTableResponseDTO)
                 .toList();
     }
 
@@ -161,7 +140,7 @@ public class TimeTableServiceImpl implements TimeTableService{
                 dto.getStartTime(),
                 dto.getEndTime());
 
-        return toResponseDTO(saveTimeTable);
+        return entityMapper.toTimeTableResponseDTO(saveTimeTable);
     }
 
     //T-5) 교수가 본인이 담당하고 있는 수업에 존재하는 시간표를 수정하기 위한 서비스 구현부
@@ -206,7 +185,7 @@ public class TimeTableServiceImpl implements TimeTableService{
                 dto.getStartTime(),
                 dto.getEndTime());
 
-        return toResponseDTO(updateTimeTable);
+        return entityMapper.toTimeTableResponseDTO(updateTimeTable);
     }
 
     //T-6) 교수 or 관리자가 개설된 강의에 대한 시간표를 삭제하기 위한 서비스 구현부

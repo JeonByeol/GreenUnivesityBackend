@@ -38,7 +38,7 @@ public class EntityMapper {
     // ==========================================
     // 1. Attendance 변환 (Attendance-A)
     // ==========================================
-    private AttendanceResponseDTO toattendanceResponseDTO(Attendance attendance){
+    public AttendanceResponseDTO toattendanceResponseDTO(Attendance attendance){
         if (attendance == null) return null;
 
         Enrollment enrollment=attendance.getEnrollment();
@@ -57,7 +57,7 @@ public class EntityMapper {
     // ==========================================
     // 2. Classroom 변환 (Classroom-A)
     // ==========================================
-    private ClassroomResponseDTO toClassroomResponseDTO(Classroom classroom){
+    public ClassroomResponseDTO toClassroomResponseDTO(Classroom classroom){
         if (classroom == null) return null;
 
         return
@@ -72,7 +72,7 @@ public class EntityMapper {
     // ==========================================
     // 3. Course 변환 (Course-A)
     // ==========================================
-    private CourseResponseDTO toCourseResponseDTO(Course course){
+    public CourseResponseDTO toCourseResponseDTO(Course course){
         if (course == null) return null;
 
         Department department = course.getDepartment();
@@ -107,7 +107,7 @@ public class EntityMapper {
     // ==========================================
     // 5. Grade 변환 (Grade-A)
     // ==========================================
-    private GradeResponseDTO toGradeResponseDTO(Grade grade){
+    public GradeResponseDTO toGradeResponseDTO(Grade grade){
         if (grade == null) return null;
 
         Enrollment enrollment = grade.getEnrollment();
@@ -127,7 +127,7 @@ public class EntityMapper {
     // ==========================================
     // 6. GradeItem 변환 (GradeItem-A)
     // ==========================================
-    private GradeItemResponseDTO toGradeItemResponseDTO(GradeItem gradeItem){
+    public GradeItemResponseDTO toGradeItemResponseDTO(GradeItem gradeItem){
         if (gradeItem == null) return null;
 
         CourseOffering offering=gradeItem.getCourseOffering();
@@ -146,7 +146,7 @@ public class EntityMapper {
     // 7. StudentScore 변환 (StudentScore-A)
     // ==========================================
 
-    private StudentScoreResponseDTO toStudentScoreResponseDTO(StudentScore studentScore){
+    public StudentScoreResponseDTO toStudentScoreResponseDTO(StudentScore studentScore){
         if (studentScore == null) return null;
 
         GradeItem item=studentScore.getGradeItem();
@@ -166,7 +166,7 @@ public class EntityMapper {
     // 8. CourseOffering 변환 (CourseOffering-A)
     // ==========================================
 
-    private CourseOfferingResponseDTO toCourseOfferingResponseDTO(CourseOffering offering){
+    public CourseOfferingResponseDTO toCourseOfferingResponseDTO(CourseOffering offering){
         if (offering == null) return null;
 
         // 데이터가 없는 경우를 대비합니다.
@@ -201,7 +201,7 @@ public class EntityMapper {
     // ==========================================
     // 9. Review 변환 (Review-A)
     // ==========================================
-    private ReviewResponseDTO toReviewResponseDTO(Review review) {
+    public ReviewResponseDTO toReviewResponseDTO(Review review) {
         if (review == null) return null;
 
         Enrollment enrollment = review.getEnrollment();
@@ -224,7 +224,7 @@ public class EntityMapper {
     // 10. TimeTable 변환 (TimeTable-A)
     // ==========================================
 
-    private TimeTableResponseDTO toTimeTableResponseDTO(TimeTable timeTable){
+    public TimeTableResponseDTO toTimeTableResponseDTO(TimeTable timeTable){
         if (timeTable == null) return null;
 
         ClassSection section = timeTable.getClassSection();
@@ -246,13 +246,13 @@ public class EntityMapper {
     }
 
     // ==========================================
-    // 11. Department 변환 (Department-A)
+    // 11. ClassSection 변환 (ClassSection-A)
     // ==========================================
 
     // ==========================================
     // 12. Department 변환 (Department-A)
     // ==========================================
-    private DepartmentResponseDTO toDepartmentResponseDTO(Department department){
+    public DepartmentResponseDTO toDepartmentResponseDTO(Department department){
         if (department == null) return null;
 
         return

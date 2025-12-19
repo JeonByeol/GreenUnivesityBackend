@@ -10,6 +10,7 @@ import com.univercity.unlimited.greenUniverCity.function.academic.grade.entity.G
 import com.univercity.unlimited.greenUniverCity.function.academic.grade.entity.StudentScore;
 import com.univercity.unlimited.greenUniverCity.function.academic.grade.repository.StudentScoreRepository;
 import com.univercity.unlimited.greenUniverCity.function.academic.offering.entity.CourseOffering;
+import com.univercity.unlimited.greenUniverCity.util.EntityMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -29,23 +30,7 @@ public class StudentScoreServiceImpl implements StudentScoreService{
 
     private final AcademicSecurityValidator validator;
 
-    /**
-     * SS-A) StudentScore 엔티티를 Response DTO로 변환
-     */
-
-    private StudentScoreResponseDTO toResponseDTO(StudentScore studentScore){
-        GradeItem item=studentScore.getGradeItem();
-        Enrollment enrollment=studentScore.getEnrollment();
-
-        return StudentScoreResponseDTO.builder()
-                .scoreId(studentScore.getScoreId())
-                .enrollmentId(enrollment.getEnrollmentId())
-                .itemId(item.getItemId())
-                .scoreObtained(studentScore.getScoreObtained())
-                .createdAt(studentScore.getCreatedAt())
-                .updatedAt(studentScore.getUpdatedAt())
-                .build();
-    }
+    private final EntityMapper entityMapper;
     
     //SS-1) 학생 점수 생성
     @Override
@@ -81,7 +66,7 @@ public class StudentScoreServiceImpl implements StudentScoreService{
         StudentScore saveScore =repository.save(studentScore);
         log.info("4) 학생 점수 생성 완료 -scoreId-:{}, 교수-:{}", saveScore.getScoreId(), professorEmail);
 
-        return toResponseDTO(saveScore);
+        return entityMapper.toStudentScoreResponseDTO(saveScore);
     }
 
     //SS-2) 학생 점수 단건 조회
@@ -92,7 +77,7 @@ public class StudentScoreServiceImpl implements StudentScoreService{
         StudentScore studentScore=repository.findById(scoreId)
                 .orElseThrow(()->new IllegalArgumentException("점수 정보를 찾을 수 없습니다"));
 
-        return toResponseDTO(studentScore);
+        return entityMapper.toStudentScoreResponseDTO(studentScore);
     }
     
     //SS-3) 학생별 모든 점수 조회
@@ -105,7 +90,7 @@ public class StudentScoreServiceImpl implements StudentScoreService{
         log.info("4) 학생 점수 목록 조회 성공 - enrollmentId-:{}, 점수개수-:{}", enrollmentId, scores.size());
 
         return scores.stream()
-                .map(this::toResponseDTO)
+                .map(entityMapper::toStudentScoreResponseDTO)
                 .toList();
     }
     
@@ -123,7 +108,7 @@ public class StudentScoreServiceImpl implements StudentScoreService{
         log.info("4) 평가 항목별 점수 조회 성공 - itemId-:{}, 점수개수-:{}", itemId, scores.size());
 
         return scores.stream()
-                .map(this::toResponseDTO)
+                .map(entityMapper::toStudentScoreResponseDTO)
                 .toList();
     }
     
@@ -149,7 +134,7 @@ public class StudentScoreServiceImpl implements StudentScoreService{
 
         log.info("5) 학생 점수 수정 성공 -scoreId-:{}, 교수-:{}", updateScore.getScoreId(), professorEmail);
 
-        return toResponseDTO(updateScore);
+        return entityMapper.toStudentScoreResponseDTO(updateScore);
     }
 
     //SS-6) 모든 점수 입력 확인(GradeItemService를 통해 평가항목 개수 조회)

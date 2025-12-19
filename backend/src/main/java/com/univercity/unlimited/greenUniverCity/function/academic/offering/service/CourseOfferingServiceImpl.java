@@ -10,6 +10,7 @@ import com.univercity.unlimited.greenUniverCity.function.academic.offering.excep
 import com.univercity.unlimited.greenUniverCity.function.academic.offering.repository.CourseOfferingRepository;
 import com.univercity.unlimited.greenUniverCity.function.member.user.entity.User;
 import com.univercity.unlimited.greenUniverCity.function.member.user.service.UserService;
+import com.univercity.unlimited.greenUniverCity.util.EntityMapper;
 import com.univercity.unlimited.greenUniverCity.util.MapperUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -32,36 +33,8 @@ public class CourseOfferingServiceImpl implements CourseOfferingService{
 
     private final ModelMapper mapper;
 
+    private final EntityMapper entityMapper;
 
-    private CourseOfferingResponseDTO toResponseDTO(CourseOffering offering){
-        // 데이터가 없는 경우를 대비합니다.
-        String professorName = "공백";
-        User professor = offering.getProfessor();
-        if (professor != null && professor.getNickname() != null) {
-            professorName = professor.getNickname();
-        }
-
-        String courseName = "공백";
-        Course course = offering.getCourse();
-        if(offering.getCourseName() == null) {
-            if (course != null && course.getCourseName() != null) {
-                courseName = course.getCourseName();
-            }
-        } else {
-            courseName = offering.getCourseName();
-        }
-
-        return
-                CourseOfferingResponseDTO.builder()
-                        .offeringId(offering.getOfferingId())
-                        .professorId(professor != null ? professor.getUserId() : null)
-                        .professorName(professorName)
-                        .courseName(courseName)
-                        .year(offering.getYear())
-                        .semester(offering.getSemester())
-                        .courseId(course != null ? course.getCourseId() : null)
-                        .build();
-    }
 
     @Override
     public Optional<List<CourseOfferingResponseDTO>> findAllCourseOfferingDTO() {
@@ -82,7 +55,7 @@ public class CourseOfferingServiceImpl implements CourseOfferingService{
 
 
         return offerings.stream()
-                .map(this::toResponseDTO).toList();
+                .map(entityMapper::toCourseOfferingResponseDTO).toList();
     }
 
     @Override
@@ -94,7 +67,7 @@ public class CourseOfferingServiceImpl implements CourseOfferingService{
             throw new RuntimeException("Offering not found with id : " + offeringId);
         }
 
-        CourseOfferingResponseDTO responseDTO = toResponseDTO(offeringOptinal.get());
+        CourseOfferingResponseDTO responseDTO = entityMapper.toCourseOfferingResponseDTO(offeringOptinal.get());
         return List.of(responseDTO);
     }
 
@@ -118,7 +91,7 @@ public class CourseOfferingServiceImpl implements CourseOfferingService{
         log.info("4)OfferingCreateDTO -> Offering : {}", offering);
         CourseOffering result = repository.save(offering);
 
-        return toResponseDTO(result);
+        return entityMapper.toCourseOfferingResponseDTO(result);
     }
 
     @Override
@@ -145,7 +118,7 @@ public class CourseOfferingServiceImpl implements CourseOfferingService{
         CourseOffering updateOffering = repository.save(offering);
 
         log.info("6) Offering 수정 성공 updateOffering : {}", updateOffering);
-        return toResponseDTO(updateOffering);
+        return entityMapper.toCourseOfferingResponseDTO(updateOffering);
     }
 
     @Override

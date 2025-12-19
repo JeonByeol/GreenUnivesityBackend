@@ -7,6 +7,7 @@ import com.univercity.unlimited.greenUniverCity.function.academic.course.entity.
 import com.univercity.unlimited.greenUniverCity.function.academic.course.repository.CourseRepository;
 import com.univercity.unlimited.greenUniverCity.function.member.department.entity.Department;
 import com.univercity.unlimited.greenUniverCity.function.member.department.service.DepartmentService;
+import com.univercity.unlimited.greenUniverCity.util.EntityMapper;
 import com.univercity.unlimited.greenUniverCity.util.MapperUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,21 +24,9 @@ public class CourseServiceImpl implements CourseService{
 
     private final DepartmentService departmentService;
 
+    private final EntityMapper entityMapper;
+
     private final ModelMapper mapper;
-
-    private CourseResponseDTO toResponseDTO(Course course){
-        Department department = course.getDepartment();
-
-        return
-                CourseResponseDTO.builder()
-                        .courseId(course.getCourseId())
-                        .courseName(course.getCourseName())
-                        .description(course.getDescription())
-                        .credits(course.getCredits())
-                        .departmentId(department != null ? department.getDepartmentId() : -1)
-                        .build();
-    }
-
 
     @Override
     public List<CourseResponseDTO> legacyFindAllCourse() {
@@ -57,7 +46,7 @@ public class CourseServiceImpl implements CourseService{
         log.info("3) Course 전체조회 성공");
 
         return courses.stream()
-                .map(this::toResponseDTO).toList();
+                .map(entityMapper::toCourseResponseDTO).toList();
     }
 
 
@@ -70,7 +59,7 @@ public class CourseServiceImpl implements CourseService{
             throw new RuntimeException("Course not found with id: " + courseId);
         }
 
-        CourseResponseDTO responseDTO = toResponseDTO(course.get());
+        CourseResponseDTO responseDTO = entityMapper.toCourseResponseDTO(course.get());
         return List.of(responseDTO);
     }
 
@@ -90,7 +79,7 @@ public class CourseServiceImpl implements CourseService{
         Course result = repository.save(course);
         log.info("4)추가된 Course : {}", result);
 
-        return toResponseDTO(result);
+        return entityMapper.toCourseResponseDTO(result);
     }
 
     @Override
@@ -115,7 +104,7 @@ public class CourseServiceImpl implements CourseService{
 
         log.info("6) Course 수정 성공 updateCourse:  {}",updateCourse);
 
-        return toResponseDTO(updateCourse);
+        return entityMapper.toCourseResponseDTO(updateCourse);
     }
 
     @Override

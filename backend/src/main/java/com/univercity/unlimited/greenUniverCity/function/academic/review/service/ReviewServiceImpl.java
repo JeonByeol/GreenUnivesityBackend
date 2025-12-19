@@ -14,6 +14,7 @@ import com.univercity.unlimited.greenUniverCity.function.academic.review.excepti
 import com.univercity.unlimited.greenUniverCity.function.academic.review.repository.ReviewRepository;
 import com.univercity.unlimited.greenUniverCity.function.academic.section.entity.ClassSection;
 import com.univercity.unlimited.greenUniverCity.function.member.user.entity.User;
+import com.univercity.unlimited.greenUniverCity.util.EntityMapper;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -35,33 +36,7 @@ public class ReviewServiceImpl implements ReviewService{
 
     private final AcademicSecurityValidator validator;
 
-    private final ModelMapper mapper;
-
-    /**
-     * R-A) Review 엔티티를 (Response)DTO로 변환
-     * - 각각의 crud 기능에 사용되는 서비스 구현부에 사용하기 위해 함수로 생성
-     * | (** 추후 이 기능을 담당하는 프론트 작업시 유의할 점 **)
-     * 생성 시에는 updatedAt이 null로 반환되고, 수정 시에는 값이 존재하는데
-     * 프론트엔드에서 updatedAt이 null이 아닌 경우에만 "수정됨" 표시를 하면 된다
-     */
-
-    private ReviewResponseDTO toResponseDTO(Review review) {
-        Enrollment enrollment = review.getEnrollment();
-        ClassSection section=enrollment.getClassSection();
-        CourseOffering courseOffering=section.getCourseOffering();
-        User user=enrollment.getUser();
-
-        return ReviewResponseDTO.builder()
-                .reviewId(review.getReviewId())
-                .rating(review.getRating())
-                .comment(review.getComment())
-                .createdAt(review.getCreatedAt())
-                .updatedAt(review.getUpdatedAt())
-                .courseName(courseOffering.getCourseName())
-                .studentNickname(user!= null ? user.getNickname() : "탈퇴한 사용자")
-                .enrollmentId(enrollment.getEnrollmentId())
-                .build();
-    }
+    private final EntityMapper entityMapper;
     
 
     /**
@@ -94,7 +69,7 @@ public class ReviewServiceImpl implements ReviewService{
         log.info("3) 리뷰 전체조회 성공");
 
         return reviews.stream()
-                .map(this::toResponseDTO)
+                .map(entityMapper::toReviewResponseDTO)
                 .toList();
     }
 
@@ -107,7 +82,7 @@ public class ReviewServiceImpl implements ReviewService{
 
         log.info("3)특정 과목 리뷰 조회 성공 - offeringId-:{}",offeringId);
         return reviews.stream()
-                .map(this::toResponseDTO)
+                .map(entityMapper::toReviewResponseDTO)
                 .toList();
     }
     
@@ -119,7 +94,7 @@ public class ReviewServiceImpl implements ReviewService{
         Review review= repository.findById(reviewId)
                 .orElseThrow(()->new IllegalArgumentException("리뷰 정보를 찾을 수 없습니다."));
 
-        return toResponseDTO(review);
+        return entityMapper.toReviewResponseDTO(review);
     }
 
     //R-3) 학생이 수강중이거나 완료한 과목에 대한 리뷰를 작성하는 서비스 구현부
@@ -147,7 +122,7 @@ public class ReviewServiceImpl implements ReviewService{
 
         log.info("5) 리뷰 작성 완료 reviewId: {}, 학생: {}", saveReview.getReviewId(), studentEmail);
 
-        return toResponseDTO(saveReview);
+        return entityMapper.toReviewResponseDTO(saveReview);
     }
 
     //R-4) 학생 본인이 기존에 작성한 리뷰를 수정하는 서비스 구현부
@@ -176,7 +151,7 @@ public class ReviewServiceImpl implements ReviewService{
         log.info("5) 리뷰 수정 성공 -학생:{}, reviewId: {},수강평:{},평점:{}",
                 studentEmail, dto.getReviewId(), dto.getComment(),dto.getRating());
         
-        return toResponseDTO(updateReview);
+        return entityMapper.toReviewResponseDTO(updateReview);
     }
 
     //R-5) 학생이 작성한 리뷰를 삭제하기 위한 서비스 구현부

@@ -8,6 +8,7 @@ import com.univercity.unlimited.greenUniverCity.function.academic.grade.entity.G
 import com.univercity.unlimited.greenUniverCity.function.academic.grade.repository.GradeItemRepository;
 import com.univercity.unlimited.greenUniverCity.function.academic.offering.entity.CourseOffering;
 import com.univercity.unlimited.greenUniverCity.function.academic.offering.service.CourseOfferingService;
+import com.univercity.unlimited.greenUniverCity.util.EntityMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -25,23 +26,8 @@ public class GradeItemServiceImpl implements GradeItemService{
 
     private final AcademicSecurityValidator validator;
 
+    private final EntityMapper entityMapper;
 
-    /**
-     * GI-A) GradeItem 엔티티를 ResponseDTO로 변환
-     */
-    private GradeItemResponseDTO toResponseDTO(GradeItem gradeItem){
-        CourseOffering offering=gradeItem.getCourseOffering();
-
-        return GradeItemResponseDTO.builder()
-                .itemId(gradeItem.getItemId())
-                .offeringId(offering.getOfferingId())
-                .itemName(gradeItem.getItemName())
-                .itemType(gradeItem.getItemType())
-                .maxScore(gradeItem.getMaxScore())
-                .weightPercent(gradeItem.getWeightPercent())
-                .build();
-    }
-    
     //GI-1) 평가항목 생성
     @Override
     public GradeItemResponseDTO createGradeItem(GradeItemCreateDTO dto, String professorEmail) {
@@ -71,7 +57,7 @@ public class GradeItemServiceImpl implements GradeItemService{
         log.info("5) 평가 항목 생성 완료 - itemId-:{}, 교수-:{}",
                 savedItem.getItemId(), professorEmail);
 
-        return toResponseDTO(savedItem);
+        return entityMapper.toGradeItemResponseDTO(savedItem);
     }
 
     //GI-2) 평가항목 단건 조회
@@ -82,7 +68,7 @@ public class GradeItemServiceImpl implements GradeItemService{
         GradeItem gradeItem=repository.findById(itemId)
                 .orElseThrow(()->new IllegalArgumentException("평가항목을 찾을 수 없습니다"));
 
-        return toResponseDTO(gradeItem);
+        return entityMapper.toGradeItemResponseDTO(gradeItem);
     }
 
     //GI-3) 강의별 평가항목 목록 조회
@@ -96,7 +82,7 @@ public class GradeItemServiceImpl implements GradeItemService{
                  offeringId, items.size());
 
         return items.stream()
-                .map(this::toResponseDTO)
+                .map(entityMapper::toGradeItemResponseDTO)
                 .toList();
     }
     
@@ -120,7 +106,7 @@ public class GradeItemServiceImpl implements GradeItemService{
 
         log.info("5) 평가항목 수정 완료 - itemId-:{}, 교수-:{}",updateItem.getItemId(), professorEmail);
 
-        return toResponseDTO(updateItem);
+        return entityMapper.toGradeItemResponseDTO(updateItem);
     }
 
     //GI-5) 평가항목 비율 합계 검증
