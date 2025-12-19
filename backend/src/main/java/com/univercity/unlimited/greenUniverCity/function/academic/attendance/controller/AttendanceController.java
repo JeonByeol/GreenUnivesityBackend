@@ -55,7 +55,7 @@ public class AttendanceController {
             professorEmail = "hannah@aaa.com"; // 테스트용 기본값
         }
 
-        AttendanceResponseDTO response=attendanceService.createAttendanceForProfessor(dto,professorEmail);
+        AttendanceResponseDTO response=attendanceService.createAttendance(dto,professorEmail);
 
         return ResponseEntity.ok(response);
     }
@@ -74,7 +74,7 @@ public class AttendanceController {
             professorEmail = "hannah@aaa.com"; // 테스트용 기본값
         }
 
-        AttendanceResponseDTO updateAttendance=attendanceService.updateAttendanceForProfessor(
+        AttendanceResponseDTO updateAttendance=attendanceService.updateAttendance(
                 dto,
                 professorEmail
         );
@@ -82,15 +82,51 @@ public class AttendanceController {
         return ResponseEntity.ok(updateAttendance);
     }
 
+    // =================================================================================
+    // 8. [삭제] 출결 삭제 (교수) (New!)
+    // =================================================================================
+    @DeleteMapping("/delete/{attendanceId}")
+    public ResponseEntity<String> deleteAttendance(
+            @PathVariable("attendanceId") Long attendanceId,
+            @RequestHeader(value="X-User-Email", required = false) String professorEmail) {
 
+        if (professorEmail == null || professorEmail.isEmpty()) {
+            professorEmail = "hannah@aaa.com";
+        }
 
-    //교수
-    //학생출석등록/수정
-    //학생들 전체 출석부
+        log.info("1) 출결 삭제 요청 - ID: {}, 교수: {}", attendanceId, professorEmail);
+        attendanceService.deleteAttendance(attendanceId, professorEmail);
 
+        return ResponseEntity.ok("출결 데이터가 삭제되었습니다.");
+    }
 
-    //관리자
-    //학생들 전체 출석부
-    //학생 출석 등록/수정
+    // =================================================================================
+    // 1. [조회] 출결 단건 조회 (New!)
+    // - 수정 버튼 누르기 전이나 상세 보기 시 사용
+    // =================================================================================
+    @GetMapping("one/{attendanceId}")
+    public ResponseEntity<AttendanceResponseDTO> getAttendance(@PathVariable("attendanceId") Long attendanceId) {
+        log.info("1) 출결 단건 조회 요청 - ID: {}", attendanceId);
+        AttendanceResponseDTO response = attendanceService.getAttendance(attendanceId);
+        return ResponseEntity.ok(response);
+    }
+
+    // =================================================================================
+    // 3. [조회] 교수 - 특정 강의(Offering)의 전체 출결 현황 조회 (New!)
+    // - 교수가 본인 수업의 출석부를 볼 때 사용
+    // =================================================================================
+    @GetMapping("/offering/{offeringId}")
+    public List<AttendanceResponseDTO> getAttendanceByOffering(
+            @PathVariable("offeringId") Long offeringId,
+            @RequestHeader(value="X-User-Email", required = false) String professorEmail) {
+
+        // Postman 테스트용 헤더 처리
+        if (professorEmail == null || professorEmail.isEmpty()) {
+            professorEmail = "hannah@aaa.com"; // 테스트용 기본값
+        }
+
+        log.info("1) 교수 과목별 출결 조회 요청 - OfferingId: {}, 교수: {}", offeringId, professorEmail);
+        return attendanceService.getAttendanceByOffering(offeringId, professorEmail);
+    }
 
 }

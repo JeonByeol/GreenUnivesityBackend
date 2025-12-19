@@ -42,16 +42,16 @@ public class EntityMapper {
         if (attendance == null) return null;
 
         Enrollment enrollment=attendance.getEnrollment();
-        User user=enrollment.getUser();
+        // [안전장치 추가] enrollment가 null이면 user도 못 꺼내므로 방어 로직 필요
+        User user = (enrollment != null) ? enrollment.getUser() : null;
 
-        return
-                AttendanceResponseDTO.builder()
-                        .attendanceId(attendance.getAttendanceId())
-                        .enrollmentId(enrollment.getEnrollmentId())
-                        .attendanceDate(attendance.getAttendanceDate())
-                        .status(attendance.getStatus())
-                        .studentNickName(user.getNickname())
-                        .build();
+        return AttendanceResponseDTO.builder()
+                .attendanceId(attendance.getAttendanceId())
+                .enrollmentId(enrollment != null ? enrollment.getEnrollmentId() : null) // null 체크
+                .attendanceDate(attendance.getAttendanceDate())
+                .status(attendance.getStatus())
+                .studentNickName(user != null ? user.getNickname() : "알 수 없음") // null 체크
+                .build();
     }
 
     // ==========================================
@@ -60,12 +60,11 @@ public class EntityMapper {
     public ClassroomResponseDTO toClassroomResponseDTO(Classroom classroom){
         if (classroom == null) return null;
 
-        return
-                ClassroomResponseDTO.builder()
-                        .classroomId(classroom.getClassroomId())
-                        .capacity(classroom.getCapacity())
-                        .location(classroom.getLocation())
-                        .build();
+        return ClassroomResponseDTO.builder()
+                .classroomId(classroom.getClassroomId())
+                .capacity(classroom.getCapacity())
+                .location(classroom.getLocation())
+                .build();
 
     }
 

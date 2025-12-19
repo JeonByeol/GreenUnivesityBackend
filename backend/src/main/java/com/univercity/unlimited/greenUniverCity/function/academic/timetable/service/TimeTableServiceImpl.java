@@ -71,7 +71,7 @@ public class TimeTableServiceImpl implements TimeTableService{
                 .toList();
     }
     
-    //T-2-1) 본인 id를 활용하여 단건 조회를 할 수 있는 service구현부
+    //T-2-1-1) 본인 id를 활용하여 단건 조회를 할 수 있는 service구현부
     @Override
     public TimeTableResponseDTO getTimeTable(Long timetableId) {
         log.info("2) 시간표 단건 조회 시작 - timetableId-:{}",timetableId);
@@ -123,8 +123,9 @@ public class TimeTableServiceImpl implements TimeTableService{
         }
 
 
-            TimeTable timeTable=TimeTable.builder()
+        TimeTable timeTable=TimeTable.builder()
                 .classSection(section)
+                .classroom(classroom)
                 .dayOfWeek(dto.getDayOfWeek())
                 .startTime(dto.getStartTime())
                 .endTime(dto.getEndTime())

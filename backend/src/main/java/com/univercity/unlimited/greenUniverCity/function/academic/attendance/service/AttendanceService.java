@@ -20,9 +20,25 @@ public interface AttendanceService {
     List<AttendanceResponseDTO> findForStudentOfAttendance(String email);
 
     //A-4) A에 선언된 postmanTestCreateAttendance의 요청을 받아서 교수가 특정 학생에 대한 출결을 작성하기 위해 동작하는 서비스 선언
-    AttendanceResponseDTO createAttendanceForProfessor(AttendanceCreateDTO dto,String professorEmail);
+    AttendanceResponseDTO createAttendance(AttendanceCreateDTO dto,String professorEmail);
 
     //A-5) A에 선언된 postmanUpdateAttendance의 요청을 받아서 교수가 학생에 대한 출결을 수정하기 위해 동작하는 서비스 선언
-    AttendanceResponseDTO updateAttendanceForProfessor(AttendanceUpdateDTO dto,String professorEmail);
+    AttendanceResponseDTO updateAttendance(AttendanceUpdateDTO dto,String professorEmail);
 
+    // =================================================================================
+    // A-6). [조회] 출결 단건 조회 (기본 CRUD 보강)
+    // - 수정 버튼 누르기 전이나 상세 보기 시 사용
+    // =================================================================================
+    AttendanceResponseDTO getAttendance(Long attendanceId);
+
+    // =================================================================================
+    // A-7). [조회] 교수가 특정 과목(Offering)의 전체 출결 현황 조회 (요청하신 기능!)
+    // =================================================================================
+    List<AttendanceResponseDTO> getAttendanceByOffering(Long offeringId, String professorEmail);
+
+
+    // =================================================================================
+    // A-8). [삭제] 출결 삭제 (교수)
+    // =================================================================================
+    void deleteAttendance(Long attendanceId, String professorEmail);
 }
