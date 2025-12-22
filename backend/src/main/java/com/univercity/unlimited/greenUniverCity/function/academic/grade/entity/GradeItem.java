@@ -36,4 +36,10 @@ public class GradeItem {
     @JoinColumn(name = "offering_id")
     @ToString.Exclude // 순환 참조 방지
     private CourseOffering courseOffering; // 해당 강의의 평가 기준
+
+    public void updateGradeItemInfo(String itemName, Float maxScore, Float weightPercent) {
+        if (itemName != null) this.itemName = itemName;
+        if (maxScore != null) this.maxScore = maxScore;
+        if (weightPercent != null) this.weightPercent = weightPercent;
+    }
 }

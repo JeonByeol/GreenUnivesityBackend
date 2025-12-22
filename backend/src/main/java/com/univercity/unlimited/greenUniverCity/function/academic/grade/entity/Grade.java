@@ -57,4 +57,10 @@ public class Grade{
         this.totalScore = totalScore;
         this.letterGrade = calculateGrade(totalScore);
     }
+
+    // --- 비즈니스 로직 (수정 편의 메서드) ---
+    public void updateGradeInfo(Float totalScore, String letterGrade) {
+        if (totalScore != null) this.totalScore = totalScore;
+        if (letterGrade != null) this.letterGrade = letterGrade;
+    }
 }

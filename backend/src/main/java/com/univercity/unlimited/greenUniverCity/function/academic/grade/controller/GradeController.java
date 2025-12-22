@@ -23,10 +23,10 @@ public class GradeController {
 
     //NEW-G-1) 최종 성적 테이블에 존재하는 모든 데이터를 조회하기 위해 컨트롤러 내부에 선언된 crud(get)
     @GetMapping("/all")
-    public List<GradeResponseDTO> getGrades(){
+    public ResponseEntity<List<GradeResponseDTO>> getGrades(){
         log.info("1) 최종 성적 전체조회 요청");
 
-        return gradeService.findAllGrades();
+        return ResponseEntity.ok(gradeService.findAllGrades());
     }
 
     //NEW-G-2) 최종 성적에 대한 단건 조회를 하기 위해 컨트롤러 내부에 선언된 CRUD(get)
@@ -55,8 +55,7 @@ public class GradeController {
             log.warn("X-User-Email 헤더가 없습니다. 테스트용 기본값 사용");
             studentEmail = "hannah@aaa.com";
         }
-        
-        //뭔가 뭔가 이상함 추후 수정 예정
+
         List<GradeResponseDTO> response=gradeService.getStudentGrades(studentEmail,studentEmail);
 
         log.info("Complete: 학생 성적 조회 완료 - 학생-:{}, 성적개수-:{}",
@@ -87,52 +86,30 @@ public class GradeController {
         return ResponseEntity.ok(responses);
     }
 
-    //NEW-G-5) 교수가 학생에 대한 최종 성적을 생성하기 위해 컨트롤러 내부에 선언된 crud(post)
-    @PostMapping("/create")
-    public ResponseEntity<GradeResponseDTO> createGrade(
-            @Valid @RequestBody GradeCreateDTO dto,
-            @RequestHeader(value = "X-User-Email", required = false) String professorEmail){
-
-        log.info("1) 최종 성적 생성 요청 - enrollmentId-:{}, 교수-:{}", dto.getEnrollmentId(), professorEmail);
-
-        // Postman 테스트용
-        if (professorEmail == null || professorEmail.isEmpty()) {
-            log.warn("X-User-Email 헤더가 없습니다. 테스트용 기본값 사용");
-            professorEmail = "hannah@aaa.com";
-        }
-
-        GradeResponseDTO response= gradeService.createGrade(dto,professorEmail);
-
-        log.info("Complete:최종 성적 생성 완료 - gradeId-:{}, letterGrade-:{}",
-                response.getGradeId(), response.getLetterGrade());
-
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
-    }
-
-    //NEW-G-6) 최종 성적을 수정 하기 위해 컨트롤러 내부에 선언된 Crud(get)
-    @PutMapping("/{gradeId}")
+    //NEW-G-5) 최종 성적을 수정 하기 위해 컨트롤러 내부에 선언된 Crud(get)
+    @PutMapping("/update")
     public ResponseEntity<GradeResponseDTO> updateGrade(
-            @PathVariable Long gradeId,
             @Valid @RequestBody GradeUpdateDTO dto,
-            @RequestHeader (value = "X-User-Email", required = false) String professorEmail){
+            @RequestHeader(value = "X-User-Email", required = false) String professorEmail) {
 
-        log.info("1) 최종 성적 수정 요청 -gradeId-:{}, 교수-:{}", gradeId, professorEmail);
+        log.info("1) 최종 성적 수정 요청 (DTO 방식) - GradeId: {}, 교수: {}", dto.getGradeId(), professorEmail);
 
-        // Postman 테스트용
+        // [Postman 테스트용]
         if (professorEmail == null || professorEmail.isEmpty()) {
             log.warn("X-User-Email 헤더가 없습니다. 테스트용 기본값 사용");
             professorEmail = "hannah@aaa.com";
         }
 
-        GradeResponseDTO response= gradeService.updateGrade(gradeId, dto, professorEmail);
+        // Service 호출 시 DTO 안의 GradeId를 첫 번째 인자로 전달
+        GradeResponseDTO response = gradeService.updateGrade(dto.getGradeId(), dto, professorEmail);
 
-        log.info("Complete: 최종 성적 수정 완료 - gradeId-:{}, letterGrade-:{}",
+        log.info("Complete: 최종 성적 수정 완료 - GradeId: {}, LetterGrade: {}",
                 response.getGradeId(), response.getLetterGrade());
 
         return ResponseEntity.ok(response);
     }
 
-    //NEW-G-7) 최종 성적 자동 계산 및 저장하기 위해 컨트롤러 내부에 선언된 crud(post)
+    //NEW-G-6) 최종 성적 자동 계산 및 저장하기 위해 컨트롤러 내부에 선언된 crud(post)
     @PostMapping("/enrollments/{enrollmentId}/calculate")
     public ResponseEntity<GradeResponseDTO> calculateAndSaveGrade(
             @PathVariable Long enrollmentId,
@@ -154,49 +131,7 @@ public class GradeController {
 
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
-}
-// 구버전 컨트롤러
-////G-1) 성적 테이블에 존재하는 전체 데이터 조회
-//@GetMapping("/all")
-//public List<LegacyGradeDTO> postmanTestGrade(){
-//    log.info("Controller: 성적전체조회");
-//    return gradeService.findAllGrade();
-//}
-//
-////G-2) 특정 학생이 본인이 수강한 모든 과목의 성적과 과목명을 조회
-//@GetMapping("/mygrade/{email}")
-//public List<GradeResponseDTO> postmanMyGrade(@PathVariable("email") String email){
-//    return gradeService.myGrade(email);
-//}
-//
-////G-3) 교수가 특정 과목의 수업을 듣는 전체학생 조회
-//@GetMapping("/course/{offeringId}")
-//public List<GradeResponseDTO> postmanCourseGrade(@PathVariable("offeringId") Long offeringId){
-//    return gradeService.offeringOfGrade(offeringId);
-//}
-//
-////G-4) 교수가 특정 학생에 대한 성적을 수정(입력)
-//@PutMapping("{enrollmentId}")
-//public ResponseEntity<LegacyGradeDTO> updateGrade(
-//        @PathVariable("enrollmentId") Long enrollmentId,
-//        @RequestBody LegacyGradeDTO legacyGradeDTO) {
-//
-//    String gradeValue= legacyGradeDTO.getGradeValue();
-//
-//    log.info(" 수강신청 ID[{}]의 성적을 [{}]로 입력 시도...",  enrollmentId, gradeValue);
-//
-//    LegacyGradeDTO updateGrade=gradeService.updateNewGrade(
-//            enrollmentId,
-//            gradeValue
-//    );
-//    return ResponseEntity.ok(updateGrade);
-//}
 
-//    @PostMapping("/test")
-//    public GradeDTO postmanTestAdd(@RequestBody GradeDTO dto){
-//        Long enrollment=dto.getEnrollment().getEnrollmentId();
-//        String value=dto.getGradeValue();
-//        String mail=dto.getEnrollment().getUser().getEmail();
-//        return gradeService.postNewGrade(enrollment,value,mail);
-//    }
+}
+
 

@@ -4,23 +4,15 @@ import com.univercity.unlimited.greenUniverCity.function.academic.attendance.dto
 import com.univercity.unlimited.greenUniverCity.function.academic.attendance.dto.AttendanceResponseDTO;
 import com.univercity.unlimited.greenUniverCity.function.academic.attendance.dto.AttendanceUpdateDTO;
 import com.univercity.unlimited.greenUniverCity.function.academic.attendance.entity.Attendance;
-import com.univercity.unlimited.greenUniverCity.function.academic.common.AcademicSecurityValidatorDummy;
+import com.univercity.unlimited.greenUniverCity.function.academic.common.AcademicSecurityValidator;
 import com.univercity.unlimited.greenUniverCity.function.academic.enrollment.entity.Enrollment;
 import com.univercity.unlimited.greenUniverCity.function.academic.enrollment.service.EnrollmentService;
 import com.univercity.unlimited.greenUniverCity.function.academic.offering.entity.CourseOffering;
 import com.univercity.unlimited.greenUniverCity.function.academic.offering.service.CourseOfferingService;
-import com.univercity.unlimited.greenUniverCity.function.academic.review.exception.DataIntegrityException;
-import com.univercity.unlimited.greenUniverCity.function.academic.review.exception.InvalidRoleException;
-import com.univercity.unlimited.greenUniverCity.function.academic.review.exception.UnauthorizedException;
-import com.univercity.unlimited.greenUniverCity.function.member.user.entity.User;
 import com.univercity.unlimited.greenUniverCity.function.academic.attendance.repository.AttendanceRepository;
-import com.univercity.unlimited.greenUniverCity.function.member.user.entity.UserRole;
-import com.univercity.unlimited.greenUniverCity.function.member.user.service.UserService;
 import com.univercity.unlimited.greenUniverCity.util.EntityMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.modelmapper.ModelMapper;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -33,7 +25,7 @@ public class AttendanceServiceImpl implements AttendanceService{
     private final AttendanceRepository repository;
     private final EnrollmentService enrollmentService; // 학생/수강신청 정보용
     private final CourseOfferingService offeringService; // [NEW] 과목 정보 조회용
-    private final AcademicSecurityValidatorDummy validator;
+    private final AcademicSecurityValidator validator;
     private final EntityMapper entityMapper;
 
     // =================================================================================

@@ -1,7 +1,7 @@
 package com.univercity.unlimited.greenUniverCity.function.member.user.service;
 
 import com.univercity.unlimited.greenUniverCity.function.academic.enrollment.exception.UserNotFoundException;
-import com.univercity.unlimited.greenUniverCity.function.academic.review.exception.InvalidRoleException;
+import com.univercity.unlimited.greenUniverCity.util.exception.InvalidRoleException;
 import com.univercity.unlimited.greenUniverCity.function.member.user.dto.UserLoginDTO;
 import com.univercity.unlimited.greenUniverCity.function.member.user.dto.UserRegisterDTO;
 import com.univercity.unlimited.greenUniverCity.function.member.user.dto.UserResponseDTO;

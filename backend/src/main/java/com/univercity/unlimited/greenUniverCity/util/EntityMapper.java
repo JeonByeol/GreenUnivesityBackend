@@ -18,6 +18,7 @@ import com.univercity.unlimited.greenUniverCity.function.academic.offering.dto.C
 import com.univercity.unlimited.greenUniverCity.function.academic.offering.entity.CourseOffering;
 import com.univercity.unlimited.greenUniverCity.function.academic.review.dto.ReviewResponseDTO;
 import com.univercity.unlimited.greenUniverCity.function.academic.review.entity.Review;
+import com.univercity.unlimited.greenUniverCity.function.academic.section.dto.ClassSectionResponseDTO;
 import com.univercity.unlimited.greenUniverCity.function.academic.section.entity.ClassSection;
 import com.univercity.unlimited.greenUniverCity.function.academic.timetable.dto.TimeTableResponseDTO;
 import com.univercity.unlimited.greenUniverCity.function.academic.timetable.entity.TimeTable;
@@ -26,6 +27,8 @@ import com.univercity.unlimited.greenUniverCity.function.member.department.entit
 import com.univercity.unlimited.greenUniverCity.function.member.user.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 @Component
 @RequiredArgsConstructor
@@ -247,7 +250,51 @@ public class EntityMapper {
     // ==========================================
     // 11. ClassSection 변환 (ClassSection-A)
     // ==========================================
+    public ClassSectionResponseDTO toClassSectionResponseDTO(ClassSection section) {
+        if (section == null) return null;
 
+        // 1. 시간표 변환 (List가 null일 경우를 대비해 빈 리스트 처리 또는 stream 처리)
+        // section.getTimeTables()가 null일 리는 없지만(new ArrayList로 초기화됨), 안전하게 작성
+        List<TimeTableResponseDTO> timeTableDTOs = section.getTimeTables().stream()
+                .map(tt -> TimeTableResponseDTO.builder()
+                        .dayOfWeek(tt.getDayOfWeek())
+                        .startTime(tt.getStartTime())
+                        .endTime(tt.getEndTime())
+                        .classroomId(tt.getClassroom() != null ? tt.getClassroom().getClassroomId() : null)
+                        .classroomName(tt.getClassroom() != null ? tt.getClassroom().getLocation() : "미정")
+                        .build())
+                .toList();
+
+        // 2. 현재 인원 (엔티티 필드값 사용)
+        Integer currentCount = section.getCurrentCount(); // null이면 0으로 반환됨 (Getter에서 처리됨)
+
+        // 3. 기본 틀 생성
+        ClassSectionResponseDTO response = ClassSectionResponseDTO.builder()
+                .sectionId(section.getSectionId())
+                .sectionName(section.getSectionName())
+                .maxCapacity(section.getMaxCapacity())
+                .currentCount(currentCount)
+                .sectionType(section.getSectionType())
+                // Enum에 displayName이 있으므로 바로 사용 가능
+                .sectionTypeDisplay(section.getSectionType() != null ? section.getSectionType().getDisplayName() : null)
+                .offeringId(section.getCourseOffering().getOfferingId())
+                .courseName(section.getCourseOffering().getCourseName())
+                .year(section.getCourseOffering().getYear())
+                .semester(section.getCourseOffering().getSemester())
+                .professorName(section.getCourseOffering().getProfessor().getNickname())
+                .timeTables(timeTableDTOs)
+                .build();
+
+        // 4. 계산 로직
+        if (response.getMaxCapacity() != null) {
+            response.setAvailableSeats(response.getMaxCapacity() - currentCount);
+            response.setIsFull(currentCount >= response.getMaxCapacity());
+            response.setEnrollmentRate(response.getMaxCapacity() > 0
+                    ? (currentCount.doubleValue() / response.getMaxCapacity()) * 100.0 : 0.0);
+        }
+
+        return response;
+    }
     // ==========================================
     // 12. Department 변환 (Department-A)
     // ==========================================

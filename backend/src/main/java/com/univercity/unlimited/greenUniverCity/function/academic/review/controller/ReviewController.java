@@ -22,25 +22,23 @@ public class ReviewController {
 
     //R-1) 리뷰 전체 조회
     @GetMapping("/all")
-    public List<ReviewResponseDTO> postmanTestReview(){
+    public ResponseEntity<List<ReviewResponseDTO>> getAllReviews(){
         log.info("1) 리뷰 전체 조회 요청");
-        return reviewService.findAllReview();
+        return ResponseEntity.ok(reviewService.findAllReview());
     }
 
     //R-2) 특정 과목에 대해 존재하는 리뷰 목록 조회 컨트롤러
     @GetMapping("/course/{offeringId}")
-    public List<ReviewResponseDTO> postmanTestStudent(@PathVariable("offeringId") Long offeringId){
+    public ResponseEntity<List<ReviewResponseDTO>> getCourseReviews(@PathVariable("offeringId") Long offeringId){
         log.info("1) 특정 과목에 대한 리뷰 조회요청 - offeringId-:{}",offeringId);
-        return reviewService.findOfferingForReview(offeringId);
+        return ResponseEntity.ok(reviewService.findOfferingForReview(offeringId));
     }
 
     //R-3) 학생이 수강중이거나 완료한 과목에 대한 리뷰를 작성하는 컨트롤러
     @PostMapping("/create")
-    public ResponseEntity<ReviewResponseDTO> postmanCreateReview(
+    public ResponseEntity<ReviewResponseDTO> createReview(
             @Valid @RequestBody ReviewCreateDTO dto,
-            @RequestHeader(value="X-User-Email",required = false) String studentEmail) {  // Spring Security에서 이메일 가져옴
-
-        log.info("받은 DTO: {}", dto);
+            @RequestHeader(value="X-User-Email",required = false) String studentEmail) {
 
         log.info("1) 리뷰 작성 요청 - 학생: {}, enrollmentId: {}", studentEmail, dto.getEnrollmentId());
 
@@ -61,8 +59,7 @@ public class ReviewController {
             @RequestBody ReviewUpdateDTO dto,
             @RequestHeader(value = "X-User-Email", required = false) String studentEmail){
 
-        log.info("1) 리뷰 수정 요청 reviewId-:{},comment:{},rating:{}",
-                dto.getReviewId(),dto.getComment(),dto.getRating());
+        log.info("1) 리뷰 수정 요청 - ReviewId: {}, 학생: {}", dto.getReviewId(), studentEmail);
 
         // Postman 테스트용: Header가 없으면 기본값 사용 (개발 환경에서만)
         if (studentEmail == null || studentEmail.isEmpty()) {
@@ -70,22 +67,18 @@ public class ReviewController {
             studentEmail = "edward@aaa.com"; // 테스트용 기본값
         }
 
-        ReviewResponseDTO updateReview=reviewService.myReviewUpdate(
-                dto,
-                studentEmail
-        );
+        ReviewResponseDTO response = reviewService.myReviewUpdate(dto, studentEmail);
 
-        return ResponseEntity.ok(updateReview);
+        return ResponseEntity.ok(response);
     }
 
     //R-5) 학생이 작성한 리뷰를 삭제하기 위해 컨트롤러 내에 선언된 crud
     @DeleteMapping("/delete/{reviewId}")
-    public void postmanDeleteReview(
+    public ResponseEntity<Void> deleteReview(
             @PathVariable("reviewId") Long reviewId,
             @RequestHeader(value = "X-User-Email", required = false) String studentEmail){
 
-        log.info("1) 리뷰 삭제 요청 reviewId-:{},studentEmail:{}",
-                reviewId,studentEmail);
+        log.info("1) 리뷰 삭제 요청 - ReviewId: {}, 학생: {}", reviewId, studentEmail);
 
         // Postman 테스트용: Header가 없으면 기본값 사용 (개발 환경에서만)
         if (studentEmail == null || studentEmail.isEmpty()) {
@@ -93,12 +86,14 @@ public class ReviewController {
             studentEmail = "edward@aaa.com"; // 테스트용 기본값
         }
 
-        reviewService.deleteByReview(reviewId,studentEmail);
+        reviewService.deleteByReview(reviewId, studentEmail);
+
+        return ResponseEntity.noContent().build();
     }
 
     //R-6) 성적 단건 조회를 위해 one 주소 사용
     @GetMapping("/one/{reviewId}")
-    public ResponseEntity<ReviewResponseDTO> getReviews(@PathVariable("reviewId") Long reviewId){
+    public ResponseEntity<ReviewResponseDTO> getReedReview(@PathVariable("reviewId") Long reviewId){
         log.info("1) 리뷰 단건 조회 요청 - reviewId-:{}", reviewId);
 
         ReviewResponseDTO response= reviewService.getReview(reviewId);

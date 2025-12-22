@@ -8,10 +8,7 @@ import com.univercity.unlimited.greenUniverCity.function.academic.enrollment.exc
 import com.univercity.unlimited.greenUniverCity.function.academic.enrollment.exception.EnrollmentNotFoundException;
 import com.univercity.unlimited.greenUniverCity.function.academic.enrollment.exception.UserNotFoundException;
 import com.univercity.unlimited.greenUniverCity.function.academic.enrollment.repository.EnrollmentRepository;
-import static com.univercity.unlimited.greenUniverCity.function.academic.enrollment.repository.EnrollmentRepository.SectionCountSummary;
-import com.univercity.unlimited.greenUniverCity.function.academic.offering.entity.CourseOffering;
 import com.univercity.unlimited.greenUniverCity.function.academic.offering.exception.CourseOfferingNotFoundException;
-import com.univercity.unlimited.greenUniverCity.function.academic.offering.service.CourseOfferingService;
 import com.univercity.unlimited.greenUniverCity.function.academic.section.entity.ClassSection;
 import com.univercity.unlimited.greenUniverCity.function.academic.section.service.ClassSectionService;
 import com.univercity.unlimited.greenUniverCity.function.member.user.entity.User;
@@ -41,7 +38,6 @@ public class EnrollmentServiceImpl implements EnrollmentService {
 
     private final EntityMapper entityMapper;
 
-    private final EnrollmentCountService enrollmentCountService;
     
     //중복수강신청 검증
     private void validateDuplicateEnrollment(Long userId, Long sectionId) {
@@ -59,7 +55,7 @@ public class EnrollmentServiceImpl implements EnrollmentService {
 
     //정원초과검증
     private void validateSectionCapacity(ClassSection section) {
-        Integer currentCount = enrollmentCountService.getCurrentEnrollmentCount(section.getSectionId());
+        Integer currentCount = section.getCurrentCount();
         Integer maxCapacity = section.getMaxCapacity();
 
         if (currentCount >= maxCapacity) {
@@ -255,22 +251,6 @@ public class EnrollmentServiceImpl implements EnrollmentService {
         return enrollment;
     }
 
-    /**
-     *  -- ClassSection -- <-- SE
-     */
-
-    //E.SE-1) 특정 분반의 현재 수강 인원 조회 Service 구현부
-    @Override
-    public Integer getCurrentEnrollmentCount(Long sectionId) {
-        return enrollmentCountService.getCurrentEnrollmentCount(sectionId);
-    }
-
-    //E.SE-2) 여러 분반의 현재 수강 인원을 한 번에 조회 Service 구현부
-    @Override
-    public Map<Long, Integer> getCurrentEnrollmentCounts(List<Long> sectionIds) {
-        return enrollmentCountService.getCurrentEnrollmentCounts(sectionIds);
-
-    }
 
 
 }

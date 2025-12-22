@@ -32,7 +32,7 @@ public interface AttendanceService {
     AttendanceResponseDTO getAttendance(Long attendanceId);
 
     // =================================================================================
-    // A-7). [조회] 교수가 특정 과목(Offering)의 전체 출결 현황 조회 (요청하신 기능!)
+    // A-7). [조회] 교수가 특정 과목(Offering)의 전체 출결 현황 조회
     // =================================================================================
     List<AttendanceResponseDTO> getAttendanceByOffering(Long offeringId, String professorEmail);
 

@@ -12,12 +12,14 @@ import com.univercity.unlimited.greenUniverCity.util.EntityMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
 @Slf4j
 @RequiredArgsConstructor
+@Transactional
 public class GradeItemServiceImpl implements GradeItemService{
 
     private final GradeItemRepository repository;
@@ -31,18 +33,19 @@ public class GradeItemServiceImpl implements GradeItemService{
     //GI-1) 평가항목 생성
     @Override
     public GradeItemResponseDTO createGradeItem(GradeItemCreateDTO dto, String professorEmail) {
+        Long offeringId = dto.getOfferingId();
+        String itemName = dto.getItemName();
+
         log.info("2) 평가항목 생성 시작 - offeringId-:{}, itemName-:{}, 교수-:{}",
-                 dto.getOfferingId(), dto.getItemName(), professorEmail);
+                offeringId, itemName, professorEmail);
 
-        CourseOffering offering =
-                courseOfferingService.getCourseOfferingEntity(dto.getOfferingId());
-
+        CourseOffering offering = courseOfferingService.getCourseOfferingEntity(offeringId);
         validator.validateProfessorOwnership(offering, professorEmail, "평가항목 생성");
-        
-        if(repository.existsByCourseOffering_OfferingIdAndItemName(
-                dto.getOfferingId(), dto.getItemName())){
-            throw new IllegalStateException("이미 같은 이름의 평가 항목이 존재합니다");
-        }
+
+        boolean exists = repository.existsByCourseOffering_OfferingIdAndItemName(offeringId, itemName);
+        validator.validateDuplicate(exists, "평가 항목(" + itemName + ")");
+
+        checkTotalWeightLimit(dto.getOfferingId(), null, dto.getWeightPercent());
 
         GradeItem gradeItem = GradeItem.builder()
                 .courseOffering(offering)
@@ -52,27 +55,23 @@ public class GradeItemServiceImpl implements GradeItemService{
                 .weightPercent(dto.getWeightPercent())
                 .build();
 
-        GradeItem savedItem = repository.save(gradeItem);
-
-        log.info("5) 평가 항목 생성 완료 - itemId-:{}, 교수-:{}",
-                savedItem.getItemId(), professorEmail);
-
-        return entityMapper.toGradeItemResponseDTO(savedItem);
+        return entityMapper.toGradeItemResponseDTO(repository.save(gradeItem));
     }
 
     //GI-2) 평가항목 단건 조회
     @Override
+    @Transactional(readOnly = true)
     public GradeItemResponseDTO getGradeItem(Long itemId) {
         log.info("2) 평가항목 조회 시작 - itemId-:{}", itemId);
 
-        GradeItem gradeItem=repository.findById(itemId)
-                .orElseThrow(()->new IllegalArgumentException("평가항목을 찾을 수 없습니다"));
+        GradeItem gradeItem = validator.getEntityOrThrow(repository, itemId, "평가 항목");
 
         return entityMapper.toGradeItemResponseDTO(gradeItem);
     }
 
     //GI-3) 강의별 평가항목 목록 조회
     @Override
+    @Transactional(readOnly = true)
     public List<GradeItemResponseDTO> getOfferingGradeItem(Long offeringId) {
         log.info("2) 강의별 평가항목 조회 시작 - offeringId-:{}", offeringId);
 
@@ -91,55 +90,64 @@ public class GradeItemServiceImpl implements GradeItemService{
     public GradeItemResponseDTO updateGradeItem(Long itemId, GradeItemUpdateDTO dto, String professorEmail) {
         log.info("2) 평가항목 수정 시작 - itemId-:{},교수-:{}", itemId, professorEmail);
 
-        GradeItem gradeItem = repository.findById(itemId)
-                .orElseThrow(()->new IllegalArgumentException("3) 평가 항목을 찾을 수 없습니다"));
-        
+        //조회
+        GradeItem gradeItem = validator.getEntityOrThrow(repository, itemId, "평가 항목");
+
+        //검증
         CourseOffering offering= gradeItem.getCourseOffering();
         validator.validateProfessorOwnership(offering, professorEmail, "평가항목 수정");
 
-        gradeItem.setItemName(dto.getItemName());
-//        gradeItem.setItemType(dto.getItemType());
-        gradeItem.setMaxScore(dto.getMaxScore());
-        gradeItem.setWeightPercent(dto.getWeightPercent());
-
-        GradeItem updateItem= repository.save(gradeItem);
-
-        log.info("5) 평가항목 수정 완료 - itemId-:{}, 교수-:{}",updateItem.getItemId(), professorEmail);
-
-        return entityMapper.toGradeItemResponseDTO(updateItem);
-    }
-
-    //GI-5) 평가항목 비율 합계 검증
-    @Override
-    public boolean validateWeightSum(Long offeringId) {
-        log.info("2) 평가항목 비율 합계 검증 - offeringId-:{}", offeringId);
-
-        //모든 평가항목 조회
-        List<GradeItem> items=repository.findByOfferingId(offeringId);
-
-        float totalWeight = 0.0f;
-
-        for(GradeItem item: items){
-            totalWeight += item.getWeightPercent();
+        //이름 변경 시 중복 체크
+        if (dto.getItemName() != null && !gradeItem.getItemName().equals(dto.getItemName())) {
+            boolean exists = repository.existsByCourseOffering_OfferingIdAndItemName(
+                    gradeItem.getCourseOffering().getOfferingId(),
+                    dto.getItemName()
+            );
+            validator.validateDuplicate(exists, "평가 항목(" + dto.getItemName() + ")");
         }
 
-        //100%인지 확인
-        boolean isValid = Math.abs(totalWeight - 100.0f) < 0.01f;
+        // (자동 검증) 비율 변경 시 100% 초과 여부 확인 (자기 자신은 제외하고 합산)
+        if (dto.getWeightPercent() != null) {
+            checkTotalWeightLimit(gradeItem.getCourseOffering().getOfferingId(), itemId, dto.getWeightPercent());
+        }
 
-        log.info("비율 합계-:{}%, 유효성-:{}", totalWeight, isValid);
+        gradeItem.updateGradeItemInfo(
+                dto.getItemName(),
+                dto.getMaxScore(),
+                dto.getWeightPercent()
+        );
 
-        return isValid;
+        return entityMapper.toGradeItemResponseDTO(repository.save(gradeItem));
     }
+
+    //  비율 합계 검증 로직
+    private void checkTotalWeightLimit(Long offeringId, Long currentItemId, Float newWeight) {
+        List<GradeItem> items = repository.findByOfferingId(offeringId);
+
+        double currentTotal = items.stream()
+                // 수정 중일 때는 자기 자신의 기존 비율은 빼고 계산해야 함
+                .filter(item -> !item.getItemId().equals(currentItemId))
+                .mapToDouble(GradeItem::getWeightPercent)
+                .sum();
+
+        if (currentTotal + newWeight > 100.0) {
+            throw new IllegalArgumentException(
+                    String.format("비율 합계가 100%%를 초과합니다. (현재: %.1f%%, 추가 시: %.1f%%)",
+                            currentTotal, currentTotal + newWeight));
+        }
+    }
+
     //GI-6) 평가항목 개수 조회( 외부 service에서 사용예정)
     @Override
+    @Transactional(readOnly = true)
     public Long countOfferingGradeItems(Long offeringId) {
         return repository.countByCourseOffering_OfferingId(offeringId);
     }
 
     //GI-7) GradeItem에 대한 정보 조회(외부 service에서 사용예정)
     @Override
+    @Transactional(readOnly = true)
     public GradeItem getGradeItemEntity(Long itemId) {
-        return repository.findById(itemId)
-                .orElseThrow(()->new IllegalArgumentException("평가 항목을 찾을 수 없습니다."));
+        return validator.getEntityOrThrow(repository, itemId, "평가 항목");
     }
 }

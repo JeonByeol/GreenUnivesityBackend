@@ -3,72 +3,41 @@ package com.univercity.unlimited.greenUniverCity.function.academic.review.servic
 import com.univercity.unlimited.greenUniverCity.function.academic.common.AcademicSecurityValidator;
 import com.univercity.unlimited.greenUniverCity.function.academic.enrollment.entity.Enrollment;
 import com.univercity.unlimited.greenUniverCity.function.academic.enrollment.service.EnrollmentService;
-import com.univercity.unlimited.greenUniverCity.function.academic.offering.entity.CourseOffering;
 import com.univercity.unlimited.greenUniverCity.function.academic.review.dto.ReviewCreateDTO;
 import com.univercity.unlimited.greenUniverCity.function.academic.review.dto.ReviewResponseDTO;
 import com.univercity.unlimited.greenUniverCity.function.academic.review.dto.ReviewUpdateDTO;
 import com.univercity.unlimited.greenUniverCity.function.academic.review.entity.Review;
 import com.univercity.unlimited.greenUniverCity.function.academic.review.exception.DuplicateReviewException;
 import com.univercity.unlimited.greenUniverCity.function.academic.review.exception.ReviewNotFoundException;
-import com.univercity.unlimited.greenUniverCity.function.academic.review.exception.UnauthorizedReviewException;
 import com.univercity.unlimited.greenUniverCity.function.academic.review.repository.ReviewRepository;
-import com.univercity.unlimited.greenUniverCity.function.academic.section.entity.ClassSection;
-import com.univercity.unlimited.greenUniverCity.function.member.user.entity.User;
 import com.univercity.unlimited.greenUniverCity.util.EntityMapper;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.modelmapper.ModelMapper;
-import org.springframework.http.ResponseEntity;
+
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
 @Slf4j
 @RequiredArgsConstructor
+@Transactional
+
 public class ReviewServiceImpl implements ReviewService{
     private final ReviewRepository repository;
-
     private final EnrollmentService enrollmentService;
-
     private final AcademicSecurityValidator validator;
-
     private final EntityMapper entityMapper;
-    
-
-    /**
-     * R-3-2) 중복 리뷰 검사: 이미 해당 수강신청에 리뷰를 작성했는지 확인하는 함수
-     */
-
-    private void validateDuplicateReview(Enrollment enrollment) {
-        boolean reviewExists = repository.existsByEnrollment(enrollment);
-
-        if (reviewExists) {
-            log.warn("중복 리뷰 작성 시도 - enrollmentId: {}", enrollment.getEnrollmentId());
-            throw new DuplicateReviewException(
-                    "4) 보안 검사 시도 식별코드 -:R-3-2" +
-                            "이미 해당 과목에 대한 리뷰를 작성하셨습니다.");
-        }
-
-        log.info("4) 중복 검사 통과 - enrollmentId: {}", enrollment.getEnrollmentId());
-    }
-
 
     //R-1) 리뷰 테이블에 존재하는 모든 데이터를 조회하는 서비스 구현부
-    //->60% 완료
-    //구상:modelMapper를 좀 더 깔끔하거나 좋은 방식으로 수정하거나 mapper를 사용 안 할 예정
-    @Transactional
     @Override
+    @Transactional(readOnly = true)
     public List<ReviewResponseDTO> findAllReview() {
         log.info("2) 리뷰 전체조회 시작");
-        List<Review> reviews=repository.findAllWithDetails();
 
-        log.info("3) 리뷰 전체조회 성공");
-
-        return reviews.stream()
+        return repository.findAllWithDetails().stream()
                 .map(entityMapper::toReviewResponseDTO)
                 .toList();
     }
@@ -76,6 +45,7 @@ public class ReviewServiceImpl implements ReviewService{
     //R-2)특정 과목에 대해 존재하는 리뷰 목록 조회 서비스 구현부
     // -> 98.9% 완료 나중에 구상 혹은 프론트앤드에서 작업할 때 추가 수정 하거나 그대로 사용 하면 될 듯?
     @Override
+    @Transactional(readOnly = true)
     public List<ReviewResponseDTO> findOfferingForReview(Long offeringId) {
         log.info("2 특정 과목에 존재하는 리뷰 조회 시작 - offeringId-:{}", offeringId);
         List<Review> reviews=repository.findReviewsByCourseOfferingId(offeringId);
@@ -88,11 +58,11 @@ public class ReviewServiceImpl implements ReviewService{
     
     //R-2-1) 본인 id를 활용하여 단건 조회를 할 수 있는 service구현부
     @Override
+    @Transactional(readOnly = true)
     public ReviewResponseDTO getReview(Long reviewId) {
         log.info("2) 리뷰 단건 조회 시작 - reviewId-:{}", reviewId);
 
-        Review review= repository.findById(reviewId)
-                .orElseThrow(()->new IllegalArgumentException("리뷰 정보를 찾을 수 없습니다."));
+        Review review = validator.getEntityOrThrow(repository, reviewId, "리뷰");
 
         return entityMapper.toReviewResponseDTO(review);
     }
@@ -106,20 +76,19 @@ public class ReviewServiceImpl implements ReviewService{
         Enrollment enrollment = enrollmentService.getEnrollmentEntity(dto.getEnrollmentId());
 
         // 보안 검사
-        validator.validateStudentEnrollmentOwnership(enrollment,studentEmail,"리뷰생성");
+        validator.validateStudentEnrollmentOwnership(enrollment,studentEmail,"리뷰작성");
 
         // 중복 리뷰 검사
-        validateDuplicateReview(enrollment);
+        boolean exists = repository.existsByEnrollment(enrollment);
+        validator.validateDuplicate(exists, "해당 강의의 리뷰");
 
         Review review = Review.builder()
                 .enrollment(enrollment)
                 .rating(dto.getRating())
                 .comment(dto.getComment())
-                .createdAt(LocalDateTime.now())
                 .build();
 
         Review saveReview =repository.save(review);
-
         log.info("5) 리뷰 작성 완료 reviewId: {}, 학생: {}", saveReview.getReviewId(), studentEmail);
 
         return entityMapper.toReviewResponseDTO(saveReview);
@@ -134,17 +103,12 @@ public class ReviewServiceImpl implements ReviewService{
                 dto.getReviewId(), studentEmail);
 
         // 리뷰 조회
-        Review review = repository.findById(dto.getReviewId())
-                .orElseThrow(() -> new ReviewNotFoundException(
-                        "3) 보안 검사 시도 식별코드 -:R-4" +
-                                "리뷰가 존재하지 않습니다. reviewId: " + dto.getReviewId()));
+        Review review = validator.getEntityOrThrow(repository, dto.getReviewId(), "리뷰");
 
         // 보안검사
         validator.validateReviewOwnership(review, studentEmail,"리뷰수정");
 
-        review.setComment(dto.getComment());
-        review.setRating(dto.getRating());
-        review.setUpdatedAt(LocalDateTime.now());
+        review.updateReviewInfo(dto.getRating(), dto.getComment());
 
         Review updateReview=repository.save(review);
 
@@ -162,12 +126,9 @@ public class ReviewServiceImpl implements ReviewService{
         log.info("2)리뷰 삭제 요청 -학생:{}, reviewId:{}",studentEmail,reviewId);
 
         //리뷰 조회
-        Review review=repository.findById(reviewId)
-                .orElseThrow(() -> new ReviewNotFoundException(
-                        "3)보안 검사 시도 식별코드 -:R-5" +
-                                "리뷰가 존재하지 않습니다. reviewId: " + reviewId));
+        Review review = validator.getEntityOrThrow(repository, reviewId, "리뷰");
 
-        //R-4-1)소유권검증
+        //본인 리뷰인지 확인
         validator.validateReviewOwnership(review,studentEmail,"리뷰삭제");
 
         repository.delete(review);

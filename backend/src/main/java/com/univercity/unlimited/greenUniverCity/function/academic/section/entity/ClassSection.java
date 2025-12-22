@@ -7,6 +7,7 @@ import com.univercity.unlimited.greenUniverCity.function.academic.timetable.enti
 import com.univercity.unlimited.greenUniverCity.function.member.user.entity.UserRole;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.Formula;
 
 import java.time.DayOfWeek;
 import java.time.LocalTime;
@@ -45,6 +46,9 @@ public class ClassSection {
     // 추가: 이 분반의 시간표들 (1:N)
     // cascade = ALL: 분반 삭제 시 시간표도 함께 삭제
     // orphanRemoval = true: 시간표가 리스트에서 제거되면 DB에서도 삭제
+    @Formula("(SELECT COUNT(e.enrollment_id) FROM tbl_enrollment e WHERE e.section_id = section_id)")
+    private Integer currentCount;
+
     @OneToMany(mappedBy = "classSection", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     @ToString.Exclude
@@ -60,5 +64,11 @@ public class ClassSection {
     public void removeTimeTable(TimeTable timeTable) {
         timeTables.remove(timeTable);
         timeTable.setClassSection(null);
+    }
+
+    public void updateSectionInfo(String sectionName, Integer maxCapacity, SectionType sectionType) {
+        if (sectionName != null) this.sectionName = sectionName;
+        if (maxCapacity != null) this.maxCapacity = maxCapacity;
+        if (sectionType != null) this.sectionType = sectionType;
     }
 }
