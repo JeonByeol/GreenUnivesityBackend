@@ -1,4 +1,21 @@
 package com.univercity.unlimited.greenUniverCity.function.member.studentStatusHistory.dto;
 
+import com.univercity.unlimited.greenUniverCity.function.member.studentStatusHistory.entity.StudentStatusHistoryType;
+import jakarta.persistence.Id;
+import lombok.*;
+
+import java.time.LocalDate;
+
+@AllArgsConstructor
+@NoArgsConstructor
+@ToString
+@Getter
+@Setter
+@Builder
 public class StudentStatusHistoryResponseDTO {
+    private Long statusHistoryId;
+    private StudentStatusHistoryType changeType;
+    private LocalDate changeDate;
+    private String reason;
+    private Long userId;
 }
