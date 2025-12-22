@@ -44,7 +44,7 @@ public class GradeController {
     }
 
     //NEW-G-3) 학생의 모든 성적을 조회하기 위해 컨트롤러 내부에 선언된 Crud(get)
-    @GetMapping("/students/my-grades")
+    @GetMapping("/my/{email}")
     public ResponseEntity<List<GradeResponseDTO>> getMyGrade(
             @RequestHeader(value = "X-User-Email", required = false) String studentEmail){
 

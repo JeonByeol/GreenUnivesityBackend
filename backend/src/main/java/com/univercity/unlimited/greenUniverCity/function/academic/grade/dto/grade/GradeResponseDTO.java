@@ -28,6 +28,11 @@ public class GradeResponseDTO {
     //User
     private String studentName;//학생이름
 
+    private String professorName; // 교수명
+
     //CourseOffering
     private String courseName;//과목명
+
+    //Course
+    private Integer credit; // 학점
 }

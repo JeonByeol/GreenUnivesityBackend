@@ -119,6 +119,8 @@ public class EntityMapper {
                 .gradeId(grade.getGradeId())
                 .enrollmentId(enrollment.getEnrollmentId())
                 .courseName(offering.getCourseName()) // 추가된 필드 매핑
+                .studentName(enrollment.getUser().getNickname())
+                .professorName(enrollment.getUser().getNickname())
                 .totalScore(grade.getTotalScore())
                 .letterGrade(grade.getLetterGrade())
                 .createdAt(grade.getCreatedAt())

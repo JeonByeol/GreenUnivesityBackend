@@ -38,12 +38,12 @@ public class StudentScoreServiceImpl implements StudentScoreService{
         log.info("2) 학생 점수 생성 시작 - enrollmentId-:{}, itemId-:{}, 교수-:{}",
                 enrollmentId, itemId, professorEmail);
 
+        if (dto.getScoreObtained() < 0) {
+            throw new IllegalArgumentException("점수는 0 이상이어야 합니다.");
+        }
+
         Enrollment enrollment= enrollmentService.getEnrollmentEntity(enrollmentId);
         GradeItem gradeItem = itemService.getGradeItemEntity(itemId);
-
-        CourseOffering offering= enrollment.getClassSection().getCourseOffering();
-        validator.validateProfessorOwnership(offering, professorEmail, "점수입력");
-
 
         //만점 초과 검증
         if(dto.getScoreObtained() > gradeItem.getMaxScore()){
@@ -53,6 +53,9 @@ public class StudentScoreServiceImpl implements StudentScoreService{
         //중복 점수 등록 확인
         boolean exists = repository.existsByEnrollment_EnrollmentIdAndGradeItem_ItemId(enrollmentId, itemId);
         validator.validateDuplicate(exists, "해당 평가항목의 점수");
+
+        CourseOffering offering= enrollment.getClassSection().getCourseOffering();
+        validator.validateProfessorOwnership(offering, professorEmail, "점수입력");
 
         StudentScore studentScore=StudentScore.builder()
                 .enrollment(enrollment)
