@@ -42,14 +42,10 @@ public class ClassSectionServiceImpl implements ClassSectionService{
             Classroom classroom = classroomService.getClassroomEntity(ttDto.getClassroomId());
 
             // 중복 검사
-            boolean isOverlap = timeTableValidationService.validateTimeOverlap(
+            timeTableValidationService.validateTimeOverlap(
                     classroom.getClassroomId(), ttDto.getDayOfWeek(),
                     ttDto.getStartTime(), ttDto.getEndTime()
             );
-
-            if (isOverlap) {
-                throw new IllegalStateException("해당 강의실/시간에 이미 수업이 있습니다: " + classroom.getLocation());
-            }
 
             // 생성 및 연결
             TimeTable timeTable = TimeTable.builder()
