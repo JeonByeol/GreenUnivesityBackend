@@ -1,5 +1,6 @@
 package com.univercity.unlimited.greenUniverCity.function.academic.grade.dto.gradeitem;
 
+import com.univercity.unlimited.greenUniverCity.function.academic.grade.entity.GradeItemType;
 import jakarta.validation.constraints.*;
 import lombok.*;
 
@@ -17,11 +18,7 @@ public class GradeItemCreateDTO {
     private String itemName; // 중간고사, 기말고사, 과제1
 
     @NotBlank(message = "평가 유형은 필수입니다")
-    @Pattern(
-            regexp = "EXAM|ASSIGNMENT|QUIZ|ATTENDANCE|PROJECT",
-            message = "평가 유형은 EXAM, ASSIGNMENT, QUIZ, ATTENDANCE, PROJECT 중 하나여야 합니다"
-    )
-    private String itemType; // EXAM, ASSIGNMENT, QUIZ, ATTENDANCE, PROJECT
+    private GradeItemType itemType; // EXAM, ASSIGNMENT, QUIZ, ATTENDANCE, PROJECT
 
     @NotNull(message = "만점은 필수입니다")
     @DecimalMin(value = "0.0", inclusive = false, message = "만점은 0보다 커야 합니다")

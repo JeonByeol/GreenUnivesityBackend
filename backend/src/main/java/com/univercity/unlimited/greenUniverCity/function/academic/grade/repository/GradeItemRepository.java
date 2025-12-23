@@ -1,11 +1,13 @@
 package com.univercity.unlimited.greenUniverCity.function.academic.grade.repository;
 
 import com.univercity.unlimited.greenUniverCity.function.academic.grade.entity.GradeItem;
+import com.univercity.unlimited.greenUniverCity.function.academic.grade.entity.GradeItemType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface GradeItemRepository extends JpaRepository<GradeItem,Long> {
     
@@ -20,4 +22,9 @@ public interface GradeItemRepository extends JpaRepository<GradeItem,Long> {
 
     //특정 강의에 같은 이름의 평가항목이 존재하는지 확인하기 위한 쿼리문(중복방지)
     boolean existsByCourseOffering_OfferingIdAndItemName(Long offeringId,String itemName);
+
+    // 철자, 언더스코어(_), 파라미터 타입(GradeItemType)을 정확히 확인하세요!
+    Optional<GradeItem> findByCourseOffering_OfferingIdAndItemType(Long offeringId, GradeItemType itemType);
+
+
 }

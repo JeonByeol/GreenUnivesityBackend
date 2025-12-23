@@ -1,5 +1,6 @@
 package com.univercity.unlimited.greenUniverCity.function.academic.grade.dto.gradeitem;
 
+import com.univercity.unlimited.greenUniverCity.function.academic.grade.entity.GradeItemType;
 import com.univercity.unlimited.greenUniverCity.function.academic.offering.entity.CourseOffering;
 import jakarta.persistence.Column;
 import jakarta.persistence.FetchType;
@@ -20,7 +21,7 @@ public class GradeItemResponseDTO {
 
     private String itemName;//항목명 ex(중간고사,기말고사,과제1)
 
-    private String itemType;//유형
+    private GradeItemType itemType;//유형
 
     private Float maxScore;//만점 기준 ex(100,94)
 

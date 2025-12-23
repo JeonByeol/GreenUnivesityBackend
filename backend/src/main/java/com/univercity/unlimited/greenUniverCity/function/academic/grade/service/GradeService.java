@@ -5,6 +5,8 @@ import com.univercity.unlimited.greenUniverCity.function.academic.grade.dto.grad
 import com.univercity.unlimited.greenUniverCity.function.academic.grade.dto.grade.GradeResponseDTO;
 import com.univercity.unlimited.greenUniverCity.function.academic.grade.dto.grade.GradeUpdateDTO;
 import com.univercity.unlimited.greenUniverCity.function.academic.grade.entity.Grade;
+import com.univercity.unlimited.greenUniverCity.function.academic.grade.entity.GradeItem;
+import com.univercity.unlimited.greenUniverCity.function.academic.grade.entity.GradeItemType;
 
 import java.util.List;
 
@@ -33,7 +35,6 @@ public interface GradeService {
 
 //    //New-G-5) 성적을 생성하기 위한 service 선언부 (교수만 가능)
 //    GradeResponseDTO createGrade(GradeCreateDTO dto, String professorEmail); 성적 생성은 StudentScore에서 하는 일 삭제예정
-
 
 
 }

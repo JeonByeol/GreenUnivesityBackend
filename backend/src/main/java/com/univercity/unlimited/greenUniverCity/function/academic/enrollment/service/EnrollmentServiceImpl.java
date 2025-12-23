@@ -15,11 +15,13 @@ import com.univercity.unlimited.greenUniverCity.function.member.user.entity.User
 import com.univercity.unlimited.greenUniverCity.function.member.user.service.UserService;
 import com.univercity.unlimited.greenUniverCity.util.EntityMapper;
 import com.univercity.unlimited.greenUniverCity.util.MapperUtil;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -250,7 +252,6 @@ public class EnrollmentServiceImpl implements EnrollmentService {
 
         return enrollment;
     }
-
 
 
 }

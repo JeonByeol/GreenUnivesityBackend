@@ -1,12 +1,14 @@
 package com.univercity.unlimited.greenUniverCity.function.academic.grade.service;
 
 import com.univercity.unlimited.greenUniverCity.function.academic.common.AcademicSecurityValidator;
+import com.univercity.unlimited.greenUniverCity.function.academic.enrollment.dto.EnrollmentResponseDTO;
 import com.univercity.unlimited.greenUniverCity.function.academic.enrollment.entity.Enrollment;
 import com.univercity.unlimited.greenUniverCity.function.academic.enrollment.service.EnrollmentService;
 import com.univercity.unlimited.greenUniverCity.function.academic.grade.dto.studentscore.StudentScoreCreateDTO;
 import com.univercity.unlimited.greenUniverCity.function.academic.grade.dto.studentscore.StudentScoreResponseDTO;
 import com.univercity.unlimited.greenUniverCity.function.academic.grade.dto.studentscore.StudentScoreUpdateDTO;
 import com.univercity.unlimited.greenUniverCity.function.academic.grade.entity.GradeItem;
+import com.univercity.unlimited.greenUniverCity.function.academic.grade.entity.GradeItemType;
 import com.univercity.unlimited.greenUniverCity.function.academic.grade.entity.StudentScore;
 import com.univercity.unlimited.greenUniverCity.function.academic.grade.repository.StudentScoreRepository;
 import com.univercity.unlimited.greenUniverCity.function.academic.offering.entity.CourseOffering;
@@ -171,4 +173,5 @@ public class StudentScoreServiceImpl implements StudentScoreService{
     public StudentScore getStudentScoreEntity(Long scoreId) {
         return validator.getEntityOrThrow(repository, scoreId, "점수");
     }
+
 }

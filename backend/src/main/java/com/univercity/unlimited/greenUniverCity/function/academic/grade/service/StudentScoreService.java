@@ -7,7 +7,7 @@ import com.univercity.unlimited.greenUniverCity.function.academic.grade.entity.S
 
 import java.util.List;
 
-public interface StudentScoreService {
+    public interface StudentScoreService {
     //StudentScoreController-> SS
 
     //SS-1) 학생에 대한 점수를 생성하기 위한 service 선언부 (교수)
@@ -33,4 +33,5 @@ public interface StudentScoreService {
 
     //SS-8) 외부 다른 serviceImpl에서 StudentScore에 대한 정보를 조회하기 위한 service 선언부
     StudentScore getStudentScoreEntity(Long scoreId);
+
 }

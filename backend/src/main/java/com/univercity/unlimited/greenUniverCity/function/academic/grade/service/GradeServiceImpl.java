@@ -8,6 +8,8 @@ import com.univercity.unlimited.greenUniverCity.function.academic.grade.dto.grad
 import com.univercity.unlimited.greenUniverCity.function.academic.grade.dto.grade.GradeUpdateDTO;
 import com.univercity.unlimited.greenUniverCity.function.academic.grade.dto.gradeitem.GradeItemResponseDTO;
 import com.univercity.unlimited.greenUniverCity.function.academic.grade.dto.studentscore.StudentScoreResponseDTO;
+import com.univercity.unlimited.greenUniverCity.function.academic.grade.entity.GradeItem;
+import com.univercity.unlimited.greenUniverCity.function.academic.grade.entity.GradeItemType;
 import com.univercity.unlimited.greenUniverCity.function.academic.grade.repository.GradeRepository;
 import com.univercity.unlimited.greenUniverCity.function.academic.grade.entity.Grade;
 import com.univercity.unlimited.greenUniverCity.function.academic.offering.entity.CourseOffering;
@@ -15,6 +17,7 @@ import com.univercity.unlimited.greenUniverCity.function.academic.offering.servi
 import com.univercity.unlimited.greenUniverCity.function.academic.section.entity.ClassSection;
 import com.univercity.unlimited.greenUniverCity.function.member.user.entity.User;
 import com.univercity.unlimited.greenUniverCity.util.EntityMapper;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -166,6 +169,7 @@ public class GradeServiceImpl implements GradeService{
     public Grade getGradeEntity(Long gradeId) {
         return validator.getEntityOrThrow(repository, gradeId, "성적");
     }
+
 
     /**
      * 가중 평균 계산 헬퍼 메서드(StudentScoreResponse)를 가져와서 계산

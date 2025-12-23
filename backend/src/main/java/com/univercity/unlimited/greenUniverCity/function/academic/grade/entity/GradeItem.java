@@ -21,10 +21,9 @@ public class GradeItem {
     @Column(name = "item_name", nullable = false)
     private String itemName; // 항목명 (예: 중간고사, 기말고사, 과제1)
 
-    // 명세서 예시: EXAM, ASSIGNMENT, ATTENDANCE
-    // 추후 Enum으로 리팩토링 가능 (@Enumerated(EnumType.STRING))
-    @Column(name = "item_type", nullable = false, length = 20)
-    private String itemType; //유형
+    @Enumerated(EnumType.STRING)
+    @Column(name = "item_type", nullable = false)
+    private GradeItemType itemType;//유형
 
     @Column(name = "max_score", nullable = false)
     private Float maxScore; // 만점 기준 (예: 100)
