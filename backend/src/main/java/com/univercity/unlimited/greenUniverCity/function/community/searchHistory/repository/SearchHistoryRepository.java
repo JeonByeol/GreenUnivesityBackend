@@ -8,13 +8,4 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface SearchHistoryRepository extends JpaRepository<SearchHistory,Long> {
-    SearchHistory save(SearchHistory history);
-
-    void deleteByUserId(Long userId);
-
-    Page<SearchHistory> findByUserIdOrderByCreatedAtDesc(Long userId, Pageable pageable);
-
-    List<SearchHistory> findAll();
-
-    List<SearchHistory> searchAll();
 }

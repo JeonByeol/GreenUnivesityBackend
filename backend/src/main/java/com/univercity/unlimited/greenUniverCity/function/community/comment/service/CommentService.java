@@ -11,34 +11,15 @@ import java.util.Optional;
 
 public interface CommentService {
     //모든 게시글 목록
+    // C-1 전체 조회
     List<CommentResponseDTO> findAll();
-    List<CommentResponseDTO> findAllComment();
-
-    // 게시글별 댓글 목록
-    CommentResponseDTO findByCommentCommentId(Long commentId);
-
-    List<CommentResponseDTO> getCommentsByPostId(Long postId);
-
-    ResponseEntity<String> addComment(CommentResponseDTO legacyCommentDTO);
-
-    Optional<List<CommentResponseDTO>> findAllCommentDTO();
-
-    Optional<Comment> commentId(Long commentId);
-
-    List<CommentResponseDTO> findList();
-
+    // C-2 생성
     CommentResponseDTO createComment(CommentCreateDTO dto, String email);
-
+    // C-3 추가
     CommentResponseDTO updateComment(CommentUpdateDTO dto);
-    CommentResponseDTO commentUpdate(Long commentId, CommentUpdateDTO dto);
-
+    // C-4 삭제
     void deleteComment(Long commentId);
-
-
-
-
-
-
-
+    // C-5 게시글별 댓글 목록
+    CommentResponseDTO findByCommentCommentId(Long commentId);
 
 }
