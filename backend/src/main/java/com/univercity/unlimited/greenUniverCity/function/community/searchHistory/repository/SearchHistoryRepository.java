@@ -15,4 +15,6 @@ public interface SearchHistoryRepository extends JpaRepository<SearchHistory,Lon
     Page<SearchHistory> findByUserIdOrderByCreatedAtDesc(Long userId, Pageable pageable);
 
     List<SearchHistory> findAll();
+
+    List<SearchHistory> searchAll();
 }

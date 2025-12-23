@@ -1,6 +1,7 @@
 package com.univercity.unlimited.greenUniverCity.function.community.searchHistory.controller;
 
 import com.univercity.unlimited.greenUniverCity.function.community.searchHistory.DTO.SearchCreateDTO;
+import com.univercity.unlimited.greenUniverCity.function.community.searchHistory.DTO.SearchResponseDTO;
 import com.univercity.unlimited.greenUniverCity.function.community.searchHistory.DTO.SearchResultDTO;
 import com.univercity.unlimited.greenUniverCity.function.community.searchHistory.entity.SearchHistory;
 import com.univercity.unlimited.greenUniverCity.function.community.searchHistory.service.SearchService;
@@ -10,6 +11,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Collections;
+import java.util.List;
 
 // /api/search 로 시작하는 모든 요청 처리
 @RestController
@@ -24,15 +28,15 @@ public class SearchController {
     // S-1) 전체 검색 (게시판, 게시물, 커뮤니티 등 통합 검색)
     // 예: GET /api/search/all?userId=1&keyword=자바&page=0&size=10
     @GetMapping("/all")
-    public ResponseEntity<SearchResultDTO> searchAll(
+    public ResponseEntity<List<SearchResponseDTO>> searchAll(
             Pageable pageable
     ) {
         log.info("전체 검색 요청 userId={}, keyword={}");
 
-        // DTO 만들어서 서비스로 넘기기
-        SearchCreateDTO dto = new SearchCreateDTO();
+//        // DTO 만들어서 서비스로 넘기기
+//        SearchCreateDTO dto = new SearchCreateDTO();
 
-        SearchResultDTO result = searchService.searchAll(dto, pageable);
+        List<SearchResponseDTO> result = searchService.searchAll(pageable);
         return ResponseEntity.ok(result);
     }
 
@@ -52,7 +56,7 @@ public class SearchController {
         dto.setUserId(userId != null ? userId : 0L); // userId 없으면 0L 같은 기본값
         dto.setKeyword(keyword);
 
-        SearchResultDTO result = searchService.searchAll(dto, pageable);
+        SearchResultDTO result = (SearchResultDTO) searchService.searchAll(dto, pageable);
         return ResponseEntity.ok(result);
     }
 
