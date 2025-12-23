@@ -98,7 +98,4 @@ public class ClassSectionController {
         return ResponseEntity.ok(response);
     }
 
-
-
-
 }

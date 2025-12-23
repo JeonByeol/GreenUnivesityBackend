@@ -3,30 +3,26 @@ package com.univercity.unlimited.greenUniverCity.function.academic.timetable.ser
 import com.univercity.unlimited.greenUniverCity.function.academic.classroom.entity.Classroom;
 import com.univercity.unlimited.greenUniverCity.function.academic.classroom.service.ClassroomService;
 import com.univercity.unlimited.greenUniverCity.function.academic.common.AcademicSecurityValidator;
-import com.univercity.unlimited.greenUniverCity.function.academic.review.exception.TimeTableNotFoundException;
 import com.univercity.unlimited.greenUniverCity.function.academic.offering.entity.CourseOffering;
-import com.univercity.unlimited.greenUniverCity.function.academic.offering.service.CourseOfferingService;
 import com.univercity.unlimited.greenUniverCity.function.academic.section.entity.ClassSection;
 import com.univercity.unlimited.greenUniverCity.function.academic.section.service.ClassSectionService;
 import com.univercity.unlimited.greenUniverCity.function.academic.timetable.dto.TimeTableCreateDTO;
 import com.univercity.unlimited.greenUniverCity.function.academic.timetable.dto.TimeTableResponseDTO;
 import com.univercity.unlimited.greenUniverCity.function.academic.timetable.dto.TimeTableUpdateDTO;
 import com.univercity.unlimited.greenUniverCity.function.academic.timetable.entity.TimeTable;
-import com.univercity.unlimited.greenUniverCity.function.academic.timetable.exception.ClassroomConflictException;
 import com.univercity.unlimited.greenUniverCity.function.academic.timetable.repository.TimeTableRepository;
-import com.univercity.unlimited.greenUniverCity.function.member.user.entity.User;
-import jakarta.transaction.Transactional;
+import com.univercity.unlimited.greenUniverCity.util.EntityMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.time.DayOfWeek;
-import java.time.LocalTime;
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
+@Transactional
 public class TimeTableServiceImpl implements TimeTableService{
     private final TimeTableRepository repository;
 
@@ -38,40 +34,16 @@ public class TimeTableServiceImpl implements TimeTableService{
 
     private final AcademicSecurityValidator validator;
 
-    /**
-     * T-A) TimeTable 엔티티를 (Response)DTO로 변환
-     * - 각각의 crud 기능에 사용되는 서비스 구현부에 사용하기 위해 함수로 생성
-     */
+    private final EntityMapper entityMapper;
 
-    private TimeTableResponseDTO toResponseDTO(TimeTable timeTable){
-        ClassSection section = timeTable.getClassSection();
-        CourseOffering courseOffering = section.getCourseOffering();
-        User user = courseOffering.getProfessor();
-        Classroom classroom = timeTable.getClassroom();
 
-        return TimeTableResponseDTO.builder()
-                .timetableId(timeTable.getTimetableId())
-                .dayOfWeek(timeTable.getDayOfWeek())
-                .startTime(timeTable.getStartTime())
-                .endTime(timeTable.getEndTime())
-                .classroomId(classroom.getClassroomId())
-                .classroomName(classroom.getLocation())
-                .sectionId(section.getSectionId())
-                .sectionName(section.getSectionName())
-                .courseName(courseOffering.getCourseName())
-                .build();
-    }
-
-    @Transactional
     @Override
+    @Transactional(readOnly = true)
     public List<TimeTableResponseDTO> findAllTimeTable() {
         log.info("2) 시간표 전체조회 시작");
-        List<TimeTable> timeTables=repository.findAll();
 
-        log.info("3) 시간표 전체조회 성공");
-
-        return timeTables.stream()
-                .map(this::toResponseDTO)
+        return repository.findAllWithDetails().stream()
+                .map(entityMapper::toTimeTableResponseDTO)
                 .toList();
     }
 
@@ -81,26 +53,24 @@ public class TimeTableServiceImpl implements TimeTableService{
     //-> 그리고 지금 postmanTest에서 데이터를 조회 할 때 1번째 동작에서 호출을 못하고
     // 2번째 동작부터 호출을 하는 문제가 있음
     @Override
+    @Transactional(readOnly = true)
     public List<TimeTableResponseDTO> offeringOfTimeTable(Long offeringId) {
         log.info("2) 특정 시간표 조회 시작 offeringId-:{}",offeringId);
-        List<TimeTable> timeTables=repository.findTimeTableByOfferingId(offeringId);
 
-        log.info("3) 시간표 조회 성공 offeringId-:{}",offeringId);
-
-        return timeTables.stream()
-                .map(this::toResponseDTO)
+        return repository.findTimeTableByOfferingId(offeringId).stream()
+                .map(entityMapper::toTimeTableResponseDTO)
                 .toList();
     }
     
-    //T-2-1) 본인 id를 활용하여 단건 조회를 할 수 있는 service구현부
+    //T-2-1-1) 본인 id를 활용하여 단건 조회를 할 수 있는 service구현부
     @Override
+    @Transactional(readOnly = true)
     public TimeTableResponseDTO getTimeTable(Long timetableId) {
         log.info("2) 시간표 단건 조회 시작 - timetableId-:{}",timetableId);
 
-        TimeTable timeTable=repository.findById(timetableId)
-                .orElseThrow(()->new TimeTableNotFoundException("시간표를 찾을 수 없습니다."));
+        TimeTable timeTable = validator.getEntityOrThrow(repository, timetableId, "시간표");
 
-        return toResponseDTO(timeTable);
+        return entityMapper.toTimeTableResponseDTO(timeTable);
     }
 
     //T-3)특정 학생이 신청한 모든 과목의 시간표를 조회하기 위한 서비스 구현부
@@ -108,12 +78,8 @@ public class TimeTableServiceImpl implements TimeTableService{
     public List<TimeTableResponseDTO> studentOfTimeTable(String email) {
         log.info("2) 학생이 시간표 조회 요청 학생-:{}",email);
 
-        List<TimeTable> timeTables = repository.findTimetableByStudentEmail(email);
-
-        log.info("3) 학생의 시간표 조회 성공 학생-:{}",email);
-
-        return timeTables.stream()
-                .map(this::toResponseDTO)
+        return repository.findTimetableByStudentEmail(email).stream()
+                .map(entityMapper::toTimeTableResponseDTO)
                 .toList();
     }
 
@@ -134,34 +100,24 @@ public class TimeTableServiceImpl implements TimeTableService{
         Classroom classroom = classroomService.getClassroomEntity(dto.getClassroomId());
 
         // 중복 검사
-        boolean isOverlap = validationService.validateTimeOverlap(
+        validationService.validateTimeOverlap(
                 classroom.getClassroomId(), dto.getDayOfWeek(),
                 dto.getStartTime(), dto.getEndTime()
         );
 
-        if (isOverlap) {
-            throw new IllegalStateException("강의실 중복: 해당 시간에 이미 수업이 있습니다.");
-        }
 
-
-            TimeTable timeTable=TimeTable.builder()
+        TimeTable timeTable=TimeTable.builder()
                 .classSection(section)
+                .classroom(classroom)
                 .dayOfWeek(dto.getDayOfWeek())
                 .startTime(dto.getStartTime())
                 .endTime(dto.getEndTime())
                 .build();
 
-        TimeTable saveTimeTable=repository.save(timeTable);
 
-        log.info("5) 시간표 생성 완료 -timetableId:{}, 교수:{}, 강의실:{}, 요일-:{}  시간-:{}~{}",
-                saveTimeTable.getTimetableId(),
-                requesterEmail,
-                classroom.getLocation(),
-                dto.getDayOfWeek(),
-                dto.getStartTime(),
-                dto.getEndTime());
+        log.info("5) 시간표 생성 완료");
 
-        return toResponseDTO(saveTimeTable);
+        return entityMapper.toTimeTableResponseDTO(repository.save(timeTable));
     }
 
     //T-5) 교수가 본인이 담당하고 있는 수업에 존재하는 시간표를 수정하기 위한 서비스 구현부
@@ -169,10 +125,7 @@ public class TimeTableServiceImpl implements TimeTableService{
     public TimeTableResponseDTO updateTimeTableForProfessor(TimeTableUpdateDTO dto, String requesterEmail) {
         log.info("2) 시간표 수정 시작 -timetableId-:{}, 교수-:{}",dto.getTimetableId(),requesterEmail);
 
-        TimeTable timeTable=repository.findById(dto.getTimetableId())
-                .orElseThrow(()->new TimeTableNotFoundException(
-                        "3)보안 검사 시도 식별 코드 -:T-5 " +
-                                "시간표가 존재하지 않습니다. timeId:" + dto.getTimetableId()));
+        TimeTable timeTable = validator.getEntityOrThrow(repository, dto.getTimetableId(), "시간표");
 
         // T-security 보안검사보안 검사(소유권 검증)
         CourseOffering offering = timeTable.getClassSection().getCourseOffering();
@@ -182,20 +135,18 @@ public class TimeTableServiceImpl implements TimeTableService{
         Classroom classroom = classroomService.getClassroomEntity(dto.getClassroomId());
 
         // 2. 중복 검사 (수정용)
-        boolean isOverlap = validationService.validateTimeOverlapExcludingId(
+        validationService.validateTimeOverlapExcludingId(
                 classroom.getClassroomId(), dto.getDayOfWeek(),
                 dto.getStartTime(), dto.getEndTime(),
                 dto.getTimetableId()
         );
 
-        if (isOverlap) {
-            throw new IllegalStateException("강의실 중복: 변경하려는 시간에 이미 다른 수업이 있습니다.");
-        }
-
-        timeTable.setDayOfWeek(dto.getDayOfWeek());
-        timeTable.setStartTime(dto.getStartTime());
-        timeTable.setEndTime(dto.getEndTime());
-        timeTable.setClassroom(classroom);
+        timeTable.updateTimeTableInfo(
+                dto.getDayOfWeek(),
+                dto.getStartTime(),
+                dto.getEndTime(),
+                classroom
+        );
 
         TimeTable updateTimeTable=repository.save(timeTable);
 
@@ -206,7 +157,7 @@ public class TimeTableServiceImpl implements TimeTableService{
                 dto.getStartTime(),
                 dto.getEndTime());
 
-        return toResponseDTO(updateTimeTable);
+        return entityMapper.toTimeTableResponseDTO(updateTimeTable);
     }
 
     //T-6) 교수 or 관리자가 개설된 강의에 대한 시간표를 삭제하기 위한 서비스 구현부
@@ -215,10 +166,7 @@ public class TimeTableServiceImpl implements TimeTableService{
         log.info("2) 시간표 삭제 요청 -교수: {} ,timetableId: {}",requesterEmail,timetableId);
 
         //시간표 조회
-        TimeTable timeTable=repository.findById(timetableId)
-                .orElseThrow(()->new TimeTableNotFoundException(
-                        "3)보안 검사 시도 식별 코드-: T-6 " +
-                                "시간표가 존재하지 않습니다. timeId:" + timetableId));
+        TimeTable timeTable = validator.getEntityOrThrow(repository, timetableId, "시간표");
 
         // T-security 보안검사
         CourseOffering offering = timeTable.getClassSection().getCourseOffering();
@@ -227,12 +175,6 @@ public class TimeTableServiceImpl implements TimeTableService{
         repository.delete(timeTable);
 
         log.info("5)시간표 삭제 성공 -교수: {},timetableId: {}",requesterEmail,timetableId);
-    }
-    
-    //T-7) 강의실 조회 서비스선언
-    @Override
-    public boolean  validateTimeOverlap(Long classroomId, DayOfWeek day, LocalTime start, LocalTime end) {
-        return validationService.validateTimeOverlap(classroomId, day, start, end);
     }
 
 }

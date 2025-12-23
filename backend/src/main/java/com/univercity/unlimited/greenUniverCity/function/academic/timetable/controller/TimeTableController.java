@@ -21,14 +21,14 @@ public class TimeTableController {
     //T-1) 시간표 테이블에 존재하는 모든 시간표를 조회하기 위해 컨트롤러 내에 선언된 crud(get)
     @GetMapping("/all")
     public List<TimeTableResponseDTO> postmanTestTimeTable(){
-        log.info("1) 여기는 시간표 전체조회Controller 입니다");
+        log.info("1) 시간표 전체 조회 요청");
         return timeTableService.findAllTimeTable();
     }
 
     //T-2) 특정 과목에 대한 시간표를 조회하기 위해 컨트롤러 내에 선언된 crud(get)
     @GetMapping("/list/offering/{offeringId}")
     public List<TimeTableResponseDTO> postmanTestCourseTimeTable(@PathVariable("offeringId") Long offeringId){
-        log.info("1)왜안됨?:{}",offeringId);
+        log.info("1) 특정 과목에 대한 시간표 조회요청 - offeringId-:{}",offeringId);
         return timeTableService.offeringOfTimeTable(offeringId);
     }
 

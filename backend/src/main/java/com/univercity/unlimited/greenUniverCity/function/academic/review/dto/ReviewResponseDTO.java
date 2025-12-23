@@ -27,4 +27,6 @@ public class ReviewResponseDTO {
     private String courseName; //강의 이름
 
     private String studentNickname; //학생
+
+    private Long enrollmentId;//수강신청Id
 }

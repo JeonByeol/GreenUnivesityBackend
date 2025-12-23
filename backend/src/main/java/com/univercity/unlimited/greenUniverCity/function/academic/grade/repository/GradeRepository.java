@@ -10,6 +10,15 @@ import java.util.List;
 import java.util.Optional;
 
 public interface GradeRepository extends JpaRepository<Grade,Long> {
+    // N+1 문제 해결을 위한 전체 조회 메서드
+    @Query("SELECT g FROM Grade g " +
+            "JOIN FETCH g.enrollment e " +
+            "JOIN FETCH e.user u " +
+            "JOIN FETCH e.classSection s " +
+            "JOIN FETCH s.courseOffering co " +
+            "ORDER BY g.gradeId ASC")
+    List<Grade> findAllWithDetails();
+
     //G-2)특정 학생이 본인이 수강한 모든 과목의 성적과 과목명을 조회하기 위한 쿼리
     @Query("SELECT g FROM Grade g " +
             "JOIN FETCH g.enrollment e " +

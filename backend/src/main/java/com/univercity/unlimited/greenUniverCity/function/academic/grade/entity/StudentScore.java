@@ -47,4 +47,10 @@ public class StudentScore {
     @JoinColumn(name = "item_id")
     @ToString.Exclude // 순환 참조 방지
     private GradeItem gradeItem;
+
+    public void updateScore(Float scoreObtained) {
+        if (scoreObtained != null) {
+            this.scoreObtained = scoreObtained;
+        }
+    }
 }

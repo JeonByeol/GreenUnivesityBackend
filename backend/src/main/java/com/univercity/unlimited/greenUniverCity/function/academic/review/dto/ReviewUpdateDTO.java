@@ -12,6 +12,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class ReviewUpdateDTO {
 
+    @NotNull(message = "id는 필수 값입니다")
+    private Long reviewId;
+
     /**
      * 수정할 수강평 내용
      */

@@ -42,36 +42,45 @@ public class GradeItemController {
     }
 
     //GI-2) 평가항목 테이블에 존재하는 데이터 하나를 단건 조회하기 위해 컨트롤러 내에 선언된 Crud(Get)
-    // ** 모르겠음 **
+    @GetMapping("one/{itemId}")
+    public ResponseEntity<GradeItemResponseDTO> getGradeItem(@PathVariable Long itemId) {
+        log.info("1) 평가항목 단건 조회 요청 - ItemId: {}", itemId);
+
+        GradeItemResponseDTO response = itemService.getGradeItem(itemId);
+
+        log.info("Complete: 조회 완료");
+        return ResponseEntity.ok(response);
+    }
 
     //GI-3) 특정 강의에 존재하는 평가항목 목록을 조회하기 위해 컨트롤러 내에 선언된 CRud(get)
-    @GetMapping("/one/{offeringId}")
-    public List<GradeItemResponseDTO> postmanTestOfferingItem(@PathVariable("offeringId") Long offeringId){
+    @GetMapping("/offering/{offeringId}")
+    public ResponseEntity<List<GradeItemResponseDTO>> postmanTestOfferingItem(@PathVariable("offeringId") Long offeringId){
         log.info("1) 특정 목록에 존재하는 데이터 조회 요청 - offeringId-:{}",offeringId);
 
-        return itemService.getOfferingGradeItem(offeringId);
+        List<GradeItemResponseDTO> responses = itemService.getOfferingGradeItem(offeringId);
+
+        return ResponseEntity.ok(responses);
     }
 
     //GI-4) 기존에 존재하던 평가항목에 대한 정보를 수정하기 위해 컨트롤러 내에 선언된 CRUD(PUT)
-    @PutMapping("/update/{itemId}")
-    public ResponseEntity<GradeItemResponseDTO> postmanUpdateItem(
-            @PathVariable("itemId") Long itemId,
-            @RequestBody GradeItemUpdateDTO dto,
-            @RequestHeader(value = "X-User-Email", required = false) String professorEmail){
+    @PutMapping("/update")
+    public ResponseEntity<GradeItemResponseDTO> updateItem(
+            @Valid @RequestBody GradeItemUpdateDTO dto,
+            @RequestHeader(value = "X-User-Email", required = false) String professorEmail) {
 
-        log.info("1) 평가항목 수정 요청 - itemId-:{}, 교수-:{}", itemId, professorEmail);
+        // DTO 안에 있는 itemId를 꺼내서 로그를 찍음
+        log.info("1) 평가항목 수정 요청 (DTO 방식) - ItemId: {}, 교수: {}", dto.getItemId(), professorEmail);
 
-        // Postman 테스트용: Header가 없으면 기본값 사용 (개발 환경에서만)
         if (professorEmail == null || professorEmail.isEmpty()) {
-            log.warn("X-User-Email 헤더가 없습니다. 테스트용 기본값 사용");
-            professorEmail = "julia@aaa.com"; // 테스트용 기본값
+            log.warn("X-User-Email 헤더 누락. 테스트 계정 사용");
+            professorEmail = "hannah@aaa.com";
         }
 
-        GradeItemResponseDTO response=itemService.updateGradeItem(itemId, dto, professorEmail);
+        // Service 호출 시 DTO 안의 ID를 첫 번째 인자로 전달
+        GradeItemResponseDTO response = itemService.updateGradeItem(dto.getItemId(), dto, professorEmail);
 
         return ResponseEntity.ok(response);
     }
 
-    //GI-5) 평가항목의 비율 합계를 검증하기 위해 컨트롤러 내부에 선언된 CRUD
 
 }

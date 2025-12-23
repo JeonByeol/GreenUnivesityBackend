@@ -37,13 +37,20 @@ public class TimeTable{
 
     @ManyToOne(fetch = FetchType.LAZY) // fk로 section을 받는게 맞음
     @JoinColumn(name="section_id")
+    @ToString.Exclude
     private ClassSection classSection;
 
-    // ✅ 강의실은 시간표에 속함 (TimeTable N : Classroom 1)
+    //강의실은 시간표에 속함 (TimeTable N : Classroom 1)
     // 이유: 월요일은 101호, 수요일은 202호일 수 있음
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "classroom_id", nullable = false)
+    @ToString.Exclude
     private Classroom classroom;
 
-
+    public void updateTimeTableInfo(DayOfWeek dayOfWeek, LocalTime startTime, LocalTime endTime, Classroom classroom) {
+        if (dayOfWeek != null) this.dayOfWeek = dayOfWeek;
+        if (startTime != null) this.startTime = startTime;
+        if (endTime != null) this.endTime = endTime;
+        if (classroom != null) this.classroom = classroom;
+    }
 }

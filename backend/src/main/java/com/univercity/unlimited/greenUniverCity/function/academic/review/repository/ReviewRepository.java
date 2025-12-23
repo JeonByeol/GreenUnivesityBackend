@@ -26,13 +26,13 @@ public interface ReviewRepository extends JpaRepository<Review,Long> {
     //validateDuplicateReview 함수에서 EnrollmentId의 값을 활용하여 데이터 조회를 시켜주기 위해 선언된 쿼리
     boolean existsByEnrollment(Enrollment enrollment);
 
-
-    /**
-     *  R-4)Rs에 선언된 myReviewUpdate의 RSL에서 enrollmentId(수강내역Id) 외래키를 활용해서
-     *  본인이 작성한 리뷰의 정보를 가져와 수정하기 위한 쿼리
-     *  주석된 이유: 리뷰를 수정 할 때 Enroll에 대한 id값을 찾을 필요 없이 바로 ReviewId로 기존에 존재하는 테이블 
-     *  칼럼만 찾아서 수정하면 되기 때문에 필요가 없는 상황 하지만 추후 문제가 생기면 필요하다고 생각하고 사용 할 수 있기 때문에 주석처리했음
-     *  //Optional<Review> findByEnrollment_enrollmentId(Long enrollmentId);
-     */
-
+    // 기존 findAll()을 덮어쓰거나 새로운 이름으로 만듭니다.
+    // 리뷰 + 수강내역 + 학생 + 분반 + 강의개설정보 + 과목정보를 한 번에 가져옴
+    @Query("SELECT r FROM Review r " +
+            "JOIN FETCH r.enrollment e " +
+            "JOIN FETCH e.user u " +
+            "JOIN FETCH e.classSection cs " +
+            "JOIN FETCH cs.courseOffering co " +
+            "JOIN FETCH co.course c")
+    List<Review> findAllWithDetails();
 }

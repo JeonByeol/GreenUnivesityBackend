@@ -5,6 +5,7 @@ import com.univercity.unlimited.greenUniverCity.function.member.department.dto.D
 import com.univercity.unlimited.greenUniverCity.function.member.department.dto.DepartmentUpdateDTO;
 import com.univercity.unlimited.greenUniverCity.function.member.department.entity.Department;
 import com.univercity.unlimited.greenUniverCity.function.member.department.repository.DepartmentRepository;
+import com.univercity.unlimited.greenUniverCity.util.EntityMapper;
 import com.univercity.unlimited.greenUniverCity.util.MapperUtil;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -23,16 +24,7 @@ import java.util.Optional;
 public class DepartmentServiceImpl implements DepartmentService{
     private final DepartmentRepository repository;
     private final ModelMapper mapper;
-
-    @Transactional
-    private DepartmentResponseDTO toResponseDTO(Department department){
-        return
-                DepartmentResponseDTO.builder()
-                        .departmentId(department.getDepartmentId())
-                        .deptName(department.getDeptName())
-//                        .courseId(department.getCourses())
-                        .build();
-    }
+    private final EntityMapper entityMapper;
 
     @Override
     public List<DepartmentResponseDTO> regacyFindAllDepartment() {
@@ -53,7 +45,7 @@ public class DepartmentServiceImpl implements DepartmentService{
         log.info("3) Department 전체조회 성공");
 
         return departments.stream()
-                .map(this::toResponseDTO).toList();
+                .map(entityMapper::toDepartmentResponseDTO).toList();
     }
 
     @Override
@@ -65,7 +57,7 @@ public class DepartmentServiceImpl implements DepartmentService{
             throw new RuntimeException("Department not found with id: " + departmentId);
         }
 
-        DepartmentResponseDTO responseDTO = toResponseDTO(department.get());
+        DepartmentResponseDTO responseDTO = entityMapper.toDepartmentResponseDTO(department.get());
         return List.of(responseDTO);
     }
 
@@ -80,7 +72,7 @@ public class DepartmentServiceImpl implements DepartmentService{
         Department result = repository.save(department);
         log.info("4)추가된 Course : {}", result);
 
-        return toResponseDTO(result);
+        return entityMapper.toDepartmentResponseDTO(result);
     }
 
     @Override
@@ -104,7 +96,7 @@ public class DepartmentServiceImpl implements DepartmentService{
 
         log.info("6) Department 수정 성공 updateDepartment:  {}",updateDepartment);
 
-        return toResponseDTO(updateDepartment);
+        return entityMapper.toDepartmentResponseDTO(updateDepartment);
     }
 
     @Override

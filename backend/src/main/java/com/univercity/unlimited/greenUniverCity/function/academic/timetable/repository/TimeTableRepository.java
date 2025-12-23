@@ -11,6 +11,15 @@ import java.util.List;
 
 public interface TimeTableRepository extends JpaRepository<TimeTable,Long> {
 
+    //전체 시간표 조회 (DTO 변환 시 N+1 방지)
+    @Query("SELECT t FROM TimeTable t " +
+            "JOIN FETCH t.classSection cs " +
+            "JOIN FETCH cs.courseOffering co " +
+            "JOIN FETCH co.course c " +
+            "LEFT JOIN FETCH t.classroom cr " +
+            "ORDER BY t.timetableId ASC") // 강의실은 배정 전일 수 있으므로 LEFT JOIN
+    List<TimeTable> findAllWithDetails();
+
     //T-2)에 선언된
     @Query("SELECT t FROM TimeTable t " +
             "JOIN FETCH t.classSection cs " +
@@ -26,10 +35,6 @@ public interface TimeTableRepository extends JpaRepository<TimeTable,Long> {
             "JOIN e.user u " +
             "WHERE u.email = :email")
     List<TimeTable> findTimetableByStudentEmail(@Param("email") String email);
-
-    // =================================================================
-    // ✅ [수정] 중복 검사 쿼리 (Boolean 반환으로 통일)
-    // =================================================================
 
     // Case A: 생성 시 (나 자신은 없으므로 그냥 검사)
     @Query("SELECT COUNT(t) > 0 FROM TimeTable t " +
@@ -60,4 +65,6 @@ public interface TimeTableRepository extends JpaRepository<TimeTable,Long> {
                                            @Param("start") LocalTime start,
                                            @Param("end") LocalTime end,
                                            @Param("excludeId") Long excludeId);
+
+
 }

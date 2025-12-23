@@ -21,7 +21,7 @@ public interface ReviewService {
     ReviewResponseDTO createReviewStudent(ReviewCreateDTO dto, String studentEmail);;
 
     //R-4) R에 선언된 postmanUpdateReview의 요청을 받아서 학생이 기존에 본인이 작성한 리뷰를 수정하기 위해 동작하는 서비스 선언
-    ReviewResponseDTO myReviewUpdate(Long reviewId, ReviewUpdateDTO dto, String studentEmail);
+    ReviewResponseDTO myReviewUpdate(ReviewUpdateDTO dto, String studentEmail);
 
     //R-5) R에 선언된 postmanDeleteReview의 요청을 받아서 학생이 작성한 리뷰를 삭제하기 위해 동작하는 서비스 선언
     void deleteByReview(Long reviewId,String studentEmail);
