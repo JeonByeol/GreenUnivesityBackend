@@ -1,8 +1,10 @@
 package com.univercity.unlimited.greenUniverCity.function.academic.grade.service;
 
+import com.univercity.unlimited.greenUniverCity.function.academic.assignment.repository.SubmissionRepository;
 import com.univercity.unlimited.greenUniverCity.function.academic.common.AcademicSecurityValidator;
 import com.univercity.unlimited.greenUniverCity.function.academic.enrollment.entity.Enrollment;
 import com.univercity.unlimited.greenUniverCity.function.academic.enrollment.service.EnrollmentService;
+import com.univercity.unlimited.greenUniverCity.function.academic.grade.calculator.ScoreCalculator;
 import com.univercity.unlimited.greenUniverCity.function.academic.grade.dto.grade.GradeCreateDTO;
 import com.univercity.unlimited.greenUniverCity.function.academic.grade.dto.grade.GradeResponseDTO;
 import com.univercity.unlimited.greenUniverCity.function.academic.grade.dto.grade.GradeUpdateDTO;
@@ -10,8 +12,10 @@ import com.univercity.unlimited.greenUniverCity.function.academic.grade.dto.grad
 import com.univercity.unlimited.greenUniverCity.function.academic.grade.dto.studentscore.StudentScoreResponseDTO;
 import com.univercity.unlimited.greenUniverCity.function.academic.grade.entity.GradeItem;
 import com.univercity.unlimited.greenUniverCity.function.academic.grade.entity.GradeItemType;
+import com.univercity.unlimited.greenUniverCity.function.academic.grade.repository.GradeItemRepository;
 import com.univercity.unlimited.greenUniverCity.function.academic.grade.repository.GradeRepository;
 import com.univercity.unlimited.greenUniverCity.function.academic.grade.entity.Grade;
+import com.univercity.unlimited.greenUniverCity.function.academic.grade.repository.StudentScoreRepository;
 import com.univercity.unlimited.greenUniverCity.function.academic.offering.entity.CourseOffering;
 import com.univercity.unlimited.greenUniverCity.function.academic.offering.service.CourseOfferingService;
 import com.univercity.unlimited.greenUniverCity.function.academic.section.entity.ClassSection;
@@ -36,11 +40,15 @@ public class GradeServiceImpl implements GradeService{
 
     private final GradeRepository repository;
     private final EnrollmentService enrollmentService;
-    private final StudentScoreService scoreService;
-    private final GradeItemService itemService;
     private final CourseOfferingService offeringService;
     private final EntityMapper entityMapper;
     private final AcademicSecurityValidator validator;
+
+    // 계산기 및 레포지토리 직접 주입 (성능 최적화 & 순환참조 방지)
+    private final ScoreCalculator calculator;
+    private final GradeItemRepository gradeItemRepository;
+    private final SubmissionRepository submissionRepository;
+    private final StudentScoreRepository studentScoreRepository;
 
     //G-1) 성적 테이블에 존재하는 모든 데이터를 조회하기 위한 service구현부 ** 교수or관리자 ** 권한만 가능해야함
     @Override
@@ -131,36 +139,30 @@ public class GradeServiceImpl implements GradeService{
                 enrollmentId, professorEmail);
 
         Enrollment enrollment= enrollmentService.getEnrollmentEntity(enrollmentId);
-
         CourseOffering offering= enrollment.getClassSection().getCourseOffering();
         validator.validateProfessorOwnership(offering, professorEmail, "성적계산");
 
-        Long totalItems = itemService.countOfferingGradeItems(offering.getOfferingId());
-        Long submittedScores = scoreService.countStudentScore(enrollmentId);
-
-        if (!totalItems.equals(submittedScores)) {
-            throw new IllegalStateException(
-                    String.format("아직 채점되지 않은 항목이 있습니다. (전체: %d개, 입력: %d개)", totalItems, submittedScores));
+        // 평가 항목 목록 조회
+        List<GradeItem> gradeItems = gradeItemRepository.findByOfferingId(offering.getOfferingId());
+        if (gradeItems.isEmpty()) {
+            throw new IllegalStateException("평가 항목이 설정되지 않았습니다.");
         }
 
-        List<StudentScoreResponseDTO> scoreResponseDTOS= scoreService.getStudentScores(enrollmentId);
-        validator.validateNotEmpty(scoreResponseDTOS.isEmpty(), "입력된 점수가 없어 계산할 수 없습니다.");
+        // 3. [최적화] 계산에 필요한 모든 데이터 일괄 조회 (Bulk Load)
+//        ScoreData scoreData = loadAllScoreData(enrollment);
 
-        // 가중 평균 계산
-        Float totalScore =calculateWeightedAverage(scoreResponseDTOS);
+        // 4. [계산] Calculator에게 데이터 전달하여 총점 산출
+//        float totalScore = calculateTotalScore(gradeItems, scoreData);
 
-        //[갱신] 기존 성적이 있으면 업데이트, 없으면 생성
+        // 5. [저장] 결과 저장 (기존 성적이 있으면 업데이트, 없으면 생성)
         Grade grade = repository.findByEnrollment_enrollmentId(enrollmentId)
                 .orElse(Grade.builder().enrollment(enrollment).build());
 
-        grade.setTotalScoreAndCalculateGrade(totalScore);
+//        grade.setTotalScoreAndCalculateGrade(totalScore);
+        Grade savedGrade = repository.save(grade);
 
-        Grade saveGrade= repository.save(grade);
-
-        log.info("5) 최종 성적 계산 완료 - 총점-:{}, 등급-:{}, 교수-:{}",
-                totalScore, grade.getLetterGrade(), professorEmail);
-
-        return entityMapper.toGradeResponseDTO(saveGrade);
+//        log.info("성적 계산 완료 - 총점: {:.2f}, 등급: {}", totalScore, savedGrade.getLetterGrade());
+        return entityMapper.toGradeResponseDTO(savedGrade);
     }
     
     //G-8 외부 Service에서 grade에 대한 정보 조회
@@ -171,37 +173,5 @@ public class GradeServiceImpl implements GradeService{
     }
 
 
-    /**
-     * 가중 평균 계산 헬퍼 메서드(StudentScoreResponse)를 가져와서 계산
-     */
-
-    private Float calculateWeightedAverage(List<StudentScoreResponseDTO> scoreResponseDTOS) {
-        float totalWeightedScore = 0.0f; //최종 점수 누적용
-        float totalWeight = 0.0f; // 가중치 합계 누적용
-
-        //각 점수에 대해 가중치 적용
-        for (StudentScoreResponseDTO scoreResponseDTO : scoreResponseDTOS) {
-            //GradeItemService를 통해 평가항목 정보 조회
-            GradeItemResponseDTO itemResponseDTO =
-                    itemService.getGradeItem(scoreResponseDTO.getItemId());
-
-            // 100점 만점을 기준으로 환산 (획득점수 / 만점)
-            float percentageScore =
-                    (scoreResponseDTO.getScoreObtained() / itemResponseDTO.getMaxScore()) * 100;
-            // 가중치 반영 점수 계산 
-            float weightedScore =  percentageScore * (itemResponseDTO.getWeightPercent()/100);
-            
-            // 누적
-            totalWeightedScore += weightedScore;
-            totalWeight += itemResponseDTO.getWeightPercent();
-        }
-
-        //가중치 합이 100이 아닐 경우 비율 조정
-        if(totalWeight > 0 && totalWeight != 100){
-            totalWeightedScore =(totalWeightedScore/totalWeight) * 100;
-        }
-
-        return totalWeightedScore;
-    }
 
 }

@@ -33,11 +33,13 @@ public interface SubmissionRepository extends JpaRepository<Submission, Long> {
             "WHERE a.assignmentId = :assignmentId AND st.email = :email")
     Optional<Submission> findByAssignmentIdAndStudentEmail(@Param("assignmentId") Long assignmentId, @Param("email") String email);
 
-    //성적 산출용: 특정 강의(Offering)에서 특정 학생이 받은 과제 점수 총합 조회
-    // - COALESCE(..., 0): 점수가 없으면 NULL 대신 0.0을 반환
-    // - 경로: Submission -> Assignment -> ClassSection -> CourseOffering
-    @Query("SELECT COALESCE(SUM(s.score), 0) FROM Submission s " +
-            "WHERE s.assignment.classSection.courseOffering.offeringId = :offeringId " +
+    //성적 산출용: 특정 분반(Section)에서 특정 학생(Email)이 제출한 모든 내역 조회
+    @Query("SELECT s FROM Submission s " +
+            "JOIN FETCH s.assignment a " +
+            "WHERE a.classSection.sectionId = :sectionId " +
             "AND s.student.email = :email")
-    Float sumTotalScoreByOfferingAndStudent(@Param("offeringId") Long offeringId, @Param("email") String email);
+    List<Submission> findAllBySectionIdAndStudentEmail(
+            @Param("sectionId") Long sectionId,
+            @Param("email") String email
+    );
 }
