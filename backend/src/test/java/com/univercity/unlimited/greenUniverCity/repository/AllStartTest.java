@@ -1,5 +1,6 @@
 package com.univercity.unlimited.greenUniverCity.repository;
 
+import com.univercity.unlimited.greenUniverCity.function.member.studentStatusHistory.repository.StudentStatusHistoryRepository;
 import org.junit.platform.suite.api.IncludeTags;
 import org.junit.platform.suite.api.SelectClasses;
 import org.junit.platform.suite.api.Suite;
@@ -44,7 +45,9 @@ import org.junit.platform.suite.api.Suite;
 
         AttendanceRepositoryTests.class,
 
-        UserDummyRepositoryTests.class
+        UserDummyRepositoryTests.class,
+
+        StudentStatusHistoryRepositoryTests.class,
 })
 @IncludeTags("push")
 public class AllStartTest {
