@@ -26,6 +26,7 @@ import org.junit.platform.suite.api.Suite;
         //ClassSection은 CourseOffering과 Classroom이 필요하므로 그 뒤에 배치
         ClassSectionRepositoryTests.class,
 
+        AcademicTermRepositoryTests.class,
 
         // 3. 수강 및 활동 데이터 (개설 강의에 의존)
         CommentRepositoryTests.class,
