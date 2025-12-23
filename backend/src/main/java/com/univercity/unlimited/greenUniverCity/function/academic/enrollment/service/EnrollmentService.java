@@ -25,18 +25,6 @@ public interface EnrollmentService {
     //E.All)다른 service에서 enrollment와 여기에 속한 상위 테이블의 정보를 실질적으로 사용하기 위한 service
     Enrollment getEnrollmentEntity(Long id);
 
-    // -- ClassSection -- (SE)
-    //E.SE-1) ClassSection에 존재하는 단일분반의 정원에 대한 값을 계산하기 위해 Service 선언
-    Integer getCurrentEnrollmentCount(Long sectionId);
 
-    //E.SE-2) ClassSection에 존재하는 복수분반의 정원의 값을 계산하기 위해 Service 선언
-    // Map <분반Id,수강인원>
-    Map<Long,Integer> getCurrentEnrollmentCounts(List<Long> sectionIds);
 
 }
-/**
- * 다른 클래스에 정보를 전달할 때 repository가 옳은지 service가 옳은지 검증 후 추후 사용 혹은 삭제 예정
- */
-//EnrollmentTestDTO getEnrollmentForGrade(Long id);//E-4)다른 service에서 enrollment에 대한 정보를 받아서 단순 조회하는 service
-//List<EnrollmentDTO> getEnrollmentFindUser(Long id);//E-5)다른 service에서 enrollment에 대한 정보를 받아오기 위해 만든 service
-///

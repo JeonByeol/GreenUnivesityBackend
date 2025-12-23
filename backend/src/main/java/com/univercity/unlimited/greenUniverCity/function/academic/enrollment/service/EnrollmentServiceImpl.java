@@ -4,21 +4,21 @@ import com.univercity.unlimited.greenUniverCity.function.academic.enrollment.dto
 import com.univercity.unlimited.greenUniverCity.function.academic.enrollment.dto.EnrollmentResponseDTO;
 import com.univercity.unlimited.greenUniverCity.function.academic.enrollment.dto.EnrollmentUpdateDTO;
 import com.univercity.unlimited.greenUniverCity.function.academic.enrollment.entity.Enrollment;
+import com.univercity.unlimited.greenUniverCity.function.academic.enrollment.exception.DuplicateEnrollmentException;
 import com.univercity.unlimited.greenUniverCity.function.academic.enrollment.exception.EnrollmentNotFoundException;
 import com.univercity.unlimited.greenUniverCity.function.academic.enrollment.exception.UserNotFoundException;
 import com.univercity.unlimited.greenUniverCity.function.academic.enrollment.repository.EnrollmentRepository;
-import static com.univercity.unlimited.greenUniverCity.function.academic.enrollment.repository.EnrollmentRepository.SectionCountSummary;
-import com.univercity.unlimited.greenUniverCity.function.academic.offering.entity.CourseOffering;
 import com.univercity.unlimited.greenUniverCity.function.academic.offering.exception.CourseOfferingNotFoundException;
-import com.univercity.unlimited.greenUniverCity.function.academic.offering.service.CourseOfferingService;
 import com.univercity.unlimited.greenUniverCity.function.academic.section.entity.ClassSection;
 import com.univercity.unlimited.greenUniverCity.function.academic.section.service.ClassSectionService;
 import com.univercity.unlimited.greenUniverCity.function.member.user.entity.User;
 import com.univercity.unlimited.greenUniverCity.function.member.user.service.UserService;
+import com.univercity.unlimited.greenUniverCity.util.EntityMapper;
 import com.univercity.unlimited.greenUniverCity.util.MapperUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -36,25 +36,39 @@ public class EnrollmentServiceImpl implements EnrollmentService {
 
     private final UserService userService;
 
-    private final EnrollmentCountService enrollmentCountService;
+    private final EntityMapper entityMapper;
 
-    private EnrollmentResponseDTO toResponseDTO(Enrollment enrollment){
-        User user = enrollment.getUser();
-        ClassSection section=enrollment.getClassSection();
-        CourseOffering offering = section.getCourseOffering();
+    
+    //중복수강신청 검증
+    private void validateDuplicateEnrollment(Long userId, Long sectionId) {
+        boolean exists = repository.existsByUserUserIdAndClassSectionSectionId(userId, sectionId);
 
-        return
-                EnrollmentResponseDTO.builder()
-                        .enrollmentId(enrollment.getEnrollmentId())
-                        .offeringId(offering != null ?  offering.getOfferingId() : -1)
-                        .enrollDate(enrollment.getEnrollDate())
-                        .userId(user != null ? user.getUserId() : -1)
-                        .build();
+        if (exists) {
+            throw new DuplicateEnrollmentException(
+                    String.format(
+                            "중복 수강신청! 학생 ID: %d는 이미 분반 ID: %d에 수강신청했습니다.",
+                            userId, sectionId
+                    )
+            );
+        }
     }
 
-    /**
-     *  -- Enrollment --
-     */
+    //정원초과검증
+    private void validateSectionCapacity(ClassSection section) {
+        Integer currentCount = section.getCurrentCount();
+        Integer maxCapacity = section.getMaxCapacity();
+
+        if (currentCount >= maxCapacity) {
+            throw new IllegalStateException(
+                    String.format(
+                            "수강신청 불가! 분반 '%s'의 정원이 초과되었습니다. (현재: %d/%d)",
+                            section.getSectionName(),
+                            currentCount,
+                            maxCapacity
+                    )
+            );
+        }
+    }
 
     //E-1)Enroll에 존재하는 모든 데이터 조회 서비스 구현부
     @Override
@@ -75,7 +89,7 @@ public class EnrollmentServiceImpl implements EnrollmentService {
         log.info("3) Enrollment 전체조회 성공");
 
         return enrollments.stream()
-                .map(this::toResponseDTO).toList();
+                .map(entityMapper::toEnrollmentResponseDTO).toList();
     }
 
     @Override
@@ -88,7 +102,7 @@ public class EnrollmentServiceImpl implements EnrollmentService {
             throw new RuntimeException("Enrollment 를 찾을 수없습니다." + enrollmentId);
         }
 
-        EnrollmentResponseDTO responseDTO = toResponseDTO(enrollmentOptional.get());
+        EnrollmentResponseDTO responseDTO = entityMapper.toEnrollmentResponseDTO(enrollmentOptional.get());
         return List.of(responseDTO);
     }
 
@@ -105,19 +119,35 @@ public class EnrollmentServiceImpl implements EnrollmentService {
         ClassSection section=sectionService.getClassSectionEntity(dto.getSectionId());
 //        CourseOffering offering = offeringService.getCourseOfferingEntity(dto.getOfferingId());
 
-        log.info("3-1)Offering 탐색 : {}", section);
+        log.info("3-1)section 탐색 : {}", section);
         log.info("3-2)유저 탐색 : {}", user);
+
+        // 검증 1: 중복 수강신청 검사 (데이터 조회 후, 저장 전)
+        validateDuplicateEnrollment(dto.getUserId(), dto.getSectionId());
+        log.info("3-3)중복 검증 통과");
+
+        // 검증 2: 정원 초과 검사
+        validateSectionCapacity(section);
+        log.info("3-4)정원 검증 통과");
 
         MapperUtil.updateFrom(dto,enrollment,List.of("enrollmentId"));
         enrollment.setUser(user);
         enrollment.setClassSection(section);
 
-        log.info("4)Offering 을 추가한 이후 Course : {}", enrollment);
+        log.info("4)section 을 추가한 이후 Course : {}", enrollment);
 
-        Enrollment result = repository.save(enrollment);
-        log.info("4)추가된 Course : {}", result);
+        try {
+            Enrollment result = repository.save(enrollment);
+            log.info("4)추가된 Course : {}", result);
+            return entityMapper.toEnrollmentResponseDTO(result);
 
-        return toResponseDTO(result);
+        } catch (DataIntegrityViolationException e) {
+            // DB 제약조건 위반 시 (UNIQUE 제약) - 2중 방어
+            log.error("DB 제약조건 위반: {}", e.getMessage());
+            throw new DuplicateEnrollmentException(
+                    "중복 수강신청입니다. 이미 해당 분반에 신청되었습니다."
+            );
+        }
     }
 
     @Override
@@ -135,8 +165,19 @@ public class EnrollmentServiceImpl implements EnrollmentService {
         User user = userService.getUserById(dto.getUserId());
         ClassSection section=sectionService.getClassSectionEntity(dto.getSectionId());
 //        CourseOffering offering = offeringService.getCourseOfferingEntity(dto.getOfferingId());
-        log.info("3-1)Offering 탐색 : {}", section);
+        log.info("3-1)Section 탐색 : {}", section);
         log.info("3-2)유저 탐색 : {}", user);
+
+        // 검증: 분반 변경 시 중복 검사 (다른 분반으로 변경하는 경우에만)
+        if (!enrollment.getClassSection().getSectionId().equals(dto.getSectionId())) {
+            validateDuplicateEnrollment(dto.getUserId(), dto.getSectionId());
+            log.info("3-3)중복 검증 통과 (분반 변경)");
+
+            // 검증: 새 분반의 정원 검사
+            validateSectionCapacity(section);
+            log.info("3-4)정원 검증 통과 (새 분반)");
+        }
+
 
         log.info("3) 수정 이전 Enrollment : {}",enrollment);
         MapperUtil.updateFrom(dto,enrollment,List.of("enrollmentId"));
@@ -148,7 +189,7 @@ public class EnrollmentServiceImpl implements EnrollmentService {
 
         log.info("6) Course 수정 성공 updateCourse:  {}",updateCourse);
 
-        return toResponseDTO(updateCourse);
+        return entityMapper.toEnrollmentResponseDTO(updateCourse);
     }
 
     @Override
@@ -210,51 +251,7 @@ public class EnrollmentServiceImpl implements EnrollmentService {
         return enrollment;
     }
 
-    /**
-     *  -- ClassSection -- <-- SE
-     */
-
-    //E.SE-1) 특정 분반의 현재 수강 인원 조회 Service 구현부
-    @Override
-    public Integer getCurrentEnrollmentCount(Long sectionId) {
-        return enrollmentCountService.getCurrentEnrollmentCount(sectionId);
-    }
-
-    //E.SE-2) 여러 분반의 현재 수강 인원을 한 번에 조회 Service 구현부
-    @Override
-    public Map<Long, Integer> getCurrentEnrollmentCounts(List<Long> sectionIds) {
-        return enrollmentCountService.getCurrentEnrollmentCounts(sectionIds);
-
-    }
 
 
 }
-
-/**
- * E-4) 다른 클래스에 정보를 전달할 때 repository가 옳은지 service가 옳은지 검증 후 추후 사용 혹은 삭제 예정
- */
-//@Override
-//    public EnrollmentTestDTO getEnrollmentForGrade(Long id) {
-//        Enrollment e=repository.findByEnrollmentId(id);
-//
-//        CourseOffering co=e.getCourseOffering();
-//
-//        return EnrollmentTestDTO.builder()
-//                .enrollmentId(e.getEnrollmentId())
-////                .studentId(e.getUser().getUserId())
-//                .offeringId(co.getOfferingId())
-//                .courseName(co.getCourse().getCourseName())
-//                .studentName(e.getUser().getNickname())
-//                .build();
-//    }
-
-
-/**
- * /E-5) 다른 클래스에 정보를 전달할 때 repository가 옳은지 service가 옳은지 검증 후 추후 사용 혹은 삭제 예정
- */
-//    @Override
-//    public List<EnrollmentDTO> getEnrollmentFindUser(Long id) {
-//        List<EnrollmentDTO> list=new ArrayList<>();
-//        return null;
-//    }
 

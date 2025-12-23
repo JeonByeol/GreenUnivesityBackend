@@ -42,4 +42,9 @@ public class Review{
     @JoinColumn(name = "enrollment_id")
     private Enrollment enrollment;
 
+    public void updateReviewInfo(Integer rating, String comment) {
+        if (rating != null) this.rating = rating;
+        if (comment != null) this.comment = comment;
+    }
+
 }

@@ -4,19 +4,15 @@ import com.univercity.unlimited.greenUniverCity.function.academic.attendance.dto
 import com.univercity.unlimited.greenUniverCity.function.academic.attendance.dto.AttendanceResponseDTO;
 import com.univercity.unlimited.greenUniverCity.function.academic.attendance.dto.AttendanceUpdateDTO;
 import com.univercity.unlimited.greenUniverCity.function.academic.attendance.entity.Attendance;
+import com.univercity.unlimited.greenUniverCity.function.academic.common.AcademicSecurityValidator;
 import com.univercity.unlimited.greenUniverCity.function.academic.enrollment.entity.Enrollment;
 import com.univercity.unlimited.greenUniverCity.function.academic.enrollment.service.EnrollmentService;
-import com.univercity.unlimited.greenUniverCity.function.academic.review.exception.DataIntegrityException;
-import com.univercity.unlimited.greenUniverCity.function.academic.review.exception.InvalidRoleException;
-import com.univercity.unlimited.greenUniverCity.function.academic.review.exception.UnauthorizedException;
-import com.univercity.unlimited.greenUniverCity.function.member.user.entity.User;
+import com.univercity.unlimited.greenUniverCity.function.academic.offering.entity.CourseOffering;
+import com.univercity.unlimited.greenUniverCity.function.academic.offering.service.CourseOfferingService;
 import com.univercity.unlimited.greenUniverCity.function.academic.attendance.repository.AttendanceRepository;
-import com.univercity.unlimited.greenUniverCity.function.member.user.entity.UserRole;
-import com.univercity.unlimited.greenUniverCity.function.member.user.service.UserService;
+import com.univercity.unlimited.greenUniverCity.util.EntityMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.modelmapper.ModelMapper;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -27,193 +23,142 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class AttendanceServiceImpl implements AttendanceService{
     private final AttendanceRepository repository;
+    private final EnrollmentService enrollmentService; // 학생/수강신청 정보용
+    private final CourseOfferingService offeringService; // [NEW] 과목 정보 조회용
+    private final AcademicSecurityValidator validator;
+    private final EntityMapper entityMapper;
 
-    private final UserService userService;
-
-    private final EnrollmentService enrollmentService;
-
-    private final ModelMapper mapper;
-
-    /**
-     * A-A) Attendance 엔티티를 (Response) DTO로 변환
-     * - 각각의 crud 기능에 사용되는 서비스 구현부에 사용하기 위해 함수로 생성
-     */
-    private AttendanceResponseDTO toResponseDTO(Attendance attendance){
-        Enrollment enrollment=attendance.getEnrollment();
-        User user=enrollment.getUser();
-
-        return
-                AttendanceResponseDTO.builder()
-                        .attendanceId(attendance.getAttendanceId())
-                        .enrollmentId(enrollment.getEnrollmentId())
-                        .attendanceDate(attendance.getAttendanceDate())
-                        .status(attendance.getStatus())
-                        .studentNickName(user.getNickname())
-                        .build();
-    }
-
-    private void validateStudentOwnerShip(String requesterEmail,String targetEmail,String action){
-        log.info("4) 학생 권한 검증 시작 요청자 -:{}, 대상자 -:{}, 작업 -:{}",requesterEmail,targetEmail,action);
-
-        // 1.요청자 조회
-        User requester=userService.getUserByEmail(requesterEmail);
-
-        // 2.요청자의 학생 권한 확인
-        if(!requester.getUserRole().equals(UserRole.STUDENT)){
-            throw new InvalidRoleException(
-                    String.format(
-                            "4)보안 검사 시도 식별코드-: A-Security-1 (출결%s) " +
-                                    "학생 권한이 없습니다. " +
-                                    "요청자: %s,userId: %s, 현재역할: %s",
-                            action,requester.getUserId(),requester.getUserRole())
-            );
-        }
-
-    }
-
-
-    /**
-     * A-Security) 보안검사:
-     * - 교수 권한 검증: CourseOffering의 담당 교수와 요청자가 일치하는지 확인
-     */
-    private void validateProfessorOwnership(Enrollment enrollment,String email,String action){
-        log.info("4) 교수 권한 검증 시작 -: {}",email);
-
-        // 1.요청자 조회 - userService에 존재하는 U-E service 구현부에 email을 전달하여 유저를 조회합니다
-        User requester=userService.getUserByEmail(email);
-
-        // 2. 요청자의 교수 권한 확인
-        if(!(requester.getUserRole() == UserRole.PROFESSOR
-                || requester.getUserRole() == UserRole.ADMIN)){
-            throw new InvalidRoleException(
-                    String.format(
-                            "4)보안 검사 시도 식별코드-: A-Security-1 (출결%s) " +
-                                    "교수 권한이 없습니다. " +
-                                    "요청자: %s, userId: %s, 현재역할: %s",
-                            action,email,requester.getUserId(),requester.getUserRole())
-            );
-        }
-
-        // 3. 담당 교수가 존재하는지 확인
-        User professor=enrollment.getClassSection().getCourseOffering().getProfessor();
-
-        if (professor == null) {
-            throw new DataIntegrityException(
-                    String.format(
-                            "4)보안 검사 시도 식별코드-: A-security-2 (출결 %s) " +
-                                    "데이터 오류: 개설 강의에 담당 교수가 없습니다. offeringId: %s",
-                            action, enrollment.getClassSection().getCourseOffering().getOfferingId())
-            );
-        }
-
-        // 4. 담당 교수의 역할 확인 (데이터 정합성)
-        if (!(professor.getUserRole().equals(UserRole.PROFESSOR) || professor.getUserRole().equals(UserRole.ADMIN))) {
-            throw new InvalidRoleException(
-                    String.format(
-                            "4)보안 검사 시도 식별코드-: A-security-3 (출결 %s) " +
-                                    "데이터 오류: 담당자가 교수 권한이 없습니다. " +
-                                    "userId: %s, 현재 역할: %s",
-                            action, professor.getUserId(), professor.getUserRole())
-            );
-        }
-
-        // 5. 요청자와 담당 교수 일치 확인
-        if (!professor.getUserId().equals(requester.getUserId())) {
-            throw new UnauthorizedException(
-                    String.format(
-                            "4)보안 검사 시도 식별코드-: A-security-4 (출결 %s) " +
-                                    "해당 강의의 담당 교수만 출결을 %s할 수 있습니다. " +
-                                    "담당 교수: %s (userId: %s), 요청자: %s (userId: %s)",
-                            action, action,
-                            professor.getEmail(), professor.getUserId(),
-                            email, requester.getUserId())
-            );
-        }
-
-        log.info("4) 교수 권한 검증 완료 - 교수: {}, 작업: {}", email, action);
-    }
-
-    //A-1) 출결 테이블에 존재하는 데이터를 조회하는 서비스 구현부
+    // =================================================================================
+    // A-1). [조회] 출결 단건 조회 (기본 CRUD 보강)
+    // - 수정 버튼 누르기 전이나 상세 보기 시 사용
+    // =================================================================================
     @Override
-    public List<AttendanceResponseDTO> findAllAttendance() {
-        log.info("2)출결 표 전체조회 시작");
+    public AttendanceResponseDTO getAttendance(Long attendanceId) {
+        //1.존재 여부 확인 (Validator 활용)
+        Attendance attendance = validator.getEntityOrThrow(repository, attendanceId, "출결");
 
-        List<Attendance> attendances=repository.findAll();
+        // (선택 사항) 조회하는 사람이 본인(학생)이거나 교수인지 확인하는 로직을 추가할 수 있음
+        // 현재는 데이터 존재 여부만 확인하고 리턴
 
-        return attendances.stream()
-                .map(this::toResponseDTO)
+        return entityMapper.toattendanceResponseDTO(attendance);
+    }
+
+    // =================================================================================
+    // A-2). [조회] 교수가 특정 과목(Offering)의 전체 출결 현황 조회
+    // =================================================================================
+    @Override
+    public List<AttendanceResponseDTO> getAttendanceByOffering(Long offeringId, String professorEmail) {
+        log.info("2) 교수 과목별 출결 조회 - offeringId: {}, 교수: {}", offeringId, professorEmail);
+
+        // 1. 과목 정보 가져오기 (외부 서비스 사용)
+        // CourseOfferingService에 getEntity 메서드가 있다고 가정 (없으면 추가 필요)
+        CourseOffering offering = offeringService.getCourseOfferingEntity(offeringId);
+
+        // 2. [보안 검증] "이 과목, 진짜 당신 강의 맞습니까?"
+        validator.validateProfessorOwnership(offering, professorEmail, "출결 조회");
+
+        // 3. 해당 과목의 출결 리스트 조회
+        return repository.findByOfferingId(offeringId).stream()
+                .map(entityMapper::toattendanceResponseDTO)
                 .collect(Collectors.toList());
     }
 
-    //A-2)학생이 특정 과목에 대한 출결을 조회하기 위한 서비스 구현부
+    // =================================================================================
+    // A-3). [조회] 학생이 특정 과목(Enrollment)에 대한 출결 조회 (기존 유지)
+    // =================================================================================
     @Override
     public List<AttendanceResponseDTO> findForEnrollmentOfAttendance(Long enrollmentId) {
-        log.info("2) 학생이 출결 조회 시작 enrollmentId-:{}",enrollmentId);
+        log.info("2) 학생 과목별 출결 조회 - enrollmentId: {}", enrollmentId);
+
+        // Enrollment 존재 여부 체크 (외부 서비스)
+        enrollmentService.getEnrollmentEntity(enrollmentId);
 
         List<Attendance> attendances=repository.findByEnrollmentId(enrollmentId);
 
         return attendances.stream()
-                .map(this::toResponseDTO)
-                .collect(Collectors.toList());
+                .map(entityMapper::toattendanceResponseDTO)
+                .toList();
     }
 
-    //A-3)학생이 자신의 수강과목에 대한 모든 출결을 조회하기 위한 서비스 구현부
+    // =================================================================================
+    // A-4). [조회] 학생이 본인의 모든 출결 조회 (기존 유지)
+    // =================================================================================
     @Override
     public List<AttendanceResponseDTO> findForStudentOfAttendance(String email) {
-        log.info("2) 학생이 출결 조회 시작 email-:{}",email);
-
-        List<Attendance> attendances=repository.findByEmail(email);
-
-        return attendances.stream()
-                .map(this::toResponseDTO)
+        log.info("2) 학생 전체 출결 조회 - email: {}", email);
+        return repository.findByEmail(email).stream()
+                .map(entityMapper::toattendanceResponseDTO)
                 .collect(Collectors.toList());
     }
 
-    //A-4)  교수가 특정 학생에 대한 출결을 작성하기 위한 서비스 구현부
+    // =================================================================================
+    // A-5). [관리자/디버깅용] 출결 전체 조회 (기존 복구)
+    // =================================================================================
     @Override
-    public AttendanceResponseDTO createAttendanceForProfessor(AttendanceCreateDTO dto,String professorEmail) {
-        log.info("2) 교수가 학생 출결 생성 시작 교수-:{}",professorEmail);
+    public List<AttendanceResponseDTO> findAllAttendance() {
+        log.info("2) 출결 전체 테이블 조회");
+        return repository.findAllWithDetails().stream()
+                .map(entityMapper::toattendanceResponseDTO)
+                .collect(Collectors.toList());
+    }
 
-        Enrollment enrollment=enrollmentService.getEnrollmentEntity(dto.getEnrollmentId());
+    // =================================================================================
+    // 6. [생성] 출결 데이터 작성 (교수)
+    // =================================================================================
+    @Override
+    public AttendanceResponseDTO createAttendance(AttendanceCreateDTO dto, String professorEmail) {
+        log.info("2) 출결 생성 요청 - 교수: {}", professorEmail);
 
-        //A-security 보안검사
-        validateProfessorOwnership(enrollment,professorEmail,"생성");
+        // 1. Enrollment 조회 (외부 서비스)
+        Enrollment enrollment = enrollmentService.getEnrollmentEntity(dto.getEnrollmentId());
 
-        Attendance attendance= Attendance.builder()
+        // 2. 중복 검사 (같은 날짜에 이미 출석체크 했는지?)
+        // repository에 boolean existsByEnrollmentAndAttendanceDate(...) 메서드 필요
+        // validator.validateDuplicate(repository.existsByEnrollmentAndAttendanceDate(enrollment, dto.getAttendanceDate()), "해당 날짜의 출결");
+
+        // 3. 교수 권한 검증 ("이 학생 내 수업 듣는 거 맞아?")
+        validator.validateProfessorOwnership(enrollment, professorEmail, "출결 생성");
+
+        Attendance attendance = Attendance.builder()
                 .enrollment(enrollment)
                 .attendanceDate(dto.getAttendanceDate())
                 .status(dto.getStatus())
                 .build();
 
-        Attendance createAttendance=repository.save(attendance);
-
-        log.info("5) 출결 작성 완료 -attendanceId:{}, 교수:{}",createAttendance.getAttendanceId(),professorEmail);
-
-        return toResponseDTO(createAttendance);
+        return entityMapper.toattendanceResponseDTO(repository.save(attendance));
     }
 
-    //A-5) 교수가 학생에 대한 출결을 수정하기 위한 서비스 구현부
+    // =================================================================================
+    // 7. [수정] 출결 상태 변경 (교수)
+    // =================================================================================
     @Override
-    public AttendanceResponseDTO updateAttendanceForProfessor(AttendanceUpdateDTO dto, String professorEmail) {
-        log.info("2) 교수가 학생 출결 수정 시작  attendanceId-:{}, 교수-:{}",dto.getAttendanceId(),professorEmail);
+    public AttendanceResponseDTO updateAttendance(AttendanceUpdateDTO dto, String professorEmail) {
+        Long attendanceId = dto.getAttendanceId();
+        log.info("2) 출결 수정 요청 - ID: {}, 교수: {}", attendanceId, professorEmail);
 
-        Attendance attendance=repository.findById(dto.getAttendanceId())
-                .orElseThrow(()->new RuntimeException(
-                        "3)보안 검사 식별 코드 -:A-5 " +
-                                "출결이 존재하지 않습니다. attendanceId " + dto.getAttendanceId()));
+        // 1.[본인 Repo] 조회 및 검증
+        Attendance attendance = validator.getEntityOrThrow(repository, attendanceId, "출결");
 
-        Enrollment enrollment=attendance.getEnrollment();
-        validateProfessorOwnership(enrollment,professorEmail,"수정");
+        // 2.교수 권한 검증
+        validator.validateProfessorOwnership(attendance.getEnrollment(), professorEmail, "출결 수정");
 
-        attendance.setAttendanceDate(dto.getAttendanceDate());
+        // 3.업데이트
         attendance.setStatus(dto.getStatus());
+        attendance.setAttendanceDate(dto.getAttendanceDate());
 
-        Attendance updateAttendance=repository.save(attendance);
-
-        log.info("5) 출결 수정 성공 교수-:{}, attendanceId-:{}",professorEmail,dto.getAttendanceId());
-
-        return toResponseDTO(updateAttendance);
+        return entityMapper.toattendanceResponseDTO(repository.save(attendance));
     }
 
+    // =================================================================================
+    // 8.삭제 출결 삭제 (교수)
+    // =================================================================================
+    @Override
+    public void deleteAttendance(Long attendanceId, String professorEmail) {
+        log.info("2) 출결 삭제 요청 - ID: {}, 교수: {}", attendanceId, professorEmail);
 
+        Attendance attendance = validator.getEntityOrThrow(repository, attendanceId, "출결");
+        validator.validateProfessorOwnership(attendance.getEnrollment(), professorEmail, "출결 삭제");
+
+        repository.delete(attendance);
+    }
 }

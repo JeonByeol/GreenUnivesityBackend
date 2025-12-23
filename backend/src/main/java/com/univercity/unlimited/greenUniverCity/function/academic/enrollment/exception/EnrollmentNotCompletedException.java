@@ -1,4 +1,4 @@
-package com.univercity.unlimited.greenUniverCity.function.academic.review.exception;
+package com.univercity.unlimited.greenUniverCity.function.academic.enrollment.exception;
 
 public class EnrollmentNotCompletedException extends RuntimeException {
     public EnrollmentNotCompletedException(String message) {

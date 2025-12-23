@@ -9,6 +9,13 @@ import java.util.List;
 
 public interface AttendanceRepository extends JpaRepository <Attendance,Long>{
 
+    // N+1 문제 해결을 위한 Fetch Join 메서드
+    // Attendance -> Enrollment -> User 까지 한 번에 가져옵니다.
+    @Query("SELECT a FROM Attendance a " +
+            "JOIN FETCH a.enrollment e " +
+            "JOIN FETCH e.user u " +
+            "ORDER BY a.attendanceId ASC")
+    List<Attendance> findAllWithDetails();
 
     @Query("SELECT a FROM Attendance a " +
             "JOIN FETCH a.enrollment e " +
@@ -21,4 +28,12 @@ public interface AttendanceRepository extends JpaRepository <Attendance,Long>{
             "WHERE u.email = :email")
     List<Attendance> findByEmail(@Param("email")String email);
 
+    // (교수용) 특정 강의(Offering)에 대한 모든 학생의 출결 조회
+    // (Attendance -> Enrollment -> ClassSection -> CourseOffering -> OfferingId 경로)
+    @Query("SELECT a FROM Attendance a " +
+            "JOIN a.enrollment e " +
+            "JOIN e.classSection s " +
+            "JOIN s.courseOffering o " +
+            "WHERE o.offeringId = :offeringId")
+    List<Attendance> findByOfferingId(@Param("offeringId") Long offeringId);
 }
