@@ -55,7 +55,7 @@ public class BoardServiceImpl implements BoardService {
                 .build();
     }
 
-    // 4) 수정 (update) - body 에서 boardId 받는 방식
+    // 4) 추가 (update) - body 에서 boardId 받는 방식
     @Override
     public BoardResponseDTO updateBoard(BoardUpdateDTO dto) {
         // 1) id 확인
