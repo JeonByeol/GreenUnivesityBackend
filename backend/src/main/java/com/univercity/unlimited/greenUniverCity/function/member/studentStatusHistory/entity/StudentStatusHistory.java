@@ -7,7 +7,7 @@ import lombok.*;
 import java.time.LocalDate;
 
 @Entity
-@Table(name = "tbl_student_status_history")
+@Table(name = "tbl_sshistory")
 @ToString
 @Getter
 @Setter
