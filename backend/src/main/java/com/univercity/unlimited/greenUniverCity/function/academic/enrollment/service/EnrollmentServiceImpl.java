@@ -10,8 +10,10 @@ import com.univercity.unlimited.greenUniverCity.function.academic.enrollment.exc
 import com.univercity.unlimited.greenUniverCity.function.academic.enrollment.repository.EnrollmentRepository;
 import com.univercity.unlimited.greenUniverCity.function.academic.offering.exception.CourseOfferingNotFoundException;
 import com.univercity.unlimited.greenUniverCity.function.academic.section.entity.ClassSection;
+import com.univercity.unlimited.greenUniverCity.function.academic.section.repository.ClassSectionRepository;
 import com.univercity.unlimited.greenUniverCity.function.academic.section.service.ClassSectionService;
 import com.univercity.unlimited.greenUniverCity.function.member.user.entity.User;
+import com.univercity.unlimited.greenUniverCity.function.member.user.repository.UserRepository;
 import com.univercity.unlimited.greenUniverCity.function.member.user.service.UserService;
 import com.univercity.unlimited.greenUniverCity.util.EntityMapper;
 import com.univercity.unlimited.greenUniverCity.util.MapperUtil;
@@ -31,13 +33,10 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class EnrollmentServiceImpl implements EnrollmentService {
     private final EnrollmentRepository repository;
+    private final ClassSectionRepository sectionRepository;
+    private final UserRepository userRepository;
 
     private final ModelMapper mapper;
-
-    private final ClassSectionService sectionService;
-
-    private final UserService userService;
-
     private final EntityMapper entityMapper;
 
     
@@ -117,8 +116,8 @@ public class EnrollmentServiceImpl implements EnrollmentService {
 
         log.info("3)EnrollmentCreateDTO -> Enrollment : {}", enrollment);
 
-        User user = userService.getUserById(dto.getUserId());
-        ClassSection section=sectionService.getClassSectionEntity(dto.getSectionId());
+        User user = getUserOrThrow(dto.getUserId());
+        ClassSection section = getSectionOrThrow(dto.getSectionId());
 //        CourseOffering offering = offeringService.getCourseOfferingEntity(dto.getOfferingId());
 
         log.info("3-1)section 탐색 : {}", section);
@@ -164,8 +163,8 @@ public class EnrollmentServiceImpl implements EnrollmentService {
 
         Enrollment enrollment = enrollmentOptional.get();
 
-        User user = userService.getUserById(dto.getUserId());
-        ClassSection section=sectionService.getClassSectionEntity(dto.getSectionId());
+        User user = getUserOrThrow(dto.getUserId());
+        ClassSection section = getSectionOrThrow(dto.getSectionId());
 //        CourseOffering offering = offeringService.getCourseOfferingEntity(dto.getOfferingId());
         log.info("3-1)Section 탐색 : {}", section);
         log.info("3-2)유저 탐색 : {}", user);
@@ -253,6 +252,23 @@ public class EnrollmentServiceImpl implements EnrollmentService {
         return enrollment;
     }
 
+    // =========================================================================
+    //  함수
+    // =========================================================================
+    private Enrollment getEnrollmentOrThrow(Long id) {
+        return repository.findById(id)
+                .orElseThrow(() -> new EnrollmentNotFoundException("Enrollment 를 찾을 수없습니다." + id));
+    }
+
+    private User getUserOrThrow(Long id) {
+        return userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found with id : " + id));
+    }
+
+    private ClassSection getSectionOrThrow(Long id) {
+        return sectionRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Section not found with id : " + id));
+    }
 
 }
 

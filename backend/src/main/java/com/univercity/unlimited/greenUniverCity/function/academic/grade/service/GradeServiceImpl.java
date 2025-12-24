@@ -63,7 +63,7 @@ public class GradeServiceImpl implements GradeService{
     public GradeResponseDTO getGrade(Long gradeId, String requesterEmail) {
         log.info("2) 성적 단건 조회 시작 - gradeId: {}, 요청자: {}", gradeId, requesterEmail);
 
-        Grade grade = validator.getEntityOrThrow(repository, gradeId, "성적");
+        Grade grade = getGradeOrThrow(gradeId);
         
         // 1차 보안 본인이면 바로 리턴
         String studentEmail = grade.getEnrollment().getUser().getEmail();
@@ -103,7 +103,7 @@ public class GradeServiceImpl implements GradeService{
         log.info("2) 특정 강의에 대한 성적 조회 시작 - offeringId-:{}, 교수-:{}",
                 offeringId, professorEmail);
 
-        CourseOffering offering = validator.getEntityOrThrow(offeringRepository, offeringId, "강의");
+        CourseOffering offering = getOfferingOrThrow(offeringId);
         validator.validateProfessorOwnership(offering,professorEmail,"성적 조회");
         
         List<Grade> grades=repository.findByOfferingGrade(offeringId);
@@ -122,7 +122,7 @@ public class GradeServiceImpl implements GradeService{
         log.info("2) 성적 수정 시작 - gradeId-:{}, 교수-:{}",
                 gradeId, professorEmail);
 
-        Grade grade = validator.getEntityOrThrow(repository, gradeId, "성적");
+        Grade grade = getGradeOrThrow(gradeId);
         CourseOffering offering = grade.getEnrollment().getClassSection().getCourseOffering();
 
         // 1차 보안 소유권 확인
@@ -145,7 +145,7 @@ public class GradeServiceImpl implements GradeService{
         log.info("2) 최종 성적 자동 계산 시작 - enrollmentId-:{}, 교수-:{}",
                 enrollmentId, professorEmail);
 
-        Enrollment enrollment = validator.getEntityOrThrow(enrollmentRepository, enrollmentId, "수강신청");
+        Enrollment enrollment = getEnrollmentOrThrow(enrollmentId);
         CourseOffering offering= enrollment.getClassSection().getCourseOffering();
         
         // 1차보안 소유권 확인
@@ -192,7 +192,7 @@ public class GradeServiceImpl implements GradeService{
     public void calculateGradeForOffering(Long offeringId, String professorEmail) {
         log.info("ALL) 강의별 전체 성적 산출 시작 - offeringId: {}, 교수: {}", offeringId, professorEmail);
 
-        CourseOffering offering = validator.getEntityOrThrow(offeringRepository, offeringId, "강의");
+        CourseOffering offering = getOfferingOrThrow(offeringId);
 
         validator.validateProfessorOwnership(offering, professorEmail, "전체 성적 산출");
         //validator.validateTermProcessingAllowed(offering, professorEmail, "전체 성적 산출");
@@ -218,13 +218,20 @@ public class GradeServiceImpl implements GradeService{
         log.info("전체 성적 산출 완료 - 성공: {}/{}", successCount, enrollments.size());
     }
 
-    //G-8 외부 Service에서 grade에 대한 정보 조회
-    @Override
-    @Transactional(readOnly = true)
-    public Grade getGradeEntity(Long gradeId) {
-        return validator.getEntityOrThrow(repository, gradeId, "성적");
+    // =========================================================================
+    //  Private Helper Methods
+    // =========================================================================
+    private Grade getGradeOrThrow(Long id) {
+        return validator.getEntityOrThrow(repository, id, "성적");
     }
 
+    private CourseOffering getOfferingOrThrow(Long id) {
+        return validator.getEntityOrThrow(offeringRepository, id, "강의");
+    }
+
+    private Enrollment getEnrollmentOrThrow(Long id) {
+        return validator.getEntityOrThrow(enrollmentRepository, id, "수강신청");
+    }
 
 
 }

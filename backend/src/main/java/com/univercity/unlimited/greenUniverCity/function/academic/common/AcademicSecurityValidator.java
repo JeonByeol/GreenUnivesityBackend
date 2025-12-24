@@ -6,6 +6,7 @@ import com.univercity.unlimited.greenUniverCity.function.academic.enrollment.ent
 import com.univercity.unlimited.greenUniverCity.function.academic.grade.entity.StudentScore;
 import com.univercity.unlimited.greenUniverCity.function.academic.offering.entity.CourseOffering;
 import com.univercity.unlimited.greenUniverCity.function.academic.review.entity.Review;
+import com.univercity.unlimited.greenUniverCity.function.member.user.repository.UserRepository;
 import com.univercity.unlimited.greenUniverCity.util.exception.DataIntegrityException;
 import com.univercity.unlimited.greenUniverCity.util.exception.InvalidRoleException;
 import com.univercity.unlimited.greenUniverCity.util.exception.UnauthorizedException;
@@ -41,7 +42,15 @@ public class AcademicSecurityValidator {
     }
 
     /**
-     * V-2) [검증] 중복 데이터 존재 여부 확인
+     * V-2) [공통] 이메일로 User 엔티티 조회 및 예외 처리 (UserRepository 전용)
+     */
+    public User getEntityByEmailOrThrow(UserRepository repository, String email, String entityName) {
+        return repository.findByEmail(email)
+                .orElseThrow(() -> new EntityNotFoundException(entityName + " 정보를 찾을 수 없습니다. (Email: " + email + ")"));
+    }
+
+    /**
+     * V-3) [검증] 중복 데이터 존재 여부 확인
      */
 
     // 상황 A: 간단하게 표준 문구 사용 (2번 생성자 활용)
@@ -61,7 +70,7 @@ public class AcademicSecurityValidator {
     }
 
     /**
-     * V-3) [검증] 데이터 존재 여부 확인 (있어야만 통과)
+     * V-4) [검증] 데이터 존재 여부 확인 (있어야만 통과)
      */
     public void validateNotEmpty(boolean isEmpty, String errorMessage) {
         if (isEmpty) {
@@ -70,7 +79,7 @@ public class AcademicSecurityValidator {
     }
 
     /**
-     * V-4) [보안] 본인 확인 (단순 이메일 비교 - DB 조회 없이 빠름)
+     * V-5) [보안] 본인 확인 (단순 이메일 비교 - DB 조회 없이 빠름)
      */
     public void validateOwner(String ownerEmail, String requesterEmail, String errorMessage) {
         if (!ownerEmail.equals(requesterEmail)) {

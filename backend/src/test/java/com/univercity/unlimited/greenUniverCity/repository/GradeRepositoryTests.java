@@ -4,6 +4,7 @@ import com.univercity.unlimited.greenUniverCity.function.academic.enrollment.ent
 import com.univercity.unlimited.greenUniverCity.function.academic.enrollment.repository.EnrollmentRepository;
 import com.univercity.unlimited.greenUniverCity.function.academic.grade.entity.Grade;
 import com.univercity.unlimited.greenUniverCity.function.academic.grade.entity.GradeItem;
+import com.univercity.unlimited.greenUniverCity.function.academic.grade.entity.GradeItemType;
 import com.univercity.unlimited.greenUniverCity.function.academic.grade.entity.StudentScore;
 import com.univercity.unlimited.greenUniverCity.function.academic.grade.repository.GradeItemRepository;
 import com.univercity.unlimited.greenUniverCity.function.academic.grade.repository.StudentScoreRepository;
@@ -94,7 +95,7 @@ public class GradeRepositoryTests {
             GradeItem midterm = GradeItem.builder()
                     .courseOffering(offering)
                     .itemName("중간고사")
-                    .itemType("EXAM")
+                    .itemType(GradeItemType.MIDTERM)
                     .maxScore(100.0f)
                     .weightPercent(30.0f)
                     .build();
@@ -104,7 +105,7 @@ public class GradeRepositoryTests {
             GradeItem finalExam = GradeItem.builder()
                     .courseOffering(offering)
                     .itemName("기말고사")
-                    .itemType("EXAM")
+                    .itemType(GradeItemType.FINAL)
                     .maxScore(100.0f)
                     .weightPercent(40.0f)
                     .build();
@@ -114,7 +115,7 @@ public class GradeRepositoryTests {
             GradeItem assignment = GradeItem.builder()
                     .courseOffering(offering)
                     .itemName("과제")
-                    .itemType("ASSIGNMENT")
+                    .itemType(GradeItemType.ASSIGNMENT)
                     .maxScore(100.0f)
                     .weightPercent(30.0f)
                     .build();

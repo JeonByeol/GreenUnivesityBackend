@@ -28,6 +28,4 @@ public interface ClassSectionService {
     //SE-6) 개발단계 SectionId를 통해 한건 조회를 하기위한 service선언부
     ClassSectionResponseDTO getSection(Long sectionId);
 
-    //SE-E) 외부 Service에서 ClassSection의 정보를 활용하기 위해 조회 시킬수 있는 service 선언부
-    ClassSection getClassSectionEntity(Long sectionId);
 }
