@@ -7,6 +7,7 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 public interface EnrollmentRepository extends JpaRepository<Enrollment,Long> {
     // -- 전체 Entity --
@@ -15,22 +16,12 @@ public interface EnrollmentRepository extends JpaRepository<Enrollment,Long> {
     Enrollment findByEnrollmentId(Long id);
 
 
-    //추가: 중복 수강신청 검사
-    /**
-     * 특정 학생이 특정 분반에 이미 수강신청했는지 확인
-     *
-     * @param userId 학생 ID
-     * @param sectionId 분반 ID
-     * @return 존재 여부 (true: 중복, false: 신청 가능)
-     */
+    // 특정 학생이 특정 분반에 이미 신청했는지 확인 (True/False 반환)
     boolean existsByUserUserIdAndClassSectionSectionId(Long userId, Long sectionId);
-
-    //추가: 특정 학생의 특정 분반 수강신청 내역 조회
+    
+    //  특정 강의(Offering)를 수강하는 모든 학생 목록 조회 (성적 일괄 산출용) GradeService에서 사용
     @Query("SELECT e FROM Enrollment e " +
-            "WHERE e.user.userId = :userId " +
-            "AND e.classSection.sectionId = :sectionId")
-    List<Enrollment> findByUserIdAndSectionId(
-            @Param("userId") Long userId,
-            @Param("sectionId") Long sectionId
-    );
+            "JOIN FETCH e.user " + // 학생 정보도 필요할 테니 Fetch Join
+            "WHERE e.classSection.courseOffering.offeringId = :offeringId")
+    List<Enrollment> findAllByOfferingId(@Param("offeringId") Long offeringId);
 }

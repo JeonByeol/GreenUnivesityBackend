@@ -18,6 +18,7 @@ public interface EnrollmentService {
     EnrollmentResponseDTO createEnrollmentByAuthorizedUser(EnrollmentCreateDTO dto, String email);
     EnrollmentResponseDTO updateEnrollmentByAuthorizedUser(EnrollmentUpdateDTO dto, String email);
     Map<String,String> deleteByEnrollmentId(Long enrollmentId, String email);
+
     //E-2) **(기능 입력 바랍니다/사용 안할거면 삭제 부탁드립니다)**
     int addEnrollment(EnrollmentResponseDTO legacyEnrollmentDTO);
 

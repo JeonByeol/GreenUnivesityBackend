@@ -17,7 +17,7 @@ public interface TimeTableRepository extends JpaRepository<TimeTable,Long> {
             "JOIN FETCH cs.courseOffering co " +
             "JOIN FETCH co.course c " +
             "LEFT JOIN FETCH t.classroom cr " +
-            "ORDER BY t.timetableId ASC") // 강의실은 배정 전일 수 있으므로 LEFT JOIN
+            "ORDER BY t.timetableId ASC")
     List<TimeTable> findAllWithDetails();
 
     //T-2)에 선언된

@@ -1,5 +1,6 @@
 package com.univercity.unlimited.greenUniverCity.repository;
 
+import com.univercity.unlimited.greenUniverCity.function.member.studentStatusHistory.repository.StudentStatusHistoryRepository;
 import org.junit.platform.suite.api.IncludeTags;
 import org.junit.platform.suite.api.SelectClasses;
 import org.junit.platform.suite.api.Suite;
@@ -26,6 +27,9 @@ import org.junit.platform.suite.api.Suite;
         //ClassSection은 CourseOffering과 Classroom이 필요하므로 그 뒤에 배치
         ClassSectionRepositoryTests.class,
 
+        // 과제는 분반(ClassSection)이 있어야 생성 가능
+        AssignmentRepositoryTests.class,
+        AcademicTermRepositoryTests.class,
 
         // 3. 수강 및 활동 데이터 (개설 강의에 의존)
         CommentRepositoryTests.class,
@@ -39,11 +43,16 @@ import org.junit.platform.suite.api.Suite;
 
         ReviewRepositoryTests.class,
 
+        //과제 제출은 '과제'와 '학생'이 있어야 가능 (Enrollment 후 활동으로 간주하여 뒤에 배치)
+        SubmissionRepositoryTests.class,
+
         GradeRepositoryTests.class,
 
         AttendanceRepositoryTests.class,
 
-        UserDummyRepositoryTests.class
+        UserDummyRepositoryTests.class,
+
+        StudentStatusHistoryRepositoryTests.class,
 })
 @IncludeTags("push")
 public class AllStartTest {

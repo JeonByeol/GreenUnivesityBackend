@@ -1,11 +1,14 @@
 package com.univercity.unlimited.greenUniverCity.function.academic.grade.repository;
 
+import com.univercity.unlimited.greenUniverCity.function.academic.enrollment.entity.Enrollment;
+import com.univercity.unlimited.greenUniverCity.function.academic.grade.entity.GradeItem;
 import com.univercity.unlimited.greenUniverCity.function.academic.grade.entity.StudentScore;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface StudentScoreRepository extends JpaRepository<StudentScore,Long> {
     //특정 수강신청에서 한 학생의 모든 점수를 조회하기 위한 쿼리문
@@ -26,5 +29,6 @@ public interface StudentScoreRepository extends JpaRepository<StudentScore,Long>
 
     //중복 점수 등록 확인
     boolean existsByEnrollment_EnrollmentIdAndGradeItem_ItemId(Long enrollmentId,Long ItemId);
+
 
 }
