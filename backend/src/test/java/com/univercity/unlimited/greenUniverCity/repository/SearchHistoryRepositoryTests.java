@@ -47,7 +47,6 @@ public class SearchHistoryRepositoryTests {
      * 전체 검색 기록 불러오기 테스트
      */
     @Test
-    @Tag("push")
     public void findAllSearchHistory() {
 
         List<SearchHistory> list = searchHistoryRepository.findAll();

@@ -43,7 +43,11 @@ import org.junit.platform.suite.api.Suite;
 
         AttendanceRepositoryTests.class,
 
-        UserDummyRepositoryTests.class
+        UserDummyRepositoryTests.class,
+
+        FileAttachmentRepositoryTests.class,
+
+        SearchHistoryRepositoryTests.class
 })
 @IncludeTags("push")
 public class AllStartTest {
