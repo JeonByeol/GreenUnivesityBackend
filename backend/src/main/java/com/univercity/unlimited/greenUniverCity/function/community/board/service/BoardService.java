@@ -16,7 +16,7 @@ public interface BoardService {
     // 생성
     BoardResponseDTO createBoard(BoardCreateDTO dto);
 
-    // 수정 (달링이 원하는: body 에서 boardId 받는 방식)
+    // 추가
     BoardResponseDTO updateBoard(BoardUpdateDTO dto);
 
     // 삭제

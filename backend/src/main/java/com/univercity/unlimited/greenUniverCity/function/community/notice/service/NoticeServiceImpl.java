@@ -83,14 +83,7 @@ public class NoticeServiceImpl implements NoticeService {
         return mapper.map(saved, NoticeResponseDTO.class);
     }
 
-
-    // (이름이 이상하지만, 인터페이스 맞추려고 놔둠)
-    @Override
-    public List<Course> findPartNotice(String noticeId, String noticeName) {
-        return List.of();
-    }
-
-    // N-4) 삭제
+   // N-4) 삭제
     @Override
     public void deleteNotice(Long noticeId) {
         noticeRepository.deleteById(noticeId);
@@ -104,4 +97,9 @@ public class NoticeServiceImpl implements NoticeService {
         Notice saved = noticeRepository.save(notice);
         return mapper.map(saved, NoticeResponseDTO.class);
     }
+
+//    @Override
+//    public List<Course> findPartNotice(String noticeId, String noticeName) {
+//        return List.of();
+//    }
 }

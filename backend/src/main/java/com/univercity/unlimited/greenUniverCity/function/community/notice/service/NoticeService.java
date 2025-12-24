@@ -22,7 +22,7 @@ public interface NoticeService {
     // N-3) 수정 (조건 A: Body로 noticeId 포함해서 받는 방식)
     NoticeResponseDTO updateNotice(NoticeUpdateDTO dto);
 
-    List<Course> findPartNotice(String noticeId, String noticeName);
+//    List<Course> findPartNotice(String noticeId, String noticeName);
 
     // N-4 삭제
     void deleteNotice(Long noticeId);
