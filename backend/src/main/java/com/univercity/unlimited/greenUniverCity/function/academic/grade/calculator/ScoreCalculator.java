@@ -6,6 +6,7 @@ import com.univercity.unlimited.greenUniverCity.function.academic.grade.entity.S
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -17,6 +18,52 @@ import java.util.List;
 @Component
 @Slf4j
 public class ScoreCalculator {
+
+    /**
+     * 🚀 [메인] 최종 성적 통합 계산 메서드
+     * - 역할: Service가 던져준 데이터(List)를 가지고 반복문을 돌며 최종 점수를 산출
+     * - 이 메서드 하나로 계산 로직을 끝냅니다.
+     */
+    public float calculateFinalGrade(List<GradeItem> gradeItems,
+                                     List<Submission> submissions,
+                                     List<StudentScore> studentScores) {
+
+        List<Float> weightedScores = new ArrayList<>();
+        float totalWeight = 0.0f;
+
+        for (GradeItem item : gradeItems) {
+            float obtainedScore = 0.0f;
+
+            // Enum 타입에 따라 계산 방식 분기 처리
+            switch (item.getItemType()) {
+                case ASSIGNMENT:
+                    // 과제 점수 계산 (Submission 리스트 전체 전달하여 평균 산출)
+                    obtainedScore = calculateAssignmentScore(submissions, item);
+                    break;
+
+                case MIDTERM:    // 중간고사
+                case FINAL:      // 기말고사
+                case ATTENDANCE: // 출석
+                case ETC:        // 기타
+                default:
+                    // 시험 및 기타 점수는 StudentScore 테이블에서 해당 항목(ItemId)의 점수를 찾아옴
+                    StudentScore matchScore = studentScores.stream()
+                            .filter(s -> s.getGradeItem().getItemId().equals(item.getItemId()))
+                            .findFirst()
+                            .orElse(null);
+
+                    obtainedScore = calculateExamScore(matchScore, item);
+                    break;
+            }
+
+            // 가중치 적용 후 리스트에 추가
+            weightedScores.add(applyWeight(obtainedScore, item));
+            totalWeight += item.getWeightPercent();
+        }
+
+        // 최종 합산 반환 (비율 보정 포함)
+        return calculateFinalTotal(weightedScores, totalWeight);
+    }
 
     /**
      *  과제 점수 계산 (평균 점수 환산)

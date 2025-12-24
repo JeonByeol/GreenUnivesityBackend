@@ -23,21 +23,37 @@ public class GradeController {
 
     //NEW-G-1) 최종 성적 테이블에 존재하는 모든 데이터를 조회하기 위해 컨트롤러 내부에 선언된 crud(get)
     @GetMapping("/all")
-    public ResponseEntity<List<GradeResponseDTO>> getGrades(){
-        log.info("1) 최종 성적 전체조회 요청");
+    public ResponseEntity<List<GradeResponseDTO>> getGrades(
+            @RequestHeader(value = "X-User-Email", required = false) String requesterEmail) {
 
-        return ResponseEntity.ok(gradeService.findAllGrades());
+        log.info("1) 최종 성적 전체조회 요청 - 요청자: {}", requesterEmail);
+
+        // [Postman 테스트용]
+        if (requesterEmail == null || requesterEmail.isEmpty()) {
+            log.warn("X-User-Email 헤더가 없습니다. 테스트용 기본값 사용");
+            requesterEmail = "hannah@aaa.com"; // 교수 또는 관리자 이메일 권장
+        }
+
+        return ResponseEntity.ok(gradeService.findAllGrades(requesterEmail));
     }
 
     //NEW-G-2) 최종 성적에 대한 단건 조회를 하기 위해 컨트롤러 내부에 선언된 CRUD(get)
     @GetMapping("/one/{gradeId}")
-    public ResponseEntity<GradeResponseDTO> getGrade(@PathVariable("gradeId") Long gradeId){
+    public ResponseEntity<GradeResponseDTO> getGrade(
+            @PathVariable("gradeId") Long gradeId,
+            @RequestHeader(value = "X-User-Email", required = false) String requesterEmail) {
 
-        log.info("1) 최종 성적 단건 조회 요청 - gradeId-:{}",gradeId);
+        log.info("1) 최종 성적 단건 조회 요청 - gradeId: {}, 요청자: {}", gradeId, requesterEmail);
 
-        GradeResponseDTO response= gradeService.getGrade(gradeId);
+        // [Postman 테스트용]
+        if (requesterEmail == null || requesterEmail.isEmpty()) {
+            log.warn("X-User-Email 헤더가 없습니다. 테스트용 기본값 사용");
+            requesterEmail = "hannah@aaa.com";
+        }
 
-        log.info("Complete: 최종 성적 조회 완료 - gradeId-:{}, letterGrade-:{}",
+        GradeResponseDTO response = gradeService.getGrade(gradeId, requesterEmail);
+
+        log.info("Complete: 단건 조회 완료 - gradeId: {}, 등급: {}",
                 response.getGradeId(), response.getLetterGrade());
 
         return ResponseEntity.ok(response);
@@ -109,7 +125,7 @@ public class GradeController {
         return ResponseEntity.ok(response);
     }
 
-    //NEW-G-6) 최종 성적 자동 계산 및 저장하기 위해 컨트롤러 내부에 선언된 crud(post)
+    //NEW-G-6) 특정 학생 성적 자동 산출 (단건 계산)
     @PostMapping("/enrollments/{enrollmentId}/calculate")
     public ResponseEntity<GradeResponseDTO> calculateAndSaveGrade(
             @PathVariable Long enrollmentId,
@@ -130,6 +146,25 @@ public class GradeController {
                 response.getGradeId(), response.getTotalScore(), response.getLetterGrade());
 
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    // G-7) 강의별 전체 학생 성적 일괄 산출 (일괄 계산)
+    @PostMapping("/offerings/{offeringId}/calculate-all")
+    public ResponseEntity<String> calculateGradeForOffering(
+            @PathVariable Long offeringId,
+            @RequestHeader(value = "X-User-Email", required = false) String professorEmail) {
+
+        log.info("1) 강의 전체 성적 일괄 산출 요청 - offeringId: {}, 교수: {}", offeringId, professorEmail);
+
+        if (professorEmail == null || professorEmail.isEmpty()) {
+            professorEmail = "hannah@aaa.com";
+        }
+
+        gradeService.calculateGradeForOffering(offeringId, professorEmail);
+
+        log.info("Complete: 강의 전체 성적 산출 완료 - offeringId: {}", offeringId);
+
+        return ResponseEntity.ok("해당 강의의 전체 수강생 성적 산출이 완료되었습니다.");
     }
 
 }

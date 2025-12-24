@@ -19,6 +19,6 @@ public class GradeCreateDTO {
     private Float totalScore; //총점 
 
     @NotBlank(message = "등급은 필수입니다")
-    @Pattern(regexp = "^(A\\\\+?|B\\\\+?|C\\\\+?|D\\\\+?|F)$", message = "등급 형식이 올바르지 않습니다. (A+, A, B+, B, C+, C, D+, D, F 형식만 허용됩니다.)")
+    @Pattern(regexp = "^([A-D]\\+?|F)$", message = "등급 형식이 올바르지 않습니다. (A+, A, B+, B, C+, C, D+, D, F 형식만 허용됩니다.)")
     private String letterGrade; //등급
 }

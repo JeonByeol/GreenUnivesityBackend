@@ -13,10 +13,10 @@ import java.util.List;
 public interface GradeService {
 
     //New-G-1) 성적 테이블에 존재하는 전체 데이터를 조회하기 위한 service 선언부 (교수만 가능해야함)
-    List<GradeResponseDTO> findAllGrades();
+    List<GradeResponseDTO> findAllGrades(String requesterEmail);
 
     //New-G-2) 성적의 단건 조회를 위한 service 선언부
-    GradeResponseDTO getGrade(Long gradeId);
+    GradeResponseDTO getGrade(Long gradeId,String requesterEmail);
 
     //NEW-G-3) 학생별 모든 성적 조회를 위한 service 선언부 (학생 본인만 가능)
     List<GradeResponseDTO> getStudentGrades(String studentEmail, String requesterEmail);
@@ -27,10 +27,13 @@ public interface GradeService {
     //NEW-G-5) 성적을 수정하기 위한 service 선언부 (교수만 가능)
     GradeResponseDTO updateGrade(Long gradeId, GradeUpdateDTO dto, String professorEmail);
 
-    //New-G-6) 최종 성적 자동 계산 및 저장 (교수만 가능)
+    //New-G-6) 최종 성적 자동 계산 및 저장  (교수용 - 단건처리)
     GradeResponseDTO calculateAndSaveGrade(Long enrollmentId, String professorEmail);
 
-    //NEW-G-7) 외부 Entity(GradeItem,StudentScore,...)등 다른 ServiceImpl에서 사용하기 위해 선언된 service 선언
+    // G-7) 강의별 전체 학생 성적 일괄 산출 (교수용 - 전체 처리)
+    void calculateGradeForOffering(Long offeringId, String professorEmail);
+
+    //NEW-G-8) 외부 Entity(GradeItem,StudentScore,...)등 다른 ServiceImpl에서 사용하기 위해 선언된 service 선언
     Grade getGradeEntity(Long gradeId);
 
 //    //New-G-5) 성적을 생성하기 위한 service 선언부 (교수만 가능)

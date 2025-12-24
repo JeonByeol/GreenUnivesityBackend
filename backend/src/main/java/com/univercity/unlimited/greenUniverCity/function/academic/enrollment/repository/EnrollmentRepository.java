@@ -18,4 +18,10 @@ public interface EnrollmentRepository extends JpaRepository<Enrollment,Long> {
 
     // 특정 학생이 특정 분반에 이미 신청했는지 확인 (True/False 반환)
     boolean existsByUserUserIdAndClassSectionSectionId(Long userId, Long sectionId);
+    
+    //  특정 강의(Offering)를 수강하는 모든 학생 목록 조회 (성적 일괄 산출용) GradeService에서 사용
+    @Query("SELECT e FROM Enrollment e " +
+            "JOIN FETCH e.user " + // 학생 정보도 필요할 테니 Fetch Join
+            "WHERE e.classSection.courseOffering.offeringId = :offeringId")
+    List<Enrollment> findAllByOfferingId(@Param("offeringId") Long offeringId);
 }
