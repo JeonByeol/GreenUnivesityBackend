@@ -1,5 +1,9 @@
 package com.univercity.unlimited.greenUniverCity.util;
 
+import com.univercity.unlimited.greenUniverCity.function.academic.assignment.dto.assignment.AssignmentResponseDTO;
+import com.univercity.unlimited.greenUniverCity.function.academic.assignment.dto.submission.SubmissionResponseDTO;
+import com.univercity.unlimited.greenUniverCity.function.academic.assignment.entity.Assignment;
+import com.univercity.unlimited.greenUniverCity.function.academic.assignment.entity.Submission;
 import com.univercity.unlimited.greenUniverCity.function.academic.attendance.dto.AttendanceResponseDTO;
 import com.univercity.unlimited.greenUniverCity.function.academic.attendance.entity.Attendance;
 import com.univercity.unlimited.greenUniverCity.function.academic.classroom.dto.ClassroomResponseDTO;
@@ -309,5 +313,46 @@ public class EntityMapper {
                         .deptName(department.getDeptName())
 //                        .courseId(department.getCourses())
                         .build();
+    }
+
+    // ==========================================
+    // 13. Assignment 변환 (Assignment-A)
+    // ==========================================
+    public AssignmentResponseDTO toAssignmentResponseDTO(Assignment assignment) {
+        if (assignment == null) return null;
+
+        // 연관된 ClassSection 정보 가져오기
+        ClassSection section = assignment.getClassSection();
+
+        return AssignmentResponseDTO.builder()
+                .assignmentId(assignment.getAssignmentId())
+                .sectionId(section != null ? section.getSectionId() : null)
+                .sectionName(section != null ? section.getSectionName() : null) // 분반명 매핑
+                .title(assignment.getTitle())
+                .description(assignment.getDescription())
+                .dueDate(assignment.getDueDate())
+                .maxScore(assignment.getMaxScore())
+                .build();
+    }
+    // ==========================================
+    // 14. Submission 변환 (Submission-A)
+    // ==========================================
+    public SubmissionResponseDTO toSubmissionResponseDTO(Submission submission) {
+        if (submission == null) return null;
+
+        Assignment assignment = submission.getAssignment();
+        User student = submission.getStudent();
+
+        return SubmissionResponseDTO.builder()
+                .submissionId(submission.getSubmissionId())
+                .assignmentId(assignment != null ? assignment.getAssignmentId() : null)
+                .assignmentTitle(assignment != null ? assignment.getTitle() : null)
+                .studentId(student != null ? student.getUserId() : null)
+                .studentName(student != null ? student.getNickname() : "알 수 없음") // 혹은 getNickname()
+//                .studentNumber(student != null ? student.getStudentNumber() : null) // 학번
+                .fileUrl(submission.getFileUrl())
+                .score(submission.getScore())
+                .submittedAt(submission.getSubmittedAt())
+                .build();
     }
 }

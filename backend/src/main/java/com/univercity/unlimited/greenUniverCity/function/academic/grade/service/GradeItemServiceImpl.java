@@ -5,10 +5,12 @@ import com.univercity.unlimited.greenUniverCity.function.academic.grade.dto.grad
 import com.univercity.unlimited.greenUniverCity.function.academic.grade.dto.gradeitem.GradeItemResponseDTO;
 import com.univercity.unlimited.greenUniverCity.function.academic.grade.dto.gradeitem.GradeItemUpdateDTO;
 import com.univercity.unlimited.greenUniverCity.function.academic.grade.entity.GradeItem;
+import com.univercity.unlimited.greenUniverCity.function.academic.grade.entity.GradeItemType;
 import com.univercity.unlimited.greenUniverCity.function.academic.grade.repository.GradeItemRepository;
 import com.univercity.unlimited.greenUniverCity.function.academic.offering.entity.CourseOffering;
 import com.univercity.unlimited.greenUniverCity.function.academic.offering.service.CourseOfferingService;
 import com.univercity.unlimited.greenUniverCity.util.EntityMapper;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -149,5 +151,14 @@ public class GradeItemServiceImpl implements GradeItemService{
     @Transactional(readOnly = true)
     public GradeItem getGradeItemEntity(Long itemId) {
         return validator.getEntityOrThrow(repository, itemId, "평가 항목");
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public GradeItem getGradeItemByOfferingAndType(Long offeringId, GradeItemType itemType) {
+        return repository.findByCourseOffering_OfferingIdAndItemType(offeringId, itemType)
+                .orElseThrow(() -> new EntityNotFoundException(
+                        String.format("이 강의에는 '%s' 평가 항목이 설정되지 않았습니다. 평가 기준을 먼저 등록해주세요.", itemType.name())
+                ));
     }
 }
