@@ -30,8 +30,10 @@ public class SubmissionServiceImpl implements SubmissionService {
     // 주석-1) SubmissionController=SB
 
     private final SubmissionRepository submissionRepository;
-    private final AssignmentService assignmentService;
-    private final UserService userService;
+
+    private final AssignmentRepository assignmentRepository;
+    private final UserRepository userRepository;
+
     private final AcademicSecurityValidator securityValidator; // ✅ 보안 검증 유틸리티
     private final EntityMapper entityMapper;
 
@@ -40,8 +42,8 @@ public class SubmissionServiceImpl implements SubmissionService {
     public SubmissionResponseDTO submitAssignment(SubmissionCreateDTO dto, String email) {
         log.info("SB-1) 과제 제출 요청 - assignmentId: {}, 학생: {}", dto.getAssignmentId(), email);
 
-        // 1. 과제 엔티티 조회 (AssignmentService의 AS-E 메서드 활용)
-        Assignment assignment = assignmentService.getAssignmentEntity(dto.getAssignmentId());
+        // 1. 과제 정보조회
+        Assignment assignment = getAssignmentOrThrow(dto.getAssignmentId());
 
         // 마감 기한 체크 (서버 시간 기준)
         if (LocalDateTime.now().isAfter(assignment.getDueDate())) {
@@ -56,8 +58,8 @@ public class SubmissionServiceImpl implements SubmissionService {
             securityValidator.validateDuplicateCustomMessage(true, "이미 과제를 제출했습니다. 수정 기능을 이용해주세요.");
         }
 
-        // 3. 학생(User) 엔티티 조회 (UserService 활용)
-        User student = userService.getUserByEmail(email);
+        // 3. 학생 정보 조회
+        User student = getStudentOrThrow(email);
 
         // 4. 제출 엔티티 생성
         Submission submission = Submission.builder()
@@ -77,7 +79,7 @@ public class SubmissionServiceImpl implements SubmissionService {
         log.info("SB-2) 과제 재제출(파일수정) 요청 - submissionId: {}", dto.getSubmissionId());
 
         // 1. 제출 내역 조회
-        Submission submission = getSubmissionEntity(dto.getSubmissionId());
+        Submission submission = getSubmissionOrThrow(dto.getSubmissionId());
 
         if (LocalDateTime.now().isAfter(submission.getAssignment().getDueDate())) {
             throw new BusinessLogicException("마감 기한이 지나 수정할 수 없습니다.");
@@ -99,7 +101,7 @@ public class SubmissionServiceImpl implements SubmissionService {
         log.info("SB-3) 과제 채점 요청 - submissionId: {}, 점수: {}, 교수: {}", submissionId, score, email);
 
         // 1. 제출 내역 조회
-        Submission submission = getSubmissionEntity(submissionId);
+        Submission submission = getSubmissionOrThrow(submissionId);
 
         // 2. [보안] 해당 과제의 담당 교수가 맞는지 검증 (Validator AC-security 활용)
         // Submission -> Assignment -> ClassSection 정보를 넘겨서 검증
@@ -125,8 +127,8 @@ public class SubmissionServiceImpl implements SubmissionService {
     public List<SubmissionResponseDTO> findAllSubmissionsByAssignment(Long assignmentId) {
         log.info("SB-4) 특정 과제 제출물 전체 조회 - assignmentId: {}", assignmentId);
 
-        // 과제 존재 여부 확인 (Optional)
-        assignmentService.getAssignmentEntity(assignmentId);
+        // 과제 존재 여부 확인
+        securityValidator.getEntityOrThrow(assignmentRepository, assignmentId, "과제");
 
         // (선택사항: 교수의 권한을 여기서도 체크할 수 있음)
 
@@ -159,11 +161,20 @@ public class SubmissionServiceImpl implements SubmissionService {
                 .toList();
     }
 
-    //SB-E) 외부 Service에서 Submission의 정보를 활용하기 위한 엔티티 조회 서비스
-    @Override
-    @Transactional(readOnly = true)
-    public Submission getSubmissionEntity(Long submissionId) {
-        // Validator V-1 활용하여 엔티티 조회
-        return securityValidator.getEntityOrThrow(submissionRepository, submissionId, "제출 내역");
+    // =========================================================================
+    // 함수
+    // =========================================================================
+
+    private Submission getSubmissionOrThrow(Long id) {
+        return securityValidator.getEntityOrThrow(submissionRepository, id, "제출 내역");
     }
+
+    private Assignment getAssignmentOrThrow(Long id) {
+        return securityValidator.getEntityOrThrow(assignmentRepository, id, "과제");
+    }
+
+    private User getStudentOrThrow(String email) {
+        return securityValidator.getEntityByEmailOrThrow(userRepository, email, "학생");
+    }
+
 }

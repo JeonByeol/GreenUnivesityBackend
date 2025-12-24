@@ -2,6 +2,7 @@ package com.univercity.unlimited.greenUniverCity.function.academic.review.servic
 
 import com.univercity.unlimited.greenUniverCity.function.academic.common.AcademicSecurityValidator;
 import com.univercity.unlimited.greenUniverCity.function.academic.enrollment.entity.Enrollment;
+import com.univercity.unlimited.greenUniverCity.function.academic.enrollment.repository.EnrollmentRepository;
 import com.univercity.unlimited.greenUniverCity.function.academic.enrollment.service.EnrollmentService;
 import com.univercity.unlimited.greenUniverCity.function.academic.review.dto.ReviewCreateDTO;
 import com.univercity.unlimited.greenUniverCity.function.academic.review.dto.ReviewResponseDTO;
@@ -27,7 +28,8 @@ import java.util.List;
 
 public class ReviewServiceImpl implements ReviewService{
     private final ReviewRepository repository;
-    private final EnrollmentService enrollmentService;
+    private final EnrollmentRepository enrollmentRepository;
+
     private final AcademicSecurityValidator validator;
     private final EntityMapper entityMapper;
 
@@ -55,14 +57,14 @@ public class ReviewServiceImpl implements ReviewService{
                 .map(entityMapper::toReviewResponseDTO)
                 .toList();
     }
-    
+
     //R-2-1) 본인 id를 활용하여 단건 조회를 할 수 있는 service구현부
     @Override
     @Transactional(readOnly = true)
     public ReviewResponseDTO getReview(Long reviewId) {
         log.info("2) 리뷰 단건 조회 시작 - reviewId-:{}", reviewId);
 
-        Review review = validator.getEntityOrThrow(repository, reviewId, "리뷰");
+        Review review = getReviewOrThrow(reviewId);
 
         return entityMapper.toReviewResponseDTO(review);
     }
@@ -73,7 +75,7 @@ public class ReviewServiceImpl implements ReviewService{
     public ReviewResponseDTO createReviewStudent(ReviewCreateDTO dto,String studentEmail) {
         log.info("2) 리뷰 작성 시작 - 학생: {}, enrollmentId: {}", studentEmail, dto.getEnrollmentId());
 
-        Enrollment enrollment = enrollmentService.getEnrollmentEntity(dto.getEnrollmentId());
+        Enrollment enrollment = getEnrollmentOrThrow(dto.getEnrollmentId());
 
         // 보안 검사
         validator.validateStudentEnrollmentOwnership(enrollment,studentEmail,"리뷰작성");
@@ -103,7 +105,7 @@ public class ReviewServiceImpl implements ReviewService{
                 dto.getReviewId(), studentEmail);
 
         // 리뷰 조회
-        Review review = validator.getEntityOrThrow(repository, dto.getReviewId(), "리뷰");
+        Review review = getReviewOrThrow(dto.getReviewId());
 
         // 보안검사
         validator.validateReviewOwnership(review, studentEmail,"리뷰수정");
@@ -114,7 +116,7 @@ public class ReviewServiceImpl implements ReviewService{
 
         log.info("5) 리뷰 수정 성공 -학생:{}, reviewId: {},수강평:{},평점:{}",
                 studentEmail, dto.getReviewId(), dto.getComment(),dto.getRating());
-        
+
         return entityMapper.toReviewResponseDTO(updateReview);
     }
 
@@ -126,7 +128,7 @@ public class ReviewServiceImpl implements ReviewService{
         log.info("2)리뷰 삭제 요청 -학생:{}, reviewId:{}",studentEmail,reviewId);
 
         //리뷰 조회
-        Review review = validator.getEntityOrThrow(repository, reviewId, "리뷰");
+        Review review = getReviewOrThrow(reviewId);
 
         //본인 리뷰인지 확인
         validator.validateReviewOwnership(review,studentEmail,"리뷰삭제");
@@ -136,4 +138,14 @@ public class ReviewServiceImpl implements ReviewService{
         log.info("5) 리뷰 삭제 성공 -학생:{}, reviewId:{}",studentEmail,reviewId);
     }
 
+    // =========================================================================
+    //  함수
+    // =========================================================================
+    private Review getReviewOrThrow(Long id) {
+        return validator.getEntityOrThrow(repository, id, "리뷰");
+    }
+
+    private Enrollment getEnrollmentOrThrow(Long id) {
+        return validator.getEntityOrThrow(enrollmentRepository, id, "수강신청");
+    }
 }

@@ -28,6 +28,4 @@ public interface AssignmentService {
     //AS-ALL) 등록된 모든 과제 내용을 전체 조회하기 위한 서비스
     List<AssignmentResponseDTO> findAllAssignments();
 
-    //AS-E) 외부 Service(예: 제출 서비스)에서 Assignment의 실체 정보를 사용하기 위한 엔티티 조회 서비스
-    Assignment getAssignmentEntity(Long assignmentId);
 }

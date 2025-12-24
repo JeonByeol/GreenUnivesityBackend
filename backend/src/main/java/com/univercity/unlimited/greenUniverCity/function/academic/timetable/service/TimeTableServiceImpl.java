@@ -1,10 +1,12 @@
 package com.univercity.unlimited.greenUniverCity.function.academic.timetable.service;
 
 import com.univercity.unlimited.greenUniverCity.function.academic.classroom.entity.Classroom;
+import com.univercity.unlimited.greenUniverCity.function.academic.classroom.repository.ClassroomRepository;
 import com.univercity.unlimited.greenUniverCity.function.academic.classroom.service.ClassroomService;
 import com.univercity.unlimited.greenUniverCity.function.academic.common.AcademicSecurityValidator;
 import com.univercity.unlimited.greenUniverCity.function.academic.offering.entity.CourseOffering;
 import com.univercity.unlimited.greenUniverCity.function.academic.section.entity.ClassSection;
+import com.univercity.unlimited.greenUniverCity.function.academic.section.repository.ClassSectionRepository;
 import com.univercity.unlimited.greenUniverCity.function.academic.section.service.ClassSectionService;
 import com.univercity.unlimited.greenUniverCity.function.academic.timetable.dto.TimeTableCreateDTO;
 import com.univercity.unlimited.greenUniverCity.function.academic.timetable.dto.TimeTableResponseDTO;
@@ -25,15 +27,11 @@ import java.util.List;
 @Transactional
 public class TimeTableServiceImpl implements TimeTableService{
     private final TimeTableRepository repository;
-
-    private final ClassSectionService sectionService;
-
-    private final ClassroomService classroomService;
+    private final ClassSectionRepository sectionRepository; 
+    private final ClassroomRepository classroomRepository; 
 
     private final TimeTableValidationService validationService;
-
     private final AcademicSecurityValidator validator;
-
     private final EntityMapper entityMapper;
 
 
@@ -61,14 +59,14 @@ public class TimeTableServiceImpl implements TimeTableService{
                 .map(entityMapper::toTimeTableResponseDTO)
                 .toList();
     }
-    
+
     //T-2-1-1) 본인 id를 활용하여 단건 조회를 할 수 있는 service구현부
     @Override
     @Transactional(readOnly = true)
     public TimeTableResponseDTO getTimeTable(Long timetableId) {
         log.info("2) 시간표 단건 조회 시작 - timetableId-:{}",timetableId);
 
-        TimeTable timeTable = validator.getEntityOrThrow(repository, timetableId, "시간표");
+        TimeTable timeTable = getTimeTableOrThrow(timetableId);
 
         return entityMapper.toTimeTableResponseDTO(timeTable);
     }
@@ -90,14 +88,14 @@ public class TimeTableServiceImpl implements TimeTableService{
     public TimeTableResponseDTO createTimeTableForProfessor(TimeTableCreateDTO dto, String requesterEmail) {
         log.info("2) 시간표 생성 -교수:{}, getSectionId:{}",requesterEmail,dto.getSectionId());
 
-        ClassSection section=sectionService.getClassSectionEntity(dto.getSectionId());
+        ClassSection section = getSectionOrThrow(dto.getSectionId());
         CourseOffering offering=section.getCourseOffering();
 
         // T-security 보안검사
         validator.validateProfessorOwnership(offering,requesterEmail,"시간표 생성");
 
         // 강의실 조회
-        Classroom classroom = classroomService.getClassroomEntity(dto.getClassroomId());
+        Classroom classroom = getClassroomOrThrow(dto.getClassroomId());
 
         // 중복 검사
         validationService.validateTimeOverlap(
@@ -125,14 +123,14 @@ public class TimeTableServiceImpl implements TimeTableService{
     public TimeTableResponseDTO updateTimeTableForProfessor(TimeTableUpdateDTO dto, String requesterEmail) {
         log.info("2) 시간표 수정 시작 -timetableId-:{}, 교수-:{}",dto.getTimetableId(),requesterEmail);
 
-        TimeTable timeTable = validator.getEntityOrThrow(repository, dto.getTimetableId(), "시간표");
+        TimeTable timeTable = getTimeTableOrThrow(dto.getTimetableId());
 
         // T-security 보안검사보안 검사(소유권 검증)
         CourseOffering offering = timeTable.getClassSection().getCourseOffering();
         validator.validateProfessorOwnership(offering,requesterEmail,"시간표 수정");
 
         // 강의실 조회
-        Classroom classroom = classroomService.getClassroomEntity(dto.getClassroomId());
+        Classroom classroom = getClassroomOrThrow(dto.getClassroomId());
 
         // 2. 중복 검사 (수정용)
         validationService.validateTimeOverlapExcludingId(
@@ -166,7 +164,7 @@ public class TimeTableServiceImpl implements TimeTableService{
         log.info("2) 시간표 삭제 요청 -교수: {} ,timetableId: {}",requesterEmail,timetableId);
 
         //시간표 조회
-        TimeTable timeTable = validator.getEntityOrThrow(repository, timetableId, "시간표");
+        TimeTable timeTable = getTimeTableOrThrow(timetableId);
 
         // T-security 보안검사
         CourseOffering offering = timeTable.getClassSection().getCourseOffering();
@@ -177,4 +175,18 @@ public class TimeTableServiceImpl implements TimeTableService{
         log.info("5)시간표 삭제 성공 -교수: {},timetableId: {}",requesterEmail,timetableId);
     }
 
+    // =========================================================================
+    //  함수
+    // =========================================================================
+    private TimeTable getTimeTableOrThrow(Long id) {
+        return validator.getEntityOrThrow(repository, id, "시간표");
+    }
+
+    private ClassSection getSectionOrThrow(Long id) {
+        return validator.getEntityOrThrow(sectionRepository, id, "분반");
+    }
+
+    private Classroom getClassroomOrThrow(Long id) {
+        return validator.getEntityOrThrow(classroomRepository, id, "강의실");
+    }
 }

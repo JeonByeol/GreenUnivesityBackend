@@ -30,6 +30,4 @@ public interface ClassroomService {
     //CR-5(교수OR관리자) CR에 선언된 postmanTest --의 요청을 받아서 강의실이 폐쇄 될때 삭제하기 위해 동작하는 서비스 선언
     void deleteByClassroom(Long classroomId,String email);
 
-    //CR-6) 외부 다른 serviceImpl에서 Classroom에 대한 정보를 조회하기 위한 service 선언부
-    Classroom getClassroomEntity(Long classroomId);
 }

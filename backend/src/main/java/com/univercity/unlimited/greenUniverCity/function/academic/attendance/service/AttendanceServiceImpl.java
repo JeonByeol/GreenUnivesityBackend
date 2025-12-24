@@ -6,8 +6,10 @@ import com.univercity.unlimited.greenUniverCity.function.academic.attendance.dto
 import com.univercity.unlimited.greenUniverCity.function.academic.attendance.entity.Attendance;
 import com.univercity.unlimited.greenUniverCity.function.academic.common.AcademicSecurityValidator;
 import com.univercity.unlimited.greenUniverCity.function.academic.enrollment.entity.Enrollment;
+import com.univercity.unlimited.greenUniverCity.function.academic.enrollment.repository.EnrollmentRepository;
 import com.univercity.unlimited.greenUniverCity.function.academic.enrollment.service.EnrollmentService;
 import com.univercity.unlimited.greenUniverCity.function.academic.offering.entity.CourseOffering;
+import com.univercity.unlimited.greenUniverCity.function.academic.offering.repository.CourseOfferingRepository;
 import com.univercity.unlimited.greenUniverCity.function.academic.offering.service.CourseOfferingService;
 import com.univercity.unlimited.greenUniverCity.function.academic.attendance.repository.AttendanceRepository;
 import com.univercity.unlimited.greenUniverCity.util.EntityMapper;
@@ -23,19 +25,17 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class AttendanceServiceImpl implements AttendanceService{
     private final AttendanceRepository repository;
-    private final EnrollmentService enrollmentService; // 학생/수강신청 정보용
-    private final CourseOfferingService offeringService; // [NEW] 과목 정보 조회용
+    private final EnrollmentRepository enrollmentRepository; // Service 대신 Repo 직접 사용
+    private final CourseOfferingRepository offeringRepository;
+
     private final AcademicSecurityValidator validator;
     private final EntityMapper entityMapper;
 
-    // =================================================================================
-    // A-1). [조회] 출결 단건 조회 (기본 CRUD 보강)
-    // - 수정 버튼 누르기 전이나 상세 보기 시 사용
-    // =================================================================================
+    // A-1) [조회] 출결 단건 조회 (상세)
     @Override
     public AttendanceResponseDTO getAttendance(Long attendanceId) {
-        //1.존재 여부 확인 (Validator 활용)
-        Attendance attendance = validator.getEntityOrThrow(repository, attendanceId, "출결");
+        //1.존재 여부 확인
+        Attendance attendance = getAttendanceOrThrow(attendanceId);
 
         // (선택 사항) 조회하는 사람이 본인(학생)이거나 교수인지 확인하는 로직을 추가할 수 있음
         // 현재는 데이터 존재 여부만 확인하고 리턴
@@ -43,16 +43,13 @@ public class AttendanceServiceImpl implements AttendanceService{
         return entityMapper.toattendanceResponseDTO(attendance);
     }
 
-    // =================================================================================
-    // A-2). [조회] 교수가 특정 과목(Offering)의 전체 출결 현황 조회
-    // =================================================================================
+    // A-2) [조회] 교수가 특정 과목(Offering)의 전체 출결 현황 조회
     @Override
     public List<AttendanceResponseDTO> getAttendanceByOffering(Long offeringId, String professorEmail) {
         log.info("2) 교수 과목별 출결 조회 - offeringId: {}, 교수: {}", offeringId, professorEmail);
 
-        // 1. 과목 정보 가져오기 (외부 서비스 사용)
-        // CourseOfferingService에 getEntity 메서드가 있다고 가정 (없으면 추가 필요)
-        CourseOffering offering = offeringService.getCourseOfferingEntity(offeringId);
+        // 1. 과목 정보 가져오기
+        CourseOffering offering = getOfferingOrThrow(offeringId);
 
         // 2. [보안 검증] "이 과목, 진짜 당신 강의 맞습니까?"
         validator.validateProfessorOwnership(offering, professorEmail, "출결 조회");
@@ -63,15 +60,13 @@ public class AttendanceServiceImpl implements AttendanceService{
                 .collect(Collectors.toList());
     }
 
-    // =================================================================================
-    // A-3). [조회] 학생이 특정 과목(Enrollment)에 대한 출결 조회 (기존 유지)
-    // =================================================================================
+    // A-3) [조회] 학생이 특정 과목(Enrollment)에 대한 출결 조회
     @Override
     public List<AttendanceResponseDTO> findForEnrollmentOfAttendance(Long enrollmentId) {
         log.info("2) 학생 과목별 출결 조회 - enrollmentId: {}", enrollmentId);
 
-        // Enrollment 존재 여부 체크 (외부 서비스)
-        enrollmentService.getEnrollmentEntity(enrollmentId);
+        // Enrollment 존재 여부 체크 단순히 검증용 호출
+        getEnrollmentOrThrow(enrollmentId);
 
         List<Attendance> attendances=repository.findByEnrollmentId(enrollmentId);
 
@@ -80,20 +75,19 @@ public class AttendanceServiceImpl implements AttendanceService{
                 .toList();
     }
 
-    // =================================================================================
-    // A-4). [조회] 학생이 본인의 모든 출결 조회 (기존 유지)
-    // =================================================================================
+    // A-4) [조회] 학생 본인의 전체 출결 조회
     @Override
     public List<AttendanceResponseDTO> findForStudentOfAttendance(String email) {
         log.info("2) 학생 전체 출결 조회 - email: {}", email);
+
+        // (필요 시 여기서 학생 이메일 유효성 검증 로직 추가 가능)
+
         return repository.findByEmail(email).stream()
                 .map(entityMapper::toattendanceResponseDTO)
                 .collect(Collectors.toList());
     }
 
-    // =================================================================================
-    // A-5). [관리자/디버깅용] 출결 전체 조회 (기존 복구)
-    // =================================================================================
+    // A-5) [관리자] 출결 전체 조회
     @Override
     public List<AttendanceResponseDTO> findAllAttendance() {
         log.info("2) 출결 전체 테이블 조회");
@@ -102,15 +96,13 @@ public class AttendanceServiceImpl implements AttendanceService{
                 .collect(Collectors.toList());
     }
 
-    // =================================================================================
-    // 6. [생성] 출결 데이터 작성 (교수)
-    // =================================================================================
+    // A-6) [생성] 출결 데이터 등록 (교수)
     @Override
     public AttendanceResponseDTO createAttendance(AttendanceCreateDTO dto, String professorEmail) {
         log.info("2) 출결 생성 요청 - 교수: {}", professorEmail);
 
-        // 1. Enrollment 조회 (외부 서비스)
-        Enrollment enrollment = enrollmentService.getEnrollmentEntity(dto.getEnrollmentId());
+        // 1. Enrollment 조회
+        Enrollment enrollment = getEnrollmentOrThrow(dto.getEnrollmentId());
 
         // 2. 중복 검사 (같은 날짜에 이미 출석체크 했는지?)
         // repository에 boolean existsByEnrollmentAndAttendanceDate(...) 메서드 필요
@@ -136,8 +128,8 @@ public class AttendanceServiceImpl implements AttendanceService{
         Long attendanceId = dto.getAttendanceId();
         log.info("2) 출결 수정 요청 - ID: {}, 교수: {}", attendanceId, professorEmail);
 
-        // 1.[본인 Repo] 조회 및 검증
-        Attendance attendance = validator.getEntityOrThrow(repository, attendanceId, "출결");
+        // 1.[본인] 조회 및 검증
+        Attendance attendance = getAttendanceOrThrow(dto.getAttendanceId());
 
         // 2.교수 권한 검증
         validator.validateProfessorOwnership(attendance.getEnrollment(), professorEmail, "출결 수정");
@@ -149,16 +141,33 @@ public class AttendanceServiceImpl implements AttendanceService{
         return entityMapper.toattendanceResponseDTO(repository.save(attendance));
     }
 
-    // =================================================================================
-    // 8.삭제 출결 삭제 (교수)
-    // =================================================================================
+    // A-8) [삭제] 출결 데이터 삭제 (교수)
     @Override
     public void deleteAttendance(Long attendanceId, String professorEmail) {
         log.info("2) 출결 삭제 요청 - ID: {}, 교수: {}", attendanceId, professorEmail);
-
-        Attendance attendance = validator.getEntityOrThrow(repository, attendanceId, "출결");
+        
+        //조회
+        Attendance attendance = getAttendanceOrThrow(attendanceId);
+        
+        //검증
         validator.validateProfessorOwnership(attendance.getEnrollment(), professorEmail, "출결 삭제");
 
         repository.delete(attendance);
+    }
+
+    // =========================================================================
+    // 함수
+    // =========================================================================
+
+    private Attendance getAttendanceOrThrow(Long id) {
+        return validator.getEntityOrThrow(repository, id, "출결");
+    }
+
+    private Enrollment getEnrollmentOrThrow(Long id) {
+        return validator.getEntityOrThrow(enrollmentRepository, id, "수강신청");
+    }
+
+    private CourseOffering getOfferingOrThrow(Long id) {
+        return validator.getEntityOrThrow(offeringRepository, id, "강의(Offering)");
     }
 }

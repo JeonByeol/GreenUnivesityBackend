@@ -31,7 +31,5 @@ import java.util.List;
     //SS-7) 학생의 점수 개수를 조회한다 외부 다른 serviceImpl에서 사용하기 위한 service 선언부
     Long countStudentScore(Long enrollmentId);
 
-    //SS-8) 외부 다른 serviceImpl에서 StudentScore에 대한 정보를 조회하기 위한 service 선언부
-    StudentScore getStudentScoreEntity(Long scoreId);
 
 }

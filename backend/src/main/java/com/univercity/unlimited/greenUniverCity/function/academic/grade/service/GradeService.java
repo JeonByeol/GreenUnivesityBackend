@@ -33,8 +33,6 @@ public interface GradeService {
     // G-7) 강의별 전체 학생 성적 일괄 산출 (교수용 - 전체 처리)
     void calculateGradeForOffering(Long offeringId, String professorEmail);
 
-    //NEW-G-8) 외부 Entity(GradeItem,StudentScore,...)등 다른 ServiceImpl에서 사용하기 위해 선언된 service 선언
-    Grade getGradeEntity(Long gradeId);
 
 //    //New-G-5) 성적을 생성하기 위한 service 선언부 (교수만 가능)
 //    GradeResponseDTO createGrade(GradeCreateDTO dto, String professorEmail); 성적 생성은 StudentScore에서 하는 일 삭제예정

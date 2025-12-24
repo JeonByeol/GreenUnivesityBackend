@@ -36,7 +36,7 @@ public class ClassroomServiceImpl implements ClassroomService{
                 .map(entityMapper::toClassroomResponseDTO)
                 .toList();
     }
-    
+
     //CR-2) 강의실 테이블에 존재하는 특정 강의실을 조회하기 위한 서비스 구현부
     @Override
     @Transactional(readOnly = true)
@@ -54,7 +54,7 @@ public class ClassroomServiceImpl implements ClassroomService{
     public ClassroomResponseDTO getRoom(Long classroomId) {
         log.info("2) 강의실 단건 조회 시작 - classroomId-:{}", classroomId);
 
-        Classroom classroom= validator.getEntityOrThrow(repository,classroomId,"강의실");
+        Classroom classroom = getClassroomOrThrow(classroomId);
 
         return entityMapper.toClassroomResponseDTO(classroom);
     }
@@ -63,12 +63,12 @@ public class ClassroomServiceImpl implements ClassroomService{
     @Override
     public ClassroomResponseDTO createClassroom(ClassroomCreateDTO dto, String email) {
         log.info("2) 강의실 생성 시작 - 관리자-:{}, 위치-:{}", email, dto.getLocation());
-        
+
         validator.validateAdminRole(email,"강의실 생성");
 
         boolean exists = repository.existsByLocation(dto.getLocation());
         validator.validateDuplicate(exists, "강의실(" + dto.getLocation() + ")");
-        
+
         Classroom classroom = Classroom.builder()
                 .location(dto.getLocation())
                 .capacity(dto.getCapacity())
@@ -76,7 +76,7 @@ public class ClassroomServiceImpl implements ClassroomService{
 
         return entityMapper.toClassroomResponseDTO(repository.save(classroom));
     }
-    
+
     //CR-4) 기존에 존재하는 강의실의 정보를 수정하기 위한 서비스 구현부
     @Override
     public ClassroomResponseDTO updateClassroom(ClassroomUpdateDTO dto, String email) {
@@ -84,7 +84,7 @@ public class ClassroomServiceImpl implements ClassroomService{
         String location = dto.getLocation();
         log.info("2) 강의실 정보 수정 시작 classroomId-:{}, 관리자-:{}", classroomId, email);
 
-        Classroom classroom = validator.getEntityOrThrow(repository, classroomId, "강의실");
+        Classroom classroom = getClassroomOrThrow(classroomId);
 
         validator.validateAdminRole(email,"강의실 수정");
 
@@ -99,24 +99,24 @@ public class ClassroomServiceImpl implements ClassroomService{
         log.info("5) 강의실 수정 완료");
         return entityMapper.toClassroomResponseDTO(repository.save(classroom));
     }
-    
+
     //CR-5) 존재하는 강의실을 삭제하기 위한 서비스 구현부
     @Override
-    @Transactional
     public void deleteByClassroom(Long classroomId, String email) {
         log.info("2) 강의실 정보 삭제 시작 - 관리자-:{}, classroomId-:{}", email, classroomId);
 
-        Classroom classroom = validator.getEntityOrThrow(repository, classroomId, "강의실");
+        Classroom classroom = getClassroomOrThrow(classroomId);
 
         validator.validateAdminRole(email, "강의실 삭제");
-        
+
         repository.delete(classroom);
         log.info("5) 강의실 삭제 완료");
     }
-
-    //CR-6) 외부 service에서 classroom의 정보를 조회하기 위한 service선언부
-    @Override
-    public Classroom getClassroomEntity(Long classroomId) {
-        return validator.getEntityOrThrow(repository, classroomId, "강의실");
+    
+    // =========================================================================
+    //  함수
+    // =========================================================================
+    private Classroom getClassroomOrThrow(Long id) {
+        return validator.getEntityOrThrow(repository, id, "강의실");
     }
 }
