@@ -54,7 +54,7 @@ public class FileController {
         log.info("meta: {}", meta);
         log.info("filesCount: {}", files.size());
 
-        List<FileResponseDTO> result = fileService.saveFiles(files, meta.getPostId());
+        List<FileResponseDTO> result = fileService.createdfile(meta.getPostId(), meta.getPostId());
         return ResponseEntity.ok(result);
     }
     // P-3 ) 파일 삭제
@@ -67,8 +67,10 @@ public class FileController {
 
         String email = getEmail(requesterEmail);
 
-        Map<String, String> result = fileService.deleteByfileId(fileId, email);
-        return ResponseEntity.ok(result.get("result"));
+//        Map<String, String> result = fileService.deleteFile(file, filedId);
+//        return ResponseEntity.ok(result.get("result"));
+        fileService.deleteFile(null,fileId);
+        return ResponseEntity.ok("성공");
     }
     // P-4) 다수의 파일 중 원하는 파일만 삭제하는 기능 구현하고 싶은데 어려울 거 같아서 보류합니다.
     // P-5 ) 파일 수정 (서비스 시그니처에 맞게)

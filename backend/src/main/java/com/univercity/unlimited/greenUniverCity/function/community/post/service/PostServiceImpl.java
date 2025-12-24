@@ -16,7 +16,6 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @Slf4j
@@ -28,56 +27,54 @@ public class PostServiceImpl implements PostService {
     private final ModelMapper mapper;
 
 
-    // P-3) Post ServiceImpl 설정
+    // P-1) 조회
     @Override
     public List<PostDTO> findAllPost() {
-        List<PostDTO> dto=new ArrayList<>();
-        for(Post i:postRepository.findAll()){
-            PostDTO r=mapper.map(i, PostDTO.class);
+        List<PostDTO> dto = new ArrayList<>();
+        for (Post i : postRepository.findAll()) {
+            PostDTO r = mapper.map(i, PostDTO.class);
             dto.add(r);
         }
         log.info("모든 Post를 조회하는 service 코드 실행");
         return dto;
     }
 
+    // P-1-1) 아이디로 조회
     @Override
-    public void deletePost(Long postId) {
-        postRepository.deleteById(postId);
-        }
+    public PostResponseDTO postById(Long postId) {
+        Post p = postRepository.findById(postId)
+                .orElseThrow(() -> new RuntimeException("해당 게시물이 존재하지 않습니다."));
 
-    @Override
-    public PostDTO postById(Long postId) {
-        Optional<Post> findById = postRepository.findById(postId);
-        PostDTO r =mapper.map(findById.get(), PostDTO.class);
-        return r;
+        return PostResponseDTO.builder()
+                .boardName(p.getBoard().getBoardName())
+                .userId(p.getUser().getUserId())
+                .title(p.getTitle())
+                .content(p.getContent())
+                .viewCount(p.getViewCount())
+                .createdAt(p.getCreateAt())
+                .updateAt(p.getUpdateAt())
+                .build();
     }
 
-    @Override
-    public List<Post> searchById(Long postId) {
-        return List.of();
-    }
 
+    // P-2) 생성
     @Override
-    public List<Post> searchByKeyword(String keyword) {
-        return List.of();
-    }
-
-    @Override
-    public PostResponseDTO postCreate(Long postId, String studentEmail) {
-        return null;
-    }
-
-    @Override
-    public PostResponseDTO postCreate(PostCreateDTO dto) {
-        Post entity = mapper.map(dto, Post.class);
+    public PostResponseDTO postCreate(PostCreateDTO postId, String studentEmail) {
+        Post entity = mapper.map(postId, Post.class);
         entity.setCreateAt(LocalDateTime.now());
         Post saved = postRepository.save(entity);
         PostResponseDTO response = mapper.map(saved, PostResponseDTO.class);
         return response;
     }
 
-   @Transactional
-   @Override
+    @Override
+    public PostResponseDTO postUpdate(Long PostId, String email) {
+        return null;
+    }
+
+    // P-3) 추가
+    @Transactional
+    @Override
     public PostResponseDTO postUpdate(Long postId, PostUpdateDTO dto) {
 
         // 1) 기존 게시글 조회 (board, user 다 살아있는 상태로 가져옴)
@@ -86,26 +83,25 @@ public class PostServiceImpl implements PostService {
         entity.setTitle(dto.getTitle());
         entity.setContent(dto.getContent());
         Post saved = postRepository.save(entity);
-        return  mapper.map(saved, PostResponseDTO.class);
+        return mapper.map(saved, PostResponseDTO.class);
     }
 
+    // P-4) 삭제
     @Override
-    @Transactional
-    public void deleteByPost(Long postId) {
+    public void deletePost(Long postId) {
         postRepository.deleteById(postId);
     }
-
-    @Override
-    public List<Post> search(String keyword) {
-        return postRepository.findByTitleContainingIgnoreCase(keyword);
-    }
+}
 
 //    @Override
-//    public Post getPostbyId(Long id){
-//        return postRepository.findById(id)
-//                .orElseThrow();
-////        log.info("한명의 회원을 조회하는 service 생성");
+//    public PostResponseDTO postCreate(PostCreateDTO dto) {
+//
+//    }
+//
+//    @Override
+//    public List<Post> searchByKeyword(String keyword) {
+//        return List.of();
 //    }
 
 
-}
+
