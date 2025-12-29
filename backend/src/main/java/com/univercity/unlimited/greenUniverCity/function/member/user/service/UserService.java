@@ -8,10 +8,11 @@ import com.univercity.unlimited.greenUniverCity.function.member.user.entity.User
 import com.univercity.unlimited.greenUniverCity.function.member.user.entity.UserRole;
 
 import java.util.List;
+import java.util.Map;
 
 public interface UserService {
     //전체 유저 데이터를 조회하기 위한 service
-    List<UserDTO> findAllUsers();
+    List<UserResponseDTO> findAllUsers();
 
     //특정 역활에 속한 모든 유저를 조회하기 위한 service
     List<User> findUsersByRole(UserRole role);
@@ -35,4 +36,7 @@ public interface UserService {
 
     // U-CP) 이메일과 비밀번호를 입력받은 후에, 비밀번호를 변경
     UserResponseDTO changePassword(String password, String email);
+    
+    // U-D) 해당 유저 데이터 삭제
+    Map<String,String> deleteByUserEmail(Long userId,String email);
 }

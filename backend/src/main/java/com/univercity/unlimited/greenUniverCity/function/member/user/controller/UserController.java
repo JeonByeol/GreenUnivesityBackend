@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @Slf4j
@@ -27,7 +28,7 @@ public class UserController {
 
     // U-1) 전체 유저 조회
     @GetMapping("/all") //전체 데이터 조회
-    public List<UserDTO> postmanTestUser() {
+    public List<UserResponseDTO> postmanTestUser() {
         log.info("Controller: /api/user/all 호출");
         return userService.findAllUsers();
     }
@@ -83,9 +84,11 @@ public class UserController {
         return userService.login(dto);
     }
 
-    @PostMapping("/register") //회원가입
+    @PostMapping("/create") //회원가입
 //    private  ResponseEntity<String > rr(@RequestBody UserDTO dto) {
-    public UserResponseDTO register(@RequestBody UserRegisterDTO dto) {
+    public UserResponseDTO register(
+            @RequestBody UserRegisterDTO dto,
+            @RequestHeader(value="X-User-Email") String requesterEmail) {
         log.info("Controller:/api/user/register:{} 확인", dto);
         return userService.register(dto);
     }
@@ -97,5 +100,12 @@ public class UserController {
         log.info("1) 비밀번호 변경 : {}", dto);
         UserResponseDTO responseDTO = userService.changePassword(dto.getPassword(), requesterEmail);
         return responseDTO;
+    }
+
+    @DeleteMapping("/delete/{userId}")
+    public Map<String, String> delete(
+            @PathVariable("userId") Long userId,
+            @RequestHeader(value="X-User-Email",required = false) String requesterEmail) {
+        return userService.deleteByUserEmail(userId,requesterEmail);
     }
 }

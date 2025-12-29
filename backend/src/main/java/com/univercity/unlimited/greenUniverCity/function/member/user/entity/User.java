@@ -11,10 +11,10 @@ import java.util.List;
 @AllArgsConstructor //
 @NoArgsConstructor //파라미터가 없는 기본 생성자 생성
 @Getter
+@Setter
 @Table(name = "tbl_user") //사용자 테이블
 @ToString
 @Builder
-@Setter
 public class User {
 
     @Id //아이디 이메일 비밀번호 닉네임 칼럼 생성
@@ -37,4 +37,8 @@ public class User {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "department_id")
     private Department department;
+
+    @Column(name = "is_delete", nullable = false)
+    @Builder.Default
+    private boolean isDelete = false;
 }

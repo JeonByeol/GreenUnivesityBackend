@@ -18,4 +18,5 @@ public class UserResponseDTO {
     private String studentNumber; // 학번
     private String deptName; // 학과 번호
     private String password;
+    private boolean isDelete;
 }

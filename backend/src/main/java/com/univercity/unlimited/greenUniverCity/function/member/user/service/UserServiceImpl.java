@@ -7,6 +7,7 @@ import com.univercity.unlimited.greenUniverCity.function.member.department.servi
 import com.univercity.unlimited.greenUniverCity.function.member.user.dto.UserLoginDTO;
 import com.univercity.unlimited.greenUniverCity.function.member.user.dto.UserRegisterDTO;
 import com.univercity.unlimited.greenUniverCity.function.member.user.dto.UserResponseDTO;
+import com.univercity.unlimited.greenUniverCity.util.MapperUtil;
 import com.univercity.unlimited.greenUniverCity.util.exception.InvalidRoleException;
 import com.univercity.unlimited.greenUniverCity.function.member.user.dto.UserDTO;
 import com.univercity.unlimited.greenUniverCity.function.member.user.entity.User;
@@ -22,6 +23,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -38,22 +40,27 @@ public class UserServiceImpl implements UserService {
     private final PasswordEncoder encoder;
 
     @Override
-    public List<UserDTO> findAllUsers() {
-        List<UserDTO> dto=new ArrayList<>();
-        for (User i:userRepository.findAll()){
-            log.info("1)유저에 대한 칼럼 내역은 어떻게 작동하는지:{}",i);
-            UserDTO r= mapper.map(i,UserDTO.class);
-            dto.add(r);
+    public List<UserResponseDTO> findAllUsers() {
+        List<UserResponseDTO> dto = new ArrayList<>();
+        for (User user : userRepository.findAll()) {
+            log.info("1)유저에 대한 칼럼 내역은 어떻게 작동하는지:{}", user);
+
+            // isDelete 체크 제거 - 모든 사용자 반환
+            // if(user.isDelete())
+            //     continue;
+
+            UserResponseDTO responseDTO = new UserResponseDTO();
+
+            MapperUtil.updateFrom(user, responseDTO, new ArrayList<>());
+            responseDTO.setDeptName(user.getDepartment().getDeptName());
+            responseDTO.setRole(user.getUserRole().toString());
+            responseDTO.setDelete(  user.isDelete()); // isDelete 상태도 DTO에 포함
+
+            dto.add(responseDTO);
         }
-        log.info("모든 유저를 조회하는 service 코드 실행:{}",dto);
+        log.info("모든 유저를 조회하는 service 코드 실행:{}", dto);
         return dto;
     }
-
-//    @Override
-//    public User findByUser(String id) {
-//        log.info("한명의 회원을 조회하는 service 생성");
-//        return userRepository.findById(id);
-//    }
 
     @Override
     public List<User> findUsersByRole(UserRole role) {
@@ -115,6 +122,7 @@ public class UserServiceImpl implements UserService {
         log.info("서비스에서 가져온 department {}", department);
 
         user.setDepartment(department);
+        user.setPassword(encoder.encode(user.getPassword()));
 
         // 3. 저장
         User savedUser = userRepository.save(user);
@@ -189,5 +197,17 @@ public class UserServiceImpl implements UserService {
                                 : null
                 )
                 .build();
+    }
+
+    @Override
+    public Map<String, String> deleteByUserEmail(Long userId,String email) {
+        User user = userRepository.findByUserId(userId);
+
+        if(user.isDelete())
+            return Map.of("failure","이미 비활성화 상태 입니다.");
+
+        user.setDelete(true);
+        userRepository.save(user);
+        return Map.of("success","비활성화에 성공하였습니다.");
     }
 }
