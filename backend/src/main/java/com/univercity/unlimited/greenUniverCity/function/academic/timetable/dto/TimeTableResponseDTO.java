@@ -34,6 +34,9 @@ public class TimeTableResponseDTO {
     private Long sectionId;// 분반 id
 
     private String courseName; //강의명
+    
+    //User에 담긴 정보
+    private String professorName; // 교수명
 
 
 

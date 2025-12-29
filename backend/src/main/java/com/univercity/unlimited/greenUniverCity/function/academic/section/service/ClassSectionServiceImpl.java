@@ -83,6 +83,8 @@ public class ClassSectionServiceImpl implements ClassSectionService{
                 .toList();
     }
 
+
+
     //SE-3) 특정 개설강의에 대한 새로운 분반을 생성하기 위한 서비스 구현부
     @Override
     public ClassSectionResponseDTO createSection(ClassSectionCreateDTO dto, String email) {
