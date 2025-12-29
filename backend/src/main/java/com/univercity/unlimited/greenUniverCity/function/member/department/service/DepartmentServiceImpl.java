@@ -124,6 +124,15 @@ public class DepartmentServiceImpl implements DepartmentService{
     }
 
     @Override
+    public Department findByName(String departmentName) {
+        Optional<Department> departmentOptional = repository.findByDeptName(departmentName);
+        if(departmentOptional.isEmpty()) {
+            throw new RuntimeException("");
+        }
+        return departmentOptional.get();
+    }
+
+    @Override
     public int addDepartment(DepartmentResponseDTO legacyDepartmentDTO) {
         log.info("1) 확인 : {}", legacyDepartmentDTO);
         Department department = mapper.map(legacyDepartmentDTO,Department.class);

@@ -31,6 +31,6 @@ public class AcademicTerm {
     @Column(name = "registration_end")
     private LocalDate registrationEnd;
 
-    @Column(name = "isCurrent")
-    private boolean isCurrent;
+//    @Column(name = "isCurrent")
+//    private boolean isCurrent;
 }

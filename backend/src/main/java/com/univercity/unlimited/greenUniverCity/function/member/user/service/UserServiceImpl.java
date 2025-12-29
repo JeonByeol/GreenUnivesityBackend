@@ -2,14 +2,22 @@ package com.univercity.unlimited.greenUniverCity.function.member.user.service;
 
 import com.univercity.unlimited.greenUniverCity.config.PasswordEncoderConfig;
 import com.univercity.unlimited.greenUniverCity.function.academic.enrollment.exception.UserNotFoundException;
+import com.univercity.unlimited.greenUniverCity.function.member.department.entity.Department;
+import com.univercity.unlimited.greenUniverCity.function.member.department.service.DepartmentService;
+import com.univercity.unlimited.greenUniverCity.function.member.user.dto.UserLoginDTO;
+import com.univercity.unlimited.greenUniverCity.function.member.user.dto.UserRegisterDTO;
+import com.univercity.unlimited.greenUniverCity.function.member.user.dto.UserResponseDTO;
 import com.univercity.unlimited.greenUniverCity.util.exception.InvalidRoleException;
 import com.univercity.unlimited.greenUniverCity.function.member.user.dto.UserDTO;
 import com.univercity.unlimited.greenUniverCity.function.member.user.entity.User;
 import com.univercity.unlimited.greenUniverCity.function.member.user.entity.UserRole;
 import com.univercity.unlimited.greenUniverCity.function.member.user.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -25,7 +33,9 @@ public class UserServiceImpl implements UserService {
 
     private final ModelMapper mapper;
 
-    private final PasswordEncoderConfig passwordEncoderConfig;
+    private final DepartmentService departmentService;
+
+    private final PasswordEncoder encoder;
 
     @Override
     public List<UserDTO> findAllUsers() {
@@ -52,54 +62,80 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDTO login(UserDTO userDTO) {
+    public UserResponseDTO login(UserLoginDTO userDTO) {
         Optional<User> userOptional = Optional.ofNullable(userRepository.getUserByEmail(userDTO.getEmail()));
 //        UserVo user=userRepository.getUserByEmail(userDTO.getEmail()).get();
         if (userOptional.isEmpty()) {
             log.warn("로그인 정보가 없다:{}", userDTO.getEmail());
             throw new RuntimeException("이메일 또는 비밀번호가 일치하지 않습니다.");
         }
-        User u = userOptional.get();
-//        if(userDTO.getPassword().equals(u.getPassword())){
-//            log.warn("로그인 실패: 비밀번호 불일치");
-//            throw new RuntimeException("이메일 또는 비밀번호가 일치하지 않습니다.");
-//        }
+
+        // 비밀번호 검증
+        // 검증 시에, 첫번째가 평문, 두번째가 암호화문입니다.
+        if (!encoder.matches(userDTO.getPassword(),userOptional.get().getPassword())) {
+            throw new RuntimeException("이메일 또는 비밀번호가 일치하지 않습니다.");
+        }
+
+        User user = userOptional.get();
+
         // 추후에 passwordEncode와 같은 비밀번호 암호화와 같은 기능을 생성하고 이 암호화 비밀번호를 검증 시키기 위한 코드 추후 사용 예정
-        log.info("로그인 성공: {}", u.getEmail());
-        return UserDTO.builder()
-                .userId(u.getUserId())
-                .email(u.getEmail())
-                .nickname(u.getNickname())
-                .role(u.getUserRole().toString())
+        log.info("로그인 성공: {}", user.getEmail());
+        return UserResponseDTO.builder()
+                .userId(user.getUserId())
+                .email(user.getEmail())
+                .nickname(user.getNickname())
+                .role(user.getUserRole().name())
+                .studentNumber(user.getStudentNumber())
+                .deptName(
+                        user.getDepartment() != null
+                                ? user.getDepartment().getDeptName()
+                                : null
+                )
                 .build();
     }
 
     @Override
-    public UserDTO register(UserDTO dto) {
+    public UserResponseDTO register(UserRegisterDTO dto) {
         log.info("service user, register dto=>{}", dto);
-        User user =mapper.map(dto, User.class);
-        String data = dto.getRole();
-        log.info("1) data:{}",data);
-        if(data.equals("학생")) {
-//            roles.add(UserRole.STUDENT);
-//           userVo.setUserRoleList(roles);
-            user.setUserRole(UserRole.STUDENT);
-        } else if(data.equals("교수")){
-            user.setUserRole(UserRole.PROFESSOR);
+
+        User user = mapper.map(dto, User.class);
+
+        // 1. 역할 매핑
+        UserRole role;
+        switch (dto.getRole()) {
+            case "STUDENT" -> role = UserRole.STUDENT;
+            case "PROFESSOR" -> role = UserRole.PROFESSOR;
+            case "ADMIN" -> role = UserRole.ADMIN;
+            default -> throw new IllegalArgumentException("알 수 없는 역할: " + dto.getRole());
         }
-        log.info("2) IF 이후  :{}", user);
-        userRepository.save(user);
+        user.setUserRole(role);
 
+        log.info("dto.deptName {}", dto.getDeptName());
+        Department department = departmentService.findByName(dto.getDeptName());
+        log.info("서비스에서 가져온 department {}", department);
+
+        user.setDepartment(department);
+
+        // 3. 저장
         User savedUser = userRepository.save(user);
-        log.info("3) savedUser:{}",savedUser);
+        log.info("savedUser: {}", savedUser);
 
-        return UserDTO.builder()
+        // 4. 응답 DTO
+        return UserResponseDTO.builder()
                 .userId(savedUser.getUserId())
                 .email(savedUser.getEmail())
                 .nickname(savedUser.getNickname())
-                .role(savedUser.getUserRole().name()) // (예시) 첫 번째 역할 반환
+                .role(savedUser.getUserRole().name())
+                .studentNumber(savedUser.getStudentNumber())
+//                .password(savedUser.getPassword()))
+                .deptName(
+                        savedUser.getDepartment() != null
+                                ? savedUser.getDepartment().getDeptName()
+                                : null
+                )
                 .build();
     }
+
 
     @Override
     public User getUserById(Long userId) {
@@ -132,32 +168,26 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(()->new UserNotFoundException("사용자를 찾을 수 없습니다. email:"+email));
     }
 
-//    @Override
-//    @Transactional
-//    public UserDTO grade(Long userId) { ***없앨예정***
-////        Optional<UserVo> userEntities = userRepository.findUserWithGradesById(userId);
-////        List<UserDTO> dto=new ArrayList<>();
-////        log.info("1)여기가 문제인지 dto:{}",dto);
-////        for(UserVo i:userEntities){
-////            log.info("2)아니면 여기가 문제인지 i:{}",i);
-////            UserDTO r=mapper.map(i,UserDTO.class);
-////            log.info("3)그것도 아니면 여기가 문제인지 r:{}",r);
-////            dto.add(r);
-////        }
-////        return dto;
+    @Override
+    public UserResponseDTO changePassword(String password, String email) {
+        // encoder.encode(savedUser.getPassword())
+        User user = userRepository.getUserByEmail(email);
+        user.setPassword(encoder.encode(password));
+        User savedUser = userRepository.save(user);
 
-//        // 1. 유저를 조회하고, 없으면 예외(Exception)를 발생시킴
-//        User user = userRepository.findUserWithGradesById(userId)
-//                .orElseThrow(() -> {
-//                    log.warn("ID: {}에 해당하는 유저를 찾을 수 없음", userId);
-//                    return new RuntimeException("User not found with id: " + userId);
-//                });
-//        log.info("2) 유저 찾음: {}", user.getNickname());
-//        // 2. ModelMapper로 변환 ()
-//        UserDTO dto = mapper.map(user, UserDTO.class);
-//        log.info("3) DTO로 변환 완료");
-//        // 3. List가 아닌 DTO 객체 1개를 반환
-//        return dto;
-//    }
-
+        // 4. 응답 DTO
+        return UserResponseDTO.builder()
+                .userId(savedUser.getUserId())
+                .email(savedUser.getEmail())
+                .nickname(savedUser.getNickname())
+                .role(savedUser.getUserRole().name())
+                .studentNumber(savedUser.getStudentNumber())
+                .password(encoder.encode(savedUser.getPassword()))
+                .deptName(
+                        savedUser.getDepartment() != null
+                                ? savedUser.getDepartment().getDeptName()
+                                : null
+                )
+                .build();
+    }
 }
