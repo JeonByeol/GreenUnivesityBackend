@@ -1,9 +1,6 @@
 package com.univercity.unlimited.greenUniverCity.function.member.user.service;
 
-import com.univercity.unlimited.greenUniverCity.function.member.user.dto.UserDTO;
-import com.univercity.unlimited.greenUniverCity.function.member.user.dto.UserLoginDTO;
-import com.univercity.unlimited.greenUniverCity.function.member.user.dto.UserRegisterDTO;
-import com.univercity.unlimited.greenUniverCity.function.member.user.dto.UserResponseDTO;
+import com.univercity.unlimited.greenUniverCity.function.member.user.dto.*;
 import com.univercity.unlimited.greenUniverCity.function.member.user.entity.User;
 import com.univercity.unlimited.greenUniverCity.function.member.user.entity.UserRole;
 
@@ -36,7 +33,13 @@ public interface UserService {
 
     // U-CP) 이메일과 비밀번호를 입력받은 후에, 비밀번호를 변경
     UserResponseDTO changePassword(String password, String email);
-    
-    // U-D) 해당 유저 데이터 삭제
+
+    // U-D) 해당 유저 데이터 비활성화
     Map<String,String> deleteByUserEmail(Long userId,String email);
+
+    // U-DR) 해당 유저 데이터 활성화
+    Map<String,String> restoreByUserEmail(Long userId,String email);
+
+    // U-U) 유저 정보 업데이트
+    UserResponseDTO updateUserByAuthorizedUser(UserUpdateDTO dto, String email);
 }

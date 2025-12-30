@@ -1,10 +1,9 @@
 package com.univercity.unlimited.greenUniverCity.function.member.user.controller;
 
+import com.univercity.unlimited.greenUniverCity.function.academic.course.dto.CourseResponseDTO;
+import com.univercity.unlimited.greenUniverCity.function.academic.course.dto.CourseUpdateDTO;
 import com.univercity.unlimited.greenUniverCity.function.academic.timetable.dto.TimeTableCreateDTO;
-import com.univercity.unlimited.greenUniverCity.function.member.user.dto.UserDTO;
-import com.univercity.unlimited.greenUniverCity.function.member.user.dto.UserLoginDTO;
-import com.univercity.unlimited.greenUniverCity.function.member.user.dto.UserRegisterDTO;
-import com.univercity.unlimited.greenUniverCity.function.member.user.dto.UserResponseDTO;
+import com.univercity.unlimited.greenUniverCity.function.member.user.dto.*;
 import com.univercity.unlimited.greenUniverCity.function.member.user.entity.UserRole;
 import com.univercity.unlimited.greenUniverCity.function.member.user.service.UserService;
 import com.univercity.unlimited.greenUniverCity.function.member.user.entity.User;
@@ -102,6 +101,30 @@ public class UserController {
         return responseDTO;
     }
 
+    @PutMapping("/update")
+    public ResponseEntity<UserResponseDTO> updateCourse(
+            @RequestBody UserUpdateDTO dto,
+            @RequestHeader(value="X-User-Email",required = false) String requesterEmail
+    )
+    {
+        log.info("1) User 수정 요청 {}", dto);
+
+        // 이메일이 비어있을 경우 처리도 고려
+//        String email = getEmail(requesterEmail);
+
+        UserResponseDTO updateRespone = userService.updateUserByAuthorizedUser(dto,requesterEmail);
+        return ResponseEntity.ok(updateRespone);
+    }
+
+    // 유저 복구 (활성화)
+    @PostMapping("/restore/{userId}")
+    public Map<String, String> restore(
+            @PathVariable("userId") Long userId,
+            @RequestHeader(value="X-User-Email", required = false) String requesterEmail) {
+        return userService.restoreByUserEmail(userId, requesterEmail);
+    }
+
+    // 유저 비활성화
     @DeleteMapping("/delete/{userId}")
     public Map<String, String> delete(
             @PathVariable("userId") Long userId,

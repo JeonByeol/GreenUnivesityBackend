@@ -4,12 +4,9 @@ import com.univercity.unlimited.greenUniverCity.config.PasswordEncoderConfig;
 import com.univercity.unlimited.greenUniverCity.function.academic.enrollment.exception.UserNotFoundException;
 import com.univercity.unlimited.greenUniverCity.function.member.department.entity.Department;
 import com.univercity.unlimited.greenUniverCity.function.member.department.service.DepartmentService;
-import com.univercity.unlimited.greenUniverCity.function.member.user.dto.UserLoginDTO;
-import com.univercity.unlimited.greenUniverCity.function.member.user.dto.UserRegisterDTO;
-import com.univercity.unlimited.greenUniverCity.function.member.user.dto.UserResponseDTO;
+import com.univercity.unlimited.greenUniverCity.function.member.user.dto.*;
 import com.univercity.unlimited.greenUniverCity.util.MapperUtil;
 import com.univercity.unlimited.greenUniverCity.util.exception.InvalidRoleException;
-import com.univercity.unlimited.greenUniverCity.function.member.user.dto.UserDTO;
 import com.univercity.unlimited.greenUniverCity.function.member.user.entity.User;
 import com.univercity.unlimited.greenUniverCity.function.member.user.entity.UserRole;
 import com.univercity.unlimited.greenUniverCity.function.member.user.repository.UserRepository;
@@ -54,7 +51,7 @@ public class UserServiceImpl implements UserService {
             MapperUtil.updateFrom(user, responseDTO, new ArrayList<>());
             responseDTO.setDeptName(user.getDepartment().getDeptName());
             responseDTO.setRole(user.getUserRole().toString());
-            responseDTO.setDelete(  user.isDelete()); // isDelete 상태도 DTO에 포함
+            responseDTO.setDelete(user.isDelete()); // isDelete 상태도 DTO에 포함
 
             dto.add(responseDTO);
         }
@@ -79,8 +76,13 @@ public class UserServiceImpl implements UserService {
 
         // 비밀번호 검증
         // 검증 시에, 첫번째가 평문, 두번째가 암호화문입니다.
-        if (!encoder.matches(userDTO.getPassword(),userOptional.get().getPassword())) {
+        if (!encoder.matches(userDTO.getPassword(), userOptional.get().getPassword())) {
             throw new RuntimeException("이메일 또는 비밀번호가 일치하지 않습니다.");
+        }
+
+        if (userOptional.get().isDelete()) {
+            log.warn("로그인 비활성화 유저 :{}", userDTO.getEmail());
+            throw new RuntimeException("비활성화 유저입니다.");
         }
 
         User user = userOptional.get();
@@ -147,10 +149,10 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User getUserById(Long userId) {
-        User user=userRepository.findByUserId(userId);
+        User user = userRepository.findByUserId(userId);
 
-        if(user == null){
-            throw new UserNotFoundException("사용자를 찾을 수 없습니다. id:"+ userId);
+        if (user == null) {
+            throw new UserNotFoundException("사용자를 찾을 수 없습니다. id:" + userId);
         }
 
         return user;
@@ -158,8 +160,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User getProfessorById(Long userId) {
-        User user=userRepository.findProfessorById(userId)
-                .orElseThrow(()->new UserNotFoundException("사용자를 찾을 수 없습니다. id:"+ userId));
+        User user = userRepository.findProfessorById(userId)
+                .orElseThrow(() -> new UserNotFoundException("사용자를 찾을 수 없습니다. id:" + userId));
 
         if (!user.getUserRole().equals(UserRole.PROFESSOR)) {
             throw new InvalidRoleException(
@@ -173,7 +175,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public User getUserByEmail(String email) {
         return userRepository.findByEmail(email)
-                .orElseThrow(()->new UserNotFoundException("사용자를 찾을 수 없습니다. email:"+email));
+                .orElseThrow(() -> new UserNotFoundException("사용자를 찾을 수 없습니다. email:" + email));
     }
 
     @Override
@@ -200,14 +202,80 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Map<String, String> deleteByUserEmail(Long userId,String email) {
+    public Map<String, String> deleteByUserEmail(Long userId, String email) {
         User user = userRepository.findByUserId(userId);
 
-        if(user.isDelete())
-            return Map.of("failure","이미 비활성화 상태 입니다.");
+        if (user.isDelete())
+            return Map.of("failure", "이미 비활성화 상태 입니다.");
 
         user.setDelete(true);
         userRepository.save(user);
-        return Map.of("success","비활성화에 성공하였습니다.");
+        return Map.of("success", "비활성화에 성공하였습니다.");
+    }
+
+    @Override
+    public Map<String, String> restoreByUserEmail(Long userId, String email) {
+        User user = userRepository.findByUserId(userId);
+
+        if (!user.isDelete())
+            return Map.of("failure", "이미 활성화 상태 입니다.");
+
+        user.setDelete(false);
+        userRepository.save(user);
+        return Map.of("success", "활성화에 성공하였습니다.");
+    }
+
+    @Override
+    public UserResponseDTO updateUserByAuthorizedUser(UserUpdateDTO dto, String email) {
+        log.info("1) 유저 정보 수정: user={}", dto);
+
+        // 1. 기존 유저 조회
+        User findUser = userRepository.findByUserId(dto.getUserId());
+        if (findUser == null) {
+            throw new RuntimeException("유저를 찾을 수 없습니다: " + dto.getUserId());
+        }
+
+        // ✅ role 기본값은 기존 값 유지
+        UserRole role = findUser.getUserRole();
+
+        // ✅ role이 들어온 경우에만 변경
+        if (dto.getRole() != null) {
+            switch (dto.getRole()) {
+                case "STUDENT" -> role = UserRole.STUDENT;
+                case "PROFESSOR" -> role = UserRole.PROFESSOR;
+                case "ADMIN" -> role = UserRole.ADMIN;
+                default -> throw new IllegalArgumentException("알 수 없는 역할: " + dto.getRole());
+            }
+        }
+
+        String password = findUser.getPassword();
+        if(dto.getPassword() != null) {
+            password = encoder.encode(dto.getPassword());
+        }
+
+        // 2. DTO가 null이면 기존 값 사용, 아니면 새 값 사용
+        User newUser = User.builder()
+                .userId(findUser.getUserId())
+                .email(dto.getEmail() != null ? dto.getEmail() : findUser.getEmail())
+                .password(password)
+                .nickname(dto.getNickname() != null ? dto.getNickname() : findUser.getNickname())
+                .studentNumber(findUser.getStudentNumber()) // 학번 변경 불가
+                .userRole(role) // ✅ 안전
+                .department(dto.getDeptName() != null
+                        ? departmentService.findByName(dto.getDeptName())
+                        : findUser.getDepartment())
+                .isDelete(dto.isDelete())
+                .build();
+
+        // 3. 저장
+        User resultUser = userRepository.save(newUser);
+
+        // 4. 응답 DTO 변환
+        UserResponseDTO responseDTO = new UserResponseDTO();
+        MapperUtil.updateFrom(resultUser, responseDTO, new ArrayList<>());
+
+        log.info("유저 정보 수정 완료: user={}", responseDTO);
+        return responseDTO;
     }
 }
+
