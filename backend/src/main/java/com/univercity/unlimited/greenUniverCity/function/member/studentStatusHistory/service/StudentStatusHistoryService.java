@@ -15,7 +15,10 @@ public interface StudentStatusHistoryService {
     StudentStatusHistoryResponseDTO createHistoryByAuthorizedUser(StudentStatusHistoryCreateDTO dto, String email);
     StudentStatusHistoryResponseDTO updateHistoryByAuthorizedUser(StudentStatusHistoryUpdateDTO dto, String email);
     Map<String, String> deleteByHistoryId(Long historyId, String email);
-    
+
+    StudentStatusHistoryResponseDTO approveStatusHistory(StudentStatusHistoryUpdateDTO dto, String email);
+    StudentStatusHistoryResponseDTO rejectStatusHistory(StudentStatusHistoryUpdateDTO dto, String email);    // 반려
+
     // 추후 entity를 찾아야하는 경우 추가
 //    StudentStatusHistory findEntityById(Long historyId);
 }

@@ -1,6 +1,8 @@
 package com.univercity.unlimited.greenUniverCity.function.member.user.entity;
 
 import com.univercity.unlimited.greenUniverCity.function.member.department.entity.Department;
+import com.univercity.unlimited.greenUniverCity.function.member.studentStatusHistory.entity.StudentStatusHistoryApproveType;
+import com.univercity.unlimited.greenUniverCity.function.member.studentStatusHistory.entity.StudentStatusHistoryType;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -41,4 +43,15 @@ public class User {
     @Column(name = "is_delete", nullable = false)
     @Builder.Default
     private boolean isDelete = false;
+
+    @Column(name = "current_status")
+    @Enumerated(EnumType.STRING)
+    @Builder.Default
+    private StudentStatusHistoryType currentStatus = StudentStatusHistoryType.ENROLLED;
+
+    @Column(name = "current_approve")
+    @Enumerated(EnumType.STRING)
+    @Builder.Default
+    private StudentStatusHistoryApproveType currentApprove = StudentStatusHistoryApproveType.None;
+
 }

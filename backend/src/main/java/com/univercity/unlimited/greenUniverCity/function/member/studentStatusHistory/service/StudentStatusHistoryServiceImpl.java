@@ -5,8 +5,13 @@ import com.univercity.unlimited.greenUniverCity.function.member.studentStatusHis
 import com.univercity.unlimited.greenUniverCity.function.member.studentStatusHistory.dto.StudentStatusHistoryResponseDTO;
 import com.univercity.unlimited.greenUniverCity.function.member.studentStatusHistory.dto.StudentStatusHistoryUpdateDTO;
 import com.univercity.unlimited.greenUniverCity.function.member.studentStatusHistory.entity.StudentStatusHistory;
+import com.univercity.unlimited.greenUniverCity.function.member.studentStatusHistory.entity.StudentStatusHistoryApproveType;
+import com.univercity.unlimited.greenUniverCity.function.member.studentStatusHistory.entity.StudentStatusHistoryType;
 import com.univercity.unlimited.greenUniverCity.function.member.studentStatusHistory.repository.StudentStatusHistoryRepository;
+import com.univercity.unlimited.greenUniverCity.function.member.user.dto.UserResponseDTO;
+import com.univercity.unlimited.greenUniverCity.function.member.user.dto.UserUpdateDTO;
 import com.univercity.unlimited.greenUniverCity.function.member.user.entity.User;
+import com.univercity.unlimited.greenUniverCity.function.member.user.service.UserService;
 import com.univercity.unlimited.greenUniverCity.util.MapperUtil;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -24,16 +29,53 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class StudentStatusHistoryServiceImpl implements StudentStatusHistoryService{
     private final StudentStatusHistoryRepository repository;
+
+    private final UserService userService;
+
     private final ModelMapper mapper;
 
     private StudentStatusHistoryResponseDTO toResponseDTO(StudentStatusHistory history) {
         User user = history.getUser();
 
+
+        String changeTypeStr;
+        StudentStatusHistoryType changeTypeEnum = history.getChangeType();
+
+
+        if (changeTypeEnum == StudentStatusHistoryType.LEAVE) { // 휴학
+            changeTypeStr = "휴학";
+        } else if (changeTypeEnum == StudentStatusHistoryType.EXPELLED) { // 제적
+            changeTypeStr = "제적";
+        } else if (changeTypeEnum == StudentStatusHistoryType.ENROLLED) { // 재학
+            changeTypeStr = "재학";
+        } else if (changeTypeEnum == StudentStatusHistoryType.GRADUATED) { // 졸업
+            changeTypeStr = "졸업";
+        } else {
+            changeTypeStr = "기타";
+        }
+
+        String approveTypeStr;
+        StudentStatusHistoryApproveType approveTypeEnum = history.getApproveType();
+
+        if (approveTypeEnum == null || approveTypeEnum == StudentStatusHistoryApproveType.REQUESTED) { // 신청됨(미확정)
+            approveTypeStr = "대기";
+        } else if (approveTypeEnum == StudentStatusHistoryApproveType.APPROVED) { // 승인
+            approveTypeStr = "승인";
+        } else if (approveTypeEnum == StudentStatusHistoryApproveType.REJECTED) { // 거절
+            approveTypeStr = "반려";
+        } else {
+            approveTypeStr = "기타";
+        }
+
+        Long userId = user != null ? user.getUserId() : null;
+
         return StudentStatusHistoryResponseDTO.builder()
-                .statusHistoryId(history.getHistoryId())
-                .changeType(history.getChangeType())
+                .statusHistoryId(history.getStatusHistoryId())
+                .changeType(changeTypeStr)
+                .approveType(approveTypeStr)
+                .changeDate(history.getChangeDate())
                 .reason(history.getReason())
-                .userId(user != null ? user.getUserId() : 1l)
+                .userId(userId) // null 가능
                 .build();
     }
 
@@ -41,7 +83,7 @@ public class StudentStatusHistoryServiceImpl implements StudentStatusHistoryServ
     public List<StudentStatusHistoryResponseDTO> findAllHistory() {
         List<StudentStatusHistoryResponseDTO> dtoList = new ArrayList<>();
         for(StudentStatusHistory i : repository.findAll()) {
-            StudentStatusHistoryResponseDTO dto = mapper.map(i, StudentStatusHistoryResponseDTO.class);
+            StudentStatusHistoryResponseDTO dto = toResponseDTO(i);
             dtoList.add(dto);
         }
         return dtoList;
@@ -109,4 +151,52 @@ public class StudentStatusHistoryServiceImpl implements StudentStatusHistoryServ
 
         return Map.of("Result","Success");
     }
+
+    @Override
+    public StudentStatusHistoryResponseDTO approveStatusHistory(StudentStatusHistoryUpdateDTO dto, String email) {
+        log.info("1) StudentStatusHistory 승인 시작, statusHistoryDTO: {}", dto);
+        return processApproval(dto.getStatusHistoryId(), dto.getChangeType(),StudentStatusHistoryApproveType.APPROVED, email);
+    }
+
+    @Override
+    public StudentStatusHistoryResponseDTO rejectStatusHistory(StudentStatusHistoryUpdateDTO dto, String email) {
+        log.info("1) StudentStatusHistory 거절 시작, statusHistoryDTO: {}", dto);
+        return processApproval(dto.getStatusHistoryId(), dto.getChangeType(), StudentStatusHistoryApproveType.REJECTED, email);
+    }
+
+    // StudentStatusHistoryApproveType에 대한 처리 진행
+    private StudentStatusHistoryResponseDTO processApproval(Long statusHistoryId,
+                                                            StudentStatusHistoryType changeType,
+                                                            StudentStatusHistoryApproveType approveType,
+                                                            String email) {
+        log.info("2) StudentStatusHistory 처리 시작, statusHistoryId: {}, approveType: {}", statusHistoryId, approveType);
+
+        StudentStatusHistory history = repository.findById(statusHistoryId)
+                .orElseThrow(() -> new RuntimeException("해당하는 statusHistoryId가 없습니다."));
+
+        log.info("3) DB에서 가져온 History: {}", history);
+
+        User user = history.getUser();
+        log.info("4) 연관 User 정보: {}", user);
+
+        // 히스토리에는 승인/거절 기록
+        history.setApproveType(approveType);
+
+        // User 업데이트
+        UserUpdateDTO userUpdateDTO = new UserUpdateDTO();
+        MapperUtil.updateFrom(user, userUpdateDTO, new ArrayList<>());
+        userUpdateDTO.setUserId(user.getUserId()); // 필수
+        userUpdateDTO.setCurrentStatus(history.getChangeType()); // 반드시 호출
+        userUpdateDTO.setCurrentApprove(StudentStatusHistoryApproveType.None);
+        log.info("5) 변환된 UserUpdateDTO 정보: {}", userUpdateDTO);
+        userService.updateUserByAuthorizedUser(userUpdateDTO, email);
+
+        // 히스토리 저장
+        StudentStatusHistory saved = repository.save(history);
+        log.info("6) 저장된 History: {}", saved);
+
+        return toResponseDTO(saved);
+    }
+
+
 }

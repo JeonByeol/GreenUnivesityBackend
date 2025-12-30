@@ -3,6 +3,7 @@ package com.univercity.unlimited.greenUniverCity.repository;
 import com.univercity.unlimited.greenUniverCity.function.academic.academicTerm.entity.AcademicTerm;
 import com.univercity.unlimited.greenUniverCity.function.academic.academicTerm.respository.AcademicTermRepository;
 import com.univercity.unlimited.greenUniverCity.function.member.studentStatusHistory.entity.StudentStatusHistory;
+import com.univercity.unlimited.greenUniverCity.function.member.studentStatusHistory.entity.StudentStatusHistoryApproveType;
 import com.univercity.unlimited.greenUniverCity.function.member.studentStatusHistory.entity.StudentStatusHistoryType;
 import com.univercity.unlimited.greenUniverCity.function.member.studentStatusHistory.repository.StudentStatusHistoryRepository;
 import com.univercity.unlimited.greenUniverCity.function.member.user.entity.User;
@@ -30,16 +31,29 @@ public class StudentStatusHistoryRepositoryTests {
     public void testInsertData() {
         // 데이터 세팅
         List<User> userList = userRepository.findAll();
+        if (userList.isEmpty()) {
+            log.warn("유저 데이터가 없습니다.");
+            return;
+        }
 
-        for(int i=0; i<10; i++) {
-            int maxIndex = StudentStatusHistoryType.values().length;
-            int randomIndex = (int)(Math.random()*maxIndex);
-            StudentStatusHistoryType randomType = StudentStatusHistoryType.values()[randomIndex];
+        for (int i = 0; i < 10; i++) {
+
+            StudentStatusHistoryType changeType =
+                    StudentStatusHistoryType.values()
+                            [(int) (Math.random() * StudentStatusHistoryType.values().length)];
+
+            StudentStatusHistoryApproveType approveType =
+                    StudentStatusHistoryApproveType.values()
+                            [(int) (Math.random() * StudentStatusHistoryApproveType.values().length)];
+
+            User randomUser = userList.get((int) (Math.random() * userList.size()));
+
             StudentStatusHistory history = StudentStatusHistory.builder()
-                    .changeType(randomType)
+                    .changeType(changeType)
+                    .approveType(approveType)
                     .changeDate(LocalDate.now())
-                    .reason("이유" + i)
-                    .user(userList.get((int)(Math.random()*userList.size())))
+                    .reason("테스트 사유 " + i)
+                    .user(randomUser)
                     .build();
 
             repository.save(history);

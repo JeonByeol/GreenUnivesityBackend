@@ -94,4 +94,20 @@ public class StudentStatusHistoryController {
         Map<String,String> result = studentStatusHistoryService.deleteByHistoryId(historyId,email);
         return ResponseEntity.ok(result.get("result"));
     }
+
+    @PostMapping("/approved")
+    public ResponseEntity<StudentStatusHistoryResponseDTO> appovedSSHistory(
+            @RequestBody StudentStatusHistoryUpdateDTO dto,
+            @RequestHeader(value="X-User-Email",required = false) String requesterEmail) {
+        StudentStatusHistoryResponseDTO responseDTO = studentStatusHistoryService.approveStatusHistory(dto,requesterEmail);
+        return ResponseEntity.ok(responseDTO);
+    }
+
+    @PostMapping("/rejected")
+    public ResponseEntity<StudentStatusHistoryResponseDTO> rejectedSSHistory(
+            @RequestBody StudentStatusHistoryUpdateDTO dto,
+            @RequestHeader(value="X-User-Email",required = false) String requesterEmail) {
+        StudentStatusHistoryResponseDTO responseDTO = studentStatusHistoryService.rejectStatusHistory(dto,requesterEmail);
+        return ResponseEntity.ok(responseDTO);
+    }
 }
