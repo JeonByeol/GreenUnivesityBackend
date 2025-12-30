@@ -5,81 +5,88 @@ import com.univercity.unlimited.greenUniverCity.function.community.comment.dto.C
 import com.univercity.unlimited.greenUniverCity.function.community.comment.dto.CommentUpdateDTO;
 import com.univercity.unlimited.greenUniverCity.function.community.comment.entity.Comment;
 import com.univercity.unlimited.greenUniverCity.function.community.comment.repository.CommentRepository;
-import com.univercity.unlimited.greenUniverCity.util.MapperUtil;
-import jakarta.transaction.Transactional;
+import com.univercity.unlimited.greenUniverCity.function.community.post.entity.Post;
+import com.univercity.unlimited.greenUniverCity.function.community.post.repository.PostRepository;
+import com.univercity.unlimited.greenUniverCity.function.member.user.entity.User;
+import com.univercity.unlimited.greenUniverCity.function.member.user.repository.UserRepository;
+
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.modelmapper.ModelMapper;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
-@Slf4j
 @RequiredArgsConstructor
+@Transactional
 public class CommentServiceImpl implements CommentService {
+
     private final CommentRepository commentRepository;
-    private final ModelMapper mapper;
+    private final PostRepository postRepository;
+    private final UserRepository userRepository;
 
-
-    //조회
+    /** C-1 전체 조회 */
     @Override
-    public CommentResponseDTO findByCommentCommentId(Long commentId) {
-        log.info("해당 아이디의 코멘트를 조회 service->{}",commentId);
-        return mapper.map( commentRepository.findById(commentId), CommentResponseDTO.class);
-    }
-
-
-    @Override
+    @Transactional(readOnly = true)
     public List<CommentResponseDTO> findAll() {
-        List<Comment> comments = commentRepository.findAll();
-        List<CommentResponseDTO> legacyCommentDTOS = comments.stream().map(comment ->
-                mapper.map(comment, CommentResponseDTO.class)).toList();
-
-       List<CommentResponseDTO> optionalCommentDTOS = legacyCommentDTOS;
-        return optionalCommentDTOS;
+        return commentRepository.findAll().stream()
+                .map(CommentResponseDTO::from)
+                .toList();
     }
 
-    //생성
+
+    /** C-2 생성 */
     @Override
     public CommentResponseDTO createComment(CommentCreateDTO dto, String email) {
-        log.info("2)comment 추가 시작 comment : {}", dto);
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("유저 없음"));
 
-        Comment comment = new Comment();
-        MapperUtil.updateFrom(dto, comment, List.of("commentId"));
-        log.info("3)CourseCreateDTO -> comment : {}", comment);
+        Post post = postRepository.findById(dto.getPostId())
+                .orElseThrow(() -> new IllegalArgumentException("게시글 없음"));
 
-        Comment result = commentRepository.save(comment);
-        log.info("4)추가된 comment : {}", result);
+        Comment comment = Comment.builder()
+                .content(dto.getContent())
+                .user(user)
+                .post(post)
+                .createdAt(LocalDateTime.now())
+                .deleted(false)
+                .build();
 
-        return CommentResponseDTO.builder().build();
+        return CommentResponseDTO.from(commentRepository.save(comment));
     }
-    //추가
-    @Override
-    @Transactional
-    public CommentResponseDTO updateComment(CommentUpdateDTO dto) {
 
+    /** C-3 수정 */
+    @Override
+    public CommentResponseDTO updateComment(CommentUpdateDTO dto) {
         Comment comment = commentRepository.findById(dto.getCommentId())
-                .orElseThrow(() -> new RuntimeException("댓글이 없습니다."));
+                .orElseThrow(() -> new IllegalArgumentException("댓글 없음"));
 
         comment.setContent(dto.getContent());
-
-        Comment saved = commentRepository.save(comment);
-
-        return CommentResponseDTO.builder()
-                .commentId(saved.getCommentId())
-                .content(saved.getContent())
-                .updatedAt(LocalDateTime.now())
-                .build();
+        return CommentResponseDTO.from(comment);
     }
 
-    //삭제
+    /** C-4 삭제 (Soft Delete) */
     @Override
     public void deleteComment(Long commentId) {
-        commentRepository.deleteById(commentId);
+        commentRepository.softDelete(commentId);
     }
 
+    /** C-5 단일 조회 */
+    @Override
+    @Transactional(readOnly = true)
+    public CommentResponseDTO findByCommentId(Long commentId) {
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new IllegalArgumentException("댓글 없음"));
+
+        return CommentResponseDTO.from(comment);
+    }
+
+    /** 관리자용 전체 조회 (deleted 포함) */
+    @Override
+    @Transactional(readOnly = true)
+    public List<Comment> getAllCommentsForAdmin() {
+        return commentRepository.findAllIncludingDeleted();
+    }
 }

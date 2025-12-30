@@ -17,6 +17,7 @@ public class CommentUpdateDTO {
     private String content; //댓글내용
     private LocalDateTime createdAt;//작성일시
     private Long postId;
+    private String User;
 
 
 

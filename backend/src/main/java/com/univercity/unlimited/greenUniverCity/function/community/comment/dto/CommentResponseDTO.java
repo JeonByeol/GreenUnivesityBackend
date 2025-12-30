@@ -1,30 +1,34 @@
 package com.univercity.unlimited.greenUniverCity.function.community.comment.dto;
 
-import lombok.*;
+import com.univercity.unlimited.greenUniverCity.function.community.comment.entity.Comment;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
-
-@AllArgsConstructor
-@NoArgsConstructor
-@Setter
 @Getter
-@ToString
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class CommentResponseDTO {
-    //Comment
-    private Long commentId; //댓글 고유 ID
 
-    private String content; //댓글내용
-
-    private LocalDateTime createdAt;//작성일시
-
-    private LocalDateTime updatedAt; //수정날짜
+    private Long commentId;
+    private String content;
+    private LocalDateTime createdAt;
 
     private Long postId;
+    private Long userId;
+    private String nickname;
 
-    private String writerName;//작성자 이름
-
-    private String boardName;
-
-
+    public static CommentResponseDTO from(Comment comment) {
+        return CommentResponseDTO.builder()
+                .commentId(comment.getCommentId())
+                .content(comment.getContent())
+                .createdAt(comment.getCreatedAt())
+                .postId(comment.getPost() != null ? comment.getPost().getPostId() : null)
+                .userId(comment.getUser() != null ? comment.getUser().getUserId() : null)
+                .nickname(comment.getUser() != null ? comment.getUser().getNickname() : null)
+                .build();
+    }
 }

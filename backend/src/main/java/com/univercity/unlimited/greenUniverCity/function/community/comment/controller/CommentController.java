@@ -31,7 +31,7 @@ public ResponseEntity<List<CommentResponseDTO>> getAllComments() {
     // C-2) 아이디로 한 개의 댓글만 조회 200
     @GetMapping("/one/{commentId}")
     public List<CommentResponseDTO> getById(@PathVariable("commentId") Long commentId){
-        return List.of(commentService.findByCommentCommentId(commentId));
+        return List.of(commentService.findByCommentId(commentId));
     };
     // C-5) 댓글 수정 200
     @PutMapping("/update")
@@ -42,7 +42,7 @@ public ResponseEntity<List<CommentResponseDTO>> getAllComments() {
         return ResponseEntity.ok(updated);
     }
     // C-6) 댓글 삭제 204
-    @DeleteMapping("/delete/{commentId}")
+    @DeleteMapping("/{commentId}")
     public ResponseEntity<Void> deleteComment(@PathVariable Long commentId) {
         commentService.deleteComment(commentId);  // ✔ 정식 메서드 호출
         return ResponseEntity.noContent().build();

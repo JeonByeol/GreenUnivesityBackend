@@ -4,22 +4,26 @@ import com.univercity.unlimited.greenUniverCity.function.community.comment.dto.C
 import com.univercity.unlimited.greenUniverCity.function.community.comment.dto.CommentResponseDTO;
 import com.univercity.unlimited.greenUniverCity.function.community.comment.dto.CommentUpdateDTO;
 import com.univercity.unlimited.greenUniverCity.function.community.comment.entity.Comment;
-import org.springframework.http.ResponseEntity;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface CommentService {
-    //모든 게시글 목록
-    // C-1 전체 조회
-    List<CommentResponseDTO> findAll();
-    // C-2 생성
-    CommentResponseDTO createComment(CommentCreateDTO dto, String email);
-    // C-3 추가
-    CommentResponseDTO updateComment(CommentUpdateDTO dto);
-    // C-4 삭제
-    void deleteComment(Long commentId);
-    // C-5 게시글별 댓글 목록
-    CommentResponseDTO findByCommentCommentId(Long commentId);
 
+    /** C-1 전체 조회 (일반 사용자용: deleted=false) */
+    List<CommentResponseDTO> findAll();
+
+    /** C-2 댓글 생성 */
+    CommentResponseDTO createComment(CommentCreateDTO dto, String email);
+
+    /** C-3 댓글 수정 */
+    CommentResponseDTO updateComment(CommentUpdateDTO dto);
+
+    /** C-4 댓글 삭제 (Soft Delete) */
+    void deleteComment(Long commentId);
+
+    /** C-5 단일 댓글 조회 */
+    CommentResponseDTO findByCommentId(Long commentId);
+
+    /** 관리자용: 삭제 포함 전체 조회 */
+    List<Comment> getAllCommentsForAdmin();
 }
