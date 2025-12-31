@@ -93,7 +93,7 @@ public class CourseOfferingController {
         return ResponseEntity.ok(result.get("result"));
     }
 
-    @GetMapping("/my")
+    @GetMapping("/my2")
     public ResponseEntity<List<CourseOfferingResponseDTO>> getMyData(
             @RequestHeader(value = "X-User-Email", required = false) String email) {
 

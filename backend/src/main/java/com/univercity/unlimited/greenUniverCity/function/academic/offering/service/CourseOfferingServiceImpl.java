@@ -176,6 +176,22 @@ public class CourseOfferingServiceImpl implements CourseOfferingService{
     }
 
 
+    @Override
+    @Transactional(readOnly = true)
+    public List<CourseOfferingResponseDTO> findMyOfferings(String email) {
+        log.info("2) 내 강의 목록 조회 시작 - email: {}", email);
+
+        // 1. 위에서 만든 최적화된 쿼리 메서드 호출
+        List<CourseOffering> offerings = repository.findAllByProfessorEmail(email);
+
+        log.info("3) 조회 성공 - 건수: {}", offerings.size());
+
+        // 2. DTO 변환 후 반환
+        return offerings.stream()
+                .map(entityMapper::toCourseOfferingResponseDTO)
+                .toList();
+    }
+
     // 주석
 //    @Override
 //    public Optional<List<CourseOfferingResponseDTO>> findAllCourseOfferingDTO() {
