@@ -29,15 +29,16 @@ public class NoticeServiceImpl implements NoticeService {
     // N-1) 전체 조회
     @Override
     public List<NoticeResponseDTO> findAllNotice() {
-        List<Notice> list = noticeRepository.findAll();
-
-        return list.stream()
+        return noticeRepository.findAllWithUser().stream()
                 .map(n -> NoticeResponseDTO.builder()
                         .noticeId(n.getNoticeId())
                         .title(n.getTitle())
                         .content(n.getContent())
-                        .build())
-                .toList();
+                        .createdAt(n.getCreatedAt())
+                        .userId(n.getUser() != null ? n.getUser().getUserId() : null)
+                        .nickname(n.getUser() != null ? n.getUser().getNickname() : null)
+                        .build()
+                ).toList();
     }
 
     // (필요하면 구현) 과목 일부 검색 - 아직 미사용이라 빈 구현
@@ -57,11 +58,6 @@ public class NoticeServiceImpl implements NoticeService {
                 .title(n.getTitle())
                 .content(n.getContent())
                 .build());
-    }
-
-    @Override
-    public NoticeResponseDTO updateNotice() {
-        return null;
     }
 
     // N-3) 수정 (조건 A: Body로 noticeId 포함해서 받는 방식)

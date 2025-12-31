@@ -20,6 +20,9 @@ public class NoticeResponseDTO {
 
     private LocalDateTime createdAt; //날짜
 
+    private Long userId;
+    private String nickname; // 작성자 표시용
+
 
 
 }
