@@ -36,6 +36,35 @@ public class UserServiceImpl implements UserService {
 
     private final PasswordEncoder encoder;
 
+    public UserUpdateDTO toEntity(User user) {
+        if (user == null) {
+            return null;
+        }
+
+        String deptName = null;
+        if (user.getDepartment() != null) {
+            deptName = user.getDepartment().getDeptName();
+        }
+
+        String role = null;
+        if (user.getUserRole() != null) {
+            role = user.getUserRole().name();
+        }
+
+        return UserUpdateDTO.builder()
+                .userId(user.getUserId())
+                .email(user.getEmail())
+                .password(user.getPassword())
+                .nickname(user.getNickname())
+                .role(role)
+                .studentNumber(user.getStudentNumber())
+                .deptName(deptName)
+                .isDelete(user.isDelete())
+                .currentStatus(user.getCurrentStatus())
+                .currentApprove(user.getCurrentApprove())
+                .build();
+    }
+
     @Override
     public List<UserResponseDTO> findAllUsers() {
         List<UserResponseDTO> dto = new ArrayList<>();
@@ -259,12 +288,18 @@ public class UserServiceImpl implements UserService {
                 .email(dto.getEmail() != null ? dto.getEmail() : findUser.getEmail())
                 .password(password)
                 .nickname(dto.getNickname() != null ? dto.getNickname() : findUser.getNickname())
-                .studentNumber(findUser.getStudentNumber()) // 학번 변경 불가
-                .userRole(role) // ✅ 안전
+                .studentNumber(findUser.getStudentNumber())
+                .userRole(role)
                 .department(dto.getDeptName() != null
                         ? departmentService.findByName(dto.getDeptName())
                         : findUser.getDepartment())
                 .isDelete(dto.isDelete())
+                .currentStatus(dto.getCurrentStatus() != null
+                        ? dto.getCurrentStatus()
+                        : findUser.getCurrentStatus())
+                .currentApprove(dto.getCurrentApprove() != null
+                        ? dto.getCurrentApprove()
+                        : findUser.getCurrentApprove())
                 .build();
 
         // 3. 저장

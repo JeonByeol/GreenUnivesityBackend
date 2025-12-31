@@ -42,4 +42,7 @@ public interface UserService {
 
     // U-U) 유저 정보 업데이트
     UserResponseDTO updateUserByAuthorizedUser(UserUpdateDTO dto, String email);
+
+    // Mapper 임시로. 추후 EntityMapper로 이동
+    UserUpdateDTO toEntity(User user);
 }

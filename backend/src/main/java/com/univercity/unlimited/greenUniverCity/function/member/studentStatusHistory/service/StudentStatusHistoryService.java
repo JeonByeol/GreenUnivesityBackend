@@ -19,6 +19,8 @@ public interface StudentStatusHistoryService {
     StudentStatusHistoryResponseDTO approveStatusHistory(StudentStatusHistoryUpdateDTO dto, String email);
     StudentStatusHistoryResponseDTO rejectStatusHistory(StudentStatusHistoryUpdateDTO dto, String email);    // 반려
 
+    List<StudentStatusHistoryResponseDTO> getMyData(String email);
+
     // 추후 entity를 찾아야하는 경우 추가
 //    StudentStatusHistory findEntityById(Long historyId);
 }
