@@ -16,6 +16,7 @@ public class CourseUpdateDTO {
     private String description; // 강의 설명
 
     private Integer credits; // 학점
+    private Long departmentId; // 과목 코드
 
 }
 

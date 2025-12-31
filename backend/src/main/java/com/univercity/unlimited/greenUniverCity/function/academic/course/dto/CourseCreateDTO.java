@@ -17,6 +17,5 @@ public class CourseCreateDTO {
     private Integer credits; // 학점
 
     private Long departmentId; // 과목 코드
-
 }
 

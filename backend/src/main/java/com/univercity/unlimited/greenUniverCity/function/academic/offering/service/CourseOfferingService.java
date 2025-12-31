@@ -4,19 +4,20 @@ import com.univercity.unlimited.greenUniverCity.function.academic.offering.dto.C
 import com.univercity.unlimited.greenUniverCity.function.academic.offering.dto.CourseOfferingResponseDTO;
 import com.univercity.unlimited.greenUniverCity.function.academic.offering.dto.CourseOfferingUpdateDTO;
 import com.univercity.unlimited.greenUniverCity.function.academic.offering.entity.CourseOffering;
+import com.univercity.unlimited.greenUniverCity.function.member.studentStatusHistory.dto.StudentStatusHistoryResponseDTO;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
 public interface CourseOfferingService {
-    Optional<List<CourseOfferingResponseDTO>> findAllCourseOfferingDTO();
-
     List<CourseOfferingResponseDTO> findAllOffering();
     List<CourseOfferingResponseDTO> findById(Long offeringId);
     CourseOfferingResponseDTO createOfferingByAuthorizedUser(CourseOfferingCreateDTO dto, String email);
     CourseOfferingResponseDTO updateOfferingByAuthorizedUser(CourseOfferingUpdateDTO dto, String email);
     Map<String,String> deleteByOfferingId(Long offeringId,String email);
+
+    List<CourseOfferingResponseDTO> getMyData(String email);
 
     int addCourseOffering(CourseOfferingResponseDTO legacyCourseOfferingDTO);
 
@@ -24,4 +25,5 @@ public interface CourseOfferingService {
     CourseOffering getCourseOfferingEntity(Long id);
 
     //CourseOfferingDTO findByCourseNameForTimeTable(String courseName);//CO-4) Timetable에 강의명을 넘겨주기 위해 구성한 service
+    // Optional<List<CourseOfferingResponseDTO>> findAllCourseOfferingDTO();
 }
