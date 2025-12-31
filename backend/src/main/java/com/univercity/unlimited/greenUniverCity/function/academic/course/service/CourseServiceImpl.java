@@ -28,6 +28,44 @@ public class CourseServiceImpl implements CourseService{
 
     private final ModelMapper mapper;
 
+    private Course toEntity(CourseUpdateDTO dto) {
+        if (dto == null) return null;
+
+        Course course = Course.builder()
+                .courseId(dto.getCourseId())
+                .courseName(dto.getCourseName())
+                .description(dto.getDescription())
+                .credits(dto.getCredits())
+                .build();
+
+        // ✅ department만 있을 때만 변경
+        if (dto.getDepartmentId() != null) {
+            Department department = departmentService.findEntityById(dto.getDepartmentId());
+            course.setDepartment(department);
+        }
+
+        return course;
+    }
+
+    private Course toEntity(CourseCreateDTO dto) {
+        if (dto == null) return null;
+
+        Course course = Course.builder()
+                .courseName(dto.getCourseName())
+                .description(dto.getDescription())
+                .credits(dto.getCredits())
+                .build();
+
+        // departmentId가 있으면 Department 세팅
+        if (dto.getDepartmentId() != null) {
+            Department department = departmentService.findEntityById(dto.getDepartmentId());
+            course.setDepartment(department);
+        }
+        return course;
+    }
+
+
+
     @Override
     public List<CourseResponseDTO> legacyFindAllCourse() {
         List<CourseResponseDTO> dtoList=new ArrayList<>();
@@ -67,12 +105,8 @@ public class CourseServiceImpl implements CourseService{
     public CourseResponseDTO createCourseByAuthorizedUser(CourseCreateDTO dto, String email) {
         log.info("2)Course 추가 시작 course : {}", dto);
 
-        Course course = new Course();
-        MapperUtil.updateFrom(dto, course, List.of("departmentId"));
-        log.info("3)CourseCreateDTO -> Course : {}", course);
-
-        Department department = departmentService.findEntityById(dto.getDepartmentId());
-        course.setDepartment(department);
+        Course course = toEntity(dto);
+//        log.info("3)CourseCreateDTO -> Course : {}", course);
 
         log.info("4)Department를 추가한 이후 Course : {}", course);
 
@@ -93,11 +127,9 @@ public class CourseServiceImpl implements CourseService{
         }
 
         // 조회
-        Course course = courseOptional.get();
 
-        log.info("3) 수정 이전 Course : {}",course);
-        MapperUtil.updateFrom(dto,course,List.of("courseId"));
-
+//        log.info("3) 수정 이전 Course : {}",course);
+        Course course = toEntity(dto);
 
         log.info("5) 기존 Course : {}",course);
         Course updateCourse=repository.save(course);

@@ -92,4 +92,31 @@ public class CourseOfferingController {
         Map<String,String> result = courseOfferingService.deleteByOfferingId(offeringId,email);
         return ResponseEntity.ok(result.get("result"));
     }
+
+    @GetMapping("/my")
+    public ResponseEntity<List<CourseOfferingResponseDTO>> getMyData(
+            @RequestHeader(value = "X-User-Email", required = false) String email) {
+
+        // 1) 요청 로그
+        log.info("1) 교수의 개설강의 데이터 조회 요청 :{}", email);
+
+        // 2) 이메일 검증 (Postman 테스트용)
+        if (email == null || email.isEmpty()) {
+            log.warn("X-User-Email 헤더가 없습니다. 테스트용 기본값 사용");
+            email = "hannah@aaa.com";
+        }
+
+        // 3) 서비스 호출
+        List<CourseOfferingResponseDTO> response =
+                courseOfferingService.getMyData(email);
+
+        // 4) 완료 로그
+        log.info("Complete: 개설강의 데이터 조회 완료 : {}, 데이터개수-:{}",
+                email, response.size());
+
+        // 5) 응답 반환
+        return ResponseEntity.ok(response);
+    }
+
+
 }

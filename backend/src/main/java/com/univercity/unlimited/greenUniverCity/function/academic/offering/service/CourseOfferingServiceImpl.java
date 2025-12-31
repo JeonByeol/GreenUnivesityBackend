@@ -34,17 +34,7 @@ public class CourseOfferingServiceImpl implements CourseOfferingService{
     private final ModelMapper mapper;
 
     private final EntityMapper entityMapper;
-
-
-    @Override
-    public Optional<List<CourseOfferingResponseDTO>> findAllCourseOfferingDTO() {
-        List<CourseOffering> courseOfferings = repository.findAll();
-        List<CourseOfferingResponseDTO> legacyCourseOfferingDTOS = courseOfferings.stream().map(courseOffering ->
-                mapper.map(courseOffering, CourseOfferingResponseDTO.class)).toList();
-
-        Optional<List<CourseOfferingResponseDTO>> optionalCourseOfferingDTOS = Optional.of(legacyCourseOfferingDTOS);
-        return optionalCourseOfferingDTOS;
-    }
+    
 
     @Override
     public List<CourseOfferingResponseDTO> findAllOffering() {
@@ -136,6 +126,24 @@ public class CourseOfferingServiceImpl implements CourseOfferingService{
         return Map.of("Result","Success");
     }
 
+    @Override
+    public List<CourseOfferingResponseDTO> getMyData(String email) {
+        log.info("Service) 본인 수강 내역 조회 시작 - email: {}", email);
+
+        List<CourseOffering> list =
+                repository.findByUserEmail(email);
+
+        if (list == null || list.isEmpty()) {
+            log.info("Service) 조회 결과 없음 - email: {}", email);
+            return List.of(); // 빈 리스트 반환
+        }
+
+        log.info("Service) 조회 완료 - email: {}, count: {}", email, list.size());
+        return list.stream()
+                .map(result -> entityMapper.toCourseOfferingResponseDTO(result))
+                .toList();
+    }
+
 
     @Override
     public int addCourseOffering(CourseOfferingResponseDTO legacyCourseOfferingDTO) {
@@ -166,4 +174,15 @@ public class CourseOfferingServiceImpl implements CourseOfferingService{
         return offering;
     }
 
+
+    // 주석
+//    @Override
+//    public Optional<List<CourseOfferingResponseDTO>> findAllCourseOfferingDTO() {
+//        List<CourseOffering> courseOfferings = repository.findAll();
+//        List<CourseOfferingResponseDTO> legacyCourseOfferingDTOS = courseOfferings.stream().map(courseOffering ->
+//                mapper.map(courseOffering, CourseOfferingResponseDTO.class)).toList();
+//
+//        Optional<List<CourseOfferingResponseDTO>> optionalCourseOfferingDTOS = Optional.of(legacyCourseOfferingDTOS);
+//        return optionalCourseOfferingDTOS;
+//    }
 }

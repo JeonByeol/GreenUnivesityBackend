@@ -47,6 +47,9 @@ public class AcademicTermController {
         return academicTermService.findById(termId);
     }
 
+    // T-2-2) Term 학기 별 과목 조회
+
+
     // T-3) TermCreateDTO를 통해 데이터를 생성
     @PostMapping("/create")
     public ResponseEntity<AcademicTermResponseDTO> createTerm(

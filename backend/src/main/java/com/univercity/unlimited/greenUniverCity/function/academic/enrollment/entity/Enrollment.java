@@ -44,9 +44,4 @@ public class Enrollment {
     @JoinColumn(name = "section_id")
     @ToString.Exclude
     private ClassSection classSection; //분반
-
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "offering_id")
-////    @ToString.Exclude
-//    private CourseOffering courseOffering; //강의 개설 ClassSection 등장으로 삭제 예정
 }

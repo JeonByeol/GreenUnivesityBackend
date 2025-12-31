@@ -94,4 +94,46 @@ public class StudentStatusHistoryController {
         Map<String,String> result = studentStatusHistoryService.deleteByHistoryId(historyId,email);
         return ResponseEntity.ok(result.get("result"));
     }
+
+    @PostMapping("/approved")
+    public ResponseEntity<StudentStatusHistoryResponseDTO> appovedSSHistory(
+            @RequestBody StudentStatusHistoryUpdateDTO dto,
+            @RequestHeader(value="X-User-Email",required = false) String requesterEmail) {
+        StudentStatusHistoryResponseDTO responseDTO = studentStatusHistoryService.approveStatusHistory(dto,requesterEmail);
+        return ResponseEntity.ok(responseDTO);
+    }
+
+    @PostMapping("/rejected")
+    public ResponseEntity<StudentStatusHistoryResponseDTO> rejectedSSHistory(
+            @RequestBody StudentStatusHistoryUpdateDTO dto,
+            @RequestHeader(value="X-User-Email",required = false) String requesterEmail) {
+        StudentStatusHistoryResponseDTO responseDTO = studentStatusHistoryService.rejectStatusHistory(dto,requesterEmail);
+        return ResponseEntity.ok(responseDTO);
+    }
+
+    @GetMapping("/my")
+    public ResponseEntity<List<StudentStatusHistoryResponseDTO>> getMyData(
+            @RequestHeader(value = "X-User-Email", required = false) String studentEmail) {
+
+        // 1) 요청 로그
+        log.info("1) 학생의 본인 데이터 조회 요청 - 학생-:{}", studentEmail);
+
+        // 2) 이메일 검증 (Postman 테스트용)
+        if (studentEmail == null || studentEmail.isEmpty()) {
+            log.warn("X-User-Email 헤더가 없습니다. 테스트용 기본값 사용");
+            studentEmail = "hannah@aaa.com";
+        }
+
+        // 3) 서비스 호출
+        List<StudentStatusHistoryResponseDTO> response =
+                studentStatusHistoryService.getMyData(studentEmail);
+
+        // 4) 완료 로그
+        log.info("Complete: 학생 데이터 조회 완료 - 학생-:{}, 데이터개수-:{}",
+                studentEmail, response.size());
+
+        // 5) 응답 반환
+        return ResponseEntity.ok(response);
+    }
+
 }

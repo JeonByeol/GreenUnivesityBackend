@@ -18,6 +18,7 @@ public interface DepartmentService {
     Map<String,String> deleteByDepartmentId(Long departmentId, String email);
 
     Department findEntityById(Long departmentId);
+    Department findByName(String departmentName);
 
     int addDepartment(DepartmentResponseDTO legacyDepartmentDTO);
 }

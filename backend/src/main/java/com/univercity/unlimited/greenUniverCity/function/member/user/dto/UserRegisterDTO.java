@@ -28,4 +28,7 @@ public class UserRegisterDTO {
 
     @NotBlank(message = "역할은 필수입니다")
     private String role; // STUDENT, PROFESSOR, ADMIN
+
+    @NotBlank(message = "학과는 필수입니다.")
+    private String deptName;
 }
