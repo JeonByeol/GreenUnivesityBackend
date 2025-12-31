@@ -4,11 +4,15 @@ import com.univercity.unlimited.greenUniverCity.function.academic.enrollment.dto
 import com.univercity.unlimited.greenUniverCity.function.academic.enrollment.dto.EnrollmentResponseDTO;
 import com.univercity.unlimited.greenUniverCity.function.academic.enrollment.dto.EnrollmentUpdateDTO;
 import com.univercity.unlimited.greenUniverCity.function.academic.enrollment.service.EnrollmentService;
+import com.univercity.unlimited.greenUniverCity.function.academic.offering.dto.CourseOfferingResponseDTO;
+import com.univercity.unlimited.greenUniverCity.function.member.user.dto.UserResponseDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -97,5 +101,25 @@ public class EnrollmentController {
 
         Map<String,String> result = enrollmentService.deleteByEnrollmentId(enrollmentId,email);
         return ResponseEntity.ok(result.get("result"));
+    }
+
+    @GetMapping("/my")
+    public ResponseEntity<Map<CourseOfferingResponseDTO, List<UserResponseDTO>>> getMyData(
+            @RequestHeader(value = "X-User-Email", required = false) String professorEmail) {
+
+        log.info("1) 교수가 관리하는 학생의 데이터 조회 요청 :{}", professorEmail);
+
+        if (professorEmail == null || professorEmail.isEmpty()) {
+            log.warn("X-User-Email 헤더가 없습니다. 테스트용 기본값 사용");
+            professorEmail = "hannah@aaa.com";
+        }
+
+        Map<CourseOfferingResponseDTO, List<UserResponseDTO>> response =
+                enrollmentService.findAllStudentsByProfessorEmail(professorEmail);
+
+        log.info("데이터 확인 : {}",response);
+
+
+        return ResponseEntity.ok(response);
     }
 }
