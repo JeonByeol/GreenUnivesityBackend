@@ -46,9 +46,9 @@ import org.junit.platform.suite.api.Suite;
         //과제 제출은 '과제'와 '학생'이 있어야 가능 (Enrollment 후 활동으로 간주하여 뒤에 배치)
         SubmissionRepositoryTests.class,
 
-        GradeRepositoryTests.class,
-
         AttendanceRepositoryTests.class,
+
+        GradeRepositoryTests.class,
 
         UserDummyRepositoryTests.class,
 

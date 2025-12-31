@@ -16,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -134,6 +135,22 @@ public class CourseOfferingServiceImpl implements CourseOfferingService{
         repository.delete(offeringOptional.get());
 
         return Map.of("Result","Success");
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<CourseOfferingResponseDTO> findMyOfferings(String email) {
+        log.info("2) 내 강의 목록 조회 시작 - email: {}", email);
+
+        // 1. 위에서 만든 최적화된 쿼리 메서드 호출
+        List<CourseOffering> offerings = repository.findAllByProfessorEmail(email);
+
+        log.info("3) 조회 성공 - 건수: {}", offerings.size());
+
+        // 2. DTO 변환 후 반환
+        return offerings.stream()
+                .map(entityMapper::toCourseOfferingResponseDTO)
+                .toList();
     }
 
 

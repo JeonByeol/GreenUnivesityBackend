@@ -1,5 +1,8 @@
 package com.univercity.unlimited.greenUniverCity.repository;
 
+import com.univercity.unlimited.greenUniverCity.function.academic.attendance.entity.Attendance;
+import com.univercity.unlimited.greenUniverCity.function.academic.attendance.entity.AttendanceStatus;
+import com.univercity.unlimited.greenUniverCity.function.academic.attendance.repository.AttendanceRepository;
 import com.univercity.unlimited.greenUniverCity.function.academic.enrollment.entity.Enrollment;
 import com.univercity.unlimited.greenUniverCity.function.academic.enrollment.repository.EnrollmentRepository;
 import com.univercity.unlimited.greenUniverCity.function.academic.grade.entity.Grade;
@@ -41,6 +44,9 @@ public class GradeRepositoryTests {
     @Autowired
     private CourseOfferingRepository courseOfferingRepository;
 
+    @Autowired
+    private AttendanceRepository attendanceRepository;
+
     /**
      * 테스트 데이터 생성 시나리오:
      * 1. 각 강의(CourseOffering)에 평가항목(GradeItem) 생성
@@ -66,9 +72,13 @@ public class GradeRepositoryTests {
         log.info("========== 성적 테스트 데이터 생성 완료 ==========");
     }
 
+
     /**
-     * 1단계: 각 강의에 평가항목 생성
-     * - 중간고사 30%, 기말고사 40%, 과제 30%
+     *  1단계: 각 강의에 평가항목 생성
+     * - 중간고사(30%): 100점 만점
+     * - 기말고사(30%): 100점 만점
+     * - 과제(20%): 50점 만점 (시험보다 낮은 배점)
+     * - 출결(20%): 20점 만점 (1주당 1점 + 알파 or 비율 그대로 점수화)
      */
     private void createGradeItems() {
         log.info("1) 평가항목 생성 시작");
@@ -83,7 +93,7 @@ public class GradeRepositoryTests {
         int createdCount = 0;
 
         for (CourseOffering offering : offerings) {
-            // 이미 평가항목이 있는지 확인
+            // 이미 평가항목이 있는지 확인 (중복 생성 방지)
             List<GradeItem> existingItems = gradeItemRepository.findByOfferingId(offering.getOfferingId());
 
             if (!existingItems.isEmpty()) {
@@ -91,7 +101,7 @@ public class GradeRepositoryTests {
                 continue;
             }
 
-            // 중간고사 (30%)
+            // 1. 중간고사 (30%) - 시험은 보통 100점 만점
             GradeItem midterm = GradeItem.builder()
                     .courseOffering(offering)
                     .itemName("중간고사")
@@ -101,28 +111,38 @@ public class GradeRepositoryTests {
                     .build();
             gradeItemRepository.save(midterm);
 
-            // 기말고사 (40%)
+            // 2. 기말고사 (30%) - 시험은 보통 100점 만점
             GradeItem finalExam = GradeItem.builder()
                     .courseOffering(offering)
                     .itemName("기말고사")
                     .itemType(GradeItemType.FINAL)
                     .maxScore(100.0f)
-                    .weightPercent(40.0f)
+                    .weightPercent(30.0f)
                     .build();
             gradeItemRepository.save(finalExam);
 
-            // 과제 (30%)
+            // 3. 과제 (20%) - 과제는 시험보다 작은 50점 만점으로 설정
             GradeItem assignment = GradeItem.builder()
                     .courseOffering(offering)
-                    .itemName("과제")
+                    .itemName("개별 과제")
                     .itemType(GradeItemType.ASSIGNMENT)
-                    .maxScore(100.0f)
-                    .weightPercent(30.0f)
+                    .maxScore(50.0f)
+                    .weightPercent(20.0f)
                     .build();
             gradeItemRepository.save(assignment);
 
+            // 4. 출결 (20%) - 출결은 주차별 점수 등을 고려해 20점 만점 (비율과 동일하게)
+            GradeItem attendance = GradeItem.builder()
+                    .courseOffering(offering)
+                    .itemName("출결")
+                    .itemType(GradeItemType.ATTENDANCE)
+                    .maxScore(20.0f)
+                    .weightPercent(20.0f)
+                    .build();
+            gradeItemRepository.save(attendance);
+
             createdCount++;
-            log.info("강의 [{}]에 평가항목 3개 생성 완료", offering.getCourseName());
+            log.info("강의 [{}]에 평가항목 4개(중간/기말/과제/출결) 생성 완료", offering.getCourseName());
         }
 
         log.info("평가항목 생성 완료 - 총 {}개 강의에 생성", createdCount);
@@ -149,40 +169,64 @@ public class GradeRepositoryTests {
             List<GradeItem> gradeItems = gradeItemRepository
                     .findByOfferingId(enrollment.getClassSection().getCourseOffering().getOfferingId());
 
-            if (gradeItems.isEmpty()) {
-                log.warn("수강신청 ID [{}]의 강의에 평가항목이 없습니다. 건너뜁니다.",
-                        enrollment.getEnrollmentId());
-                continue;
-            }
+            if (gradeItems.isEmpty()) continue;
 
-            // 이미 점수가 있는지 확인
+            // 이미 점수가 있는지 확인 (중복 생성 방지)
             List<StudentScore> existingScores = studentScoreRepository
                     .findByEnrollmentId(enrollment.getEnrollmentId());
 
-            if (!existingScores.isEmpty()) {
-                log.info("수강신청 ID [{}]는 이미 점수가 존재합니다. 건너뜁니다.",
-                        enrollment.getEnrollmentId());
-                continue;
-            }
+            if (!existingScores.isEmpty()) continue;
 
             // 각 평가항목에 대해 점수 생성
             for (GradeItem gradeItem : gradeItems) {
-                // 랜덤 점수 생성 (60~100점)
-                float randomScore = 60.0f + (float)(Math.random() * 40);
+                float scoreObtained = 0.0f;
 
+                if (gradeItem.getItemType() == GradeItemType.ATTENDANCE) {
+
+                    // 1. 해당 학생의 출결 기록 가져오기
+                    List<Attendance> attendances = attendanceRepository
+                            .findByEnrollmentId(enrollment.getEnrollmentId());
+
+                    // 2. 감점 계산 (예: 결석 1회당 1점, 지각 3회당 1점 감점)
+                    int absenceCount = 0;
+                    int lateCount = 0;
+
+                    for (Attendance att : attendances) {
+                        if (att.getStatus() == AttendanceStatus.ABSENT) {
+                            absenceCount++;
+                        } else if (att.getStatus() == AttendanceStatus.LATE) {
+                            lateCount++;
+                        }
+                    }
+
+                    // 3. 점수 산출 (MaxScore에서 감점, 최소 0점)
+                    // (지각 3번 = 결석 1번 취급 로직 예시)
+                    float deduction = (absenceCount * 1.0f) + (lateCount / 3.0f);
+                    float calculatedScore = gradeItem.getMaxScore() - deduction;
+
+                    scoreObtained = Math.max(0.0f, calculatedScore); // 0점 미만 방지
+
+                }
+                // 🔥 [CASE 2] 과제, 시험 등 나머지 -> 랜덤 생성
+                else {
+                    float maxScore = gradeItem.getMaxScore();
+                    // 60% ~ 100% 사이 랜덤 비율
+                    float randomRatio = 0.6f + (float)(Math.random() * 0.4f);
+                    float rawScore = maxScore * randomRatio;
+
+                    // 소수점 첫째자리 반올림
+                    scoreObtained = Math.round(rawScore * 10.0f) / 10.0f;
+                }
+
+                // 점수 저장
                 StudentScore studentScore = StudentScore.builder()
                         .enrollment(enrollment)
                         .gradeItem(gradeItem)
-                        .scoreObtained(randomScore)
+                        .scoreObtained(scoreObtained)
                         .build();
 
                 studentScoreRepository.save(studentScore);
-
-                log.debug("점수 생성 - 평가항목: {}, 점수: {}",
-                        gradeItem.getItemName(),
-                        randomScore);
             }
-
             createdCount++;
         }
 

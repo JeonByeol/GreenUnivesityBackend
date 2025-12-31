@@ -29,15 +29,16 @@ public class Attendance {
     @Column(name = "attendance_date", nullable = false)
     private LocalDate attendanceDate; //출결날짜
 
-    @Column(name="status",nullable = false)
-    private String status; //출결상태(출석,지각,조퇴)
+    @Column(name="status", nullable = false)
+    @Enumerated(EnumType.STRING) // DB에는 "PRESENT", "LATE" 문자열로 저장됨
+    private AttendanceStatus status;
 
     @ManyToOne
     @JoinColumn(name="enrollment_id")
     private Enrollment enrollment;//수강내역Id
 
-//    @Column(name="week",nullable = false) 12/01 추가 써야함
-//    private String week; // 주차(1주,2주,3주,...,14주..)
+    @Column(name="week",nullable = false)
+    private Integer week; //주차
 
 }
 

@@ -18,7 +18,7 @@ import java.util.Map;
 @RestController
 @Slf4j
 @RequiredArgsConstructor
-@RequestMapping("/api/student-scores")
+@RequestMapping("/api/student-score")
 public class StudentScoreController {
 
     private final StudentScoreService scoreService;
@@ -47,7 +47,7 @@ public class StudentScoreController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-    //SS-2) 학생 점수 단건 조회를 위해 컨트롤러 내부에 선언된 CRUD(GET)
+    //SS-2) 학생 점수 단건 조회를 위해 컨트롤러 내부에 선언된 CRUD(GET) - 테스트완료
     @GetMapping("/{scoreId}")
     public ResponseEntity<StudentScoreResponseDTO> getStudentScore(@PathVariable Long scoreId) {
 
@@ -61,7 +61,7 @@ public class StudentScoreController {
         return ResponseEntity.ok(response);
     }
     
-    //SS-3) 학생별 모든 점수를 조회하기 위해 컨트롤러 내부에 선언된 CRUD(get)
+    //SS-3) 학생별 모든 점수를 조회하기 위해 컨트롤러 내부에 선언된 CRUD(get) - 테스트완료
     @GetMapping("/enrollments/{enrollmentId}")
     public ResponseEntity<List<StudentScoreResponseDTO>> getStudentScores(
             @PathVariable Long enrollmentId) {

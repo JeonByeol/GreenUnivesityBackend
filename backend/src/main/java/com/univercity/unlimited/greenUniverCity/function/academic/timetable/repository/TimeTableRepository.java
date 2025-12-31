@@ -29,11 +29,14 @@ public interface TimeTableRepository extends JpaRepository<TimeTable,Long> {
 
 
     @Query("SELECT t FROM TimeTable t " +
-            "JOIN t.classSection cs " +
-            "JOIN cs.courseOffering co " +
+            "JOIN FETCH t.classSection cs " +
+            "JOIN FETCH cs.courseOffering co " +
+            "LEFT JOIN FETCH co.professor p " +
+            "LEFT JOIN FETCH t.classroom cr " +
             "JOIN Enrollment e ON e.classSection = cs " +
             "JOIN e.user u " +
-            "WHERE u.email = :email")
+            "WHERE u.email = :email " +
+            "ORDER BY t.dayOfWeek, t.startTime")
     List<TimeTable> findTimetableByStudentEmail(@Param("email") String email);
 
     // Case A: 생성 시 (나 자신은 없으므로 그냥 검사)
