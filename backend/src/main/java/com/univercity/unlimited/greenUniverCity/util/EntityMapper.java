@@ -245,6 +245,7 @@ public class EntityMapper {
                 .dayOfWeek(timeTable.getDayOfWeek())
                 .startTime(timeTable.getStartTime())
                 .endTime(timeTable.getEndTime())
+                .professorName(user.getNickname())
                 .classroomId(classroom.getClassroomId())
                 .classroomName(classroom.getLocation())
                 .sectionId(section.getSectionId())

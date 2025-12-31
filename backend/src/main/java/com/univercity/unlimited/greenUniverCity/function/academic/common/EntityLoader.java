@@ -61,7 +61,7 @@ public class EntityLoader {
     // =================================================================================
 
     // 만들긴 했는데 모든 repository를 참조하는 방식 때문에 사용 안함 근데 어떻게든 쓸 일 있을거 같아서 유지
-    
+
     public User getUser(Long id) {
         return validator.getEntityOrThrow(userRepository, id, "사용자");
     }

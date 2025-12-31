@@ -28,6 +28,4 @@ public interface ClassSectionRepository extends JpaRepository<ClassSection,Long>
             "WHERE co.offeringId = :offeringId")
     List<ClassSection> findSectionByOfferingId(@Param("offeringId") Long offeringId);
 
-
-
 }
