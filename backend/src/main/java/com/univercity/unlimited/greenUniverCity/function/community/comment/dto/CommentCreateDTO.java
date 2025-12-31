@@ -19,6 +19,8 @@ public class CommentCreateDTO {
 
     private Long postId;
 
+    private String email;
+
 
 
 

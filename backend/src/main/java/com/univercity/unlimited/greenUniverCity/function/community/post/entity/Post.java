@@ -4,6 +4,8 @@ import com.univercity.unlimited.greenUniverCity.function.community.board.entity.
 import com.univercity.unlimited.greenUniverCity.function.member.user.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 import java.time.LocalDateTime;
 
@@ -14,6 +16,9 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@SQLDelete(sql = "UPDATE tbl_post SET deleted = true WHERE post_id = ?")
+@Where(clause = "deleted = false")
+
 public class Post {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,6 +39,10 @@ public class Post {
 
     @Column(name = "view_count")
     private int viewCount; //뷰 수
+
+
+    @Column(name = "deleted", nullable = false)
+    private boolean deleted = false;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "board_id")
