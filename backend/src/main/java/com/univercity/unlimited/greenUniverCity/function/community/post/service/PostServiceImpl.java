@@ -21,7 +21,7 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 @Setter
-
+@Transactional
 public class PostServiceImpl implements PostService {
     private final PostRepository postRepository;
     private final ModelMapper mapper;
@@ -89,7 +89,7 @@ public class PostServiceImpl implements PostService {
     // P-4) 삭제
     @Override
     public void deletePost(Long postId) {
-        postRepository.deleteById(postId);
+        postRepository.softDelete(postId);
     }
 }
 

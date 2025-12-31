@@ -1,10 +1,8 @@
 package com.univercity.unlimited.greenUniverCity.function.member.studentStatusHistory.dto;
 
 import com.univercity.unlimited.greenUniverCity.function.member.studentStatusHistory.entity.StudentStatusHistoryType;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import jakarta.persistence.Column;
+import lombok.*;
 
 import java.time.LocalDate;
 
@@ -12,8 +10,10 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @Getter
 @Setter
+@ToString
 public class StudentStatusHistoryCreateDTO {
-    private StudentStatusHistoryType changeType;
+    private String changeType;
+    private LocalDate changeDate;
     private String reason;
     private Long userId;
 }

@@ -16,9 +16,6 @@ public interface NoticeService {
     // N-2 단일 공지
     List<NoticeResponseDTO> findNotice(Long noticeId);
 
-    // N-3 수정
-    NoticeResponseDTO updateNotice();
-
     // N-3) 수정 (조건 A: Body로 noticeId 포함해서 받는 방식)
     NoticeResponseDTO updateNotice(NoticeUpdateDTO dto);
 

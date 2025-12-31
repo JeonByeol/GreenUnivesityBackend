@@ -49,8 +49,9 @@ public class EntityMapper {
         if (attendance == null) return null;
 
         Enrollment enrollment=attendance.getEnrollment();
-        // [안전장치 추가] enrollment가 null이면 user도 못 꺼내므로 방어 로직 필요
+        // enrollment가 null이면 user도 못 꺼내므로 방어 로직구현
         User user = (enrollment != null) ? enrollment.getUser() : null;
+        CourseOffering offering=enrollment.getClassSection().getCourseOffering();
 
         return AttendanceResponseDTO.builder()
                 .attendanceId(attendance.getAttendanceId())
@@ -58,6 +59,8 @@ public class EntityMapper {
                 .attendanceDate(attendance.getAttendanceDate())
                 .status(attendance.getStatus())
                 .studentNickName(user != null ? user.getNickname() : "알 수 없음") // null 체크
+                .courseName(offering.getCourseName())
+                .week(attendance.getWeek())
                 .build();
     }
 
@@ -118,17 +121,19 @@ public class EntityMapper {
 
         Enrollment enrollment = grade.getEnrollment();
         CourseOffering offering=enrollment.getClassSection().getCourseOffering();
+        Course course=offering.getCourse();
 
         return GradeResponseDTO.builder()
                 .gradeId(grade.getGradeId())
                 .enrollmentId(enrollment.getEnrollmentId())
-                .courseName(offering.getCourseName()) // 추가된 필드 매핑
+                .courseName(offering.getCourseName())
                 .studentName(enrollment.getUser().getNickname())
-                .professorName(enrollment.getUser().getNickname())
+                .professorName(enrollment.getClassSection().getCourseOffering().getProfessor().getNickname())
                 .totalScore(grade.getTotalScore())
                 .letterGrade(grade.getLetterGrade())
                 .createdAt(grade.getCreatedAt())
                 .updatedAt(grade.getUpdatedAt())
+                .credit(course.getCredits())
                 .build();
     }
 
@@ -167,6 +172,11 @@ public class EntityMapper {
                 .scoreObtained(studentScore.getScoreObtained())
                 .createdAt(studentScore.getCreatedAt())
                 .updatedAt(studentScore.getUpdatedAt())
+                .itemName(item.getItemName())
+                .itemType(item.getItemType())
+                .maxScore(item.getMaxScore())
+                .weightPercent(item.getWeightPercent())
+                .studentName(enrollment.getUser().getNickname())
                 .build();
     }
 
@@ -245,11 +255,13 @@ public class EntityMapper {
                 .dayOfWeek(timeTable.getDayOfWeek())
                 .startTime(timeTable.getStartTime())
                 .endTime(timeTable.getEndTime())
+                .professorName(user.getNickname())
                 .classroomId(classroom.getClassroomId())
                 .classroomName(classroom.getLocation())
                 .sectionId(section.getSectionId())
                 .sectionName(section.getSectionName())
                 .courseName(courseOffering.getCourseName())
+                .professorNickName(courseOffering.getProfessor().getNickname())
                 .build();
     }
 

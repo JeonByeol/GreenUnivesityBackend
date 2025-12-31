@@ -6,6 +6,7 @@ import com.univercity.unlimited.greenUniverCity.function.academic.assignment.dto
 import com.univercity.unlimited.greenUniverCity.function.academic.assignment.entity.Assignment;
 import com.univercity.unlimited.greenUniverCity.function.academic.assignment.repository.AssignmentRepository;
 import com.univercity.unlimited.greenUniverCity.function.academic.common.AcademicSecurityValidator;
+import com.univercity.unlimited.greenUniverCity.function.academic.common.EntityLoader;
 import com.univercity.unlimited.greenUniverCity.function.academic.section.entity.ClassSection;
 import com.univercity.unlimited.greenUniverCity.function.academic.section.repository.ClassSectionRepository;
 import com.univercity.unlimited.greenUniverCity.util.EntityMapper;
@@ -24,6 +25,7 @@ public class AssignmentServiceImpl implements AssignmentService {
 
     private final AssignmentRepository assignmentRepository;
     private final ClassSectionRepository classSectionRepository; // 분반 직접 조회를 위해 추가 (Validator 활용)
+
     private final AcademicSecurityValidator securityValidator; // 보안 검증 유틸리티 주입
     private final EntityMapper entityMapper;
 
@@ -34,7 +36,7 @@ public class AssignmentServiceImpl implements AssignmentService {
         log.info("AS-1) 분반별 과제 목록 조회 요청 - sectionId: {}", sectionId);
 
         // 분반 존재 여부 확인 (Optional)
-        securityValidator.getEntityOrThrow(classSectionRepository, sectionId, "분반");
+        getSectionOrThrow(sectionId);
 
         return assignmentRepository.findBySectionId(sectionId).stream()
                 .map(entityMapper::toAssignmentResponseDTO)
@@ -47,7 +49,7 @@ public class AssignmentServiceImpl implements AssignmentService {
         log.info("AS-2) 과제 생성 요청 - title: {}, 사용자: {}", dto.getTitle(), email);
 
         // 1. 분반 엔티티 조회 (Validator V-1 활용)
-        ClassSection section = securityValidator.getEntityOrThrow(classSectionRepository, dto.getSectionId(), "분반");
+        ClassSection section = getSectionOrThrow(dto.getSectionId());
 
         // 2. [보안] 교수가 해당 분반(강의)의 담당자인지 검증 (Validator AC-security 활용)
         securityValidator.validateProfessorOwnership(section, email, "과제 생성");
@@ -70,8 +72,8 @@ public class AssignmentServiceImpl implements AssignmentService {
     public AssignmentResponseDTO updateAssignment(AssignmentUpdateDTO dto, String email) {
         log.info("AS-3) 과제 수정 요청 - assignmentId: {}, 사용자: {}", dto.getAssignmentId(), email);
 
-        // 1. 과제 엔티티 조회 (Validator V-1 활용)
-        Assignment assignment = securityValidator.getEntityOrThrow(assignmentRepository, dto.getAssignmentId(), "과제");
+        // 1. 과제 엔티티 조회
+        Assignment assignment = getAssignmentOrThrow(dto.getAssignmentId());
 
         // 2. [보안] 해당 과제가 속한 분반의 담당 교수인지 확인 (Section을 통해 검증)
         securityValidator.validateProfessorOwnership(assignment.getClassSection(), email, "과제 수정");
@@ -93,7 +95,7 @@ public class AssignmentServiceImpl implements AssignmentService {
         log.info("AS-4) 과제 삭제 요청 - assignmentId: {}, 사용자: {}", assignmentId, email);
 
         // 1. 과제 엔티티 조회 (Validator V-1 활용)
-        Assignment assignment = securityValidator.getEntityOrThrow(assignmentRepository, assignmentId, "과제");
+        Assignment assignment = getAssignmentOrThrow(assignmentId);
 
         // 2. [보안] 담당 교수 확인
         securityValidator.validateProfessorOwnership(assignment.getClassSection(), email, "과제 삭제");
@@ -107,7 +109,8 @@ public class AssignmentServiceImpl implements AssignmentService {
     @Transactional(readOnly = true)
     public AssignmentResponseDTO getAssignment(Long assignmentId) {
         // 단건 조회 및 DTO 변환
-        Assignment assignment = getAssignmentEntity(assignmentId);
+        Assignment assignment = getAssignmentOrThrow(assignmentId);
+
         return entityMapper.toAssignmentResponseDTO(assignment);
     }
     
@@ -122,11 +125,14 @@ public class AssignmentServiceImpl implements AssignmentService {
                 .toList();
     }
 
-    //AS-E) 외부 Service(예: 제출 서비스)에서 Assignment의 실체 정보를 사용하기 위한 엔티티 조회 서비스
-    @Override
-    @Transactional(readOnly = true)
-    public Assignment getAssignmentEntity(Long assignmentId) {
-        // Validator V-1 활용하여 엔티티 조회 (재사용성)
-        return securityValidator.getEntityOrThrow(assignmentRepository, assignmentId, "과제");
+    // =========================================================================
+    //  함수
+    // =========================================================================
+    private Assignment getAssignmentOrThrow(Long id) {
+        return securityValidator.getEntityOrThrow(assignmentRepository, id, "과제");
+    }
+
+    private ClassSection getSectionOrThrow(Long id) {
+        return securityValidator.getEntityOrThrow(classSectionRepository, id, "분반");
     }
 }

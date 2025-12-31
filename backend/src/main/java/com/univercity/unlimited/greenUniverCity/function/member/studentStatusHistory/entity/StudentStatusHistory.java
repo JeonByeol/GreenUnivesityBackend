@@ -18,10 +18,15 @@ public class StudentStatusHistory {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "history_id")
-    private Long historyId;
+    private Long statusHistoryId;
 
     @Column(name = "change_type")
+    @Enumerated(EnumType.STRING)
     private StudentStatusHistoryType changeType;
+
+    @Column(name = "approve_type")
+    @Enumerated(EnumType.STRING)
+    private StudentStatusHistoryApproveType approveType;
 
     @Column(name = "change_date")
     private LocalDate changeDate;

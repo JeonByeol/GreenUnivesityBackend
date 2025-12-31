@@ -20,6 +20,9 @@ public class NoticeCreateDTO {
 
     private LocalDateTime createdAt; //날짜
 
+    private String  nickname; //날짜
+
+
 //    @JsonBackReference("user-notice")
 //    @ToString.Exclude
 //    private UserDTO userDTO;

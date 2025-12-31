@@ -16,7 +16,7 @@ import java.util.List;
 @RestController
 @Slf4j
 @RequiredArgsConstructor
-@RequestMapping("/api/grade-items")
+@RequestMapping("/api/grade-item")
 public class GradeItemController {
     private final GradeItemService itemService;
 

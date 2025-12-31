@@ -1,5 +1,6 @@
 package com.univercity.unlimited.greenUniverCity.function.academic.enrollment.service;
 
+import com.univercity.unlimited.greenUniverCity.function.academic.course.dto.CourseResponseDTO;
 import com.univercity.unlimited.greenUniverCity.function.academic.enrollment.dto.EnrollmentCreateDTO;
 import com.univercity.unlimited.greenUniverCity.function.academic.enrollment.dto.EnrollmentResponseDTO;
 import com.univercity.unlimited.greenUniverCity.function.academic.enrollment.dto.EnrollmentUpdateDTO;
@@ -8,10 +9,15 @@ import com.univercity.unlimited.greenUniverCity.function.academic.enrollment.exc
 import com.univercity.unlimited.greenUniverCity.function.academic.enrollment.exception.EnrollmentNotFoundException;
 import com.univercity.unlimited.greenUniverCity.function.academic.enrollment.exception.UserNotFoundException;
 import com.univercity.unlimited.greenUniverCity.function.academic.enrollment.repository.EnrollmentRepository;
+import com.univercity.unlimited.greenUniverCity.function.academic.offering.dto.CourseOfferingResponseDTO;
+import com.univercity.unlimited.greenUniverCity.function.academic.offering.entity.CourseOffering;
 import com.univercity.unlimited.greenUniverCity.function.academic.offering.exception.CourseOfferingNotFoundException;
 import com.univercity.unlimited.greenUniverCity.function.academic.section.entity.ClassSection;
+import com.univercity.unlimited.greenUniverCity.function.academic.section.repository.ClassSectionRepository;
 import com.univercity.unlimited.greenUniverCity.function.academic.section.service.ClassSectionService;
+import com.univercity.unlimited.greenUniverCity.function.member.user.dto.UserResponseDTO;
 import com.univercity.unlimited.greenUniverCity.function.member.user.entity.User;
+import com.univercity.unlimited.greenUniverCity.function.member.user.repository.UserRepository;
 import com.univercity.unlimited.greenUniverCity.function.member.user.service.UserService;
 import com.univercity.unlimited.greenUniverCity.util.EntityMapper;
 import com.univercity.unlimited.greenUniverCity.util.MapperUtil;
@@ -31,16 +37,32 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class EnrollmentServiceImpl implements EnrollmentService {
     private final EnrollmentRepository repository;
-
-    private final ModelMapper mapper;
-
-    private final ClassSectionService sectionService;
-
+    private final ClassSectionRepository sectionRepository;
+    private final UserRepository userRepository;
     private final UserService userService;
 
+    private final ModelMapper mapper;
     private final EntityMapper entityMapper;
 
-    
+    public UserResponseDTO toUserDTO(User user) {
+        if (user == null) return null;
+
+        UserResponseDTO dto = UserResponseDTO.builder()
+                .userId(user.getUserId())
+                .email(user.getEmail())
+                .nickname(user.getNickname())
+                .studentNumber(user.getStudentNumber())
+                .isDelete(user.isDelete())
+                .build();
+
+        if (user.getUserRole() != null) dto.setRole(user.getUserRole().name());
+        if (user.getDepartment() != null) dto.setDeptName(user.getDepartment().getDeptName());
+
+        return dto;
+    }
+
+
+
     //중복수강신청 검증
     private void validateDuplicateEnrollment(Long userId, Long sectionId) {
         boolean exists = repository.existsByUserUserIdAndClassSectionSectionId(userId, sectionId);
@@ -117,8 +139,8 @@ public class EnrollmentServiceImpl implements EnrollmentService {
 
         log.info("3)EnrollmentCreateDTO -> Enrollment : {}", enrollment);
 
-        User user = userService.getUserById(dto.getUserId());
-        ClassSection section=sectionService.getClassSectionEntity(dto.getSectionId());
+        User user = getUserOrThrow(dto.getUserId());
+        ClassSection section = getSectionOrThrow(dto.getSectionId());
 //        CourseOffering offering = offeringService.getCourseOfferingEntity(dto.getOfferingId());
 
         log.info("3-1)section 탐색 : {}", section);
@@ -164,8 +186,8 @@ public class EnrollmentServiceImpl implements EnrollmentService {
 
         Enrollment enrollment = enrollmentOptional.get();
 
-        User user = userService.getUserById(dto.getUserId());
-        ClassSection section=sectionService.getClassSectionEntity(dto.getSectionId());
+        User user = getUserOrThrow(dto.getUserId());
+        ClassSection section = getSectionOrThrow(dto.getSectionId());
 //        CourseOffering offering = offeringService.getCourseOfferingEntity(dto.getOfferingId());
         log.info("3-1)Section 탐색 : {}", section);
         log.info("3-2)유저 탐색 : {}", user);
@@ -208,21 +230,48 @@ public class EnrollmentServiceImpl implements EnrollmentService {
 
         return Map.of("Result","Success");
     }
-
-
-    //E-2) **(기능 입력 바랍니다/사용 안할시 삭제 부탁드립니다)**
     @Override
-    public int addEnrollment(EnrollmentResponseDTO legacyEnrollmentDTO) {
-        log.info("1) 확인 : {}", legacyEnrollmentDTO);
-        Enrollment enrollment = mapper.map(legacyEnrollmentDTO, Enrollment.class);
-        log.info("확인 : {}", enrollment);
-        try {
-            repository.save(enrollment);
-        } catch (Exception e) {
-            return -1;
+    public Map<CourseOfferingResponseDTO, List<UserResponseDTO>> findAllStudentsByProfessorEmail(String professorEmail) {
+        User professor = userRepository.findByEmail(professorEmail)
+                .orElseThrow(() -> new RuntimeException("Professor not found"));
+
+        List<Object[]> results = repository.findStudentsWithCourseByProfessorEmail(professorEmail);
+
+        System.out.println("=== Repository 결과 개수: " + results.size() + " ===");
+
+        Map<Long, CourseOfferingResponseDTO> offeringMap = new HashMap<>(); // offeringId 기준
+        Map<Long, List<UserResponseDTO>> studentsMap = new HashMap<>();
+
+        for (Object[] row : results) {
+            CourseOffering co = (CourseOffering) row[0];
+            Long offeringId = co.getOfferingId();
+            CourseOfferingResponseDTO offeringDTO = entityMapper.toCourseOfferingResponseDTO(co);
+            User user = (User) row[1];
+            UserResponseDTO userDTO = toUserDTO(user);
+
+            // offeringId 기준으로 map에 추가
+            offeringMap.putIfAbsent(offeringId, offeringDTO);
+
+            List<UserResponseDTO> students = studentsMap.computeIfAbsent(offeringId, k -> new ArrayList<>());
+
+            // 학생 중복 확인
+            boolean exists = students.stream()
+                    .anyMatch(s -> s.getUserId().equals(userDTO.getUserId()));
+
+            if (!exists) {
+                students.add(userDTO);
+            }
         }
-        return 1;
+
+        // 최종적으로 CourseOfferingResponseDTO → List<UserResponseDTO> 형태로 변환
+        Map<CourseOfferingResponseDTO, List<UserResponseDTO>> result = new HashMap<>();
+        for (Map.Entry<Long, CourseOfferingResponseDTO> entry : offeringMap.entrySet()) {
+            result.put(entry.getValue(), studentsMap.get(entry.getKey()));
+        }
+
+        return result;
     }
+
 
     /**
      *  -- 전체 Entity --
@@ -253,6 +302,37 @@ public class EnrollmentServiceImpl implements EnrollmentService {
         return enrollment;
     }
 
+    //E-2) **(기능 입력 바랍니다/사용 안할시 삭제 부탁드립니다)**
+//    @Override
+    public int addEnrollment(EnrollmentResponseDTO legacyEnrollmentDTO) {
+        log.info("1) 확인 : {}", legacyEnrollmentDTO);
+        Enrollment enrollment = mapper.map(legacyEnrollmentDTO, Enrollment.class);
+        log.info("확인 : {}", enrollment);
+        try {
+            repository.save(enrollment);
+        } catch (Exception e) {
+            return -1;
+        }
+        return 1;
+    }
+
+    // =========================================================================
+    //  함수
+    // =========================================================================
+    private Enrollment getEnrollmentOrThrow(Long id) {
+        return repository.findById(id)
+                .orElseThrow(() -> new EnrollmentNotFoundException("Enrollment 를 찾을 수없습니다." + id));
+    }
+
+    private User getUserOrThrow(Long id) {
+        return userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found with id : " + id));
+    }
+
+    private ClassSection getSectionOrThrow(Long id) {
+        return sectionRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Section not found with id : " + id));
+    }
 
 }
 

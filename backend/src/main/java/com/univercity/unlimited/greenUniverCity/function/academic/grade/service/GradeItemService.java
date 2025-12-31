@@ -25,10 +25,7 @@ public interface GradeItemService {
 
     //GI-5) 평가항목의 개수를 조회하는 다른 serviceImpl 구현부에서 사용하기 위한 service 선언부
     Long countOfferingGradeItems(Long offeringId);
-    
-    //GI-6) Entity 조회를 하여 외부 다른 serviceImpl 구현부에서 사용하기 위한 service 선언부
-    GradeItem getGradeItemEntity(Long itemId);
 
-    //G-7)  특정 강의의 특정 유형(과제/시험 등) 평가 항목 조회 (없으면 예외 발생)
+    //GI-6)  특정 강의의 특정 유형(과제/시험 등) 평가 항목 조회 (없으면 예외 발생)
     GradeItem getGradeItemByOfferingAndType(Long offeringId, GradeItemType itemType);
 }

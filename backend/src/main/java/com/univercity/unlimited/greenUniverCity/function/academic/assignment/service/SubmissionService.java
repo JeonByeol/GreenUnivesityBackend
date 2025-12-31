@@ -28,6 +28,4 @@ public interface SubmissionService {
     //SB-6) 전체조회 서비스
     List<SubmissionResponseDTO> findAllSubmissions();
 
-    //SB-E) 외부 Service에서 Submission의 정보를 활용하기 위한 엔티티 조회 서비스
-    Submission getSubmissionEntity(Long submissionId);
 }

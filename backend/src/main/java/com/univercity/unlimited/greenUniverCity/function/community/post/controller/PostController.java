@@ -1,5 +1,7 @@
 package com.univercity.unlimited.greenUniverCity.function.community.post.controller;
 
+import com.univercity.unlimited.greenUniverCity.function.community.comment.dto.CommentResponseDTO;
+import com.univercity.unlimited.greenUniverCity.function.community.comment.service.CommentService;
 import com.univercity.unlimited.greenUniverCity.function.community.post.dto.PostCreateDTO;
 import com.univercity.unlimited.greenUniverCity.function.community.post.dto.PostDTO;
 import com.univercity.unlimited.greenUniverCity.function.community.post.dto.PostResponseDTO;
@@ -19,6 +21,7 @@ import java.util.List;
 public class PostController {
 
     private final PostService postService;
+    private final CommentService commentService;
 
     /* =========================
        공통 유틸 (DepartmentController와 동일)
@@ -97,9 +100,21 @@ public class PostController {
     ) {
         log.info("1) 게시물 삭제 요청 postId={}", postId);
 
-        String email = getEmail(requesterEmail);
         postService.deletePost(postId);
 
         return ResponseEntity.ok("게시물 삭제 완료");
     }
+
+    @GetMapping("/{postId}/comment")
+    public ResponseEntity<List<CommentResponseDTO>> getCommentByPostId(
+            @PathVariable Long postId,
+            @RequestHeader(value = "X-User-Email", required = false) String requesterEmail
+    ) {
+        List<CommentResponseDTO> comments = commentService.findByPostId(postId);
+
+        log.info("게시글 기반 postId={}, 댓글 수={}", postId, comments.size());
+
+        return ResponseEntity.ok(comments);
+    }
+
 }

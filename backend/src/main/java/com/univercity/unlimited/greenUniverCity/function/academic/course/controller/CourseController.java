@@ -4,6 +4,7 @@ import com.univercity.unlimited.greenUniverCity.function.academic.course.dto.Cou
 import com.univercity.unlimited.greenUniverCity.function.academic.course.dto.CourseResponseDTO;
 import com.univercity.unlimited.greenUniverCity.function.academic.course.dto.CourseUpdateDTO;
 import com.univercity.unlimited.greenUniverCity.function.academic.course.service.CourseService;
+import com.univercity.unlimited.greenUniverCity.function.member.department.service.DepartmentService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +19,7 @@ import java.util.Map;
 @RequestMapping("/api/course")
 public class CourseController {
     private final CourseService courseService;
+    private final DepartmentService departmentService;
 
     public String getEmail(String requesterEmail) {
         String email = requesterEmail;

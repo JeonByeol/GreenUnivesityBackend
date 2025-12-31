@@ -20,7 +20,7 @@ public class GradeResponseDTO {
 
     private LocalDateTime createdAt;//생성시간
 
-    private LocalDateTime updatedAt;//수정시간\
+    private LocalDateTime updatedAt;//수정시간
 
     //Enrollment
     private Long enrollmentId;// 수강신청Id

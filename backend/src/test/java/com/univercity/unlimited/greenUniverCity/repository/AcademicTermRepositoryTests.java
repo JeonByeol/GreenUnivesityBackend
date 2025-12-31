@@ -32,7 +32,7 @@ public class AcademicTermRepositoryTests {
                     .semester(i%2+"학기")
                     .registrationStart(LocalDate.now())
                     .registrationEnd(LocalDate.now())
-                    .isCurrent(((int)(Math.random() * 2) % 2) == 1)
+//                    .isCurrent(((int)(Math.random() * 2) % 2) == 1)
                     .build();
 
             repository.save(term);

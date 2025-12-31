@@ -1,6 +1,7 @@
 package com.univercity.unlimited.greenUniverCity.function.academic.enrollment.repository;
 
 import com.univercity.unlimited.greenUniverCity.function.academic.enrollment.entity.Enrollment;
+import com.univercity.unlimited.greenUniverCity.function.member.user.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -24,4 +25,16 @@ public interface EnrollmentRepository extends JpaRepository<Enrollment,Long> {
             "JOIN FETCH e.user " + // 학생 정보도 필요할 테니 Fetch Join
             "WHERE e.classSection.courseOffering.offeringId = :offeringId")
     List<Enrollment> findAllByOfferingId(@Param("offeringId") Long offeringId);
+
+
+    @Query("""
+    SELECT DISTINCT cs.courseOffering, e.user
+    FROM Enrollment e
+    JOIN e.classSection cs
+    JOIN cs.courseOffering co
+    JOIN co.professor p
+    WHERE p.email = :professorEmail
+    """)
+    List<Object[]> findStudentsWithCourseByProfessorEmail(@Param("professorEmail") String professorEmail);
+
 }

@@ -59,23 +59,23 @@ public class GradeController {
         return ResponseEntity.ok(response);
     }
 
-    //NEW-G-3) 학생의 모든 성적을 조회하기 위해 컨트롤러 내부에 선언된 Crud(get)
-    @GetMapping("/my/{email}")
+    //NEW-G-3) 학생의 모든 성적을 조회하기 위해 컨트롤러 내부에 선언된 Crud(get) - 테스트완료
+    @GetMapping("/my")
     public ResponseEntity<List<GradeResponseDTO>> getMyGrade(
-            @RequestHeader(value = "X-User-Email", required = false) String studentEmail){
+            @RequestHeader("X-User-Email") String requesterEmail){
 
-        log.info("1) 학생의 본인 성적 조회 요청 - 학생-:{}", studentEmail);
+        log.info("1) 학생의 본인 성적 조회 요청 - 학생-:{}", requesterEmail);
 
         // Postman 테스트용
-        if (studentEmail == null || studentEmail.isEmpty()) {
+        if (requesterEmail == null || requesterEmail.isEmpty()) {
             log.warn("X-User-Email 헤더가 없습니다. 테스트용 기본값 사용");
-            studentEmail = "hannah@aaa.com";
+            requesterEmail = "hannah@aaa.com";
         }
 
-        List<GradeResponseDTO> response=gradeService.getStudentGrades(studentEmail,studentEmail);
+        List<GradeResponseDTO> response=gradeService.getStudentGrades(requesterEmail,requesterEmail);
 
         log.info("Complete: 학생 성적 조회 완료 - 학생-:{}, 성적개수-:{}",
-                 studentEmail, response.size());
+                requesterEmail, response.size());
 
         return ResponseEntity.ok(response);
     }

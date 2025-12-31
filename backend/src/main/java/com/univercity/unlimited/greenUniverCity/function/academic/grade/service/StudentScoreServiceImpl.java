@@ -3,6 +3,7 @@ package com.univercity.unlimited.greenUniverCity.function.academic.grade.service
 import com.univercity.unlimited.greenUniverCity.function.academic.common.AcademicSecurityValidator;
 import com.univercity.unlimited.greenUniverCity.function.academic.enrollment.dto.EnrollmentResponseDTO;
 import com.univercity.unlimited.greenUniverCity.function.academic.enrollment.entity.Enrollment;
+import com.univercity.unlimited.greenUniverCity.function.academic.enrollment.repository.EnrollmentRepository;
 import com.univercity.unlimited.greenUniverCity.function.academic.enrollment.service.EnrollmentService;
 import com.univercity.unlimited.greenUniverCity.function.academic.grade.dto.studentscore.StudentScoreCreateDTO;
 import com.univercity.unlimited.greenUniverCity.function.academic.grade.dto.studentscore.StudentScoreResponseDTO;
@@ -10,6 +11,7 @@ import com.univercity.unlimited.greenUniverCity.function.academic.grade.dto.stud
 import com.univercity.unlimited.greenUniverCity.function.academic.grade.entity.GradeItem;
 import com.univercity.unlimited.greenUniverCity.function.academic.grade.entity.GradeItemType;
 import com.univercity.unlimited.greenUniverCity.function.academic.grade.entity.StudentScore;
+import com.univercity.unlimited.greenUniverCity.function.academic.grade.repository.GradeItemRepository;
 import com.univercity.unlimited.greenUniverCity.function.academic.grade.repository.StudentScoreRepository;
 import com.univercity.unlimited.greenUniverCity.function.academic.offering.entity.CourseOffering;
 import com.univercity.unlimited.greenUniverCity.util.EntityMapper;
@@ -24,13 +26,15 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 public class StudentScoreServiceImpl implements StudentScoreService{
-    
+
     private final StudentScoreRepository repository;
-    private final EnrollmentService enrollmentService;
-    private final GradeItemService itemService;
+    private final EnrollmentRepository enrollmentRepository; // 변경
+    private final GradeItemRepository itemRepository; // 변경
+    private final GradeItemService itemService; // countOfferingGradeItems 사용을 위해 유지 (비즈니스 로직)
+
     private final AcademicSecurityValidator validator;
     private final EntityMapper entityMapper;
-    
+
     //SS-1) 학생 점수 생성
     @Override
     public StudentScoreResponseDTO createStudentScore(StudentScoreCreateDTO dto, String professorEmail) {
@@ -44,8 +48,8 @@ public class StudentScoreServiceImpl implements StudentScoreService{
             throw new IllegalArgumentException("점수는 0 이상이어야 합니다.");
         }
 
-        Enrollment enrollment= enrollmentService.getEnrollmentEntity(enrollmentId);
-        GradeItem gradeItem = itemService.getGradeItemEntity(itemId);
+        Enrollment enrollment = getEnrollmentOrThrow(enrollmentId);
+        GradeItem gradeItem = getGradeItemOrThrow(itemId);
 
         //만점 초과 검증
         if(dto.getScoreObtained() > gradeItem.getMaxScore()){
@@ -77,11 +81,11 @@ public class StudentScoreServiceImpl implements StudentScoreService{
     public StudentScoreResponseDTO getStudentScore(Long scoreId) {
         log.info("2)학생 점수 조회 - scoreId-:{}", scoreId);
 
-        StudentScore studentScore = validator.getEntityOrThrow(repository, scoreId, "점수");
+        StudentScore studentScore = getStudentScoreOrThrow(scoreId);
 
         return entityMapper.toStudentScoreResponseDTO(studentScore);
     }
-    
+
     //SS-3) 학생별 모든 점수 조회
     @Override
     @Transactional(readOnly = true)
@@ -96,14 +100,14 @@ public class StudentScoreServiceImpl implements StudentScoreService{
                 .map(entityMapper::toStudentScoreResponseDTO)
                 .toList();
     }
-    
+
     //SS-4) 평가항목별 모든 학생 점수 조회
     @Override
     @Transactional(readOnly = true)
     public List<StudentScoreResponseDTO> getItemScores(Long itemId, String professorEmail) {
         log.info("2) 평가 항목별 점수 조회 시작 - itemId-:{}, 교수-:{}", itemId, professorEmail);
-        
-        GradeItem gradeItem= itemService.getGradeItemEntity(itemId);
+
+        GradeItem gradeItem = getGradeItemOrThrow(itemId);
 
         CourseOffering offering= gradeItem.getCourseOffering();
         validator.validateProfessorOwnership(offering, professorEmail, "점수조회");
@@ -116,14 +120,14 @@ public class StudentScoreServiceImpl implements StudentScoreService{
                 .map(entityMapper::toStudentScoreResponseDTO)
                 .toList();
     }
-    
+
     //SS-5) 학생 점수 수정
     @Override
     public StudentScoreResponseDTO updateStudentScore(Long scoreId, StudentScoreUpdateDTO dto, String professorEmail) {
         log.info("2) 학생 점수 수정 시작 - scoreId-:{}, 교수-:{}", scoreId, professorEmail);
 
-        StudentScore studentScore = validator.getEntityOrThrow(repository, scoreId, "점수");
-        
+        StudentScore studentScore = getStudentScoreOrThrow(scoreId);
+
         CourseOffering offering= studentScore.getEnrollment().getClassSection().getCourseOffering();
         validator.validateProfessorOwnership(offering, professorEmail, "점수수정");
 
@@ -150,7 +154,7 @@ public class StudentScoreServiceImpl implements StudentScoreService{
 
         //해당 학생이 받은 점수 개수
         Long submittedScores=repository.countByEnrollment_EnrollmentId(enrollmentId);
-        
+
         //비교
         boolean isComplete = totalItems.equals(submittedScores);
 
@@ -167,11 +171,18 @@ public class StudentScoreServiceImpl implements StudentScoreService{
         return repository.countByEnrollment_EnrollmentId(enrollmentId);
     }
 
-    //SS-8) StudentScore에 대한 정보를 조회(외부Service에서 사용)
-    @Override
-    @Transactional(readOnly = true)
-    public StudentScore getStudentScoreEntity(Long scoreId) {
-        return validator.getEntityOrThrow(repository, scoreId, "점수");
+    // =========================================================================
+    //  함수
+    // =========================================================================
+    private StudentScore getStudentScoreOrThrow(Long id) {
+        return validator.getEntityOrThrow(repository, id, "점수");
     }
 
+    private Enrollment getEnrollmentOrThrow(Long id) {
+        return validator.getEntityOrThrow(enrollmentRepository, id, "수강신청");
+    }
+
+    private GradeItem getGradeItemOrThrow(Long id) {
+        return validator.getEntityOrThrow(itemRepository, id, "평가 항목");
+    }
 }

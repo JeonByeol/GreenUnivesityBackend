@@ -4,5 +4,6 @@ public enum StudentStatusHistoryType {
     ENROLLED,   // 재학
     LEAVE,      // 휴학
     EXPELLED,   // 제적
-    GRADUATED   // 졸업
+    GRADUATED,   // 졸업
+    RETURN, // 복학
 }

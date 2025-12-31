@@ -1,5 +1,7 @@
 package com.univercity.unlimited.greenUniverCity.repository;
 
+import com.univercity.unlimited.greenUniverCity.function.member.department.entity.Department;
+import com.univercity.unlimited.greenUniverCity.function.member.department.repository.DepartmentRepository;
 import com.univercity.unlimited.greenUniverCity.function.member.user.repository.UserRepository;
 import com.univercity.unlimited.greenUniverCity.function.member.user.entity.UserRole;
 import com.univercity.unlimited.greenUniverCity.function.member.user.entity.User;
@@ -8,6 +10,10 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.crypto.password.PasswordEncoder;
+
+import java.time.LocalDate;
+import java.util.List;
 
 @SpringBootTest
 @Slf4j
@@ -15,9 +21,26 @@ public class UserRepositoryTests {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private DepartmentRepository departmentRepository;
+
+    @Autowired
+    private PasswordEncoder encoder;
+
+    private String getRandomStudentNumber() {
+        LocalDate now = LocalDate.now();
+
+        String year = String.valueOf(now.getYear());
+        String month = String.format("%02d", now.getMonthValue());
+        String rand = String.format("%04d", (int)(Math.random() * 10000));
+        return year + month + rand;
+    }
+
     @Test
     @Tag("push")
     public void testInsertData(){
+        List<Department> departments = departmentRepository.findAll();
+
         String[] emails = {
                 "alice@aaa.com",
                 "bob@aaa.com",
@@ -61,7 +84,7 @@ public class UserRepositoryTests {
             if(i == 10){
                 user = User.builder()
                         .email("root@aaa.com")
-                        .password("1111")
+                        .password(encoder.encode("1111"))
                         .nickname(nicknames[i])
                         .build();
 
@@ -69,7 +92,7 @@ public class UserRepositoryTests {
             } else if(i == 11) {
                 user = User.builder()
                         .email("student@aaa.com")
-                        .password("1111")
+                        .password(encoder.encode("1111"))
                         .nickname(nicknames[i])
                         .build();
 
@@ -77,7 +100,7 @@ public class UserRepositoryTests {
             } else if(i == 12){
                 user = User.builder()
                         .email("professor@aaa.com")
-                        .password("1111")
+                        .password(encoder.encode("1111"))
                         .nickname(nicknames[i])
                         .build();
 
@@ -86,7 +109,7 @@ public class UserRepositoryTests {
             else {
                 user = User.builder()
                         .email(emails[i])
-                        .password("1111")
+                        .password(encoder.encode("1111"))
                         .nickname(nicknames[i])
                         .build();
 
@@ -97,6 +120,14 @@ public class UserRepositoryTests {
             if(roleNumber>3) user.setUserRole(UserRole.STUDENT);
             if(roleNumber>5) user.setUserRole(UserRole.PROFESSOR);
             if(roleNumber>7) user.setUserRole(UserRole.ADMIN);
+
+            // ✅ 학과 랜덤 매핑
+            Department dept = departments.get(
+                    (int)(Math.random() * departments.size())
+            );
+            user.setDepartment(dept);
+            user.setStudentNumber(getRandomStudentNumber());
+
             userRepository.save(user);
         }
     }

@@ -4,6 +4,8 @@ import com.univercity.unlimited.greenUniverCity.function.academic.enrollment.dto
 import com.univercity.unlimited.greenUniverCity.function.academic.enrollment.dto.EnrollmentResponseDTO;
 import com.univercity.unlimited.greenUniverCity.function.academic.enrollment.dto.EnrollmentUpdateDTO;
 import com.univercity.unlimited.greenUniverCity.function.academic.enrollment.entity.Enrollment;
+import com.univercity.unlimited.greenUniverCity.function.academic.offering.dto.CourseOfferingResponseDTO;
+import com.univercity.unlimited.greenUniverCity.function.member.user.dto.UserResponseDTO;
 
 import java.util.List;
 import java.util.Map;
@@ -19,8 +21,7 @@ public interface EnrollmentService {
     EnrollmentResponseDTO updateEnrollmentByAuthorizedUser(EnrollmentUpdateDTO dto, String email);
     Map<String,String> deleteByEnrollmentId(Long enrollmentId, String email);
 
-    //E-2) **(기능 입력 바랍니다/사용 안할거면 삭제 부탁드립니다)**
-    int addEnrollment(EnrollmentResponseDTO legacyEnrollmentDTO);
+    Map<CourseOfferingResponseDTO,List<UserResponseDTO>> findAllStudentsByProfessorEmail(String professorEmail);
 
     // -- 전체 Entity --
     //E.All)다른 service에서 enrollment와 여기에 속한 상위 테이블의 정보를 실질적으로 사용하기 위한 service
