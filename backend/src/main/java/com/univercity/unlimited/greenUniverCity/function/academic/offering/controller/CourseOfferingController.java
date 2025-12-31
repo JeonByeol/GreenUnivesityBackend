@@ -119,4 +119,25 @@ public class CourseOfferingController {
     }
 
 
+
+    // CO-6-1 ) 성적테이블에 사용하는 이메일로 전체조회
+    @GetMapping("/my")
+    public ResponseEntity<List<CourseOfferingResponseDTO>> getMyOfferings(
+            @RequestHeader("X-User-Email") String email) {
+
+        log.info("1) 내 강의 목록 조회 요청 - 교수: {}", email);
+
+        // Service 호출 (Service에도 findAllByProfessorEmail 메서드 추가 필요)
+        List<CourseOfferingResponseDTO> list = courseOfferingService.findMyOfferings(email);
+
+        return ResponseEntity.ok(list);
+    }
+
+    // CO-6-2) [추가] 프론트엔드 드롭다운에서 호출하는 URL(/professor/이메일)을 받아주는 메서드
+    @GetMapping("/professor/{email}")
+    public ResponseEntity<List<CourseOfferingResponseDTO>> getProfessorCourses(
+            @PathVariable("email") String email) {
+
+        return ResponseEntity.ok(courseOfferingService.findMyOfferings(email));
+    }
 }

@@ -17,7 +17,7 @@ public class GradeItemCreateDTO {
     @Size(min = 1, max = 50, message = "평가 항목명은 1-50자 이내여야 합니다")
     private String itemName; // 중간고사, 기말고사, 과제1
 
-    @NotBlank(message = "평가 유형은 필수입니다")
+    @NotNull(message = "평가 유형은 필수입니다")
     private GradeItemType itemType; // EXAM, ASSIGNMENT, QUIZ, ATTENDANCE, PROJECT
 
     @NotNull(message = "만점은 필수입니다")

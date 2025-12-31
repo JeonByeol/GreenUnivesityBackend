@@ -38,6 +38,9 @@ public class TimeTableResponseDTO {
     //User에 담긴 정보
     private String professorName; // 교수명
 
+    //user(professor)
+    private String professorNickName; //교수명
+
 
 
 }

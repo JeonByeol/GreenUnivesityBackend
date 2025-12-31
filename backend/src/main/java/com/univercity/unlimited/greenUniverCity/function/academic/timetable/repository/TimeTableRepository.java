@@ -29,11 +29,14 @@ public interface TimeTableRepository extends JpaRepository<TimeTable,Long> {
 
     //T-3) 특정 학생이 수강신청한 과목들의 시간표를 조회하기 위한 쿼리 (Enrollment 조인)
     @Query("SELECT t FROM TimeTable t " +
-            "JOIN t.classSection cs " +
-            "JOIN cs.courseOffering co " +
+            "JOIN FETCH t.classSection cs " +
+            "JOIN FETCH cs.courseOffering co " +
+            "LEFT JOIN FETCH co.professor p " +
+            "LEFT JOIN FETCH t.classroom cr " +
             "JOIN Enrollment e ON e.classSection = cs " +
             "JOIN e.user u " +
-            "WHERE u.email = :email")
+            "WHERE u.email = :email " +
+            "ORDER BY t.dayOfWeek, t.startTime")
     List<TimeTable> findTimetableByStudentEmail(@Param("email") String email);
 
     //T-4) 시간표 생성 시, 해당 강의실과 시간에 겹치는 수업이 있는지 확인하기 위한 검증 쿼리

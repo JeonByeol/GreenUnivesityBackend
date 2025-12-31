@@ -1,5 +1,6 @@
 package com.univercity.unlimited.greenUniverCity.function.academic.grade.dto.studentscore;
 
+import com.univercity.unlimited.greenUniverCity.function.academic.grade.entity.GradeItemType;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -23,6 +24,8 @@ public class StudentScoreResponseDTO {
     private Long itemId;//평가기준Id
 
     private String itemName;//항목명(중간,기말)
+
+    private GradeItemType itemType;//평가기준
 
     private Float maxScore;//만점기준
 

@@ -16,6 +16,8 @@ public interface CourseOfferingService {
     CourseOfferingResponseDTO createOfferingByAuthorizedUser(CourseOfferingCreateDTO dto, String email);
     CourseOfferingResponseDTO updateOfferingByAuthorizedUser(CourseOfferingUpdateDTO dto, String email);
     Map<String,String> deleteByOfferingId(Long offeringId,String email);
+    List<CourseOfferingResponseDTO> findMyOfferings(String email);
+
 
     List<CourseOfferingResponseDTO> getMyData(String email);
 

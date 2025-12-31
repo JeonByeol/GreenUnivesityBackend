@@ -121,7 +121,7 @@ public class GradeItemServiceImpl implements GradeItemService{
         return entityMapper.toGradeItemResponseDTO(repository.save(gradeItem));
     }
 
-    //  비율 합계 검증 로직
+    //  비율 합계 검증 로직  - 정상 작동 테스트 완
     private void checkTotalWeightLimit(Long offeringId, Long currentItemId, Float newWeight) {
         List<GradeItem> items = repository.findByOfferingId(offeringId);
 

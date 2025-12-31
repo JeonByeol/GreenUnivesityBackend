@@ -19,4 +19,9 @@ public interface CourseOfferingRepository extends JpaRepository<CourseOffering,L
         where p.email = :email
     """)
     List<CourseOffering> findByUserEmail(@Param("email") String email);
+
+    //이메일로 검색하기 위한 쿼리
+    @Query("SELECT c FROM CourseOffering c JOIN FETCH c.professor p WHERE p.email = :email")
+    List<CourseOffering> findAllByProfessorEmail(@Param("email") String email);
+
 }

@@ -24,7 +24,9 @@ public interface GradeRepository extends JpaRepository<Grade,Long> {
             "JOIN FETCH g.enrollment e " +
             "JOIN FETCH e.classSection se " +
             "JOIN FETCH se.courseOffering co " +
+            "LEFT JOIN FETCH co.course c " +
             "JOIN FETCH e.user u " +
+            "LEFT JOIN FETCH co.professor p " +
             "WHERE u.email = :email")
     List<Grade> findByStudentEmail(@Param("email")String email);
 
