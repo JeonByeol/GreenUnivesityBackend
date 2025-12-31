@@ -13,7 +13,7 @@ public interface CommentService {
     List<CommentResponseDTO> findAll();
 
     /** C-2 댓글 생성 */
-    CommentResponseDTO createComment(CommentCreateDTO dto, String email);
+    CommentResponseDTO createComment(CommentCreateDTO dto);
 
     /** C-3 댓글 수정 */
     CommentResponseDTO updateComment(CommentUpdateDTO dto);
@@ -26,4 +26,6 @@ public interface CommentService {
 
     /** 관리자용: 삭제 포함 전체 조회 */
     List<Comment> getAllCommentsForAdmin();
+    /** C-6 게시글 기준 댓글 조회 */
+    List<CommentResponseDTO> findByPostId(Long postId);
 }

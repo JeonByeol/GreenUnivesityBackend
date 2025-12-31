@@ -50,10 +50,9 @@ public ResponseEntity<List<CommentResponseDTO>> getAllComments() {
     // C-7) 댓글 작성 201
     @PostMapping("/create")
     public ResponseEntity<CommentResponseDTO> createComment(
-            @RequestBody CommentCreateDTO dto,
-            @RequestHeader(value="X-User-Email",required = false) String requesterEmail
-    ) {
-        CommentResponseDTO created = commentService.createComment(dto,requesterEmail);
+            @RequestBody CommentCreateDTO dto)
+    {
+        CommentResponseDTO created = commentService.createComment(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 

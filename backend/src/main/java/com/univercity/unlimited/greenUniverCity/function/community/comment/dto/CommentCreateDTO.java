@@ -19,7 +19,7 @@ public class CommentCreateDTO {
 
     private Long postId;
 
-    private String User;
+    private String email;
 
 
 

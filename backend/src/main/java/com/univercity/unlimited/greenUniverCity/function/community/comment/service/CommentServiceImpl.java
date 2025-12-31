@@ -11,6 +11,7 @@ import com.univercity.unlimited.greenUniverCity.function.member.user.entity.User
 import com.univercity.unlimited.greenUniverCity.function.member.user.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,6 +22,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @Transactional
+@Slf4j
 public class CommentServiceImpl implements CommentService {
 
     private final CommentRepository commentRepository;
@@ -39,13 +41,11 @@ public class CommentServiceImpl implements CommentService {
 
     /** C-2 생성 */
     @Override
-    public CommentResponseDTO createComment(CommentCreateDTO dto, String email) {
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new IllegalArgumentException("유저 없음"));
-
+    public CommentResponseDTO createComment(CommentCreateDTO dto) {
+        log.info("dto serverice:{}" ,dto);
         Post post = postRepository.findById(dto.getPostId())
                 .orElseThrow(() -> new IllegalArgumentException("게시글 없음"));
-
+            User user=  userRepository.findByEmail(dto.getEmail()).get();
         Comment comment = Comment.builder()
                 .content(dto.getContent())
                 .user(user)
@@ -89,4 +89,24 @@ public class CommentServiceImpl implements CommentService {
     public List<Comment> getAllCommentsForAdmin() {
         return commentRepository.findAllIncludingDeleted();
     }
+
+    public class CommentNotFoundException extends RuntimeException {
+        public CommentNotFoundException(Long postId) {
+            super("해당 게시글에 댓글이 없습니다. postId=" + postId);
+        }
+    }
+    @Override
+    public List<CommentResponseDTO> findByPostId(Long postId) {
+
+        List<Comment> comments = commentRepository.findByPost_PostId(postId);
+
+        if (comments.isEmpty()) {
+            throw new CommentNotFoundException(postId);
+        }
+
+        return comments.stream()
+                .map(CommentResponseDTO::from)
+                .toList();
+    }
+
 }
