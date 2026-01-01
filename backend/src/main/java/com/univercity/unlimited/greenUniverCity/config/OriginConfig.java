@@ -49,7 +49,12 @@ public class OriginConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-                .allowedOrigins("http://localhost:3000", "http://localhost:3001")
+                .allowedOrigins(
+                        "http://localhost:3000",
+                        "http://localhost:3001",
+                        "https://vercel-lms-frontend.vercel.app",
+                        "https://www.greenunivercity.store"
+                )
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                 .allowedHeaders("Authorization", "Content-Type", "X-Requested-With","X-User-Email")
                 .allowCredentials(true)
