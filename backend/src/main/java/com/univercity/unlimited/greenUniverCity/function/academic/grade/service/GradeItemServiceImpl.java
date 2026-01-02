@@ -112,10 +112,13 @@ public class GradeItemServiceImpl implements GradeItemService{
             checkTotalWeightLimit(gradeItem.getCourseOffering().getOfferingId(), itemId, dto.getWeightPercent());
         }
 
+        GradeItemType typeEnum = dto.getItemType();
+
         gradeItem.updateGradeItemInfo(
                 dto.getItemName(),
                 dto.getMaxScore(),
-                dto.getWeightPercent()
+                dto.getWeightPercent(),
+                typeEnum
         );
 
         return entityMapper.toGradeItemResponseDTO(repository.save(gradeItem));
