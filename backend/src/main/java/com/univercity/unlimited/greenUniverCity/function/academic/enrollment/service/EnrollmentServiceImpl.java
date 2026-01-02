@@ -77,6 +77,22 @@ public class EnrollmentServiceImpl implements EnrollmentService {
         }
     }
 
+    private void validateDuplicateEnrollmentToOfferingId(Long userId, Long sectionId) {
+        ClassSection section = getSectionOrThrow(sectionId);
+        Long offeringId = section.getCourseOffering().getOfferingId();
+
+        boolean exists = repository.existsByUserUserIdAndClassSectionCourseOfferingOfferingId(userId, offeringId);
+
+        if (exists) {
+            throw new DuplicateEnrollmentException(
+                    String.format(
+                            "중복 수강신청! 학생 ID: %d는 이미 수업 ID: %d에 신청했습니다.",
+                            userId, offeringId
+                    )
+            );
+        }
+    }
+
     //정원초과검증
     private void validateSectionCapacity(ClassSection section) {
         Integer currentCount = section.getCurrentCount();
@@ -149,6 +165,8 @@ public class EnrollmentServiceImpl implements EnrollmentService {
         // 검증 1: 중복 수강신청 검사 (데이터 조회 후, 저장 전)
         validateDuplicateEnrollment(dto.getUserId(), dto.getSectionId());
         log.info("3-3)중복 검증 통과");
+        validateDuplicateEnrollmentToOfferingId(dto.getUserId(), dto.getSectionId());
+        log.info("3-3-2)중복 검증 통과 2");
 
         // 검증 2: 정원 초과 검사
         validateSectionCapacity(section);
@@ -270,6 +288,13 @@ public class EnrollmentServiceImpl implements EnrollmentService {
         }
 
         return result;
+    }
+
+    public List<EnrollmentResponseDTO> findMyEnrollments(String email) {
+        return repository.findByUserEmail(email)
+                .stream()
+                .map(entityMapper::toEnrollmentResponseDTO)
+                .toList();
     }
 
 

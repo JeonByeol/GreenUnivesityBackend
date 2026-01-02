@@ -122,4 +122,14 @@ public class EnrollmentController {
 
         return ResponseEntity.ok(response);
     }
+
+    @GetMapping("/myenroll")
+    public ResponseEntity<List<EnrollmentResponseDTO>> getMyEnrollments(
+            @RequestHeader("X-User-Email") String email
+    ) {
+        // email로 userId 찾아서 조회
+        return ResponseEntity.ok(
+                enrollmentService.findMyEnrollments(email)
+        );
+    }
 }
