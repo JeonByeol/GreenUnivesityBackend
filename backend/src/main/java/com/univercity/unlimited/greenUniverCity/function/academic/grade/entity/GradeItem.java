@@ -36,9 +36,10 @@ public class GradeItem {
     @ToString.Exclude // 순환 참조 방지
     private CourseOffering courseOffering; // 해당 강의의 평가 기준
 
-    public void updateGradeItemInfo(String itemName, Float maxScore, Float weightPercent) {
+    public void updateGradeItemInfo(String itemName, Float maxScore, Float weightPercent,GradeItemType itemType) {
         if (itemName != null) this.itemName = itemName;
         if (maxScore != null) this.maxScore = maxScore;
         if (weightPercent != null) this.weightPercent = weightPercent;
+        if (itemType != null) this.itemType = itemType;
     }
 }

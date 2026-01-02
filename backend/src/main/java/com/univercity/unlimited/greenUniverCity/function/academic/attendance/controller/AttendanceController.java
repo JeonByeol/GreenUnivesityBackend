@@ -18,14 +18,14 @@ import java.util.List;
 public class AttendanceController {
     private final AttendanceService attendanceService;
     
-    //A-1) 출결 컨트롤러 클래스에서 테이블내에 존재하는 모든 데이터를 조회하는 crud(get방식)선언
+    //A-1) 출결 컨트롤러 클래스에서 테이블내에 존재하는 모든 데이터를 조회하는 crud(get방식)선언 - 사용완
     @GetMapping("/all")
     public List<AttendanceResponseDTO> postmanTestAttendance(){
         log.info("1) 출결 전체조회 요청");
         return attendanceService.findAllAttendance();
     }
 
-    //A-2) 출결 컨트롤러 클래스에서 "학생의 특정 과목" 에 대한 출결을 조회하기 위해 CRUD(get방식)선언
+    //A-2) 출결 컨트롤러 클래스에서 "학생의 특정 과목" 에 대한 출결을 조회하기 위해 CRUD(get방식)선언 -사용완
     @GetMapping("/enrollment/{enrollmentId}")
     public List<AttendanceResponseDTO>postmanTestMyAttendance(
             @PathVariable("enrollmentId") Long enrollmentId){
@@ -33,7 +33,7 @@ public class AttendanceController {
         return attendanceService.findForEnrollmentOfAttendance(enrollmentId);
     }
 
-    //A-3) 출결 컨트롤러 클래스에서 "학생의 전체 출결"을 조회하기 위해 CRUD(get방식)선언
+    //A-3) 출결 컨트롤러 클래스에서 "학생의 전체 출결"을 조회하기 위해 CRUD(get방식)선언 - 사용완
     @GetMapping("/my/{email}")
     public List<AttendanceResponseDTO>postmanTestMyAttendance(
             @PathVariable("email") String email){
@@ -41,7 +41,7 @@ public class AttendanceController {
         return attendanceService.findForStudentOfAttendance(email);
     }
     
-    //A-4)출결 컨트롤러 클래스에서 학생의 출결을 작성하기 위해 CRUD(post방식) 선언
+    //A-4)출결 컨트롤러 클래스에서 학생의 출결을 작성하기 위해 CRUD(post방식) 선언  - 사용완 
     @PostMapping("/create")
     public ResponseEntity<AttendanceResponseDTO> postmanCreateAttendance(
             @RequestBody AttendanceCreateDTO dto,
@@ -60,7 +60,7 @@ public class AttendanceController {
         return ResponseEntity.ok(response);
     }
 
-    //A-5) 출결 컨트롤러 클래스내에서 학생의 출결을 수정하기 위해 CRUD(put)방식 선언
+    //A-5) 출결 컨트롤러 클래스내에서 학생의 출결을 수정하기 위해 CRUD(put)방식 선언 - 확인
     @PutMapping("/update")
     public ResponseEntity<AttendanceResponseDTO> postmanUpdateAttendance(
             @RequestBody AttendanceUpdateDTO dto,
@@ -102,7 +102,7 @@ public class AttendanceController {
 
     // =================================================================================
     // 1. [조회] 출결 단건 조회
-    // - 수정 버튼 누르기 전이나 상세 보기 시 사용
+    // - 수정 버튼 누르기 전이나 상세 보기 시 사용  -확인
     // =================================================================================
     @GetMapping("one/{attendanceId}")
     public ResponseEntity<AttendanceResponseDTO> getAttendance(@PathVariable("attendanceId") Long attendanceId) {
@@ -113,7 +113,7 @@ public class AttendanceController {
 
     // =================================================================================
     // 3. [조회] 교수 - 특정 강의(Offering)의 전체 출결 현황 조회
-    // - 교수가 본인 수업의 출석부를 볼 때 사용
+    // - 교수가 본인 수업의 출석부를 볼 때 사용  - 확인
     // =================================================================================
     @GetMapping("/offering/{offeringId}")
     public List<AttendanceResponseDTO> getAttendanceByOffering(

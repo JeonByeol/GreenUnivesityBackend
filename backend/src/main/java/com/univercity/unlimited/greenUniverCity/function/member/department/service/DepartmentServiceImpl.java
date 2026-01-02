@@ -125,7 +125,14 @@ public class DepartmentServiceImpl implements DepartmentService{
 
     @Override
     public Department findByName(String departmentName) {
-        Optional<Department> departmentOptional = repository.findByDeptName(departmentName);
+        String tempDepartmentName = departmentName;
+
+        // null, 빈 문자열, 공백 문자열 체크
+        if (departmentName == null || departmentName.trim().isEmpty()) {
+            tempDepartmentName = "대기";
+        }
+
+        Optional<Department> departmentOptional = repository.findByDeptName(tempDepartmentName);
         if(departmentOptional.isEmpty()) {
             throw new RuntimeException("");
         }
