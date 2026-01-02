@@ -83,14 +83,25 @@ public class UserController {
         return userService.login(dto);
     }
 
+    @PostMapping("/register") //회원가입
+//    private  ResponseEntity<String > rr(@RequestBody UserDTO dto) {
+    public UserResponseDTO legacyRegister(
+            @RequestBody UserRegisterDTO dto
+    ) {
+        log.info("Controller:/api/user/register:{} 확인", dto);
+        return userService.register(dto);
+    }
+
+
     @PostMapping("/create") //회원가입
 //    private  ResponseEntity<String > rr(@RequestBody UserDTO dto) {
-    public UserResponseDTO register(
+    public UserResponseDTO create(
             @RequestBody UserRegisterDTO dto,
             @RequestHeader(value="X-User-Email") String requesterEmail) {
         log.info("Controller:/api/user/register:{} 확인", dto);
         return userService.register(dto);
     }
+
 
     @PostMapping("/change")
     public UserResponseDTO changePassword(

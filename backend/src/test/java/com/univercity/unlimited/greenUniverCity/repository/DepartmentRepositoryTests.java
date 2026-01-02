@@ -25,7 +25,11 @@ public class DepartmentRepositoryTests {
     @Tag("push")
     public void insertInitData() {
         // 데이터 세팅
-        var departmentArray = List.of("컴퓨터","정보","전기");
+        var departmentArray = List.of(
+                "대기","컴퓨터","정보","전기", "기계",
+
+                "화학", "생명과학", "환경공학", "건축", "산업디자인"
+        );
 
         // 데이터 저장a
         for(String departmentName : departmentArray) {
