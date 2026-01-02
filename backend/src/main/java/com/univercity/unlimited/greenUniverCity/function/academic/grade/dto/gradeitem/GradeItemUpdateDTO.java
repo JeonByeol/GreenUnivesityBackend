@@ -1,5 +1,6 @@
 package com.univercity.unlimited.greenUniverCity.function.academic.grade.dto.gradeitem;
 
+import com.univercity.unlimited.greenUniverCity.function.academic.grade.entity.GradeItemType;
 import jakarta.validation.constraints.*;
 import lombok.*;
 
@@ -17,6 +18,9 @@ public class GradeItemUpdateDTO {
     @NotBlank(message = "평가 항목명은 필수입니다")
     @Size(min = 1, max = 50, message = "평가 항목명은 1-50자 이내여야 합니다")
     private String itemName; // 중간고사, 기말고사, 과제1
+
+    @NotNull(message = "평가 유형은 필수입니다")
+    private GradeItemType itemType;
 
     @NotNull(message = "만점은 필수입니다")
     @DecimalMin(value = "0.0", inclusive = false, message = "만점은 0보다 커야 합니다")

@@ -45,7 +45,9 @@ public class CommentServiceImpl implements CommentService {
         log.info("dto serverice:{}" ,dto);
         Post post = postRepository.findById(dto.getPostId())
                 .orElseThrow(() -> new IllegalArgumentException("게시글 없음"));
-            User user=  userRepository.findByEmail(dto.getEmail()).get();
+
+        User user=  userRepository.findByEmail(dto.getEmail()).get();
+
         Comment comment = Comment.builder()
                 .content(dto.getContent())
                 .user(user)

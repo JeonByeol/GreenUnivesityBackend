@@ -20,7 +20,7 @@ import java.util.List;
 public class GradeItemController {
     private final GradeItemService itemService;
 
-    //GI-1) 교수가 평가 항목을 생성하기 위해 컨트롤러 내에 선언된 CRUD(Post)
+    //GI-1) 교수가 평가 항목을 생성하기 위해 컨트롤러 내에 선언된 CRUD(Post) - 확인완
     @PostMapping("/create")
     public ResponseEntity<GradeItemResponseDTO> postmanCreateItem(
             @Valid @RequestBody GradeItemCreateDTO dto,
@@ -41,7 +41,7 @@ public class GradeItemController {
         return ResponseEntity.ok(response);
     }
 
-    //GI-2) 평가항목 테이블에 존재하는 데이터 하나를 단건 조회하기 위해 컨트롤러 내에 선언된 Crud(Get)
+    //GI-2) 평가항목 테이블에 존재하는 데이터 하나를 단건 조회하기 위해 컨트롤러 내에 선언된 Crud(Get)  - 확인완
     @GetMapping("one/{itemId}")
     public ResponseEntity<GradeItemResponseDTO> getGradeItem(@PathVariable Long itemId) {
         log.info("1) 평가항목 단건 조회 요청 - ItemId: {}", itemId);
@@ -52,7 +52,7 @@ public class GradeItemController {
         return ResponseEntity.ok(response);
     }
 
-    //GI-3) 특정 강의에 존재하는 평가항목 목록을 조회하기 위해 컨트롤러 내에 선언된 CRud(get)
+    //GI-3) 특정 강의에 존재하는 평가항목 목록을 조회하기 위해 컨트롤러 내에 선언된 CRud(get) - 확인완
     @GetMapping("/offering/{offeringId}")
     public ResponseEntity<List<GradeItemResponseDTO>> postmanTestOfferingItem(@PathVariable("offeringId") Long offeringId){
         log.info("1) 특정 목록에 존재하는 데이터 조회 요청 - offeringId-:{}",offeringId);
@@ -62,14 +62,14 @@ public class GradeItemController {
         return ResponseEntity.ok(responses);
     }
 
-    //GI-4) 기존에 존재하던 평가항목에 대한 정보를 수정하기 위해 컨트롤러 내에 선언된 CRUD(PUT)
+    //GI-4) 기존에 존재하던 평가항목에 대한 정보를 수정하기 위해 컨트롤러 내에 선언된 CRUD(PUT) -확인완
     @PutMapping("/update")
     public ResponseEntity<GradeItemResponseDTO> updateItem(
             @Valid @RequestBody GradeItemUpdateDTO dto,
             @RequestHeader(value = "X-User-Email", required = false) String professorEmail) {
 
         // DTO 안에 있는 itemId를 꺼내서 로그를 찍음
-        log.info("1) 평가항목 수정 요청 (DTO 방식) - ItemId: {}, 교수: {}", dto.getItemId(), professorEmail);
+        log.info("1) 평가항목 수정 요청 - ItemId: {}, 교수: {}", dto.getItemId(), professorEmail);
 
         if (professorEmail == null || professorEmail.isEmpty()) {
             log.warn("X-User-Email 헤더 누락. 테스트 계정 사용");
