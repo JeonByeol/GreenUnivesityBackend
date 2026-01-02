@@ -26,6 +26,12 @@ public class ClassSectionController {
         return sectionService.findAllSection();
     }
 
+    // SE-51) 유저 아이디를 통해 특정 offering을 중복하는지 확인 후, isFull 상태로 반환합니다.
+    @GetMapping("/filterall/{userId}")
+    public List<ClassSectionResponseDTO> getFilterAll(@PathVariable("userId") Long userId) {
+        return sectionService.findAllSectionForUser(userId);
+    }
+
     //SE-2) 특정 '강의(Offering)'에 속한 분반 목록을 조회하기 위해 컨트롤러 내에 선언된 CRUD(GET)
     @GetMapping("/list/offering/{offeringId}")
     public List<ClassSectionResponseDTO> postmanTestOneSection(@PathVariable("offeringId") Long offeringId){
@@ -98,4 +104,11 @@ public class ClassSectionController {
         return ResponseEntity.ok(response);
     }
 
+    @GetMapping("/find/{termId}")
+    public ResponseEntity<List<ClassSectionResponseDTO>> getFindClassSections(
+            @PathVariable("termId") Long termId,
+            @RequestHeader (value="X-User-Email",required = false) String email
+    ) {
+        return ResponseEntity.ok(sectionService.findByAcademicTermId(termId));
+    }
 }

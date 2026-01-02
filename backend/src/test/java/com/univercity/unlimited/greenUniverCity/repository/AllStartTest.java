@@ -22,6 +22,8 @@ import org.junit.platform.suite.api.Suite;
 
         PostRepositoryTests.class,
 
+        AcademicTermRepositoryTests.class,
+
         CourseOfferingRepositoryTests.class,
 
         //ClassSection은 CourseOffering과 Classroom이 필요하므로 그 뒤에 배치
@@ -29,7 +31,7 @@ import org.junit.platform.suite.api.Suite;
 
         // 과제는 분반(ClassSection)이 있어야 생성 가능
         AssignmentRepositoryTests.class,
-        AcademicTermRepositoryTests.class,
+
 
         // 3. 수강 및 활동 데이터 (개설 강의에 의존)
         CommentRepositoryTests.class,

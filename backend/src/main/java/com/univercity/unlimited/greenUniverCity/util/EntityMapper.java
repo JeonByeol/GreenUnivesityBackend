@@ -1,5 +1,6 @@
 package com.univercity.unlimited.greenUniverCity.util;
 
+import com.univercity.unlimited.greenUniverCity.function.academic.academicTerm.entity.AcademicTerm;
 import com.univercity.unlimited.greenUniverCity.function.academic.assignment.dto.assignment.AssignmentResponseDTO;
 import com.univercity.unlimited.greenUniverCity.function.academic.assignment.dto.submission.SubmissionResponseDTO;
 import com.univercity.unlimited.greenUniverCity.function.academic.assignment.entity.Assignment;
@@ -204,15 +205,24 @@ public class EntityMapper {
             courseName = offering.getCourseName();
         }
 
+        AcademicTerm academicTerm = offering.getAcademicTerm();
+        Long termId = null; // null 허용
+
+        if (academicTerm != null && academicTerm.getTermId() != null) {
+            termId = academicTerm.getTermId();
+        } else {
+            // 선택: 기본값 사용하거나 null 그대로 두기
+            // termId = 0L;
+            System.out.println("AcademicTerm 데이터가 없습니다. offeringId=" + offering.getOfferingId());
+        }
+
         return
                 CourseOfferingResponseDTO.builder()
                         .offeringId(offering.getOfferingId())
-                        .professorId(professor != null ? professor.getUserId() : null)
-                        .professorName(professorName)
                         .courseName(courseName)
-                        .year(offering.getYear())
-                        .semester(offering.getSemester())
                         .courseId(course != null ? course.getCourseId() : null)
+                        .professorId(professor != null ? professor.getUserId() : null)
+                        .termId(termId)
                         .build();
     }
 
@@ -297,8 +307,8 @@ public class EntityMapper {
                 .sectionTypeDisplay(section.getSectionType() != null ? section.getSectionType().getDisplayName() : null)
                 .offeringId(section.getCourseOffering().getOfferingId())
                 .courseName(section.getCourseOffering().getCourseName())
-                .year(section.getCourseOffering().getYear())
-                .semester(section.getCourseOffering().getSemester())
+                .year(section.getCourseOffering().getAcademicTerm().getYear())
+                .semester(section.getCourseOffering().getAcademicTerm().getSemester())
                 .professorName(section.getCourseOffering().getProfessor().getNickname())
                 .timeTables(timeTableDTOs)
                 .build();

@@ -13,6 +13,6 @@ import java.time.LocalDateTime;
 
 public class EnrollmentCreateDTO {
     private LocalDateTime enrollDate;//해당 날짜
-    private Long sectionId; //분반id
     private Long userId;//유저 식별코드
+    private Long sectionId; //분반id
 }

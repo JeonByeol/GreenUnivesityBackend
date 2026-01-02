@@ -1,5 +1,7 @@
 package com.univercity.unlimited.greenUniverCity.function.academic.offering.service;
 
+import com.univercity.unlimited.greenUniverCity.function.academic.academicTerm.entity.AcademicTerm;
+import com.univercity.unlimited.greenUniverCity.function.academic.academicTerm.respository.AcademicTermRepository;
 import com.univercity.unlimited.greenUniverCity.function.academic.course.entity.Course;
 import com.univercity.unlimited.greenUniverCity.function.academic.course.service.CourseService;
 import com.univercity.unlimited.greenUniverCity.function.academic.offering.dto.CourseOfferingCreateDTO;
@@ -31,6 +33,7 @@ public class CourseOfferingServiceImpl implements CourseOfferingService{
     private final CourseService courseService;
 
     private final CourseOfferingRepository repository;
+    private final AcademicTermRepository academicTermRepository;
 
     private final ModelMapper mapper;
 
@@ -69,13 +72,16 @@ public class CourseOfferingServiceImpl implements CourseOfferingService{
         // CourseId와 CourseName은 다르므로 Id를통해 결과를 탐색합니다.
         User user = userService.getUserById(dto.getProfessorId());
         Course course = courseService.getByCourseId(dto.getCourseId());
+        AcademicTerm academicTerm = academicTermRepository.findById(dto.getTermId()).get();
 
         log.info("3-1)유저 탐색 : {}", user);
         log.info("3-2)코스 탐색 : {}", course);
+        log.info("3-3)학기 탐색 : {}", academicTerm);
 
         CourseOffering offering = new CourseOffering();
         offering.setProfessor(user);
         offering.setCourse(course);
+        offering.setAcademicTerm(academicTerm);
 
         MapperUtil.updateFrom(dto, offering, new ArrayList<>());
 
@@ -100,9 +106,16 @@ public class CourseOfferingServiceImpl implements CourseOfferingService{
         // UserId와 UserName은 다르므로 Id를통해 결과를 탐색합니다.
         User user = userService.getUserById(dto.getProfessorId());
         log.info("3-2)유저 탐색 : {}", user);
+        Course course = courseService.getByCourseId(dto.getCourseId());
+        AcademicTerm term = academicTermRepository.findById(dto.getTermId())
+                .orElseThrow(() -> new RuntimeException("Term not found"));
 
         log.info("3) 수정 이전 Offering : {}", offering);
         MapperUtil.updateFrom(dto,offering,List.of("offeringId"));
+        offering.setProfessor(user);
+
+        offering.setCourse(course);
+        offering.setAcademicTerm(term);
         offering.setProfessor(user);
 
         log.info("5) 기존 Offering : {}",offering);

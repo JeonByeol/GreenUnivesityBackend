@@ -28,4 +28,9 @@ public interface ClassSectionService {
     //SE-6) 개발단계 SectionId를 통해 한건 조회를 하기위한 service선언부
     ClassSectionResponseDTO getSection(Long sectionId);
 
+    // SE-50) 수강 신청 가능한 과목을 찾는 서비스 선언
+    List<ClassSectionResponseDTO> findByAcademicTermId(Long termId);
+
+    // SE-51) 특정 유저가 이미 Offering을 신청했는지 확인
+    List<ClassSectionResponseDTO> findAllSectionForUser(Long userId);
 }

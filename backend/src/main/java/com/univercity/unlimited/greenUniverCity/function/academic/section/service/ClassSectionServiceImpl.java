@@ -4,6 +4,8 @@ import com.univercity.unlimited.greenUniverCity.function.academic.classroom.enti
 import com.univercity.unlimited.greenUniverCity.function.academic.classroom.repository.ClassroomRepository;
 import com.univercity.unlimited.greenUniverCity.function.academic.classroom.service.ClassroomService;
 import com.univercity.unlimited.greenUniverCity.function.academic.common.AcademicSecurityValidator;
+import com.univercity.unlimited.greenUniverCity.function.academic.enrollment.exception.DuplicateEnrollmentException;
+import com.univercity.unlimited.greenUniverCity.function.academic.enrollment.repository.EnrollmentRepository;
 import com.univercity.unlimited.greenUniverCity.function.academic.offering.entity.CourseOffering;
 import com.univercity.unlimited.greenUniverCity.function.academic.offering.repository.CourseOfferingRepository;
 import com.univercity.unlimited.greenUniverCity.function.academic.offering.service.CourseOfferingService;
@@ -32,6 +34,7 @@ public class ClassSectionServiceImpl implements ClassSectionService{
     private final ClassSectionRepository repository;
     private final CourseOfferingRepository offeringRepository;
     private final ClassroomRepository classroomRepository;
+    private final EnrollmentRepository enrollmentRepository;
 
     private final AcademicSecurityValidator validator;
     private final TimeTableValidationService timeTableValidationService;
@@ -62,6 +65,24 @@ public class ClassSectionServiceImpl implements ClassSectionService{
             section.addTimeTable(timeTable);
         }
     }
+
+    // 임시로 가져왔습니다. 추후 정리
+    private void validateDuplicateEnrollmentToOfferingId(Long userId, Long sectionId) {
+        ClassSection section = getSectionOrThrow(sectionId);
+        Long offeringId = section.getCourseOffering().getOfferingId();
+
+        boolean exists = enrollmentRepository.existsByUserUserIdAndClassSectionCourseOfferingOfferingId(userId, offeringId);
+
+        if (exists) {
+            throw new DuplicateEnrollmentException(
+                    String.format(
+                            "중복 수강신청! 학생 ID: %d는 이미 수업 ID: %d에 신청했습니다.",
+                            userId, offeringId
+                    )
+            );
+        }
+    }
+
     @Override
     @Transactional(readOnly = true)
     public List<ClassSectionResponseDTO> findAllSection() {
@@ -166,6 +187,37 @@ public class ClassSectionServiceImpl implements ClassSectionService{
 
         ClassSection section = getSectionOrThrow(sectionId);
         return entityMapper.toClassSectionResponseDTO(section);
+    }
+
+    @Override
+    public List<ClassSectionResponseDTO> findByAcademicTermId(Long termId) {
+        if (termId == null) {
+            throw new IllegalArgumentException("termId는 null일 수 없습니다.");
+        }
+
+        return repository.findByAcademicTermId(termId).stream()
+                .map(classSection -> entityMapper.toClassSectionResponseDTO(classSection))
+                .toList();
+    }
+
+    @Override
+    @Transactional
+    public List<ClassSectionResponseDTO> findAllSectionForUser(Long userId) {
+        log.info("2) 분반 전체조회 시작 (사용자 기준)");
+
+        return repository.findAllWithDetails().stream()
+                .map(entityMapper::toClassSectionResponseDTO)
+                .peek(sectionDto -> {
+                    // 해당 학생이 이미 같은 수업(offering)에 신청했으면 isFull 표시
+                    boolean alreadyEnrolled = enrollmentRepository
+                            .existsByUserUserIdAndClassSectionCourseOfferingOfferingId(
+                                    userId, sectionDto.getOfferingId()
+                            );
+                    if (alreadyEnrolled) {
+                        sectionDto.setIsFull(true);
+                    }
+                })
+                .toList();
     }
 
 
