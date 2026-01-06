@@ -391,7 +391,7 @@ public class EntityMapper {
                 .semester(term.getSemester())
                 .registrationStart(term.getRegistrationStart())
                 .registrationEnd(term.getRegistrationEnd())
-                .isCurrent(term.isCurrent())
+                .isCurrent(term.getIsCurrent())
                 .build();
     }
 }

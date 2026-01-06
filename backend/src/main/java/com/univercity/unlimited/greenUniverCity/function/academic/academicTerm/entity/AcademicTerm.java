@@ -32,5 +32,6 @@ public class AcademicTerm {
     private LocalDate registrationEnd;
 
     @Column(name = "is_current")
-    private boolean isCurrent;
+    @Builder.Default
+    private Boolean isCurrent = false;
 }

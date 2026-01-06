@@ -69,22 +69,27 @@ public class AcademicTermApplyMapper
 
     @Override
     protected AcademicTerm createEntity(AcademicTermCreateDTO dto) {
+        boolean current = dto.getIsCurrent() == null ? true : dto.getIsCurrent();
+
         return AcademicTerm.builder()
                 .year(dto.getYear())
                 .semester(dto.getSemester())
                 .registrationStart(dto.getRegistrationStart())
                 .registrationEnd(dto.getRegistrationEnd())
-                .isCurrent(dto.isCurrent())
+                .isCurrent(current)
                 .build();
     }
 
     @Override
     protected AcademicTerm updateEntity(AcademicTermUpdateDTO dto, AcademicTerm entity) {
+        boolean current = dto.getIsCurrent() == null ? true : dto.getIsCurrent();
+
+
         entity.setYear(dto.getYear());
         entity.setSemester(dto.getSemester());
         entity.setRegistrationStart(dto.getRegistrationStart());
         entity.setRegistrationEnd(dto.getRegistrationEnd());
-        entity.setCurrent(dto.isCurrent());
+        entity.setIsCurrent(current);
         return entity;
     }
 }
