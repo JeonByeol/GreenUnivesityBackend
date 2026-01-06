@@ -100,7 +100,7 @@ public class AcademicTermServiceImpl implements AcademicTermService {
         AcademicTerm entity = applyMapper.applyCreate(dto);
 
         AcademicTerm savedEntity = repository.save(entity);
-        log.info("{} 생성 완료: termId={}", baseName, savedEntity.getTermId());
+        log.info("{} 생성 완료: {}", baseName, savedEntity.getTermId());
 
         // Entity -> ResponseDTO + 검증
         AcademicTermResponseDTO responseDTO = entityMapper.toAcademicTermResponseDTO(savedEntity);
@@ -124,7 +124,7 @@ public class AcademicTermServiceImpl implements AcademicTermService {
         AcademicTerm updatedEntity = applyMapper.applyUpdate(dto, entity);
 
         AcademicTerm savedEntity = repository.save(updatedEntity);
-        log.info("{} 수정 완료: termId={}", baseName, savedEntity.getTermId());
+        log.info("{} 수정 완료: Id = {}", baseName, savedEntity.getTermId());
 
         // Entity -> ResponseDTO + 검증
         AcademicTermResponseDTO responseDTO = entityMapper.toAcademicTermResponseDTO(savedEntity);
@@ -139,12 +139,12 @@ public class AcademicTermServiceImpl implements AcademicTermService {
     @Override
     @Transactional
     public Map<String, String> deleteTerm(Long termId) {
-        log.info("{} 삭제 시작: termId={}", baseName, termId);
+        log.info("{} 삭제 시작: Id = {}", baseName, termId);
 
         AcademicTerm entity = findOneEntityById(termId);
         repository.delete(entity);
 
-        log.info("{} 삭제 완료: termId={}", baseName, termId);
+        log.info("{} 삭제 완료: Id = {}", baseName, termId);
         return Map.of("Result", "Success");
     }
 }

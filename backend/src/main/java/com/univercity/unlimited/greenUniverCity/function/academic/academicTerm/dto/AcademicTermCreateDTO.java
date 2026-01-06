@@ -28,7 +28,5 @@ public class AcademicTermCreateDTO {
     @NotNull(message = "학기 종료 일자를 입력해주세요.")
     private LocalDate registrationEnd;
 
-    @Pattern(regexp = "^(?i)(true|false)" ,
-    message = "true 혹은 false를 입력해주세요.")
     private Boolean isCurrent;
 }

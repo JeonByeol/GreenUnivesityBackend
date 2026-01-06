@@ -9,12 +9,11 @@ import java.util.List;
 import java.util.Map;
 
 public interface CourseService {
-    List<CourseResponseDTO> legacyFindAllCourse();
     List<CourseResponseDTO> findAllCourse();
-    List<CourseResponseDTO> findById(Long courseId);
-    CourseResponseDTO createCourseByAuthorizedUser(CourseCreateDTO dto, String email);
-    CourseResponseDTO updateCourseByAuthorizedUser(CourseUpdateDTO dto, String email);
-    Map<String,String> deleteByCourseId(Long courseId, String email);
+    CourseResponseDTO findById(Long courseId);
+    CourseResponseDTO createCourse(CourseCreateDTO dto);
+    CourseResponseDTO updateCourse(CourseUpdateDTO dto);
+    Map<String,String> deleteCourse(Long courseId);
 
     Course getByCourseId(Long courseId);
 //    CourseDTO findByCourseNameForTimeTable(Long id);//C-3) Timetable에 강의명을 넘겨주기 위해 구성한 service

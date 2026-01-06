@@ -9,9 +9,6 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 public class CourseResponseDTO {
-    //** 임시 DTO 완성본 아닙니다 **
-
-    //Course
     private Long courseId;//과목코드
 
     private String courseName; // 과목명
