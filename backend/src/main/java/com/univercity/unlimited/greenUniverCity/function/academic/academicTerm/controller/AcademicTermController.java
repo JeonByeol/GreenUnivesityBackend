@@ -4,6 +4,7 @@ import com.univercity.unlimited.greenUniverCity.function.academic.academicTerm.d
 import com.univercity.unlimited.greenUniverCity.function.academic.academicTerm.dto.AcademicTermResponseDTO;
 import com.univercity.unlimited.greenUniverCity.function.academic.academicTerm.dto.AcademicTermUpdateDTO;
 import com.univercity.unlimited.greenUniverCity.function.academic.academicTerm.service.AcademicTermService;
+import com.univercity.unlimited.greenUniverCity.function.academic.common.AcademicSecurityValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -17,83 +18,83 @@ import java.util.Map;
 @RequiredArgsConstructor
 @RequestMapping("api/term")
 public class AcademicTermController {
+
     private final AcademicTermService academicTermService;
+    private final AcademicSecurityValidator securityValidator;
 
-    public String getEmail(String requesterEmail) {
-        String email = requesterEmail;
+    private final String baseName = "AcademicTermController";
 
-        if (email == null || email.isEmpty()) {
-            log.warn("X-User-Email 헤더가 없습니다. 테스트용 기본값 사용");
-            email = "hannah@aaa.com";
-        }
-
-        return email;
-    }
-
-    // T-1) Term 테이블에 존재하는 모든 Term 조회
+    /// ========================================
+    ///         T-1) 전체 조회
+    ///         누구나 가능 (권한 체크 없음)
+    /// ========================================
     @GetMapping("/all")
-    public List<AcademicTermResponseDTO> getTermResponseDTOList() {
-        log.info("1) Term 전체 조회 입니다.");
+    public List<AcademicTermResponseDTO> getTermResponseDTOList(
+            @RequestHeader(value = "X-User-Email", required = true) String requesterEmail
+    ) {
+        log.info("{} 전체 조회 시도 - 요청자: {}", baseName, requesterEmail);
+        // 조회는 누구나 가능 (권한 체크 없음)
         return academicTermService.findAllTerm();
     }
 
-    // T-2) Term Id를 통해 특정 데이터를 조회
-    // 현재 프론트 테스트 페이지와의 연동을 위해 리스트를 통해 반환
+    /// ========================================
+    ///         T-2) 단 건 조회
+    ///         누구나 가능 (권한 체크 없음)
+    /// ========================================
     @GetMapping("/one/{termId}")
     public AcademicTermResponseDTO getTermResponseDTOByTermId(
-            @PathVariable("termId") Long termId)
-    {
-        log.info("1) Term 한 건 조회 입니다.");
+            @PathVariable Long termId,
+            @RequestHeader(value = "X-User-Email", required = true) String requesterEmail
+    ) {
+        log.info("{} 단 건 조회 시도 - termId: {}, 요청자: {}", baseName, termId, requesterEmail);
         return academicTermService.findById(termId);
     }
 
-    // T-2-2) Term 학기 별 과목 조회
-
-
-    // T-3) TermCreateDTO를 통해 데이터를 생성
+    /// ========================================
+    ///         T-3) 단 건 생성
+    ///         관리자만 가능
+    /// ========================================
     @PostMapping("/create")
     public ResponseEntity<AcademicTermResponseDTO> createTerm(
             @RequestBody AcademicTermCreateDTO dto,
-            @RequestHeader(value="X-User-Email",required = false) String requesterEmail
-    )
-    {
-        log.info("1) Term 한 건 생성 입니다. : {}", dto);
+            @RequestHeader(value = "X-User-Email", required = true) String requesterEmail
+    ) {
+        log.info("{} 생성 시도 - 요청자: {}", baseName, requesterEmail);
+        securityValidator.validateAdminRole(requesterEmail, baseName + " 생성");
 
-        // 이메일이 비어있을 경우 처리도 고려
-        String email = getEmail(requesterEmail);
-
-        AcademicTermResponseDTO createRespone = academicTermService.createTermByAuthorizedUser(dto,email);
-        return ResponseEntity.ok(createRespone);
+        AcademicTermResponseDTO createResponse = academicTermService.createTerm(dto);
+        return ResponseEntity.ok(createResponse);
     }
 
-    // T-4) TermUpdateDTO를 통해 데이터를 갱신
+    /// ========================================
+    ///         T-4) 단 건 수정
+    ///         관리자만 가능
+    /// ========================================
     @PutMapping("/update")
     public ResponseEntity<AcademicTermResponseDTO> updateTerm(
             @RequestBody AcademicTermUpdateDTO dto,
-            @RequestHeader(value="X-User-Email",required = false) String requesterEmail
-    )
-    {
-        log.info("1) Term 한 건 수정 입니다.");
+            @RequestHeader(value = "X-User-Email", required = true) String requesterEmail
+    ) {
+        log.info("{} 수정 시도 - 요청자: {}", baseName, requesterEmail);
+        securityValidator.validateAdminRole(requesterEmail, "Term 수정");
 
-        // 이메일이 비어있을 경우 처리도 고려
-        String email = getEmail(requesterEmail);
-
-        AcademicTermResponseDTO updateRespone = academicTermService.updateTermByAuthorizedUser(dto, email);
-        return ResponseEntity.ok(updateRespone);
+        AcademicTermResponseDTO updateResponse = academicTermService.updateTerm(dto);
+        return ResponseEntity.ok(updateResponse);
     }
 
-    // T-5) TermId를 통해 데이터를 삭제 혹은 비활성화
+    /// ========================================
+    ///         T-5) 단 건 삭제
+    ///         관리자만 가능
+    /// ========================================
     @DeleteMapping("/delete/{termId}")
     public ResponseEntity<String> deleteTerm(
-            @PathVariable("termId") Long termId,
-            @RequestHeader(value="X-User-Email",required = false) String requesterEmail
+            @PathVariable Long termId,
+            @RequestHeader(value = "X-User-Email", required = true) String requesterEmail
     ) {
-        log.info("1) Term 한 건 삭제 입니다.");
+        log.info("{} 삭제 시도 - termId: {}, 요청자: {}", baseName, termId, requesterEmail);
+        securityValidator.validateAdminRole(requesterEmail, "Term 삭제");
 
-        // 이메일이 비어있을 경우 처리도 고려
-        String email = getEmail(requesterEmail);
-
-        Map<String,String> result = academicTermService.deleteByTermId(termId,email);
-        return ResponseEntity.ok(result.get("result"));
+        Map<String, String> result = academicTermService.deleteTerm(termId);
+        return ResponseEntity.ok(result.get("Result"));
     }
 }
