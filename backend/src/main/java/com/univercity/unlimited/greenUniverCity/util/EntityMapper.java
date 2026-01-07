@@ -112,6 +112,8 @@ public class EntityMapper {
                 .sectionId(section != null ? section.getSectionId() : -1L)
                 .enrollDate(enrollment.getEnrollDate())
                 .userId(user != null ? user.getUserId() : -1L)
+                .studentName(user.getNickname())
+                .studentNumber(user.getStudentNumber())
                 .build();
     }
 
