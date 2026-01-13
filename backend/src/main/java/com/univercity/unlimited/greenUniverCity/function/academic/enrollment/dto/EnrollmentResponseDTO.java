@@ -25,4 +25,7 @@ public class EnrollmentResponseDTO {
 
     private Long sectionId;
 
+    private String studentName;
+
+    private String studentNumber;
 }

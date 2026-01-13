@@ -1,5 +1,7 @@
 package com.univercity.unlimited.greenUniverCity.function.academic.enrollment.service;
 
+import com.univercity.unlimited.greenUniverCity.function.academic.attendance.dto.AttendanceResponseDTO;
+import com.univercity.unlimited.greenUniverCity.function.academic.common.AcademicSecurityValidator;
 import com.univercity.unlimited.greenUniverCity.function.academic.course.dto.CourseResponseDTO;
 import com.univercity.unlimited.greenUniverCity.function.academic.enrollment.dto.EnrollmentCreateDTO;
 import com.univercity.unlimited.greenUniverCity.function.academic.enrollment.dto.EnrollmentResponseDTO;
@@ -12,6 +14,7 @@ import com.univercity.unlimited.greenUniverCity.function.academic.enrollment.rep
 import com.univercity.unlimited.greenUniverCity.function.academic.offering.dto.CourseOfferingResponseDTO;
 import com.univercity.unlimited.greenUniverCity.function.academic.offering.entity.CourseOffering;
 import com.univercity.unlimited.greenUniverCity.function.academic.offering.exception.CourseOfferingNotFoundException;
+import com.univercity.unlimited.greenUniverCity.function.academic.offering.repository.CourseOfferingRepository;
 import com.univercity.unlimited.greenUniverCity.function.academic.section.entity.ClassSection;
 import com.univercity.unlimited.greenUniverCity.function.academic.section.repository.ClassSectionRepository;
 import com.univercity.unlimited.greenUniverCity.function.academic.section.service.ClassSectionService;
@@ -38,9 +41,10 @@ import java.util.stream.Collectors;
 public class EnrollmentServiceImpl implements EnrollmentService {
     private final EnrollmentRepository repository;
     private final ClassSectionRepository sectionRepository;
+    private final CourseOfferingRepository offeringRepository;
     private final UserRepository userRepository;
-    private final UserService userService;
 
+    private final AcademicSecurityValidator validator;
     private final ModelMapper mapper;
     private final EntityMapper entityMapper;
 
@@ -297,35 +301,31 @@ public class EnrollmentServiceImpl implements EnrollmentService {
                 .toList();
     }
 
-
-    /**
-     *  -- 전체 Entity --
-     */
-
-    //E.All) 다른 service에서 enrollment와 여기에 속한 상위 테이블의 정보를 실질적으로 사용하기 위한 service 구현부
     @Override
-    public Enrollment getEnrollmentEntity(Long id) {
-        Enrollment enrollment = repository.findByEnrollmentId(id);
+    @Transactional(readOnly = true)
+    public List<EnrollmentResponseDTO> getEnrollmentsByOffering(Long offeringId, String professorEmail) {
+        log.info("2) 교수 과목별 수강생 명단 조회 - offeringId: {}, 교수: {}", offeringId, professorEmail);
 
-        //Enrollment 수강 내역 id에 대한 검증
-        if (enrollment == null) {
-            throw new EnrollmentNotFoundException(
-                    "3) 보안 검사 시도 식별코드 -:E-All" +
-                            "수강 정보를 찾을 수 없습니다. id: " + id);
-        }
+        // 1. 과목 정보 조회 (존재 여부 확인)
+        // (기존에 쓰시던 getOfferingOrThrow 메서드 활용)
+        CourseOffering offering = getOfferingOrThrow(offeringId);
 
-        //User 검증 추가 -- 현재 사용 안함
-        if (enrollment.getUser() == null) {
-            throw new UserNotFoundException("수강 정보에 연결된 사용자가 존재하지 않습니다 id:."+id);
-        }
+        // 2. 보안 검증 (이 교수의 강의가 맞는지?)
+        // (Validator는 그대로 재사용 가능합니다)
+        validator.validateProfessorOwnership(offering, professorEmail, "수강생 명단 조회");
 
-        //Section 분반 Id에 대한 검증
-        if (enrollment.getClassSection() == null) {
-            throw new CourseOfferingNotFoundException( "데이터 오류: 수강 정보에 분반이 없습니다. id: " + id);
-        }
+        // 3. 해당 과목의 수강생(Enrollment) 리스트 조회
+        List<Enrollment> enrollments = repository.findByOfferingId(offeringId);
 
-        return enrollment;
+        // 4. DTO 변환 후 반환
+        return enrollments.stream()
+                .map(entityMapper::toEnrollmentResponseDTO) // 매퍼 메서드 이름 확인 필요
+                .collect(Collectors.toList());
     }
+
+
+
+
 
     //E-2) **(기능 입력 바랍니다/사용 안할시 삭제 부탁드립니다)**
 //    @Override
@@ -357,6 +357,10 @@ public class EnrollmentServiceImpl implements EnrollmentService {
     private ClassSection getSectionOrThrow(Long id) {
         return sectionRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Section not found with id : " + id));
+    }
+
+    private CourseOffering getOfferingOrThrow(Long id) {
+        return validator.getEntityOrThrow(offeringRepository, id, "강의(Offering)");
     }
 
 }

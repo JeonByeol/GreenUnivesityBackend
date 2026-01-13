@@ -1,5 +1,6 @@
 package com.univercity.unlimited.greenUniverCity.function.academic.enrollment.service;
 
+import com.univercity.unlimited.greenUniverCity.function.academic.attendance.dto.AttendanceResponseDTO;
 import com.univercity.unlimited.greenUniverCity.function.academic.enrollment.dto.EnrollmentCreateDTO;
 import com.univercity.unlimited.greenUniverCity.function.academic.enrollment.dto.EnrollmentResponseDTO;
 import com.univercity.unlimited.greenUniverCity.function.academic.enrollment.dto.EnrollmentUpdateDTO;
@@ -24,9 +25,8 @@ public interface EnrollmentService {
     Map<CourseOfferingResponseDTO,List<UserResponseDTO>> findAllStudentsByProfessorEmail(String professorEmail);
     List<EnrollmentResponseDTO> findMyEnrollments(String email);
 
-    // -- 전체 Entity --
-    //E.All)다른 service에서 enrollment와 여기에 속한 상위 테이블의 정보를 실질적으로 사용하기 위한 service
-    Enrollment getEnrollmentEntity(Long id);
+    //E-Attendance
+    List<EnrollmentResponseDTO> getEnrollmentsByOffering(Long offeringId, String professorEmail);
 
 
 

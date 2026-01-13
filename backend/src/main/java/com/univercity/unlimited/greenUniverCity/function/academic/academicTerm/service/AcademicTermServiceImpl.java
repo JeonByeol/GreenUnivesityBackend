@@ -5,104 +5,146 @@ import com.univercity.unlimited.greenUniverCity.function.academic.academicTerm.d
 import com.univercity.unlimited.greenUniverCity.function.academic.academicTerm.dto.AcademicTermUpdateDTO;
 import com.univercity.unlimited.greenUniverCity.function.academic.academicTerm.entity.AcademicTerm;
 import com.univercity.unlimited.greenUniverCity.function.academic.academicTerm.respository.AcademicTermRepository;
-import com.univercity.unlimited.greenUniverCity.function.academic.course.entity.Course;
 import com.univercity.unlimited.greenUniverCity.util.EntityMapper;
-import com.univercity.unlimited.greenUniverCity.util.MapperUtil;
+import com.univercity.unlimited.greenUniverCity.util.exception.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 @Service
 @Slf4j
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class AcademicTermServiceImpl implements AcademicTermService {
+    // Repository
     private final AcademicTermRepository repository;
-    private final EntityMapper entityMapper;
-    private final ModelMapper mapper;
 
+    // Entity -> ResponseDTO
+    private final EntityMapper entityMapper;
+    // CreateDTO, UpdateDTO -> Entity
+    private final AcademicTermApplyMapper applyMapper;
+    // Validate ResponseDTO
+    private final AcademicTermValidationService validationService;
+
+    // Common Name
+    private final String baseName = "AcademicTerm";
+
+    // ===============================
+    // 단건 조회 헬퍼 (검증 제외, 변환 전용)
+    // ===============================
+    private AcademicTerm findOneEntityById(Long id) {
+        log.info("1) {} 단건 조회 시작: id={}", baseName, id);
+        AcademicTerm entity = repository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException(baseName + " not found with id: " + id));
+        applyMapper.validateEntity(entity);
+        log.info("2) {} 단건 조회 완료: {}", baseName, entity.getTermId());
+        return entity;
+    }
+
+    // ===============================
+    // 전체 조회
+    // ===============================
     @Override
     public List<AcademicTermResponseDTO> findAllTerm() {
-        log.info("1) Term 전체 조회 시작");
-        List<AcademicTermResponseDTO> dtoList = new ArrayList<>();
-        for(AcademicTerm academicTerm : repository.findAll()){
-            AcademicTermResponseDTO dto = mapper.map(academicTerm, AcademicTermResponseDTO.class);
-            dtoList.add(dto);
+        log.info("{} 전체 조회 시작", baseName);
+
+        List<AcademicTerm> entityList = repository.findAll();
+        List<AcademicTermResponseDTO> responseDTOList = new ArrayList<>();
+
+        for (AcademicTerm entity : entityList) {
+            try {
+                AcademicTermResponseDTO responseDTO = entityMapper.toAcademicTermResponseDTO(entity);
+                validationService.validateResponse(responseDTO);
+                responseDTOList.add(responseDTO);
+            } catch (Exception e) {
+                log.error("{} 변환 실패: termId={}, semester={}, error={}",
+                        baseName, entity.getTermId(), entity.getSemester(), e.getMessage(), e);
+            }
         }
-        return dtoList;
+
+        log.info("{} 전체 조회 완료: 성공 {}건 / 전체 {}건",
+                baseName, responseDTOList.size(), entityList.size());
+
+        return responseDTOList;
     }
 
+    // ===============================
+    // 단건 조회
+    // ===============================
     @Override
     public AcademicTermResponseDTO findById(Long termId) {
-        log.info("1) Term 한 건 조회 시작");
-        Optional<AcademicTerm> term = repository.findById(termId);
+        AcademicTerm entity = findOneEntityById(termId);
 
-        log.info("2) Term 한 건 조회 에러 처리");
-        if(term.isEmpty()){
-            throw new RuntimeException("Course not found with id: " + termId);
-        }
+        // 변환 + 검증
+        AcademicTermResponseDTO responseDTO = entityMapper.toAcademicTermResponseDTO(entity);
+        validationService.validateResponse(responseDTO);
 
-        log.info("3) Term 한 건 조회 에러 처리");
-        AcademicTermResponseDTO responseDTO = mapper.map(term.get(), AcademicTermResponseDTO.class);
+        log.info("{} 조회 완료: termId={}", baseName, termId);
+        return responseDTO;
+    }
+
+    // ===============================
+    // 생성
+    // ===============================
+    @Override
+    @Transactional
+    public AcademicTermResponseDTO createTerm(AcademicTermCreateDTO dto) {
+        log.info("{} 생성 시작: {}", baseName, dto);
+
+        // DTO -> Entity (검증 포함)
+        AcademicTerm entity = applyMapper.applyCreate(dto);
+
+        AcademicTerm savedEntity = repository.save(entity);
+        log.info("{} 생성 완료: {}", baseName, savedEntity.getTermId());
+
+        // Entity -> ResponseDTO + 검증
+        AcademicTermResponseDTO responseDTO = entityMapper.toAcademicTermResponseDTO(savedEntity);
+        validationService.validateResponse(responseDTO);
 
         return responseDTO;
     }
 
+    // ===============================
+    // 수정
+    // ===============================
     @Override
-    public AcademicTermResponseDTO createTermByAuthorizedUser(AcademicTermCreateDTO dto, String email) {
-        log.info("1) Term 한 건 추가 시작 : {}", dto);
+    @Transactional
+    public AcademicTermResponseDTO updateTerm(AcademicTermUpdateDTO dto) {
+        log.info("{} 수정 시작: termId={}", baseName, dto.getTermId());
 
-        log.info("2) Term 변환 시작");
-        AcademicTerm academicTerm = new AcademicTerm();
-        MapperUtil.updateFrom(dto, academicTerm, List.of("termId"));
-        log.info("3) Term 변환 끝 : {}",academicTerm);
+        // 단건 조회
+        AcademicTerm entity = findOneEntityById(dto.getTermId());
 
-        log.info("4) Term 결과 반환");
-        AcademicTerm term = repository.save(academicTerm);
-        AcademicTermResponseDTO responseDTO = mapper.map(term, AcademicTermResponseDTO.class);
+        // DTO -> Entity 업데이트 (검증 포함)
+        AcademicTerm updatedEntity = applyMapper.applyUpdate(dto, entity);
+
+        AcademicTerm savedEntity = repository.save(updatedEntity);
+        log.info("{} 수정 완료: Id = {}", baseName, savedEntity.getTermId());
+
+        // Entity -> ResponseDTO + 검증
+        AcademicTermResponseDTO responseDTO = entityMapper.toAcademicTermResponseDTO(savedEntity);
+        validationService.validateResponse(responseDTO);
 
         return responseDTO;
     }
 
+    // ===============================
+    // 삭제
+    // ===============================
     @Override
-    public AcademicTermResponseDTO updateTermByAuthorizedUser(AcademicTermUpdateDTO dto, String email) {
-        log.info("1) Term 한 건 수정 시작 : {}", dto);
+    @Transactional
+    public Map<String, String> deleteTerm(Long termId) {
+        log.info("{} 삭제 시작: Id = {}", baseName, termId);
 
-        log.info("2) Term 한 건 조회");
-        Optional<AcademicTerm> termOptional = repository.findById(dto.getTermId());
-        if(termOptional.isEmpty()){
-            throw new RuntimeException("Term not found with id: " + dto.getTermId());
-        }
+        AcademicTerm entity = findOneEntityById(termId);
+        repository.delete(entity);
 
-        AcademicTerm term = termOptional.get();
-        log.info("3) Term 한 건 수정 전 : {}", term);
-
-        MapperUtil.updateFrom(dto, term,List.of("termId"));
-        log.info("4) Term 한 건 수정 성공 : {}", term);
-
-        AcademicTerm responseTerm = repository.save(term);
-
-        return mapper.map(responseTerm, AcademicTermResponseDTO.class);
-    }
-
-    @Override
-    public Map<String, String> deleteByTermId(Long termId, String email) {
-        log.info("1) Term 한 건 삭제 시작 : {}", termId);
-        Optional<AcademicTerm> termOptional = repository.findById(termId);
-
-        log.info("2) Term 한 건 조회 및 체크 : {}", termId);
-        if(termOptional.isEmpty()){
-            return Map.of("Result","Failure");
-        }
-
-        log.info("3) Term 한 건 삭제");
-        repository.delete(termOptional.get());
-
-        return Map.of("Result","Success");
+        log.info("{} 삭제 완료: Id = {}", baseName, termId);
+        return Map.of("Result", "Success");
     }
 }

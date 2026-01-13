@@ -30,15 +30,5 @@ public class Course {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "dept_id")
-//    @ToString.Exclude
     private Department department; // 학과
-
-//    @OneToMany(mappedBy = "course", fetch = FetchType.LAZY)
-//    @Builder.Default
-//    @ToString.Exclude
-//    private List<CourseOffering> offerings = new ArrayList<>();
-//
-//    public void addCourseOffering(CourseOffering courseOffering){
-//        offerings.add(courseOffering);
-//    }
 }

@@ -1,5 +1,6 @@
 package com.univercity.unlimited.greenUniverCity.util;
 
+import com.univercity.unlimited.greenUniverCity.function.academic.academicTerm.dto.AcademicTermResponseDTO;
 import com.univercity.unlimited.greenUniverCity.function.academic.academicTerm.entity.AcademicTerm;
 import com.univercity.unlimited.greenUniverCity.function.academic.assignment.dto.assignment.AssignmentResponseDTO;
 import com.univercity.unlimited.greenUniverCity.function.academic.assignment.dto.submission.SubmissionResponseDTO;
@@ -111,6 +112,8 @@ public class EntityMapper {
                 .sectionId(section != null ? section.getSectionId() : -1L)
                 .enrollDate(enrollment.getEnrollDate())
                 .userId(user != null ? user.getUserId() : -1L)
+                .studentName(user.getNickname())
+                .studentNumber(user.getStudentNumber())
                 .build();
     }
 
@@ -375,6 +378,22 @@ public class EntityMapper {
                 .fileUrl(submission.getFileUrl())
                 .score(submission.getScore())
                 .submittedAt(submission.getSubmittedAt())
+                .build();
+    }
+
+    // ==========================================
+    // 15. AcademicTerm 변환 (AcademicTerm-A)
+    // ==========================================
+    public AcademicTermResponseDTO toAcademicTermResponseDTO(AcademicTerm term) {
+        if (term == null) return null;
+
+        return AcademicTermResponseDTO.builder()
+                .termId(term.getTermId())
+                .year(term.getYear())
+                .semester(term.getSemester())
+                .registrationStart(term.getRegistrationStart())
+                .registrationEnd(term.getRegistrationEnd())
+                .isCurrent(term.getIsCurrent())
                 .build();
     }
 }

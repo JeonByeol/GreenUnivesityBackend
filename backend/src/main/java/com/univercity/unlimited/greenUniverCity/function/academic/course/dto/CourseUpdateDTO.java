@@ -1,5 +1,9 @@
 package com.univercity.unlimited.greenUniverCity.function.academic.course.dto;
 
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 @ToString
@@ -9,14 +13,22 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 public class CourseUpdateDTO {
-    //** 임시 DTO 완성본 아닙니다 **
+    @NotNull(message = "강의 ID를 입력해주세요.")
     private Long courseId; // 강의 코드
+
+    @NotBlank(message = "과목명을 입력해주세요.")
     private String courseName; // 과목명
 
+    @NotBlank(message = "강의 설명을 입력해주세요.")
     private String description; // 강의 설명
 
+    @NotNull(message = "학점을 입력해주세요.")
+    @Min(value = 1, message = "학점은 1 이상이어야 합니다.")
+    @Max(value = 4, message = "학점은 4 이하이어야 합니다.")
     private Integer credits; // 학점
-    private Long departmentId; // 과목 코드
+
+    @NotNull(message = "학과 ID를 입력해주세요.")
+    private Long departmentId; // 학과 코드
 
 }
 
