@@ -96,7 +96,7 @@ public class UserRepositoryTests {
                         .nickname(nicknames[i])
                         .build();
 
-                roleNumber = 14;
+                roleNumber = 3;
             } else if(i == 12){
                 user = User.builder()
                         .email("professor@aaa.com")
@@ -104,7 +104,7 @@ public class UserRepositoryTests {
                         .nickname(nicknames[i])
                         .build();
 
-                roleNumber = 3;
+                roleNumber = 14;
             }
             else {
                 user = User.builder()
