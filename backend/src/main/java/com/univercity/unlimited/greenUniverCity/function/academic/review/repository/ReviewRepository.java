@@ -35,4 +35,14 @@ public interface ReviewRepository extends JpaRepository<Review,Long> {
             "JOIN FETCH cs.courseOffering co " +
             "JOIN FETCH co.course c")
     List<Review> findAllWithDetails();
+
+    @Query("""
+        select r
+        from Review r
+        join r.enrollment e
+        join e.classSection cs
+        join cs.courseOffering co
+        where co.professor.email = :professorEmail
+    """)
+    List<Review> findReviewsByProfessorEmail(@Param("professorEmail") String professorEmail);
 }

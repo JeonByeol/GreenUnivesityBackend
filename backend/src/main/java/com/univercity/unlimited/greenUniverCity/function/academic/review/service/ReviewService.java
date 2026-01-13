@@ -29,4 +29,6 @@ public interface ReviewService {
     //R-6) 한건 조회를 위한 one/Id 추가
     ReviewResponseDTO getReview(Long reviewId);
 
+    // 본인 수업에 대한 리뷰만 조회
+    List<ReviewResponseDTO> getMyData(String email);
 }
