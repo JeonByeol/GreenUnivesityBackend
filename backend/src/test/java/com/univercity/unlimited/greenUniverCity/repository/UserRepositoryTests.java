@@ -88,7 +88,7 @@ public class UserRepositoryTests {
                         .nickname(nicknames[i])
                         .build();
 
-                roleNumber = 9;
+                roleNumber = 10;
             } else if(i == 11) {
                 user = User.builder()
                         .email("student@aaa.com")
@@ -96,7 +96,7 @@ public class UserRepositoryTests {
                         .nickname(nicknames[i])
                         .build();
 
-                roleNumber = 4;
+                roleNumber = 7;
             } else if(i == 12){
                 user = User.builder()
                         .email("professor@aaa.com")
@@ -104,7 +104,7 @@ public class UserRepositoryTests {
                         .nickname(nicknames[i])
                         .build();
 
-                roleNumber = 6;
+                roleNumber = 3;
             }
             else {
                 user = User.builder()
@@ -117,7 +117,7 @@ public class UserRepositoryTests {
             }
 
             user.setUserRole(UserRole.GUEST);
-            if(roleNumber>2) user.setUserRole(UserRole.STUDENT);
+            user.setUserRole(UserRole.STUDENT);
             if(roleNumber>6) user.setUserRole(UserRole.PROFESSOR);
             if(roleNumber>9) user.setUserRole(UserRole.ADMIN);
 
