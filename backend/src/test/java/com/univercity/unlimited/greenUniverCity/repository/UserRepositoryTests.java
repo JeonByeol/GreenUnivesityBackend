@@ -113,13 +113,13 @@ public class UserRepositoryTests {
                         .nickname(nicknames[i])
                         .build();
 
-                roleNumber = (int)(Math.random()*8) + 1;
+                roleNumber = (int)(Math.random()*10) + 1;
             }
 
             user.setUserRole(UserRole.GUEST);
-            if(roleNumber>3) user.setUserRole(UserRole.STUDENT);
-            if(roleNumber>5) user.setUserRole(UserRole.PROFESSOR);
-            if(roleNumber>7) user.setUserRole(UserRole.ADMIN);
+            if(roleNumber>2) user.setUserRole(UserRole.STUDENT);
+            if(roleNumber>6) user.setUserRole(UserRole.PROFESSOR);
+            if(roleNumber>9) user.setUserRole(UserRole.ADMIN);
 
             // ✅ 학과 랜덤 매핑
             Department dept = departments.get(

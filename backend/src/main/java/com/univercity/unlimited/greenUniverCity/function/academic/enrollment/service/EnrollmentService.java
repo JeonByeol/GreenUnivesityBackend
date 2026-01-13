@@ -29,5 +29,5 @@ public interface EnrollmentService {
     List<EnrollmentResponseDTO> getEnrollmentsByOffering(Long offeringId, String professorEmail);
 
 
-
+    List<EnrollmentResponseDTO>  getEnrollmentByUserAndOffering(Long userId, Long offeringId);
 }
