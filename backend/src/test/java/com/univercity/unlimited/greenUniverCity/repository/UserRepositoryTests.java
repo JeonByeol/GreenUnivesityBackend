@@ -88,7 +88,7 @@ public class UserRepositoryTests {
                         .nickname(nicknames[i])
                         .build();
 
-                roleNumber = 10;
+                roleNumber = 20;
             } else if(i == 11) {
                 user = User.builder()
                         .email("student@aaa.com")
@@ -96,7 +96,7 @@ public class UserRepositoryTests {
                         .nickname(nicknames[i])
                         .build();
 
-                roleNumber = 7;
+                roleNumber = 14;
             } else if(i == 12){
                 user = User.builder()
                         .email("professor@aaa.com")
@@ -113,13 +113,13 @@ public class UserRepositoryTests {
                         .nickname(nicknames[i])
                         .build();
 
-                roleNumber = (int)(Math.random()*10) + 1;
+                roleNumber = (int)(Math.random()*20) + 1;
             }
 
             user.setUserRole(UserRole.GUEST);
             user.setUserRole(UserRole.STUDENT);
-            if(roleNumber>6) user.setUserRole(UserRole.PROFESSOR);
-            if(roleNumber>9) user.setUserRole(UserRole.ADMIN);
+            if(roleNumber>13) user.setUserRole(UserRole.PROFESSOR);
+            if(roleNumber>19) user.setUserRole(UserRole.ADMIN);
 
             // ✅ 학과 랜덤 매핑
             Department dept = departments.get(
