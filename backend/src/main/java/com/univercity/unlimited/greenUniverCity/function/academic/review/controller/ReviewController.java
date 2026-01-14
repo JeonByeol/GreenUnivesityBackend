@@ -103,5 +103,17 @@ public class ReviewController {
         return ResponseEntity.ok(response);
     }
 
+    // R-7) 교수의 이메일을 통해 조회
+    @GetMapping("/my")
+    public ResponseEntity<List<ReviewResponseDTO>> getMyReview(
+            @RequestHeader(value = "X-User-Email", required = false) String email
+    )
+    {
+        log.info("Reivew 조회 시작");
+        List<ReviewResponseDTO> reviewResponseDTOList = reviewService.getMyData(email);
+
+        return ResponseEntity.ok(reviewResponseDTOList);
+    }
+
 }
 

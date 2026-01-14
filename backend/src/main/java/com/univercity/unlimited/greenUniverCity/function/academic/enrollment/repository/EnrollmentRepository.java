@@ -49,4 +49,28 @@ public interface EnrollmentRepository extends JpaRepository<Enrollment,Long> {
     WHERE e.user.email = :email
     """)
     List<Enrollment> findByUserEmail(@Param("email") String email);
+
+    //E-Attendance
+    @Query("SELECT DISTINCT e FROM Enrollment e " +
+            "JOIN FETCH e.user u " +
+            "JOIN e.classSection s " +
+            "JOIN s.courseOffering o " +
+            "WHERE o.offeringId = :offeringId " +
+            "ORDER BY u.nickname ASC") // 이름순 정렬 옵션 (선택사항)
+    List<Enrollment> findByOfferingId(@Param("offeringId") Long offeringId);
+
+
+    @Query("""
+    SELECT e
+    FROM Enrollment e
+    JOIN e.user u
+    JOIN e.classSection cs
+    JOIN cs.courseOffering co
+    WHERE u.userId = :userId
+      AND co.offeringId = :offeringId
+    """)
+    List<Enrollment> findEnrollmentsByUserIdAndOfferingId(
+            @Param("userId") Long userId,
+            @Param("offeringId") Long offeringId
+    );
 }

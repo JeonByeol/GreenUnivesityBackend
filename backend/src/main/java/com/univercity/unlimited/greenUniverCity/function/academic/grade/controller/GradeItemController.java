@@ -42,7 +42,7 @@ public class GradeItemController {
     }
 
     //GI-2) 평가항목 테이블에 존재하는 데이터 하나를 단건 조회하기 위해 컨트롤러 내에 선언된 Crud(Get)  - 확인완
-    @GetMapping("one/{itemId}")
+    @GetMapping("/one/{itemId}")
     public ResponseEntity<GradeItemResponseDTO> getGradeItem(@PathVariable Long itemId) {
         log.info("1) 평가항목 단건 조회 요청 - ItemId: {}", itemId);
 

@@ -13,12 +13,12 @@ public interface AcademicTermService {
     AcademicTermResponseDTO findById(Long termId);
 
     // 쓰기
-    AcademicTermResponseDTO createTermByAuthorizedUser(AcademicTermCreateDTO dto, String email);
+    AcademicTermResponseDTO createTerm(AcademicTermCreateDTO dto);
 
     // 수정
-    AcademicTermResponseDTO updateTermByAuthorizedUser(AcademicTermUpdateDTO dto, String email);
+    AcademicTermResponseDTO updateTerm(AcademicTermUpdateDTO dto);
 
     // 삭제
-    Map<String, String> deleteByTermId(Long termId, String email);
+    Map<String, String> deleteTerm(Long termId);
 
 }

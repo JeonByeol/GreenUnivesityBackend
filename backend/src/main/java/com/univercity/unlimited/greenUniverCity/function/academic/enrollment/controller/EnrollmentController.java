@@ -3,6 +3,7 @@ package com.univercity.unlimited.greenUniverCity.function.academic.enrollment.co
 import com.univercity.unlimited.greenUniverCity.function.academic.enrollment.dto.EnrollmentCreateDTO;
 import com.univercity.unlimited.greenUniverCity.function.academic.enrollment.dto.EnrollmentResponseDTO;
 import com.univercity.unlimited.greenUniverCity.function.academic.enrollment.dto.EnrollmentUpdateDTO;
+import com.univercity.unlimited.greenUniverCity.function.academic.enrollment.entity.Enrollment;
 import com.univercity.unlimited.greenUniverCity.function.academic.enrollment.service.EnrollmentService;
 import com.univercity.unlimited.greenUniverCity.function.academic.offering.dto.CourseOfferingResponseDTO;
 import com.univercity.unlimited.greenUniverCity.function.member.user.dto.UserResponseDTO;
@@ -131,5 +132,35 @@ public class EnrollmentController {
         return ResponseEntity.ok(
                 enrollmentService.findMyEnrollments(email)
         );
+    }
+
+    // EnrollmentController.java
+
+    /**
+     * [교수용] 특정 강의(Offering)의 전체 수강생 명단 조회
+     * - 용도: 출결 관리 화면에서 '학생 선택' 드롭다운을 채우기 위함
+     * - URL: GET /api/enrollment/offering/{offeringId}
+     */
+    @GetMapping("/offering/{offeringId}")
+    public List<EnrollmentResponseDTO> getEnrollmentsByOffering(
+            @PathVariable("offeringId") Long offeringId,
+            @RequestHeader(value = "X-User-Email", required = false) String professorEmail) {
+
+        // 1. Postman 테스트용 헤더 처리 (기존 스타일 유지)
+        if (professorEmail == null || professorEmail.isEmpty()) {
+            professorEmail = "hannah@aaa.com"; // 테스트용 기본값 (교수)
+        }
+
+        log.info("1) 교수 과목별 수강생 명단 조회 요청 - OfferingId: {}, 교수: {}", offeringId, professorEmail);
+
+        return enrollmentService.getEnrollmentsByOffering(offeringId, professorEmail);
+    }
+
+    @GetMapping("/user/{userId}/offering/{offeringId}")
+    public List<EnrollmentResponseDTO> getEnrollmentByUserAndOffering(
+            @PathVariable Long userId,
+            @PathVariable Long offeringId
+    ) {
+        return enrollmentService.getEnrollmentByUserAndOffering(userId, offeringId);
     }
 }
