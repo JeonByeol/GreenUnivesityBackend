@@ -64,10 +64,10 @@ public class AcademicTermController {
     @PostMapping("/create")
     public ResponseEntity<AcademicTermResponseDTO> createTerm(
             @Valid @RequestBody AcademicTermCreateDTO dto,
-            @RequestHeader(value = "X-User-Email", required = true) String requesterEmail
+            @RequestHeader(value = "X-User-Email", required = false) String requesterEmail
     ) {
         log.info("{} 생성 시도 - 요청자: {}", baseName, requesterEmail);
-        securityValidator.validateAdminRole(requesterEmail, baseName + " 생성");
+//        securityValidator.validateAdminRole(requesterEmail, baseName + " 생성");
 
         AcademicTermResponseDTO createResponse = academicTermService.createTerm(dto);
         return ResponseEntity.ok(createResponse);
@@ -80,7 +80,7 @@ public class AcademicTermController {
     @PutMapping("/update")
     public ResponseEntity<AcademicTermResponseDTO> updateTerm(
             @Valid @RequestBody AcademicTermUpdateDTO dto,
-            @RequestHeader(value = "X-User-Email", required = true) String requesterEmail
+            @RequestHeader(value = "X-User-Email", required = false) String requesterEmail
     ) {
         log.info("{} 수정 시도 - 요청자: {}", baseName, requesterEmail);
         securityValidator.validateAdminRole(requesterEmail, "Term 수정");
@@ -96,7 +96,7 @@ public class AcademicTermController {
     @DeleteMapping("/delete/{termId}")
     public ResponseEntity<String> deleteTerm(
             @PathVariable Long termId,
-            @RequestHeader(value = "X-User-Email", required = true) String requesterEmail
+            @RequestHeader(value = "X-User-Email", required = false) String requesterEmail
     ) {
         log.info("{} 삭제 시도 - termId: {}, 요청자: {}", baseName, termId, requesterEmail);
         securityValidator.validateAdminRole(requesterEmail, "Term 삭제");

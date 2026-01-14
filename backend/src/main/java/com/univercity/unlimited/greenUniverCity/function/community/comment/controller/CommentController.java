@@ -47,6 +47,13 @@ public ResponseEntity<List<CommentResponseDTO>> getAllComments() {
         commentService.deleteComment(commentId);  // ✔ 정식 메서드 호출
         return ResponseEntity.noContent().build();
     }
+
+    // C-6-2) 양식에 맞추기 위해 url만 수정했습니다.
+    @DeleteMapping("/delete/{commentId}")
+    public ResponseEntity<Void> deleteComment_mk2(@PathVariable Long commentId) {
+        commentService.deleteComment(commentId);  // ✔ 정식 메서드 호출
+        return ResponseEntity.noContent().build();
+    }
     // C-7) 댓글 작성 201
     @PostMapping("/create")
     public ResponseEntity<CommentResponseDTO> createComment(

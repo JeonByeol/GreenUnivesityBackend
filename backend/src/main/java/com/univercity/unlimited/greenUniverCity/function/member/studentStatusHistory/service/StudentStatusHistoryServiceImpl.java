@@ -240,6 +240,7 @@ public class StudentStatusHistoryServiceImpl implements StudentStatusHistoryServ
 
         // User 업데이트
         UserUpdateDTO userUpdateDTO = userService.toEntity(user);
+        userUpdateDTO.setPassword(null); // 비밀번호는 변경하지 않음
 
         if(approveType == StudentStatusHistoryApproveType.APPROVED) {
             userUpdateDTO.setCurrentStatus(history.getChangeType()); // 반드시 호출

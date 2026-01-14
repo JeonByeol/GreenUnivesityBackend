@@ -4,6 +4,8 @@ import com.univercity.unlimited.greenUniverCity.function.academic.common.Academi
 import com.univercity.unlimited.greenUniverCity.function.academic.enrollment.entity.Enrollment;
 import com.univercity.unlimited.greenUniverCity.function.academic.enrollment.repository.EnrollmentRepository;
 import com.univercity.unlimited.greenUniverCity.function.academic.enrollment.service.EnrollmentService;
+import com.univercity.unlimited.greenUniverCity.function.academic.offering.dto.CourseOfferingResponseDTO;
+import com.univercity.unlimited.greenUniverCity.function.academic.offering.entity.CourseOffering;
 import com.univercity.unlimited.greenUniverCity.function.academic.review.dto.ReviewCreateDTO;
 import com.univercity.unlimited.greenUniverCity.function.academic.review.dto.ReviewResponseDTO;
 import com.univercity.unlimited.greenUniverCity.function.academic.review.dto.ReviewUpdateDTO;
@@ -136,6 +138,24 @@ public class ReviewServiceImpl implements ReviewService{
         repository.delete(review);
 
         log.info("5) 리뷰 삭제 성공 -학생:{}, reviewId:{}",studentEmail,reviewId);
+    }
+
+    @Override
+    public List<ReviewResponseDTO> getMyData(String email) {
+        log.info("Service) 본인 수강 내역 조회 시작 - email: {}", email);
+
+        List<Review> list =
+                repository.findReviewsByProfessorEmail(email);
+
+        if (list == null || list.isEmpty()) {
+            log.info("Service) 조회 결과 없음 - email: {}", email);
+            return List.of(); // 빈 리스트 반환
+        }
+
+        log.info("Service) 조회 완료 - email: {}, count: {}", email, list.size());
+        return list.stream()
+                .map(result -> entityMapper.toReviewResponseDTO(result))
+                .toList();
     }
 
     // =========================================================================

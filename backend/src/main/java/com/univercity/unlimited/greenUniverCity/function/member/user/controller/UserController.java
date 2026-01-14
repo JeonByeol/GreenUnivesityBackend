@@ -97,7 +97,7 @@ public class UserController {
 //    private  ResponseEntity<String > rr(@RequestBody UserDTO dto) {
     public UserResponseDTO create(
             @RequestBody UserRegisterDTO dto,
-            @RequestHeader(value="X-User-Email") String requesterEmail) {
+            @RequestHeader(value="X-User-Email",required = false) String requesterEmail) {
         log.info("Controller:/api/user/register:{} 확인", dto);
         return userService.register(dto);
     }

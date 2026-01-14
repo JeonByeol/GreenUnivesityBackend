@@ -341,6 +341,14 @@ public class EnrollmentServiceImpl implements EnrollmentService {
         return 1;
     }
 
+    @Override
+    public List<EnrollmentResponseDTO> getEnrollmentByUserAndOffering(Long userId, Long offeringId) {
+        List<EnrollmentResponseDTO> enrollmentList = repository.findEnrollmentsByUserIdAndOfferingId(userId, offeringId).stream()
+                .map(enrollment -> entityMapper.toEnrollmentResponseDTO(enrollment)).toList();
+
+        return enrollmentList;
+    }
+
     // =========================================================================
     //  함수
     // =========================================================================

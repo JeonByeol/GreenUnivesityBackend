@@ -3,6 +3,7 @@ package com.univercity.unlimited.greenUniverCity.function.academic.enrollment.co
 import com.univercity.unlimited.greenUniverCity.function.academic.enrollment.dto.EnrollmentCreateDTO;
 import com.univercity.unlimited.greenUniverCity.function.academic.enrollment.dto.EnrollmentResponseDTO;
 import com.univercity.unlimited.greenUniverCity.function.academic.enrollment.dto.EnrollmentUpdateDTO;
+import com.univercity.unlimited.greenUniverCity.function.academic.enrollment.entity.Enrollment;
 import com.univercity.unlimited.greenUniverCity.function.academic.enrollment.service.EnrollmentService;
 import com.univercity.unlimited.greenUniverCity.function.academic.offering.dto.CourseOfferingResponseDTO;
 import com.univercity.unlimited.greenUniverCity.function.member.user.dto.UserResponseDTO;
@@ -153,5 +154,13 @@ public class EnrollmentController {
         log.info("1) 교수 과목별 수강생 명단 조회 요청 - OfferingId: {}, 교수: {}", offeringId, professorEmail);
 
         return enrollmentService.getEnrollmentsByOffering(offeringId, professorEmail);
+    }
+
+    @GetMapping("/user/{userId}/offering/{offeringId}")
+    public List<EnrollmentResponseDTO> getEnrollmentByUserAndOffering(
+            @PathVariable Long userId,
+            @PathVariable Long offeringId
+    ) {
+        return enrollmentService.getEnrollmentByUserAndOffering(userId, offeringId);
     }
 }

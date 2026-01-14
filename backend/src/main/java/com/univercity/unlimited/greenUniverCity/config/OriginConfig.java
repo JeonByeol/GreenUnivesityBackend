@@ -53,7 +53,8 @@ public class OriginConfig implements WebMvcConfigurer {
                         "http://localhost:3000",
                         "http://localhost:3001",
                         "https://vercel-lms-frontend.vercel.app",
-                        "https://www.greenunivercity.store"
+                        "https://www.greenunivercity.store",
+                        "https://lms.greenunivercity.store"
                 )
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                 .allowedHeaders("Authorization", "Content-Type", "X-Requested-With","X-User-Email")
